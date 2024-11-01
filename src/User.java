@@ -143,19 +143,25 @@ public class User implements UserInterface{
     }
 
     //revise ---------
-    public boolean hasLogin(String username, String password){
-        if(userPass.containsKey(username) && userPass.get(username).equals(password)){
+    public boolean hasLogin(String username, String password) {
+        if (userPass.containsKey(username) && userPass.get(username).equals(password)) {
            return true;
         }
         return false;
     }
 
-    public void createNewUser(String username, String password){
+    public void createNewUser(String username, String password) {
         userPass.put(username, password);
     }
 
-    public boolean sendText(String chat_id, String message, int type, String user_id, String username, int userType){
-        return true;
+    public boolean sendText(String chat_id, String message, int type, String user_id, String username, int userType) throws NoChatFoundException {
+        if (chat_ids.contains(chat_id)) {
+            Chat existingChat = new Chat(chat_id);
+            Message intendedMessage = new Message(user_id, type, message);
+            existingChat.addMessage(intendedMessage);
+            return true;
+        }
+        throw new NoChatFoundException("No chat found");
     }
 
 }
