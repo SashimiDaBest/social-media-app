@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public interface UserInterface {
 
     public String getUsername();
@@ -20,8 +22,10 @@ public interface UserInterface {
 
     public boolean addChat(String chat_id);
     public boolean deleteChat(String chat_id);
+    public void createChat(ArrayList<String> recipient_id)
 
-    public boolean setAccountType(int accountType);
+    public void setAccountType(int accountType);
+    public int getAccountType();
 
     public boolean userDoesExist(String idToBeSearched);
 

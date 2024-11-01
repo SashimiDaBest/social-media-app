@@ -119,16 +119,14 @@ public class User implements UserInterface{
         return false;
     }
 
-
-
-
-
-
-
-//    -----------------
     public boolean addChat(String chat_id){
         chat_ids.add(chat_id);
         return true;
+    }
+
+    public void createChat(ArrayList<String> recipient_id){
+        Chat newChat = new Chat(recipient_id);
+        chat_ids.add(newChat.getChatID());
     }
 
     public boolean deleteChat(String chat_id){
@@ -136,26 +134,18 @@ public class User implements UserInterface{
         return false;
     }
 
-    public boolean setAccountType(int accountType){
+    public void setAccountType(int accountType){
         this.userType = accountType;
-        return true;
     }
-    public boolean userDoesExist(String idToBeSearched){
-        if(UserArray.contains(idToBeSearched)){
-            return true;
-        }
-        else{
-            return false;
-        }
+
+    public int getAccountType(){
+        return this.userType;
     }
+
+    //revise ---------
     public boolean hasLogin(String username, String password){
-        if(userPass.containsKey(username)){
-            if(userPass.get(username).equals(password)){
-                return true;
-            }
-            else{
-                return false;
-            }
+        if(userPass.containsKey(username) && userPass.get(username).equals(password)){
+           return true;
         }
         return false;
     }
@@ -163,6 +153,7 @@ public class User implements UserInterface{
     public void createNewUser(String username, String password){
         userPass.put(username, password);
     }
+
     public boolean sendText(String chat_id, String message, int type, String user_id, String username, int userType){
         return true;
     }
