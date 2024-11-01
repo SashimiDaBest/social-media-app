@@ -21,7 +21,7 @@ public class Chat implements ChatInterface {
     private static AtomicInteger counter = new AtomicInteger(0);;
 
     // Chat constructor for reading from file
-    public Chat(String filename, boolean alrCreated) {
+    public Chat(String filename) {
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
             this.messages = new ArrayList<>();
 
@@ -103,7 +103,6 @@ public class Chat implements ChatInterface {
         return id + number;
     }
 
-
     public String getChatID() {
         return chatID;
     }
@@ -115,9 +114,11 @@ public class Chat implements ChatInterface {
     public ArrayList<String> getRecipientID() {
         return recipientID;
     }
+
     public int getCounter(){
         return counter.get();
     }
+
     public void setRecipientID(ArrayList<String> recipientID) {
         this.recipientID = recipientID;
     }
