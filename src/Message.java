@@ -25,6 +25,14 @@ public class Message {
     }
 
     public boolean equals(Message message) {
-        return this.message.equals(message.message) && this.authorID.equals(message.authorID);
+
+        if (isImage) {
+            return this.message.equals(message.message) && this.authorID.equals(message.authorID) && this.isImage == message.isImage;
+        
+        } else {
+            
+            return this.message.equals(message.message) && this.authorID.equals(message.authorID);
+        }
+        
     }
 }
