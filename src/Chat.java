@@ -18,6 +18,7 @@ public class Chat implements ChatInterface {
     private ArrayList<Message> messages;
     private ArrayList<String> recipientID;
     private static AtomicInteger counter = new AtomicInteger(0);
+    private static String chatIDList = "chatIDList.txt";
 
     // Chat constructor for reading from file. If any input does not match the expected format, throw an error.
     public Chat(String filename) throws InvalidFileFormatException {
@@ -175,7 +176,12 @@ public class Chat implements ChatInterface {
         this.recipientID = recipientID;
     }
 
-    public static void main(String[] args) {
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
 
+        Chat chat = (Chat) obj;
+        return this.chatID.equals(((Chat) obj).chatID);
     }
 }
