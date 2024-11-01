@@ -1,19 +1,26 @@
+/**
+ * Social Media App - Message Class
+ *
+ * Message class with accessors and mutators
+ *
+ * Status: Complete
+ *
+ * @author connor pugliese, soleil pham
+ *
+ * @version 11/01/2024
+ *
+ */
 public class Message {
+
     private String messageID;
     private String message;
     private String authorID;
-    private boolean isImage;
+    private int type;
 
-    public Message(String message, String authorID) {
+    public Message(String authorID, int type, String message) {
         this.message = message;
         this.authorID = authorID;
-        this.isImage = false;
-    }
-
-    public Message(String message, String authorID, boolean isImage) {
-        this.message = message;
-        this.authorID = authorID;
-        this.isImage = isImage;
+        this.type = type;
     }
 
     public String getMessage() {
@@ -24,7 +31,16 @@ public class Message {
         return authorID;
     }
 
-    public boolean equals(Message message) {
+    public int getType() {
+        return type;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        Message message = (Message) obj;
         return this.message.equals(message.message) && this.authorID.equals(message.authorID);
     }
 }
