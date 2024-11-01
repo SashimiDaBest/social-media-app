@@ -118,7 +118,7 @@ public class Chat implements ChatInterface {
     public int getCounter(){
         return counter.get();
     }
-    public ArrayList<String> setRecipientID(ArrayList<String> recipientID) {
+    public void setRecipientID(ArrayList<String> recipientID) {
         this.recipientID = recipientID;
     }
 }
