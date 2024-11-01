@@ -1,0 +1,4 @@
+0001 [CHAT ID]
+0002 [RECIPIENT USER ID] [User who owns the Chat will be known by the fact that this Chat object is in their ArrayList]
+0002:hello [AUTHOR ID:MESSAGE] [in this case, 0002 is the recipient and not the user who owns this Chat in their list]
+0003:hi hru [AUTHOR ID:MESSAGE] [in this case, 0003 is the owner of this Chat object in their list]
