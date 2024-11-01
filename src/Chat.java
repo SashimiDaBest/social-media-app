@@ -115,10 +115,21 @@ public class Chat implements ChatInterface {
     public ArrayList<String> getRecipientID() {
         return recipientID;
     }
+
     public int getCounter(){
         return counter.get();
     }
-    public ArrayList<String> setRecipientID(ArrayList<String> recipientID) {
+
+    public void setRecipientID(ArrayList<String> recipientID) {
         this.recipientID = recipientID;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        Chat chat = (Chat) obj;
+        return this.chatID.equals(((Chat) obj).chatID);
     }
 }

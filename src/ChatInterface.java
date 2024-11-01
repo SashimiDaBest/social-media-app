@@ -19,6 +19,6 @@ public interface ChatInterface {
     public ArrayList<Message> getMessages();
     public ArrayList<String> getRecipientID();
     public int getCounter();
-    public ArrayList<String> setRecipientID(ArrayList<String> recipientID);
+    public void setRecipientID(ArrayList<String> recipientID);
 
 }
