@@ -3,10 +3,8 @@ import java.util.*;
 import java.io.*;
 
 /**
- * Social Media App - Simple Server
+ * Social Media App - Client Handler
  *
- * Server class with following methods and functionality
- * 1. run()
  *
  * Status: Incomplete
  *
