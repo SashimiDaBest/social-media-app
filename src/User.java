@@ -125,7 +125,9 @@ public class User implements UserInterface{
             for (int i = 0; i < followingList.size(); i++){
                 if (followingList.get(i).equals(followerID)){
                     followingList.remove(i);
+                    writeData();
                     return true;
+                    
                 }
             }
         }
@@ -200,6 +202,7 @@ public class User implements UserInterface{
         //address different types of false conditions?
         if (findUser(followingID) && !followingList.contains(followingID) && !blockedList.contains(followingID)) {
             followingList.add(followingID);
+            writeData();
             return true;
         }
         return false;
@@ -208,6 +211,7 @@ public class User implements UserInterface{
     public boolean deleteFollowing(String followingID) {
         if (followingList.contains(followingID)) {
             followingList.remove(followingID);
+            writeData();
             return true;
         }
         return false;
@@ -220,6 +224,7 @@ public class User implements UserInterface{
     public boolean addBlock(String blockedID) {
         if(findUser(blockedID) && !blockedList.contains(blockedID)){
             blockedList.add(blockedID);
+            writeData();
             return true;
         }
         return false;
@@ -228,6 +233,7 @@ public class User implements UserInterface{
     public boolean deleteBlock(String blockedID) {
         if(blockedList.contains(blockedID)){
             blockedList.remove(blockedID);
+            writeData();
             return true;
         }
         return false;
@@ -239,16 +245,19 @@ public class User implements UserInterface{
     //add writeData() method
     public boolean addChat(String chat_id) {
         chatIDList.add(chat_id);
+        writeData();
         return true;
     }
     //add writeData() method
     public void createChat(ArrayList<String> recipient_id) {
         Chat newChat = new Chat(recipient_id);
         chatIDList.add(newChat.getChatID());
+        writeData();
     }
     //add writeData() method
     public boolean deleteChat(String chat_id) {
         chatIDList.remove(chat_id);
+        writeData();
         return false;
     }
 
