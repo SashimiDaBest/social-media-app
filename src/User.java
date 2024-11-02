@@ -182,4 +182,14 @@ public class User implements UserInterface{
         return chat_ids;
     }
 
+    // TEMPORARY FOR TEST CASES UNTIL CONSTRUCTOR IS DONE
+    public void setuser_id(String user_id) {
+        this.user_id = user_id;
+    }
+
+    // TEMPORARY FOR TEST CASES UNTIL CONSTRUCTOR IS DONE
+    public String getUser_id() {
+        return this.user_id;
+    }
+
 }

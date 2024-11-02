@@ -24,10 +24,9 @@ public class Chat implements ChatInterface {
     check if chatID is in the right format
      */
     public Chat(String chatID) throws InvalidFileFormatException {
-        try (BufferedReader reader = new BufferedReader(new FileReader(chatID))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(chatID + ".txt"))) {
 
             String line = reader.readLine();
-            this.chatID = line;
 
             try {
                 Integer.parseInt(chatID.substring(2));
@@ -36,6 +35,8 @@ public class Chat implements ChatInterface {
             } catch (NumberFormatException e) {
                 throw new InvalidFileFormatException("Invalid chatID Format!");
             }
+
+            this.chatID = line;
 
             if (line != null) {
                 line = reader.readLine();
@@ -82,13 +83,12 @@ public class Chat implements ChatInterface {
         this.messageList = new ArrayList<>();
         writeData();
 
-        /*
         try (PrintWriter writer = new PrintWriter(new FileOutputStream(chatIDListDoc, true))) {
             writer.println(this.chatID);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
-        */
+
         counter.set(counter.get() + 1);
     }
 

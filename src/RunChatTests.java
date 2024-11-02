@@ -8,14 +8,15 @@ import java.util.ArrayList;
 public class RunChatTests {
     @Test
     public void testNoReadConstructor() {
-        String senderID = "U_0001";
-        String recipientID = "U_0002";
-        Message testMessage1 = new Message(senderID, 0, "hey bud!");
-        Message testMessage2 = new Message(recipientID, 0, "hey hru!");
+        String member1ID = "U_0001";
+        String member2ID = "U_0002";
+        Message testMessage1 = new Message(member1ID, 0, "hey bud!");
+        Message testMessage2 = new Message(member2ID, 0, "hey hru!");
 
-        ArrayList<String> recipientIDs = new ArrayList<>();
-        recipientIDs.add(recipientID);
-        Chat testChat = new Chat(recipientIDs);
+        ArrayList<String> memberIDs = new ArrayList<>();
+        memberIDs.add(member1ID);
+        memberIDs.add(member2ID);
+        Chat testChat = new Chat(memberIDs);
         File outputFile = new File(testChat.getChatID() + ".txt");
         testChat.addMessage(testMessage1);
         testChat.addMessage(testMessage2);
@@ -34,9 +35,9 @@ public class RunChatTests {
 
         ArrayList<String> expectedFileContents = new ArrayList<>();
         expectedFileContents.add(testChat.getChatID());
-        expectedFileContents.add(recipientID);
-        expectedFileContents.add(senderID + ";0hey bud!");
-        expectedFileContents.add(recipientID + ";0hey hru!");
+        expectedFileContents.add(member1ID + ";" + member2ID);
+        expectedFileContents.add(member1ID + ";0hey bud!");
+        expectedFileContents.add(member2ID + ";0hey hru!");
 
         assertEquals("Created chat data file does not match expected contents.", expectedFileContents,
                 dataFileContents);
@@ -47,12 +48,12 @@ public class RunChatTests {
 
     @Test
     public void testReadConstructor() {
-        File chatData = new File("chat1234_test.txt");
+        File chatID = new File("C_1234.txt");
         Chat testChat = null;
 
-        try (PrintWriter writer = new PrintWriter(new FileOutputStream(chatData))) {
+        try (PrintWriter writer = new PrintWriter(new FileOutputStream(chatID))) {
             writer.println("C_1234");
-            writer.println("U_0003;U_0004");
+            writer.println("U_0003;U_0004;U_0005");
             writer.println("U_0003;0hey guys");
             writer.println("U_0005;0what's up");
             writer.println("U_0004;0what going on");
@@ -61,29 +62,30 @@ public class RunChatTests {
         }
 
         try {
-            testChat = new Chat(chatData.getName());
+            testChat = new Chat("C_1234");
         } catch (InvalidFileFormatException e) {
             e.printStackTrace();
         }
 
         assertEquals("Chat does not properly instantiate chat ID from file.", testChat.getChatID(), "C_1234");
 
-        ArrayList<String> expectedRecipientIDs = new ArrayList<>();
-        expectedRecipientIDs.add("U_0003");
-        expectedRecipientIDs.add("U_0004");
+        ArrayList<String> expectedMemberIDs = new ArrayList<>();
+        expectedMemberIDs.add("U_0003");
+        expectedMemberIDs.add("U_0004");
+        expectedMemberIDs.add("U_0005");
 
-        assertEquals("Chat does not properly instantiate recipient IDs from file.", testChat.getRecipientID(),
-                expectedRecipientIDs);
+        assertEquals("Chat does not properly instantiate member IDs from file.", testChat.getMemberList(),
+                expectedMemberIDs);
 
         ArrayList<Message> messages = new ArrayList<>();
         messages.add(new Message("U_0003", 0, "hey guys"));
         messages.add(new Message("U_0005", 0, "what's up"));
         messages.add(new Message("U_0004", 0, "what going on"));
 
-        assertEquals("Chat does not properly instantiate Messages from file.", messages, testChat.getMessages());
+        assertEquals("Chat does not properly instantiate Messages from file.", messages, testChat.getMessageList());
 
-        if(chatData.exists())
-            chatData.delete();
+        if(chatID.exists())
+            chatID.delete();
 
         File testCorruptFile = new File("corruptChat1234_test.txt");
 
@@ -102,7 +104,7 @@ public class RunChatTests {
 
         try (PrintWriter writer = new PrintWriter(new FileOutputStream(testCorruptFile))) {
             writer.println("C_1234");
-            writer.println("X_0003;U_0004");
+            writer.println("X_0003;U_0004;U_0005");
             writer.println("U_0003;0hey guys");
             writer.println("U_0005;0what's up");
             writer.println("U_0004;0what going on");
@@ -119,6 +121,7 @@ public class RunChatTests {
 
     public static void main(String[] args) {
         RunChatTests test = new RunChatTests();
+        test.testNoReadConstructor();
         test.testReadConstructor();
     }
 }
