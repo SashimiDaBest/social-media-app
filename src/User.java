@@ -1,21 +1,89 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.io.*;
+
 public class User implements UserInterface{
     private String userName;
-    private String user_id; // (will be filename as well)
-    private ArrayList<String> followers_ids;
-    private ArrayList<String> following_ids;
-    private ArrayList<String> blocked_ids;
-    private ArrayList<String> chat_ids;
-    private int userType;
-    private String pathName; //path to total user & password
-    private String passWord;
-    private static ArrayList<String> UserArray; //add total user to an array - change method later
+    private String userID;
+    private String photoPathway;
+    private ArrayList<String> followerList;
+    private ArrayList<String> followingList;
+    private ArrayList<String> blockedList;
+    private ArrayList<String> chatIDList;
+    private int accountType;
+    private String password;
+    private static AtomicInteger counter = new AtomicInteger(0);
+    private final String userIDinfo = this.userID + ".txt";
+    private static final String userIDList = "UserIDList.txt";
 
-    private static final String totalUserFileName = "UserIDList.txt";
+    public User(String userIdinfo){
+        try(BufferedReader br = new BufferedReader(new FileReader(userIdinfo))){
+            String line1 = "";
+            line1 = br.readLine();
+            this.userID = line1.split(";")[0];
+            this.password = line1.split(";")[1];
+            this.userName = br.readLine();
+            this.photoPathway = br.readLine();
+            this.accountType = Integer.parseInt(br.readLine());
+            String followers = br.readLine();
+            String followersArray[] = followers.split(";");
+            for(String user: followersArray){
+                followerList.add(user);
+            }
+            String following = br.readLine();
+            String followingArray[] = following.split(";");
+            for(String user: followingArray){
+                followingList.add(user);
+            }
+            String blocking = br.readLine();
+            String blockingArray[] = blocking.split(";");
+            for(String user: blockingArray){
+                blockedList.add(user);
+            }
+            String chatting = br.readLine();
+            String chattingArray[] = chatting.split(";");
+            for(String user: chattingArray){
+                chatIDList.add(user);
+            }
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
+    }
 
-    HashMap<String, String> userPass = new HashMap<String, String>();
+
+    public User(String userName, String password){
+        //check if username is valid before you pass it into the constructor, then inside the constructor generate a new id
+        //creating a new user from just the username and password
+
+        this.userName = userName;
+        this.password = password; 
+        this.userID = createUserID();
+        this.accountType = 0;
+        this.photoPathway = null;
+        followerList = new ArrayList<String>();
+        followingList = new ArrayList<String>();
+        blockedList = new ArrayList<String>();
+        chatIDList = new ArrayList<String>();
+
+        try(PrintWriter pw = new PrintWriter(new FileWriter(userIDinfo))){
+            pw.println(this.userID + ";" + this.userName);
+            pw.println(this.userName);
+            pw.println(this.photoPathway);
+            pw.println(this.accountType);
+            pw.println("");
+            pw.println("");
+            pw.println("");
+            pw.println("");
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
+        
+    }
 
     public void setUsername(String username){
         this.userName = username;
@@ -25,31 +93,190 @@ public class User implements UserInterface{
         return this.userName;
     }
 
-    public void setPassword(String password){
-        this.passWord = password;
+    public String getUserID(){
+        return this.userID;
     }
 
-    public String getPassword(){
-        return this.passWord;
+    public String createUserID() {
+        String id = "U_";
+        String number = String.valueOf(counter.get());
+        int length = number.length();
+        for (int i = 0; i < 4 - length; i++) {
+            id += "0";
+        }
+        return id + number;
     }
 
-    public void setProfilePic(String pathname){
-        this.pathName = pathname;
+    public void setProfilePic(String photoPathway){
+        this.photoPathway = photoPathway;
     }
 
     public String getProfilePic(){
-        return this.pathName;
+        return this.photoPathway;
     }
 
-    public boolean findUser(String id){
-        try (BufferedReader br = new BufferedReader(new FileReader(pathName))) {
+    public ArrayList<String> getFollowerList() {
+        return followerList;
+    }
+
+    //add writeData() method
+    public boolean deleteFollower(String followerID) {
+        if (findUser(followerID)){
+            for (int i = 0; i < followingList.size(); i++){
+                if (followingList.get(i).equals(followerID)){
+                    followingList.remove(i);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+    //add writeData() method
+    public void writeData(){
+        try(PrintWriter pr = new PrintWriter(new FileWriter(userIDinfo))){
+            pr.println(this.userID + ";" + this.password);
+            pr.println(this.userName);
+            pr.println(this.photoPathway);
+            pr.println(this.accountType);
+            for(int i = 0; i < followerList.size(); i++){
+                if(i != followerList.size() - 1){
+                    pr.print(followerList.get(i) + ";");
+                }
+                else{
+                    pr.println(followerList.get(i));
+                }
+            }
+            for(int i = 0; i < followingList.size(); i++){
+                if(i != followingList.size() - 1){
+                    pr.print(followingList.get(i) + ";");
+                }
+                else{
+                    pr.println(followingList.get(i));
+                }
+            }
+            for(int i = 0; i < blockedList.size(); i++){
+                if(i != blockedList.size() - 1){
+                    pr.print(blockedList.get(i) + ";");
+                }
+                else{
+                    pr.println(blockedList.get(i));
+                }
+            }
+            for(int i = 0; i < chatIDList.size(); i++){
+                if(i != chatIDList.size() - 1){
+                    pr.print(chatIDList.get(i) + ";");
+                }
+                else{
+                    pr.println(chatIDList.get(i));
+                }
+            }
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+    public boolean addFollower(String followerID) {
+        //converse about this class and the possibility to be false on different occasions....
+        if (findUser(followerID)){
+            for (int i = 0; i < followerList.size(); i++){
+                if (followerList.get(i).equals(followerID)) {
+                    return true;
+                }
+            }
+        } else {
+            return false;
+        }
+        followingList.add(followerID);
+        return true;
+    }
+
+    public ArrayList<String> getFollowingList() {
+        return followingList;
+    }
+    //add writeData() method
+    public boolean addFollowing(String followingID) {
+        //address different types of false conditions?
+        if (findUser(followingID) && !followingList.contains(followingID) && !blockedList.contains(followingID)) {
+            followingList.add(followingID);
+            return true;
+        }
+        return false;
+    }
+    //add writeData() method
+    public boolean deleteFollowing(String followingID) {
+        if (followingList.contains(followingID)) {
+            followingList.remove(followingID);
+            return true;
+        }
+        return false;
+    }
+
+    public ArrayList<String> getBlockedList() {
+        return blockedList;
+    }
+    //add writeData() method
+    public boolean addBlock(String blockedID) {
+        if(findUser(blockedID) && !blockedList.contains(blockedID)){
+            blockedList.add(blockedID);
+            return true;
+        }
+        return false;
+    }
+    //add writeData() method
+    public boolean deleteBlock(String blockedID) {
+        if(blockedList.contains(blockedID)){
+            blockedList.remove(blockedID);
+            return true;
+        }
+        return false;
+    }
+
+    public ArrayList<String> getChatIDList() {
+        return chatIDList;
+    }
+    //add writeData() method
+    public boolean addChat(String chat_id) {
+        chatIDList.add(chat_id);
+        return true;
+    }
+    //add writeData() method
+    public void createChat(ArrayList<String> recipient_id) {
+        Chat newChat = new Chat(recipient_id);
+        chatIDList.add(newChat.getChatID());
+    }
+    //add writeData() method
+    public boolean deleteChat(String chat_id) {
+        chatIDList.remove(chat_id);
+        return false;
+    }
+
+    public int getAccountType(){
+        return this.accountType;
+    }
+
+    public void setAccountType(int accountType) {
+        this.accountType = accountType;
+    }
+
+    public String getPassWord() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public boolean findUser(String userID) {
+        try (BufferedReader br = new BufferedReader(new FileReader(userIDinfo))) {
             String line = br.readLine();
-            if (line.substring(0, 6).equals(id)) {
+            if (line.substring(0, 6).equals(userID)) {
                 return true;
             }
             while (line != null){
                 line = br.readLine();
-                if (line.substring(0, 6).equals(id)) {
+                if (line.substring(0, 6).equals(userID)) {
                     return true;
                 }
             }
@@ -59,127 +286,63 @@ public class User implements UserInterface{
         return false;
     }
 
-    public boolean deleteFollower(String follower_id){
-        if (findUser(follower_id)){
-            for (int i = 0; i < followers_ids.size(); i++){
-                if (followers_ids.get(i).equals(follower_id)){
-                    followers_ids.remove(i);
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public boolean addFollower(String follower_id){
-        //converse about this class and the possibility to be false on different occasions....
-        if (findUser(follower_id)){
-            for (int i = 0; i < followers_ids.size(); i++){
-                if (followers_ids.get(i).equals(follower_id)) {
-                    return true;
-                }
-            }
-        } else {
-            return false;
-        }
-        followers_ids.add(follower_id);
-        return true;
-    }
-
-    public boolean addFollowing(String following_id){
-        //address different types of false conditions?
-        if (findUser(following_id) && !following_ids.contains(following_id) && !blocked_ids.contains(following_id)) {
-            following_ids.add(following_id);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean deleteFollowing(String following_id){
-        if (following_ids.contains(following_id)) {
-            following_ids.remove(following_id);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean addBlock(String blocked_id){
-        if(UserArray.contains(blocked_id) && !blocked_ids.contains(blocked_id)){
-            blocked_ids.add(blocked_id);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean deleteBlock(String blocked_id){
-        if(blocked_ids.contains(blocked_id)){
-            blocked_ids.remove(blocked_id);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean addChat(String chat_id){
-        chat_ids.add(chat_id);
-        return true;
-    }
-
-    public void createChat(ArrayList<String> recipient_id){
-        Chat newChat = new Chat(recipient_id);
-        chat_ids.add(newChat.getChatID());
-    }
-
-    public boolean deleteChat(String chat_id){
-        chat_ids.remove(chat_id);
-        return false;
-    }
-
-    public void setAccountType(int accountType){
-        this.userType = accountType;
-    }
-
-    public int getAccountType(){
-        return this.userType;
-    }
-
-    //revise ---------
-    public boolean hasLogin(String username, String password) {
-        if (userPass.containsKey(username) && userPass.get(username).equals(password)) {
-           return true;
-        }
-        return false;
-    }
-
-    public void createNewUser(String username, String password) {
-        userPass.put(username, password);
-    }
-
-    public boolean sendText(String chat_id, String message, int type, String user_id, String username, int userType) throws NoChatFoundException {
-        if (chat_ids.contains(chat_id)) {
+    public boolean sendText(String chatID, String message, int type, String userID, String username, int userType) throws NoChatFoundException {
+        if (chatIDList.contains(chatID)) {
             Chat existingChat = null;
             try {
-                existingChat = new Chat(chat_id);
+                existingChat = new Chat(chatID);
             } catch (InvalidFileFormatException e) {
                 e.printStackTrace();
             }
-            Message intendedMessage = new Message(user_id, type, message);
+            Message intendedMessage = new Message(userID, type, message);
             existingChat.addMessage(intendedMessage);
             return true;
         }
         throw new NoChatFoundException("No chat found");
     }
+    //hi
+//hello
+    //revise ---------
+    public boolean hasLogin(String username, String password) {
+        try(BufferedReader br = new BufferedReader(new FileReader(userIDList))){
+            String userIterator = "";
+            while((userIterator = br.readLine()) != null){
+                String userN = userIterator.split(";")[0];
+                String passW = userIterator.split(";")[1];
+                if(username.equals(userN) && password.equals(passW)){
+                    return true;
+                }
+            }
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
+        return false;
+    }
+    public boolean userNameValidation(String username){
+        try(BufferedReader br = new BufferedReader(new FileReader(userIDList))){
+            String userIterator = "";
+            while((userIterator = br.readLine()) != null){
+                String userN = userIterator.split(";")[0];
+                if(userN.equals(username)){
+                    return false;
+                }
+            }
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
+        return true;
+    }
 
-    public ArrayList<String> getFollowers_ids() {
-        return followers_ids;
-    }
-    public ArrayList<String> getFollowing_ids() {
-        return following_ids;
-    }
-    public ArrayList<String> getBlocked_ids() {
-        return blocked_ids;
-    }
-    public ArrayList<String> getChat_ids() {
-        return chat_ids;
+
+    public void createNewUser(String username, String password, String userIDparameter) {
+        try(PrintWriter pw = new PrintWriter(new FileWriter(userIDList))){
+            pw.println(username + ";" + password + ";" + userIDparameter);
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
     }
 
      // for testing 
