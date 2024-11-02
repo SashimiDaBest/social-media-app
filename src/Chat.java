@@ -2,28 +2,27 @@ import java.util.ArrayList;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
-
 /**
  * Social Media App - Chat Class
- * <p>
+ *
  * Message class with accessors and mutators
- * <p>
+ *
  * Status: Complete
  *
  * @author connor pugliese, soleil pham
- * @version 11/01/2024
+ * @version 11/02/2024
  */
 public class Chat implements ChatInterface {
     private String chatID;
-    private ArrayList<Message> messages;
-    private ArrayList<String> recipientID;
+    private ArrayList<String> memberList;
+    private ArrayList<Message> messageList;
     private static AtomicInteger counter = new AtomicInteger(0);
     private static String chatIDList = "chatIDList.txt";
 
     // Chat constructor for reading from file. If any input does not match the expected format, throw an error.
     public Chat(String filename) throws InvalidFileFormatException {
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
-            this.messages = new ArrayList<>();
+            this.messageList = new ArrayList<>();
 
             // Instantiate this chat's ID as the first line in the file.
             String chatID = reader.readLine();
@@ -68,7 +67,7 @@ public class Chat implements ChatInterface {
                 String senderID = line.substring(0, 6);
                 int messageType = Integer.parseInt(line.substring(7, 8));
                 String messageContent = line.substring(8);
-                messages.add(new Message(senderID, messageType, messageContent));
+                messageList.add(new Message(senderID, messageType, messageContent));
 
                 line = reader.readLine();
             }
@@ -125,7 +124,7 @@ public class Chat implements ChatInterface {
 
             // Add all Messages to the data file.
             for (Message message : messages) {
-                writer.println(message.getAuthorID() + ";" + message.getType() + message.getMessage());
+                writer.println(message.getAuthorID() + ";" + message.getMessageType() + message.getMessage());
             }
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
@@ -162,20 +161,20 @@ public class Chat implements ChatInterface {
         return chatID;
     }
 
-    public ArrayList<Message> getMessages() {
-        return messages;
+    public ArrayList<String> getMemberList() {
+        return memberList;
     }
 
-    public ArrayList<String> getRecipientID() {
-        return recipientID;
+    public ArrayList<Message> getMessageList() {
+        return messageList;
+    }
+
+    public void setMemberList(ArrayList<String> memberList) {
+        this.memberList = memberList;
     }
 
     public int getCounter() {
         return counter.get();
-    }
-
-    public void setRecipientID(ArrayList<String> recipientID) {
-        this.recipientID = recipientID;
     }
 
     @Override
