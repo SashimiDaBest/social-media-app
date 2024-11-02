@@ -37,7 +37,9 @@ public interface UserInterface {
 //    public void logIn();
 //    public void logOut();
 
-
-
+    public ArrayList<String> getFollowers_ids();
+    public ArrayList<String> getFollowing_ids();
+    public ArrayList<String> getBlocked_ids();
+    public ArrayList<String> getChat_ids();
 
 }
