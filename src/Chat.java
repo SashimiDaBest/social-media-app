@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.*;
  *
  * Message class with accessors and mutators
  *
- * Status: Incomplete
+ * Status: Complete
  *
  * @author connor pugliese, soleil pham
  * @version 11/02/2024
@@ -19,11 +19,14 @@ public class Chat implements ChatInterface {
     private static AtomicInteger counter = new AtomicInteger(0);
     private static String chatIDListDoc = "chatIDList.txt";
 
+    /*
+    read from [chatID].txt and reconstruct chat object
+    check if chatID is in the right format
+     */
     public Chat(String chatID) throws InvalidFileFormatException {
-        try (BufferedReader reader = new BufferedReader(new FileReader(chatID))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(chatID + ".txt"))) {
 
             String line = reader.readLine();
-            this.chatID = line;
 
             try {
                 Integer.parseInt(chatID.substring(2));
@@ -32,6 +35,8 @@ public class Chat implements ChatInterface {
             } catch (NumberFormatException e) {
                 throw new InvalidFileFormatException("Invalid chatID Format!");
             }
+
+            this.chatID = line;
 
             if (line != null) {
                 line = reader.readLine();
@@ -67,12 +72,16 @@ public class Chat implements ChatInterface {
         }
     }
 
+    /*
+    Chat constructor for initially creating a new Chat.
+    Create this Chat with a unique ID and write it a data file.
+    Add this chat's ID to the list of chat IDs.
+     */
     public Chat(ArrayList<String> messageList) {
         this.chatID = createChatID();
         this.memberList = messageList;
         this.messageList = new ArrayList<>();
         writeData();
-
 
         try (PrintWriter writer = new PrintWriter(new FileOutputStream(chatIDListDoc, true))) {
             writer.println(this.chatID);
@@ -83,9 +92,15 @@ public class Chat implements ChatInterface {
         counter.set(counter.get() + 1);
     }
 
+    /*
+    Create or write to the data file matching this Chat.
+    Add the chatID and recipientID as the first two lines in the data file.
+    Add all Messages to the data file.
+     */
     public void writeData() {
         File chatData = new File(this.chatID + ".txt");
         try (PrintWriter writer = new PrintWriter(new FileOutputStream(chatData, false))) {
+
             writer.println(this.chatID);
             for (int i = 0; i < memberList.size(); i++) {
                 writer.print(memberList.get(i));
@@ -105,7 +120,11 @@ public class Chat implements ChatInterface {
     public String getChatID() {
         return chatID;
     }
-
+    /*
+    REVISE
+    Get the current status of the counter.
+    Pad the ID with 0s if its length is less than 4.
+     */
     public String createChatID() {
         String id = "C_";
 
@@ -121,10 +140,11 @@ public class Chat implements ChatInterface {
         }
 
         String number = String.valueOf(counter.get());
-        int length = number.length();
+        int length = number.length(); //4-1
         for (int i = 0; i < 4 - length; i++) {
             id += "0";
         }
+
         return id + number;
     }
 
