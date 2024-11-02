@@ -156,12 +156,30 @@ public class User implements UserInterface{
 
     public boolean sendText(String chat_id, String message, int type, String user_id, String username, int userType) throws NoChatFoundException {
         if (chat_ids.contains(chat_id)) {
-            Chat existingChat = new Chat(chat_id);
+            Chat existingChat = null;
+            try {
+                existingChat = new Chat(chat_id);
+            } catch (InvalidFileFormatException e) {
+                e.printStackTrace();
+            }
             Message intendedMessage = new Message(user_id, type, message);
             existingChat.addMessage(intendedMessage);
             return true;
         }
         throw new NoChatFoundException("No chat found");
+    }
+
+    public ArrayList<String> getFollowers_ids() {
+        return followers_ids;
+    }
+    public ArrayList<String> getFollowing_ids() {
+        return following_ids;
+    }
+    public ArrayList<String> getBlocked_ids() {
+        return blocked_ids;
+    }
+    public ArrayList<String> getChat_ids() {
+        return chat_ids;
     }
 
 }
