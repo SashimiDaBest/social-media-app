@@ -126,7 +126,7 @@ public class UserTest {
         String testChat1 = "Testing chat";
         User testUser1 = new User();
         boolean funcResult1 = testUser1.addChat(testChat1);
-        boolean result1 = testUser1.getChatIDs().contains(testChat1);
+        boolean result1 = testUser1.getChat_ids().contains(testChat1);
 
         assertEquals(true, result1); 
         assertEquals(true, funcResult1); 
@@ -135,11 +135,10 @@ public class UserTest {
 
         String testChat2 = "I'm so tired...zzzz";
         User testUser2 = new User();
-        testUser2.getChatIDs().addChat(testChat2);
-        testUser2.addChat(testChat2);
+        testUser2.getChat_ids().add(testChat2);
 
         boolean funcResult2 = testUser2.addChat(testChat2);
-        boolean result2 = testUser2.getChatIDs().contains(testUser2);
+        boolean result2 = testUser2.getChat_ids().contains(testChat2); // the id should not be added
 
         assertEquals(false, result2); 
         assertEquals(false, funcResult2);
@@ -152,7 +151,13 @@ public class UserTest {
         User testUser = new User();
         testUser.createChat(testID1);
 
-        boolean result1 = testUser.getChatIDs().contains(testID1);
+        boolean result1 = false;
+        for (String chatID: testUser.getChat_ids()) {
+
+            if (chatID.equals(testID1)) {
+                result1 = true;
+            }
+        }
         assertEquals(true, result1); 
 
         // Test 2: Should duplicates be prevented???
@@ -195,6 +200,7 @@ public class UserTest {
         assertEquals(false, result3);
     }
 
+    // requires getPassword() to work
     public void testCreateNewUser() {
 
         // Test 1: userPass should contain the new username/password pair
