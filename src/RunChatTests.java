@@ -1,5 +1,6 @@
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -39,11 +40,14 @@ public class RunChatTests {
 
         assertEquals("Created chat data file does not match expected contents.", expectedFileContents,
                 dataFileContents);
+
+        if(outputFile.exists())
+            outputFile.delete();
     }
 
     @Test
     public void testReadConstructor() {
-        File chatData = new File("C_1234.txt");
+        File chatData = new File("chat1234_test.txt");
         Chat testChat = null;
 
         try (PrintWriter writer = new PrintWriter(new FileOutputStream(chatData))) {
@@ -77,6 +81,40 @@ public class RunChatTests {
         messages.add(new Message("U_0004", 0, "what going on"));
 
         assertEquals("Chat does not properly instantiate Messages from file.", messages, testChat.getMessages());
+
+        if(chatData.exists())
+            chatData.delete();
+
+        File testCorruptFile = new File("corruptChat1234_test.txt");
+
+        try (PrintWriter writer = new PrintWriter(new FileOutputStream(testCorruptFile))) {
+            writer.println("Chat_1234");
+            writer.println("U_0003;U_0004");
+            writer.println("U_0003;0hey guys");
+            writer.println("U_0005;0what's up");
+            writer.println("U_0004;0what going on");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        assertThrows("Chat does not properly catch invalid chatIDs when instantiating from file.",
+                InvalidFileFormatException.class, () -> new Chat(testCorruptFile.getName()));
+
+        try (PrintWriter writer = new PrintWriter(new FileOutputStream(testCorruptFile))) {
+            writer.println("C_1234");
+            writer.println("X_0003;U_0004");
+            writer.println("U_0003;0hey guys");
+            writer.println("U_0005;0what's up");
+            writer.println("U_0004;0what going on");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        assertThrows("Chat does not properly catch invalid userIDs when instantiating from file.",
+                InvalidFileFormatException.class, () -> new Chat(testCorruptFile.getName()));
+
+        if(testCorruptFile.exists())
+            testCorruptFile.delete();
     }
 
     public static void main(String[] args) {
