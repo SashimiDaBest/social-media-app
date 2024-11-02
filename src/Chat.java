@@ -2,76 +2,68 @@ import java.util.ArrayList;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
-
 /**
  * Social Media App - Chat Class
- * <p>
+ *
  * Message class with accessors and mutators
- * <p>
+ *
  * Status: Complete
  *
  * @author connor pugliese, soleil pham
- * @version 11/01/2024
+ * @version 11/02/2024
  */
 public class Chat implements ChatInterface {
     private String chatID;
-    private ArrayList<Message> messages;
-    private ArrayList<String> recipientID;
+    private ArrayList<String> memberList;
+    private ArrayList<Message> messageList;
     private static AtomicInteger counter = new AtomicInteger(0);
-    private static String chatIDList = "chatIDList.txt";
+    private static String chatIDListDoc = "chatIDList.txt";
 
-    // Chat constructor for reading from file. If any input does not match the expected format, throw an error.
-    public Chat(String filename) throws InvalidFileFormatException {
-        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
-            this.messages = new ArrayList<>();
+    /*
+    read from [chatID].txt and reconstruct chat object
+    check if chatID is in the right format
+     */
+    public Chat(String chatID) throws InvalidFileFormatException {
+        try (BufferedReader reader = new BufferedReader(new FileReader(chatID))) {
 
-            // Instantiate this chat's ID as the first line in the file.
-            String chatID = reader.readLine();
-
-            // Validate the chatID.
-            if (chatID.length() != 6 || !chatID.startsWith("C_"))
-                throw new InvalidFileFormatException("Invalid chatID Format!");
-
+            String line = reader.readLine();
+            this.chatID = line;
 
             try {
                 Integer.parseInt(chatID.substring(2));
+                if (line.length() != 6 || !line.startsWith("C_"))
+                    throw new InvalidFileFormatException("Invalid chatID Format!");
             } catch (NumberFormatException e) {
                 throw new InvalidFileFormatException("Invalid chatID Format!");
             }
 
-            this.chatID = chatID;
+            if (line != null) {
+                line = reader.readLine();
 
-            String line = reader.readLine();
-            while (line != null) {
-
-                // Instantiate the ArrayList of recipientIDs as the second line in the file;
-                if ((line.length() == 6 || line.contains(";U")) && !line.contains("C")) {
-                    String[] recipientIDs = line.split(";");
-
-                    // Validate each recipientID.
-                    for (String recipientID : recipientIDs) {
-
-                        if (recipientID.length() != 6 || !recipientID.startsWith("U_"))
-                            throw new InvalidFileFormatException("Invalid recipientID Format!");
-                        try {
-                            Integer.parseInt(recipientID.substring(2));
-                        } catch (NumberFormatException e) {
-                            throw new InvalidFileFormatException("Invalid recipientID Format!");
-                        }
+                int count = 0;
+                for (int i = 0; i < line.length(); i++) {
+                    if (line.charAt(i) == ';') {
+                        count++;
                     }
-
-                    this.recipientID = new ArrayList<>(Arrays.asList(recipientIDs));
-                    line = reader.readLine();
-                    continue;
                 }
 
-                // Instantiate each Message in the file to the Messages ArrayList.
-                String senderID = line.substring(0, 6);
-                int messageType = Integer.parseInt(line.substring(7, 8));
-                String messageContent = line.substring(8);
-                messages.add(new Message(senderID, messageType, messageContent));
+                String[] members = line.split(";", count + 1);
+                this.memberList = new ArrayList<>(Arrays.asList(members));
+            } else {
+                throw new InvalidFileFormatException("No Users Found in Chat");
+            }
 
+            this.messageList = new ArrayList<>();
+
+            while (line != null) {
                 line = reader.readLine();
+                String[] member = line.split(";", 2);
+                try {
+                    this.memberList.add(member[0]);
+                    this.messageList.add(new Message(member[0], Integer.parseInt(member[1].substring(0, 1)), member[1].substring(1)));
+                } catch (Exception e) {
+                    throw new InvalidFileFormatException("Invalid User Message in Chat");
+                }
             }
 
         } catch (IOException e) {
@@ -79,66 +71,64 @@ public class Chat implements ChatInterface {
         }
     }
 
-    // Chat constructor for initially creating a new Chat.
-    public Chat(ArrayList<String> recipientID) {
-        // Create this Chat with a unique ID and write it a data file.
-        File chatIDList = new File("chatIDList.txt");
-        this.recipientID = recipientID;
-        this.messages = new ArrayList<>();
-        this.chatID = makeUniqueID();
+    /*
+    Chat constructor for initially creating a new Chat.
+    Create this Chat with a unique ID and write it a data file.
+    Add this chat's ID to the list of chat IDs.
+     */
+    public Chat(ArrayList<String> messageList) {
+        this.chatID = createChatID();
+        this.memberList = messageList;
+        this.messageList = new ArrayList<>();
         writeData();
 
-        // Add this chat's ID to the list of chat IDs.
-        try (PrintWriter writer = new PrintWriter(new FileOutputStream(chatIDList, true))) {
+        /*
+        try (PrintWriter writer = new PrintWriter(new FileOutputStream(chatIDListDoc, true))) {
             writer.println(this.chatID);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
+        */
         counter.set(counter.get() + 1);
     }
 
-    // Add the new message and update the data file.
-    public void addMessage(Message message) {
-        messages.add(message);
-        writeData();
-    }
-
-    // Delete the matching message and update the file.
-    // In the future: should probably be fixed to know which specific message to delete in the case of duplicates
-    public void deleteMessage() {
-        this.messages.removeLast();
-        writeData();
-    }
-
+    /*
+    Create or write to the data file matching this Chat.
+    Add the chatID and recipientID as the first two lines in the data file.
+    Add all Messages to the data file.
+     */
     public void writeData() {
-        // Create or write to the data file matching this Chat.
         File chatData = new File(this.chatID + ".txt");
         try (PrintWriter writer = new PrintWriter(new FileOutputStream(chatData, false))) {
 
-            // Add the chatID and recipientID as the first two lines in the data file.
             writer.println(this.chatID);
-            for (int i = 0; i < recipientID.size(); i++) {
-                writer.print(recipientID.get(i));
-                if(i != recipientID.size() - 1)
+            for (int i = 0; i < memberList.size(); i++) {
+                writer.print(memberList.get(i));
+                if(i != memberList.size() - 1)
                     writer.print(";");
             }
             writer.println();
 
-            // Add all Messages to the data file.
-            for (Message message : messages) {
-                writer.println(message.getAuthorID() + ";" + message.getType() + message.getMessage());
+            for (Message message : messageList) {
+                writer.println(message.getAuthorID() + ";" + message.getMessageType() + message.getMessage());
             }
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public String makeUniqueID() {
+    public String getChatID() {
+        return chatID;
+    }
+    /*
+    REVISE
+    Get the current status of the counter.
+    Pad the ID with 0s if its length is less than 4.
+     */
+    public String createChatID() {
         String id = "C_";
 
-        // Get the current status of the counter.
-        File chatIDList = new File("chatIDList.txt");
-        try (BufferedReader reader = new BufferedReader(new FileReader(chatIDList))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(chatIDListDoc))) {
             String line = reader.readLine();
             while (line != null) {
                 counter.incrementAndGet();
@@ -149,7 +139,6 @@ public class Chat implements ChatInterface {
             e.printStackTrace();
         }
 
-        // Pad the ID with 0s if its length is less than 4.
         String number = String.valueOf(counter.get());
         int length = number.length(); //4-1
         for (int i = 0; i < 4 - length; i++) {
@@ -159,24 +148,47 @@ public class Chat implements ChatInterface {
         return id + number;
     }
 
-    public String getChatID() {
-        return chatID;
+    public ArrayList<String> getMemberList() {
+        return memberList;
     }
 
-    public ArrayList<Message> getMessages() {
-        return messages;
+    public void setMemberList(ArrayList<String> memberList) {
+        this.memberList = memberList;
     }
 
-    public ArrayList<String> getRecipientID() {
-        return recipientID;
+    public ArrayList<Message> getMessageList() {
+        return messageList;
+    }
+
+    public void addMessage(Message message) {
+        messageList.add(message);
+        writeData();
+    }
+
+    public void editMessage(String messageText, String authorID) {
+        for (int i = messageList.size() - 1; i >= 0; i--) {
+            if (messageList.get(i).getAuthorID().equals(authorID)) {
+                boolean setSuccessful = messageList.get(i).setMessage(messageText);
+                if (setSuccessful) {
+                    writeData();
+                    break;
+                }
+            }
+        }
+    }
+
+    public void deleteMessage(String authorID) {
+        for (int i = messageList.size() - 1; i >= 0; i--) {
+            if (messageList.get(i).getAuthorID().equals(authorID)) {
+                messageList.remove(i);
+                break;
+            }
+        }
+        writeData();
     }
 
     public int getCounter() {
         return counter.get();
-    }
-
-    public void setRecipientID(ArrayList<String> recipientID) {
-        this.recipientID = recipientID;
     }
 
     @Override

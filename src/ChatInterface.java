@@ -11,13 +11,18 @@ import java.util.*;
  *
  */
 public interface ChatInterface {
-    public void addMessage (Message message);
-    public void deleteMessage ();
+    public void writeData();
 
     public String getChatID();
-    public ArrayList<Message> getMessages();
-    public ArrayList<String> getRecipientID();
-    public int getCounter();
-    public void setRecipientID(ArrayList<String> recipientID);
+    public String createChatID();
 
+    public ArrayList<String> getMemberList();
+    public void setMemberList(ArrayList<String> memberList);
+
+    public ArrayList<Message> getMessageList();
+    public void addMessage(Message message);
+    public void editMessage(String messageText, String authorID);
+    public void deleteMessage(String authorID);
+
+    public int getCounter();
 }
