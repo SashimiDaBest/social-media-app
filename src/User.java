@@ -169,4 +169,17 @@ public class User implements UserInterface{
         throw new NoChatFoundException("No chat found");
     }
 
+    public ArrayList<String> getFollowers_ids() {
+        return followers_ids;
+    }
+    public ArrayList<String> getFollowing_ids() {
+        return following_ids;
+    }
+    public ArrayList<String> getBlocked_ids() {
+        return blocked_ids;
+    }
+    public ArrayList<String> getChat_ids() {
+        return chat_ids;
+    }
+
 }
