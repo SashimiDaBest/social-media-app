@@ -1,20 +1,19 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-
 public class User implements UserInterface{
     private String userName;
-    private String userID;
-    private String photoPathway;
-    private ArrayList<String> followerList;
-    private ArrayList<String> followingList;
-    private ArrayList<String> blockedList;
-    private ArrayList<String> chatIDList;
-    private int accountType;
-    private String password;
-    private static AtomicInteger counter = new AtomicInteger(0);
-    private static final String userIDListDoc = "UserIDList.txt";
+    private String user_id; // (will be filename as well)
+    private ArrayList<String> followers_ids;
+    private ArrayList<String> following_ids;
+    private ArrayList<String> blocked_ids;
+    private ArrayList<String> chat_ids;
+    private int userType;
+    private String pathName; //path to total user & password
+    private String passWord;
+    private static ArrayList<String> UserArray; //add total user to an array - change method later
+
+    private static final String totalUserFileName = "UserIDList.txt";
 
     HashMap<String, String> userPass = new HashMap<String, String>();
 
@@ -26,145 +25,31 @@ public class User implements UserInterface{
         return this.userName;
     }
 
-    public String getUserID(){
-        return this.userID;
+    public void setPassword(String password){
+        this.passWord = password;
     }
 
-    public String createUserID() {
-        String id = "U_";
-        String number = String.valueOf(counter.get());
-        int length = number.length();
-        for (int i = 0; i < 4 - length; i++) {
-            id += "0";
-        }
-        return id + number;
+    public String getPassword(){
+        return this.passWord;
     }
 
-    public void setProfilePic(String photoPathway){
-        this.photoPathway = photoPathway;
+    public void setProfilePic(String pathname){
+        this.pathName = pathname;
     }
 
     public String getProfilePic(){
-        return this.photoPathway;
+        return this.pathName;
     }
 
-    public ArrayList<String> getFollowerList() {
-        return followerList;
-    }
-
-    //add writeData() method
-    public boolean deleteFollower(String followerID) {
-        if (findUser(followerID)){
-            for (int i = 0; i < followingList.size(); i++){
-                if (followingList.get(i).equals(followerID)){
-                    followingList.remove(i);
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    //add writeData() method
-    public boolean addFollower(String followerID) {
-        //converse about this class and the possibility to be false on different occasions....
-        if (findUser(followerID)){
-            for (int i = 0; i < followerList.size(); i++){
-                if (followerList.get(i).equals(followerID)) {
-                    return true;
-                }
-            }
-        } else {
-            return false;
-        }
-        followingList.add(followerID);
-        return true;
-    }
-
-    public ArrayList<String> getFollowingList() {
-        return followingList;
-    }
-    //add writeData() method
-    public boolean addFollowing(String followingID) {
-        //address different types of false conditions?
-        if (findUser(followingID) && !followingList.contains(followingID) && !blockedList.contains(followingID)) {
-            followingList.add(followingID);
-            return true;
-        }
-        return false;
-    }
-    //add writeData() method
-    public boolean deleteFollowing(String followingID) {
-        if (followingList.contains(followingID)) {
-            followingList.remove(followingID);
-            return true;
-        }
-        return false;
-    }
-
-    public ArrayList<String> getBlockedList() {
-        return blockedList;
-    }
-    //add writeData() method
-    public boolean addBlock(String blockedID) {
-        if(findUser(blockedID) && !blockedList.contains(blockedID)){
-            blockedList.add(blockedID);
-            return true;
-        }
-        return false;
-    }
-    //add writeData() method
-    public boolean deleteBlock(String blockedID) {
-        if(blockedList.contains(blockedID)){
-            blockedList.remove(blockedID);
-            return true;
-        }
-        return false;
-    }
-
-    public ArrayList<String> getChatIDList() {
-        return chatIDList;
-    }
-    //add writeData() method
-    public boolean addChat(String chat_id) {
-        chatIDList.add(chat_id);
-        return true;
-    }
-    //add writeData() method
-    public void createChat(ArrayList<String> recipient_id) {
-        Chat newChat = new Chat(recipient_id);
-        chatIDList.add(newChat.getChatID());
-    }
-    //add writeData() method
-    public boolean deleteChat(String chat_id) {
-        chatIDList.remove(chat_id);
-        return false;
-    }
-
-    public int getAccountType(){
-        return this.accountType;
-    }
-
-    public void setAccountType(int accountType) {
-        this.accountType = accountType;
-    }
-
-    public String getPassWord() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public boolean findUser(String userID) {
-        try (BufferedReader br = new BufferedReader(new FileReader(userIDListDoc))) {
+    public boolean findUser(String id){
+        try (BufferedReader br = new BufferedReader(new FileReader(pathName))) {
             String line = br.readLine();
-            if (line.substring(0, 6).equals(userID)) {
+            if (line.substring(0, 6).equals(id)) {
                 return true;
             }
             while (line != null){
                 line = br.readLine();
-                if (line.substring(0, 6).equals(userID)) {
+                if (line.substring(0, 6).equals(id)) {
                     return true;
                 }
             }
@@ -174,19 +59,87 @@ public class User implements UserInterface{
         return false;
     }
 
-    public boolean sendText(String chatID, String message, int type, String userID, String username, int userType) throws NoChatFoundException {
-        if (chatIDList.contains(chatID)) {
-            Chat existingChat = null;
-            try {
-                existingChat = new Chat(chatID);
-            } catch (InvalidFileFormatException e) {
-                e.printStackTrace();
+    public boolean deleteFollower(String follower_id){
+        if (findUser(follower_id)){
+            for (int i = 0; i < followers_ids.size(); i++){
+                if (followers_ids.get(i).equals(follower_id)){
+                    followers_ids.remove(i);
+                    return true;
+                }
             }
-            Message intendedMessage = new Message(userID, type, message);
-            existingChat.addMessage(intendedMessage);
+        }
+        return false;
+    }
+
+    public boolean addFollower(String follower_id){
+        //converse about this class and the possibility to be false on different occasions....
+        if (findUser(follower_id)){
+            for (int i = 0; i < followers_ids.size(); i++){
+                if (followers_ids.get(i).equals(follower_id)) {
+                    return true;
+                }
+            }
+        } else {
+            return false;
+        }
+        followers_ids.add(follower_id);
+        return true;
+    }
+
+    public boolean addFollowing(String following_id){
+        //address different types of false conditions?
+        if (findUser(following_id) && !following_ids.contains(following_id) && !blocked_ids.contains(following_id)) {
+            following_ids.add(following_id);
             return true;
         }
-        throw new NoChatFoundException("No chat found");
+        return false;
+    }
+
+    public boolean deleteFollowing(String following_id){
+        if (following_ids.contains(following_id)) {
+            following_ids.remove(following_id);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean addBlock(String blocked_id){
+        if(UserArray.contains(blocked_id) && !blocked_ids.contains(blocked_id)){
+            blocked_ids.add(blocked_id);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean deleteBlock(String blocked_id){
+        if(blocked_ids.contains(blocked_id)){
+            blocked_ids.remove(blocked_id);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean addChat(String chat_id){
+        chat_ids.add(chat_id);
+        return true;
+    }
+
+    public void createChat(ArrayList<String> recipient_id){
+        Chat newChat = new Chat(recipient_id);
+        chat_ids.add(newChat.getChatID());
+    }
+
+    public boolean deleteChat(String chat_id){
+        chat_ids.remove(chat_id);
+        return false;
+    }
+
+    public void setAccountType(int accountType){
+        this.userType = accountType;
+    }
+
+    public int getAccountType(){
+        return this.userType;
     }
 
     //revise ---------
@@ -201,4 +154,45 @@ public class User implements UserInterface{
         userPass.put(username, password);
     }
 
+    public boolean sendText(String chat_id, String message, int type, String user_id, String username, int userType) throws NoChatFoundException {
+        if (chat_ids.contains(chat_id)) {
+            Chat existingChat = null;
+            try {
+                existingChat = new Chat(chat_id);
+            } catch (InvalidFileFormatException e) {
+                e.printStackTrace();
+            }
+            Message intendedMessage = new Message(user_id, type, message);
+            existingChat.addMessage(intendedMessage);
+            return true;
+        }
+        throw new NoChatFoundException("No chat found");
+    }
+
+    public ArrayList<String> getFollowers_ids() {
+        return followers_ids;
+    }
+    public ArrayList<String> getFollowing_ids() {
+        return following_ids;
+    }
+    public ArrayList<String> getBlocked_ids() {
+        return blocked_ids;
+    }
+    public ArrayList<String> getChat_ids() {
+        return chat_ids;
+    }
+
+     // for testing 
+     
+    public HashMap<String, String> getUserPass() {
+        return userPass;
+    }
+
+    public ArrayList<String> getUserArray() {
+        return UserArray;
+    }
+
+    public void removeFromUserArray(String id) {
+        UserArray.remove(id);
+    }
 }
