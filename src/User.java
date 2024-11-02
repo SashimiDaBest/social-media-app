@@ -21,14 +21,68 @@ public class User implements UserInterface{
 
     public User(String userIdinfo){
         try(BufferedReader br = new BufferedReader(new FileReader(userIdinfo))){
-            String line = "";
-            while((line = br.readLine()) != null){
-                
+            String line1 = "";
+            line1 = br.readLine();
+            this.userID = line1.split(";")[0];
+            this.password = line1.split(";")[1];
+            this.userName = br.readLine();
+            this.photoPathway = br.readLine();
+            this.accountType = Integer.parseInt(br.readLine());
+            String followers = br.readLine();
+            String followersArray[] = followers.split(";");
+            for(String user: followersArray){
+                followerList.add(user);
+            }
+            String following = br.readLine();
+            String followingArray[] = following.split(";");
+            for(String user: followingArray){
+                followingList.add(user);
+            }
+            String blocking = br.readLine();
+            String blockingArray[] = blocking.split(";");
+            for(String user: blockingArray){
+                blockedList.add(user);
+            }
+            String chatting = br.readLine();
+            String chattingArray[] = chatting.split(";");
+            for(String user: chattingArray){
+                chatIDList.add(user);
             }
         }
         catch(IOException e){
             e.printStackTrace();
         }
+    }
+
+
+    public User(String userName, String password){
+        //check if username is valid before you pass it into the constructor, then inside the constructor generate a new id
+        //creating a new user from just the username and password
+
+        this.userName = userName;
+        this.password = password; 
+        this.userID = createUserID();
+        this.accountType = 0;
+        this.photoPathway = null;
+        followerList = new ArrayList<String>();
+        followingList = new ArrayList<String>();
+        blockedList = new ArrayList<String>();
+        chatIDList = new ArrayList<String>();
+
+        try(PrintWriter pw = new PrintWriter(new FileWriter(userIDinfo))){
+            pw.println(this.userID + ";" + this.userName);
+            pw.println(this.userName);
+            pw.println(this.photoPathway);
+            pw.println(this.accountType);
+            pw.println("");
+            pw.println("");
+            pw.println("");
+            pw.println("");
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
+        
     }
 
     public void setUsername(String username){
