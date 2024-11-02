@@ -5,7 +5,7 @@
  * 1. constructor
  * a. message can be image pathway or text
  * 2. getAuthorID(), getMessageType(), getMessage()
- * 3. setMessage(String message)
+ * 3. setMessage(String messageText)
  * a. if message is a string, then message can be edited
  * 4. equals(Object obj)
  *
@@ -40,9 +40,9 @@ public class Message {
         return message;
     }
 
-    public boolean setMessage(String message) {
+    public boolean setMessage(String messageText) {
         if (this.messageType == 0) {
-            this.message = message;
+            this.message = messageText;
             return true;
         }
         return false;

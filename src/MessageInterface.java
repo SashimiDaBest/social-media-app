@@ -14,6 +14,6 @@ public interface MessageInterface {
     public String getAuthorID();
     public int getMessageType();
     public String getMessage();
-    public boolean setMessage(String message);
+    public boolean setMessage(String messageText);
 
 }
