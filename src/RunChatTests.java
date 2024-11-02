@@ -87,7 +87,7 @@ public class RunChatTests {
         if(chatID.exists())
             chatID.delete();
 
-        File testCorruptFile = new File("corruptChat1234_test.txt");
+        File testCorruptFile = new File("C_1234.txt");
 
         try (PrintWriter writer = new PrintWriter(new FileOutputStream(testCorruptFile))) {
             writer.println("Chat_1234");
@@ -100,7 +100,7 @@ public class RunChatTests {
         }
 
         assertThrows("Chat does not properly catch invalid chatIDs when instantiating from file.",
-                InvalidFileFormatException.class, () -> new Chat(testCorruptFile.getName()));
+                InvalidFileFormatException.class, () -> new Chat("C_1234"));
 
         try (PrintWriter writer = new PrintWriter(new FileOutputStream(testCorruptFile))) {
             writer.println("C_1234");
@@ -113,7 +113,7 @@ public class RunChatTests {
         }
 
         assertThrows("Chat does not properly catch invalid userIDs when instantiating from file.",
-                InvalidFileFormatException.class, () -> new Chat(testCorruptFile.getName()));
+                InvalidFileFormatException.class, () -> new Chat("C_1234"));
 
         if(testCorruptFile.exists())
             testCorruptFile.delete();
