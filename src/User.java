@@ -16,9 +16,20 @@ public class User implements UserInterface{
     private int accountType;
     private String password;
     private static AtomicInteger counter = new AtomicInteger(0);
-    private static final String userIDListDoc = "UserIDList.txt";
+    private final String userIDinfo = this.userID + ".txt";
+    private static final String userIDList = "UserIDList.txt";
 
-    HashMap<String, String> userPass = new HashMap<String, String>();
+    public User(String userIdinfo){
+        try(BufferedReader br = new BufferedReader(new FileReader(userIdinfo))){
+            String line = "";
+            while((line = br.readLine()) != null){
+                
+            }
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
+    }
 
     public void setUsername(String username){
         this.userName = username;
@@ -66,11 +77,15 @@ public class User implements UserInterface{
         }
         return false;
     }
+
+
     //add writeData() method
     public void writeData(){
-        try(PrintWriter pr = new PrintWriter(new FileWriter(userIDListDoc))){
+        try(PrintWriter pr = new PrintWriter(new FileWriter(userIDinfo))){
             pr.println(this.userID + ";" + this.password);
             pr.println(this.userName);
+            pr.println(this.photoPathway);
+            pr.println(this.accountType);
             for(int i = 0; i < followerList.size(); i++){
                 if(i != followerList.size() - 1){
                     pr.print(followerList.get(i) + ";");
@@ -79,12 +94,28 @@ public class User implements UserInterface{
                     pr.println(followerList.get(i));
                 }
             }
-            for(int i = 0; i < followerList.size(); i++){
-                if(i != followerList.size() - 1){
-                    pr.print(followerList.get(i) + ";");
+            for(int i = 0; i < followingList.size(); i++){
+                if(i != followingList.size() - 1){
+                    pr.print(followingList.get(i) + ";");
                 }
                 else{
-                    pr.println(followerList.get(i));
+                    pr.println(followingList.get(i));
+                }
+            }
+            for(int i = 0; i < blockedList.size(); i++){
+                if(i != blockedList.size() - 1){
+                    pr.print(blockedList.get(i) + ";");
+                }
+                else{
+                    pr.println(blockedList.get(i));
+                }
+            }
+            for(int i = 0; i < chatIDList.size(); i++){
+                if(i != chatIDList.size() - 1){
+                    pr.print(chatIDList.get(i) + ";");
+                }
+                else{
+                    pr.println(chatIDList.get(i));
                 }
             }
         }
@@ -184,7 +215,7 @@ public class User implements UserInterface{
     }
 
     public boolean findUser(String userID) {
-        try (BufferedReader br = new BufferedReader(new FileReader(userIDListDoc))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(userIDinfo))) {
             String line = br.readLine();
             if (line.substring(0, 6).equals(userID)) {
                 return true;
@@ -215,17 +246,49 @@ public class User implements UserInterface{
         }
         throw new NoChatFoundException("No chat found");
     }
-
+    //hi
+//hello
     //revise ---------
     public boolean hasLogin(String username, String password) {
-        if (userPass.containsKey(username) && userPass.get(username).equals(password)) {
-           return true;
+        try(BufferedReader br = new BufferedReader(new FileReader(userIDList))){
+            String userIterator = "";
+            while((userIterator = br.readLine()) != null){
+                String userN = userIterator.split(";")[0];
+                String passW = userIterator.split(";")[1];
+                if(username.equals(userN) && password.equals(passW)){
+                    return true;
+                }
+            }
+        }
+        catch(IOException e){
+            e.printStackTrace();
         }
         return false;
     }
+    public boolean userNameValidation(String username){
+        try(BufferedReader br = new BufferedReader(new FileReader(userIDList))){
+            String userIterator = "";
+            while((userIterator = br.readLine()) != null){
+                String userN = userIterator.split(";")[0];
+                if(userN.equals(username)){
+                    return false;
+                }
+            }
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
+        return true;
+    }
 
-    public void createNewUser(String username, String password) {
-        userPass.put(username, password);
+
+    public void createNewUser(String username, String password, String userIDparameter) {
+        try(PrintWriter pw = new PrintWriter(new FileWriter(userIDList))){
+            pw.println(username + ";" + password + ";" + userIDparameter);
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
     }
 
 }
