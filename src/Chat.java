@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.concurrent.atomic.*;
 
 /**
- * Social Media App - Message Class
+ * Social Media App - Chat Class
  * <p>
  * Message class with accessors and mutators
  * <p>
@@ -26,24 +26,26 @@ public class Chat implements ChatInterface {
             this.messages = new ArrayList<>();
 
             // Instantiate this chat's ID as the first line in the file.
-            String line = reader.readLine();
+            String chatID = reader.readLine();
 
             // Validate the chatID.
-            if (line.length() != 6 || !line.startsWith("C_"))
+            if (chatID.length() != 6 || !chatID.startsWith("C_"))
                 throw new InvalidFileFormatException("Invalid chatID Format!");
+
+
             try {
-                Integer.parseInt(line.substring(2));
+                Integer.parseInt(chatID.substring(2));
             } catch (NumberFormatException e) {
                 throw new InvalidFileFormatException("Invalid chatID Format!");
             }
 
-            this.chatID = line;
+            this.chatID = chatID;
 
+            String line = reader.readLine();
             while (line != null) {
-                line = reader.readLine();
 
                 // Instantiate the ArrayList of recipientIDs as the second line in the file;
-                if (line.charAt(0) == 'U') {
+                if ((line.length() == 6 || line.contains(";U")) && !line.contains("C")) {
                     String[] recipientIDs = line.split(";");
 
                     for (String recipientID : recipientIDs) {
@@ -58,14 +60,17 @@ public class Chat implements ChatInterface {
                     }
 
                     this.recipientID = new ArrayList<>(Arrays.asList(recipientIDs));
+                    line = reader.readLine();
                     continue;
                 }
 
                 // Instantiate each Message in the file to the Messages ArrayList.
-                String senderID = line.substring(6);
-                int messageType = Integer.parseInt(line.substring(5, 6));
-                String messageContent = line.substring(7);
+                String senderID = line.substring(0, 6);
+                int messageType = Integer.parseInt(line.substring(7, 8));
+                String messageContent = line.substring(8);
                 messages.add(new Message(senderID, messageType, messageContent));
+
+                line = reader.readLine();
             }
 
         } catch (IOException e) {
@@ -99,13 +104,8 @@ public class Chat implements ChatInterface {
 
     // Delete the matching message and update the file.
     // In the future: should probably be fixed to know which specific message to delete in the case of duplicates
-    public void deleteMessage(Message message) {
-        for (Message m : messages) {
-            if (m.equals(message)) {
-                messages.remove(m);
-                break;
-            }
-        }
+    public void deleteMessage() {
+        this.messages.removeLast();
         writeData();
     }
 
@@ -117,7 +117,9 @@ public class Chat implements ChatInterface {
             // Add the chatID and recipientID as the first two lines in the data file.
             writer.println(this.chatID);
             for (int i = 0; i < recipientID.size(); i++) {
-                writer.print(recipientID.get(i) + ";");
+                writer.print(recipientID.get(i));
+                if(i != recipientID.size() - 1)
+                    writer.print(";");
             }
             writer.println();
 
