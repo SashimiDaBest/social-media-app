@@ -11,7 +11,7 @@ import java.util.Arrays;
  *
  * Status: In Progress
  *
- * @author derek mctume
+ * @author Derek Mctume
  *
  * @version 11/01/2024
  *

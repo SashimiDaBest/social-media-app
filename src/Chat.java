@@ -2,28 +2,40 @@ import java.util.ArrayList;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
-
 /**
- * Social Media App - Chat Class
+ * Chat Class
  * <p>
- * Message class with accessors and mutators
+ * Represents a chat within a social media application, managing members, messages, and
+ * file-based persistence. Provides methods for creating a new chat, reading from a file,
+ * adding, editing, and deleting messages, and generating a unique chat ID.
  * <p>
  * Status: Complete
- *
- * @author connor pugliese, soleil pham
+ * </p>
+ * @author Connor Pugliese
+ * @author Soleil Pham
  * @version 11/02/2024
+ * @since 1.0
  */
 public class Chat implements ChatInterface {
+    /** The unique identifier for the chat. */
     private String chatID;
+    /** The list of member IDs participating in this chat. */
     private ArrayList<String> memberList;
+    /** The list of messages in this chat. */
     private ArrayList<Message> messageList;
+    /** Counter to generate unique chat IDs. */
     private static AtomicInteger counter = new AtomicInteger(0);
+    /** File to store a list of all chat IDs. */
     private static String chatIDListDoc = "chatIDList.txt";
 
     /**
-     * This constructor instantiates a new Chat object by reading data from [chatID].txt.
-     * @param chatID The ID of the chat with an existing data file to be read.
-     * @throws InvalidFileFormatException if contents of the file are corrupt.
+     * Constructs a Chat object by reading data from an existing chat file.
+     * <p>
+     * Validates the format of the chatID and member IDs and populates the message list.
+     * </p>
+     *
+     * @param chatID the ID of the chat to be reconstructed
+     * @throws InvalidFileFormatException if the chat file format is invalid
      */
     public Chat(String chatID) throws InvalidFileFormatException {
         try (BufferedReader reader = new BufferedReader(new FileReader(chatID + ".txt"))) {
@@ -89,13 +101,14 @@ public class Chat implements ChatInterface {
     }
 
     /**
-     * This constructor instantiates a new, empty Chat object by taking a list of members as input. A data file is
-     * created for this new Chat, and the static ID counter is incremented.
-     * @param messageList the list of members that this Chat will have.
+     * Constructs a new Chat object with a generated unique chat ID and the specified list of members.
+     * Initializes an empty message list and writes data to a new file.
+     *
+     * @param memberList the list of member IDs for the new chat
      */
-    public Chat(ArrayList<String> messageList) {
+    public Chat(ArrayList<String> memberList) {
         this.chatID = createChatID();
-        this.memberList = messageList;
+        this.memberList = memberList;
         this.messageList = new ArrayList<>();
         writeData();
 
@@ -109,9 +122,10 @@ public class Chat implements ChatInterface {
     }
 
     /**
-     Create or write to the data file matching this Chat.
-     Add the chatID and recipientID as the first two lines in the data file.
-     Add all Messages as subsequent lines in the data file.
+     * Writes the chat data to a file, including chat ID, member list, and all messages.
+     * <p>
+     * The chat ID and member list are written as the first two lines, followed by each message.
+     * </p>
      */
     public void writeData() {
         File chatData = new File(this.chatID + ".txt");
@@ -133,14 +147,19 @@ public class Chat implements ChatInterface {
         }
     }
 
+    /**
+     * Returns the unique chat ID of this chat.
+     *
+     * @return the chat ID
+     */
     public String getChatID() {
         return chatID;
     }
 
     /**
-     * This method reads from the list of currently used chat IDs, incrementing by one for each
-     * existing ID. The result is that the first created ID will be C_0000, next will be C_0001, etc.
-     * @return A unique ID that is incremented from the last ID that was generated.
+     * Generates a unique chat ID based on the counter. Pads the ID with zeros if its length is less than four digits.
+     *
+     * @return a unique chat ID in the format "C_XXXX"
      */
     public String createChatID() {
         String id = "C_";
@@ -165,21 +184,37 @@ public class Chat implements ChatInterface {
         return id + number;
     }
 
+    /**
+     * Returns the list of member IDs participating in this chat.
+     *
+     * @return the member list
+     */
     public ArrayList<String> getMemberList() {
         return memberList;
     }
 
+    /**
+     * Sets the list of member IDs for this chat.
+     *
+     * @param memberList the new list of member IDs
+     */
     public void setMemberList(ArrayList<String> memberList) {
         this.memberList = memberList;
     }
 
+    /**
+     * Returns the list of messages in this chat.
+     *
+     * @return the message list
+     */
     public ArrayList<Message> getMessageList() {
         return messageList;
     }
 
     /**
-     * Add the required message to the Messages of the ArrayList and write the new data to the Chat's data file.
-     * @param message The Message to be added.
+     * Adds a new message to the chat and updates the file data.
+     *
+     * @param message the message to be added
      */
     public void addMessage(Message message) {
         messageList.add(message);
@@ -187,10 +222,10 @@ public class Chat implements ChatInterface {
     }
 
     /**
-     * Replace the most recent message by the given author with the given String. Data is rewritten after the message
-     * has been edited.
-     * @param messageText The message to be written in place of the existing message.
-     * @param authorID The ID of the user for whom a message will be edited.
+     * Edits the most recent message by the specified author. Updates the file if the edit is successful.
+     *
+     * @param messageText the new text for the message
+     * @param authorID the ID of the author whose message will be edited
      */
     public void editMessage(String messageText, String authorID) {
         for (int i = messageList.size() - 1; i >= 0; i--) {
@@ -205,8 +240,9 @@ public class Chat implements ChatInterface {
     }
 
     /**
-     * Delete the most recent message by the given author and rewrite data.
-     * @param authorID The ID of the user for whom a message will be deleted.
+     * Deletes the most recent message by the specified author and updates the file data.
+     *
+     * @param authorID the ID of the author whose message will be deleted
      */
     public void deleteMessage(String authorID) {
         for (int i = messageList.size() - 1; i >= 0; i--) {
@@ -218,10 +254,21 @@ public class Chat implements ChatInterface {
         writeData();
     }
 
+    /**
+     * Returns the current value of the counter used for generating unique chat IDs.
+     *
+     * @return the current counter value
+     */
     public int getCounter() {
         return counter.get();
     }
 
+    /**
+     * Determines if this chat is equal to another object based on the chat ID.
+     *
+     * @param obj the object to compare
+     * @return {@code true} if the object is a Chat with the same chat ID, otherwise {@code false}
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;

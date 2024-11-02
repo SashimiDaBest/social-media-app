@@ -13,7 +13,8 @@ import java.util.ArrayList;
  * <p>
  * Status: Complete
  *
- * @author derek mctume, connor pugliese
+ * @author Derek Mctume
+ * @author Connor Pugliese
  * @version 11/02/2024
  */
 public class RunChatTests {
