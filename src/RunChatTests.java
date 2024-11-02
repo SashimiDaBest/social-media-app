@@ -119,9 +119,28 @@ public class RunChatTests {
             testCorruptFile.delete();
     }
 
+    @Test
+    public void testEditMessage() {
+        ArrayList<String> memberIDs = new ArrayList<>();
+        memberIDs.add("U_0001");
+        memberIDs.add("U_0002");
+        memberIDs.add("U_0003");
+        Message testMessage1 = new Message("U_0001", 0, "hey guys");
+        Message testMessage2 = new Message("U_0002", 0, "what's up");
+
+        Chat testChat = new Chat(memberIDs);
+        testChat.addMessage(testMessage1);
+        testChat.addMessage(testMessage2);
+
+        testChat.editMessage("this is a new message", "U_0001");
+        assertEquals("editMessage method does not properly edit the most recent message by the selected author.",
+                "this is a new message", testChat.getMessageList().get(0).getMessage());
+    }
+
     public static void main(String[] args) {
         RunChatTests test = new RunChatTests();
         test.testNoReadConstructor();
         test.testReadConstructor();
+        test.testEditMessage();
     }
 }
