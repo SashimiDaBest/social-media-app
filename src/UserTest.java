@@ -71,11 +71,13 @@ public class UserTest {
 
         // Test 1: blocking an ID that has not already blocked should return true
         String testId1 = "BLOCK ME, PLEEEASE";
-        User.getUserArray().add(testId1);
+        User justToGetStatic = new User();
+        justToGetStatic.getUserArray().add(testId1);
         
         User testUser1 = new User();
         boolean result1 = testUser1.addBlock(testId1);
         assertEquals(true, result1); 
+        justToGetStatic.removeFromUserArray(testId1);
 
         // Test 2: blocking a user not in UserArray should return false
         String testId2 = "For second test";
@@ -88,7 +90,7 @@ public class UserTest {
         String testId3 = "For third test";
         
         User testUser3 = new User();
-        testUser3.getBlockedIds().add(testId3);
+        testUser3.getBlocked_ids().add(testId3);
         
         boolean result3 = testUser3.addBlock(testId3);
         assertEquals(false, result3);
@@ -152,9 +154,10 @@ public class UserTest {
         testUser.createChat(testID1);
 
         boolean result1 = false;
+        Chat testChat1 = new Chat(testID1);
         for (String chatID: testUser.getChat_ids()) {
 
-            if (chatID.equals(testID1)) {
+            if (chatID.equals(testChat1.getChatID())) {
                 result1 = true;
             }
         }

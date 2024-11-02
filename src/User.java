@@ -182,4 +182,17 @@ public class User implements UserInterface{
         return chat_ids;
     }
 
+     // for testing 
+     
+    public HashMap<String, String> getUserPass() {
+        return userPass;
+    }
+
+    public ArrayList<String> getUserArray() {
+        return UserArray;
+    }
+
+    public void removeFromUserArray(String id) {
+        UserArray.remove(id);
+    }
 }
