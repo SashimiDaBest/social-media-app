@@ -2,12 +2,11 @@ import java.util.*;
 /**
  * Social Media App - Chat Interface
  *
- *
  * Status: Complete
  *
  * @author soleil pham
  *
- * @version 11/01/2024
+ * @version 11/02/2024
  *
  */
 public interface ChatInterface {
