@@ -1,10 +1,21 @@
 import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
 import java.io.*;
 import java.util.ArrayList;
 
+/**
+ * Social Media App - Chat Tests
+ * <p>
+ * Test class to test the Chat class
+ * <p>
+ * Status: Complete
+ *
+ * @author derek mctume, connor pugliese
+ * @version 11/02/2024
+ */
 public class RunChatTests {
     @Test
     public void testNoReadConstructor() {
@@ -42,7 +53,7 @@ public class RunChatTests {
         assertEquals("Created chat data file does not match expected contents.", expectedFileContents,
                 dataFileContents);
 
-        if(outputFile.exists())
+        if (outputFile.exists())
             outputFile.delete();
     }
 
@@ -84,7 +95,7 @@ public class RunChatTests {
 
         assertEquals("Chat does not properly instantiate Messages from file.", messages, testChat.getMessageList());
 
-        if(chatID.exists())
+        if (chatID.exists())
             chatID.delete();
 
         File testCorruptFile = new File("C_1234.txt");
@@ -115,8 +126,112 @@ public class RunChatTests {
         assertThrows("Chat does not properly catch invalid userIDs when instantiating from file.",
                 InvalidFileFormatException.class, () -> new Chat("C_1234"));
 
-        if(testCorruptFile.exists())
+        if (testCorruptFile.exists())
             testCorruptFile.delete();
+    }
+
+    @Test
+    public void testAddMessage() {
+
+        Chat testChat;
+        try {
+            testChat = new Chat("This works");
+
+        } catch (Exception e) {
+            throw new RuntimeException("testAddMessage: Chat construction failed, failing test");
+        }
+
+        Message testMessage = new Message("U_0001", 0, "Lol, this works");
+        testChat.addMessage(testMessage);
+
+        // make sure that the message sent is in messageList
+        boolean messageInMessages = testChat.getMessageList().contains(testMessage);
+        assertEquals("testAddMessage: New message was not found in message list!", true, messageInMessages);
+
+        // New message should be detected in file after writeData()
+
+        // Parse chatData
+        ArrayList<String> fileData = new ArrayList<>();
+        try (BufferedReader bReader = new BufferedReader(new FileReader(new File(testChat.getChatID())))) {
+
+            String line = bReader.readLine();
+            while (line != null) {
+                fileData.add(line);
+                line = bReader.readLine();
+            }
+
+
+        } catch (IOException e) {
+
+            throw new RuntimeException("testAddMessage: Reading from chatData should not throw an error");
+        }
+
+        // Check if the chatId at the top of the file matches with the actual chatId
+        String chatIdFromFile = fileData.get(0);
+        assertEquals("testAddMessage: ChatID written to file does not match!", testChat.getChatID(), chatIdFromFile);
+
+
+        // Now check the messages and make sure the new message is included
+        String[] testMessageInfo = fileData.get(2).split(";");
+        String userIDFromFile = testMessageInfo[0];
+        String messageFromFile = testMessageInfo[1].substring(1); // ignore message type
+
+        assertEquals("testAddMessage; The author's ID does not match up with what is on-file", testMessage.getAuthorID(), userIDFromFile);
+        assertEquals("testAddMessage; The message's contents do not match up with what is on-file", testMessage.getMessage(), messageFromFile);
+
+        try {   // also test whether message type is being written properly
+            int messageTypeFromFile = Integer.parseInt(testMessageInfo[1].substring(0, 1));
+            assertEquals("testAddMessage; The message's type does not match up with what is on-file", testMessage.getMessageType(), messageTypeFromFile);
+
+        } catch (NumberFormatException e) {
+            throw new RuntimeException("testAddMessage: The message's type could not converted, failing test!");
+        }
+
+    }
+
+    // requires testAddMessage() to work
+    @Test
+    public void testDeleteMessage() {
+
+        // Should delete the message based if its author's ID matches the argument
+        String testID = "authorID";
+        Message testMessage1 = new Message(testID, 0, "This works");
+        Chat testChat1;
+
+        try {
+            testChat1 = new Chat("some chat ID");
+        } catch (Exception e) {
+            throw new RuntimeException("testDeleteMessage: Chat construction should not throw any errors");
+        }
+
+        testChat1.addMessage(testMessage1);
+        testChat1.deleteMessage(testMessage1.getAuthorID());
+
+        boolean result = testChat1.getMessageList().contains(testMessage1);
+        assertEquals("testDeleteMessage: The messengerList should no longer contain the message instance!", true, result);
+
+        // Check if writeData() accurately represents the changes
+        ArrayList<String> fileData = new ArrayList<>();
+        try (BufferedReader bReader = new BufferedReader(new FileReader(new File(testChat1.getChatID())))) {
+
+            String line = bReader.readLine();
+            while (line != null) {
+                fileData.add(line);
+                line = bReader.readLine();
+            }
+
+
+        } catch (IOException e) {
+
+            throw new RuntimeException("testAddMessage: Reading from chatData should not throw an error");
+        }
+
+        // Check if the chatId at the top of the file matches with the actual chatId
+        String chatIdFromFile = fileData.get(0);
+        assertEquals("testAddMessage: ChatID written to file does not match!", testChat1.getChatID(), chatIdFromFile);
+
+        // The added message shouldn't be there anymore, so there should only be two lines in the entire file
+        assertEquals("testDeleteMessage: if message is added and then subsequently deleted, then the file should only have two lines! (empty message list)", 2, fileData.size());
     }
 
     @Test
@@ -135,12 +250,5 @@ public class RunChatTests {
         testChat.editMessage("this is a new message", "U_0001");
         assertEquals("editMessage method does not properly edit the most recent message by the selected author.",
                 "this is a new message", testChat.getMessageList().get(0).getMessage());
-    }
-
-    public static void main(String[] args) {
-        RunChatTests test = new RunChatTests();
-        test.testNoReadConstructor();
-        test.testReadConstructor();
-        test.testEditMessage();
     }
 }
