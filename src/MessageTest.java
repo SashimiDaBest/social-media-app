@@ -49,26 +49,51 @@ public class MessageTest {
         assertEquals(false, result2);
     }
 
-    public void testGetType() {
+    public void testGetMessageType() {
 
         // Test 1: same as everything else
         int param1 = 0;
         Message testMessage1 = new Message("ID HERE", param1, "MESSAGE HERE");
-        boolean result1 = (testMessage1.getType() == param1);
+        boolean result1 = (testMessage1.getMessageType() == param1);
         assertEquals(true, result1); 
 
 
         // Test 2: same as everything else 
         int param2 = 1;
         Message testMessage2 = new Message("ID HERE", 0, "MESSAGE HERE");
-        boolean result2 = (testMessage1.getType() == param1);
+        boolean result2 = (testMessage2.getMessageType() == param2);
         assertEquals(false, result2);
     }
 
+    public void testSetMessage() {
 
-    public void paramTestForID() {
+        // Test 1: if there is no image (type == 0), then 
+        // set the message to the param and return true
+        String message1 = "Test message";
+        Message testMessage1 = new Message("09090", 0, "nothing here yet");
+        boolean funcResult1 = testMessage1.setMessage(message1);
+        boolean correctParam1 = testMessage1.getMessage().equals(message1);
 
-        // 
+        assertEquals(true, funcResult1);
+        assertEquals(true, correctParam1);
+
+        // Test 2: return false if it's an image
+        String message2 = "whatever";
+        Message testMessage2 = new Message("09090909", 1, "nothing here again");
+        boolean funcResult2 = testMessage2.setMessage(message2);
+        boolean correctParam2 = testMessage2.getMessage().equals("nothing here again"); // shouldn't change
+
+        assertEquals(false, funcResult2);
+        assertEquals(true, correctParam2);
     }
 
+
+    public static void main(String[] args) {
+        
+        MessageTest runTests = new MessageTest();
+        runTests.testGetMessage();
+        runTests.testGetAuthorID();
+        runTests.testGetMessageType();
+        runTests.testSetMessage();
+    }
 }
