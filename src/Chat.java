@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.*;
  *
  * Message class with accessors and mutators
  *
- * Status: Complete
+ * Status: Incomplete
  *
  * @author connor pugliese, soleil pham
  * @version 11/02/2024
@@ -120,31 +120,14 @@ public class Chat implements ChatInterface {
     public String getChatID() {
         return chatID;
     }
-    /*
-    REVISE
-    Get the current status of the counter.
-    Pad the ID with 0s if its length is less than 4.
-     */
+
     public String createChatID() {
         String id = "C_";
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(chatIDListDoc))) {
-            String line = reader.readLine();
-            while (line != null) {
-                counter.incrementAndGet();
-
-                line = reader.readLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         String number = String.valueOf(counter.get());
-        int length = number.length(); //4-1
+        int length = number.length();
         for (int i = 0; i < 4 - length; i++) {
             id += "0";
         }
-
         return id + number;
     }
 
