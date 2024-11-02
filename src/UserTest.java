@@ -30,7 +30,7 @@ public class UserTest {
         testUser.setUsername(testName);
         
         String result = testUser.getUsername();
-        assertEquals(testName, result);
+        assertEquals("testSetUsername: Setting username does not work",testName, result);
     }
 
     public void testSetPassword() {
@@ -40,7 +40,7 @@ public class UserTest {
         testUser.setPassword(testPassword);
         
         String result = testUser.getPassword();
-        assertEquals(testPassword, result);
+        assertEquals("testSetPassword: Setting password does not work",testPassword, result);
     }
 
     public void testSetProfilePic() {
@@ -50,7 +50,7 @@ public class UserTest {
         testUser.setProfilePic(testPic);
         
         String result = testUser.getProfilePic();
-        assertEquals(testPic, result);
+        assertEquals("testSetProfilePic: Setting the profile pic does not work", testPic, result);
     }
 
     public void testSetAccountType() {
@@ -60,7 +60,7 @@ public class UserTest {
         testUser.setAccountType(testType);
         
         int result = testUser.getAccountType();
-        assertEquals(testType, result);
+        assertEquals("testSetAccountType: Setting the account type does not work",testType, result);
     }
 
     // All other methods
@@ -76,7 +76,7 @@ public class UserTest {
         
         User testUser1 = new User();
         boolean result1 = testUser1.addBlock(testId1);
-        assertEquals(true, result1); 
+        assertEquals("testAddBlock: Blocking an ID that has not already been blocked should return true",true, result1); 
         justToGetStatic.removeFromUserArray(testId1);
 
         // Test 2: blocking a user not in UserArray should return false
@@ -84,7 +84,7 @@ public class UserTest {
 
         User testUser2 = new User();
         boolean result2 = testUser2.addBlock(testId2);
-        assertEquals(false, result2);
+        assertEquals("testAddBlock: Blocking a user not in UserArray should return false",false, result2);
 
         // Test 3: blocking a user that is already blocked should return false
         String testId3 = "For third test";
@@ -93,7 +93,7 @@ public class UserTest {
         testUser3.getBlocked_ids().add(testId3);
         
         boolean result3 = testUser3.addBlock(testId3);
-        assertEquals(false, result3);
+        assertEquals("testAddBlock: Blocking a user that is already blocked should return false",false, result3);
 
         
     }
@@ -109,14 +109,14 @@ public class UserTest {
         User testUser1 = new User();
         testUser1.addBlock(testId1);
         boolean result1 = testUser1.deleteBlock(testId1);
-        assertEquals(true, result1); 
+        assertEquals("testDeleteBlock: if the blocked ID is removed, then is should no longer be in the UserArray",true, result1); 
 
         // Test 2: if the blocked ID is not in blocked_ids, then it should return false
         
         String testId2 = "this works";
         User testUser2 = new User();
         boolean result2 = testUser2.deleteBlock(testId2);
-        assertEquals(false, result2);
+        assertEquals("testDeleteBlock: if the blocked ID is not in blockedIds, then it should return false",false, result2);
 
     }
 
@@ -130,8 +130,8 @@ public class UserTest {
         boolean funcResult1 = testUser1.addChat(testChat1);
         boolean result1 = testUser1.getChat_ids().contains(testChat1);
 
-        assertEquals(true, result1); 
-        assertEquals(true, funcResult1); 
+        assertEquals("testAddChat: ChatIds should caintain the chatId after appending",true, result1); 
+        assertEquals("testAddChat: succesfully adding the chat should make the function return true",true, funcResult1); 
 
         // Test 2: adding a chat_id that already exists should return false
 
@@ -142,8 +142,8 @@ public class UserTest {
         boolean funcResult2 = testUser2.addChat(testChat2);
         boolean result2 = testUser2.getChat_ids().contains(testChat2); // the id should not be added
 
-        assertEquals(false, result2); 
-        assertEquals(false, funcResult2);
+        assertEquals("testAddChat: Adding a chat that already exists should return false",false, result2); 
+        assertEquals("testAddChat: Adding a chat that already exists should make the funtion return false", funcResult2);
     }
 
     public void testCreateChat() {
@@ -161,7 +161,7 @@ public class UserTest {
                 result1 = true;
             }
         }
-        assertEquals(true, result1); 
+        assertEquals("testCreateChat: A new chat should be creeated and its ID should appear in Chat_Ids",true, result1); 
 
         // Test 2: Should duplicates be prevented???
 
