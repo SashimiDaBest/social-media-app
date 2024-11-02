@@ -48,6 +48,7 @@ public class Chat implements ChatInterface {
                 if ((line.length() == 6 || line.contains(";U")) && !line.contains("C")) {
                     String[] recipientIDs = line.split(";");
 
+                    // Validate each recipientID.
                     for (String recipientID : recipientIDs) {
 
                         if (recipientID.length() != 6 || !recipientID.startsWith("U_"))
