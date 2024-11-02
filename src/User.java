@@ -1,7 +1,9 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.io.*;
 
 public class User implements UserInterface{
     private String userName;
@@ -65,6 +67,31 @@ public class User implements UserInterface{
         return false;
     }
     //add writeData() method
+    public void writeData(){
+        try(PrintWriter pr = new PrintWriter(new FileWriter(userIDListDoc))){
+            pr.println(this.userID + ";" + this.password);
+            pr.println(this.userName);
+            for(int i = 0; i < followerList.size(); i++){
+                if(i != followerList.size() - 1){
+                    pr.print(followerList.get(i) + ";");
+                }
+                else{
+                    pr.println(followerList.get(i));
+                }
+            }
+            for(int i = 0; i < followerList.size(); i++){
+                if(i != followerList.size() - 1){
+                    pr.print(followerList.get(i) + ";");
+                }
+                else{
+                    pr.println(followerList.get(i));
+                }
+            }
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
+    }
     public boolean addFollower(String followerID) {
         //converse about this class and the possibility to be false on different occasions....
         if (findUser(followerID)){
