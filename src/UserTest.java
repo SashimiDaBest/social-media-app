@@ -19,8 +19,8 @@ import java.util.Arrays;
 
 // NOTE: in order for mutator tests to work, accessors must also work
 public class UserTest {
-    
-    
+
+
 
     // Mutators:
     public void testSetUsername() {
@@ -28,17 +28,17 @@ public class UserTest {
         String testName = "This totally works";
         User testUser = new User();
         testUser.setUsername(testName);
-        
+
         String result = testUser.getUsername();
         assertEquals(testName, result);
     }
 
     public void testSetPassword() {
-        
+
         String testPassword = "This totally works";
         User testUser = new User();
         testUser.setPassword(testPassword);
-        
+
         String result = testUser.getPassword();
         assertEquals(testPassword, result);
     }
@@ -48,7 +48,7 @@ public class UserTest {
         String testPic = "i_dont_know_what_image_format_to_use.png";
         User testUser = new User();
         testUser.setProfilePic(testPic);
-        
+
         String result = testUser.getProfilePic();
         assertEquals(testPic, result);
     }
@@ -58,7 +58,7 @@ public class UserTest {
         int testType = 1;
         User testUser = new User();
         testUser.setAccountType(testType);
-        
+
         int result = testUser.getAccountType();
         assertEquals(testType, result);
     }
@@ -71,13 +71,12 @@ public class UserTest {
 
         // Test 1: blocking an ID that has not already blocked should return true
         String testId1 = "BLOCK ME, PLEEEASE";
-        User justToGetStatic = new User();
-        justToGetStatic.getUserArray().add(testId1);
-        
+
+        User.getUserArray().add(testId1);
+
         User testUser1 = new User();
         boolean result1 = testUser1.addBlock(testId1);
-        assertEquals(true, result1); 
-        justToGetStatic.removeFromUserArray(testId1);
+        assertEquals(true, result1);
 
         // Test 2: blocking a user not in UserArray should return false
         String testId2 = "For second test";
@@ -88,14 +87,15 @@ public class UserTest {
 
         // Test 3: blocking a user that is already blocked should return false
         String testId3 = "For third test";
-        
+
         User testUser3 = new User();
-        testUser3.getBlocked_ids().add(testId3);
-        
+
+        testUser3.getBlockedIds().add(testId3);
+
         boolean result3 = testUser3.addBlock(testId3);
         assertEquals(false, result3);
 
-        
+
     }
 
     // Requires addBlock() to work
@@ -109,10 +109,10 @@ public class UserTest {
         User testUser1 = new User();
         testUser1.addBlock(testId1);
         boolean result1 = testUser1.deleteBlock(testId1);
-        assertEquals(true, result1); 
+        assertEquals(true, result1);
 
         // Test 2: if the blocked ID is not in blocked_ids, then it should return false
-        
+
         String testId2 = "this works";
         User testUser2 = new User();
         boolean result2 = testUser2.deleteBlock(testId2);
@@ -130,8 +130,8 @@ public class UserTest {
         boolean funcResult1 = testUser1.addChat(testChat1);
         boolean result1 = testUser1.getChat_ids().contains(testChat1);
 
-        assertEquals(true, result1); 
-        assertEquals(true, funcResult1); 
+        assertEquals(true, result1);
+        assertEquals(true, funcResult1);
 
         // Test 2: adding a chat_id that already exists should return false
 
@@ -142,7 +142,7 @@ public class UserTest {
         boolean funcResult2 = testUser2.addChat(testChat2);
         boolean result2 = testUser2.getChat_ids().contains(testChat2); // the id should not be added
 
-        assertEquals(false, result2); 
+        assertEquals(false, result2);
         assertEquals(false, funcResult2);
     }
 
@@ -161,14 +161,14 @@ public class UserTest {
                 result1 = true;
             }
         }
-        assertEquals(true, result1); 
+        assertEquals(true, result1);
 
         // Test 2: Should duplicates be prevented???
 
-        
+
     }
 
-    
+
     // requires createNewUser() to work
     public void testHasLogin() {
 
@@ -216,7 +216,7 @@ public class UserTest {
         String valCheck = testUser.getUserPass().get(testName);
 
         assertEquals(true, keyIsIn);
-        assertEquals(testPass, valCheck); 
+        assertEquals(testPass, valCheck);
     }
 
     // requires addChat() to work
