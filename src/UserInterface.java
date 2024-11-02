@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public interface UserInterface {
 
     public String getUsername();
@@ -20,20 +22,22 @@ public interface UserInterface {
 
     public boolean addChat(String chat_id);
     public boolean deleteChat(String chat_id);
+    public void createChat(ArrayList<String> recipient_id);
 
-    public boolean setAccountType(int accountType);
-
-    public boolean userDoesExist(String idToBeSearched);
+    public void setAccountType(int accountType);
+    public int getAccountType();
 
     public boolean hasLogin(String username, String password);
     public void createNewUser(String username, String password);
     public boolean sendText(String chat_id, String message, int type, String user_id, String username, int userType);
-    public boolean isFollower(String follower_id);
 
-    public boolean setProfileImage(String photoFileName);
+//    public boolean isFollower(String follower_id, String following_id);
 
     //IDK WHAT TO DO WITH THIS YET
-    public void logIn();
-    public void logOut();
+//    public void logIn();
+//    public void logOut();
+
+
+
 
 }

@@ -24,13 +24,13 @@ public class MessageTest {
         String param1 = "This totally works";
         Message testMessage1 = new Message("ID HERE", 0, param1);
         boolean result1 = testMessage1.getMessage().equals(param1);
-        assertEquals(result1, true);
+        assertEquals(true, result1);
 
         // Test 2: returns false if message is NOT the one passed to the constructor 
         String param2 = "This doesn't work";
         Message testMessage2 = new Message("ID HERE", 0, "Some other param");
         boolean result2 = testMessage2.getMessage().equals(param2);
-        assertEquals(result2, false);
+        assertEquals(false, result2); 
 
     }
 
@@ -40,13 +40,13 @@ public class MessageTest {
         String param1 = "1347284798";
         Message testMessage1 = new Message(param1, 0, "MESSAGE HERE");
         boolean result1 = testMessage1.getAuthorID().equals(param1);
-        assertEquals(result1, true);
+        assertEquals(true, result1); 
 
         // Test 2: same as in testGetAuthorID()
         String param2 = "529594808";
         Message testMessage2 = new Message("10101010", 0, "MESSAGE HERE");
         boolean result2 = testMessage2.getAuthorID().equals(param2);
-        assertEquals(result2, false);
+        assertEquals(false, result2);
     }
 
     public void testGetType() {
@@ -55,14 +55,14 @@ public class MessageTest {
         int param1 = 0;
         Message testMessage1 = new Message("ID HERE", param1, "MESSAGE HERE");
         boolean result1 = (testMessage1.getType() == param1);
-        assertEquals(result1, true);
+        assertEquals(true, result1); 
 
 
         // Test 2: same as everything else 
         int param2 = 1;
         Message testMessage2 = new Message("ID HERE", 0, "MESSAGE HERE");
         boolean result2 = (testMessage1.getType() == param1);
-        assertEquals(result2, false);
+        assertEquals(false, result2);
     }
 
 
