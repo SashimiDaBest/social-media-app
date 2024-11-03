@@ -118,7 +118,7 @@ public class Chat implements ChatInterface {
             throw new RuntimeException(e);
         }
 
-        counter.set(counter.get() + 1);
+        counter.set(0);
     }
 
     /**
