@@ -69,7 +69,7 @@ public class User implements UserInterface{
         blockedList = new ArrayList<String>();
         chatIDList = new ArrayList<String>();
 
-        try(PrintWriter pw = new PrintWriter(new FileWriter(userIDinfo))){
+        try(PrintWriter pw = new PrintWriter(new FileWriter(this.userID + ".txt"))){
             pw.println(this.userID + ";" + this.userName);
             pw.println(this.userName);
             pw.println(this.photoPathway);
@@ -82,7 +82,8 @@ public class User implements UserInterface{
         catch(IOException e){
             e.printStackTrace();
         }
-        
+
+        counter.set(0);
     }
 
     public void setUsername(String username){
@@ -99,6 +100,19 @@ public class User implements UserInterface{
 
     public String createUserID() {
         String id = "U_";
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(userIDList))) {
+            String line = reader.readLine();
+            while (line != null) {
+                counter.incrementAndGet();
+
+                line = reader.readLine();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         String number = String.valueOf(counter.get());
         int length = number.length();
         for (int i = 0; i < 4 - length; i++) {
@@ -122,9 +136,9 @@ public class User implements UserInterface{
     //add writeData() method
     public boolean deleteFollower(String followerID) {
         if (findUser(followerID)){
-            for (int i = 0; i < followingList.size(); i++){
-                if (followingList.get(i).equals(followerID)){
-                    followingList.remove(i);
+            for (int i = 0; i < followerList.size(); i++){
+                if (followerList.get(i).equals(followerID)){
+                    followerList.remove(i);
                     writeData();
                     return true;
                     
@@ -137,7 +151,7 @@ public class User implements UserInterface{
 
     //add writeData() method
     public void writeData(){
-        try(PrintWriter pr = new PrintWriter(new FileWriter(userIDinfo))){
+        try(PrintWriter pr = new PrintWriter(new FileWriter(this.getUserID() + ".txt"))){
             pr.println(this.userID + ";" + this.password);
             pr.println(this.userName);
             pr.println(this.photoPathway);
@@ -190,7 +204,7 @@ public class User implements UserInterface{
         } else {
             return false;
         }
-        followingList.add(followerID);
+        followerList.add(followerID);
         return true;
     }
 
@@ -278,16 +292,13 @@ public class User implements UserInterface{
     }
 
     public boolean findUser(String userID) {
-        try (BufferedReader br = new BufferedReader(new FileReader(userIDinfo))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(userIDList))) {
             String line = br.readLine();
-            if (line.substring(0, 6).equals(userID)) {
-                return true;
-            }
             while (line != null){
-                line = br.readLine();
-                if (line.substring(0, 6).equals(userID)) {
+                if (line.substring(line.length() - 6).equals(userID)) {
                     return true;
                 }
+                line = br.readLine();
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -346,7 +357,7 @@ public class User implements UserInterface{
 
 
     public void createNewUser(String username, String password, String userIDparameter) {
-        try(PrintWriter pw = new PrintWriter(new FileWriter(userIDList))){
+        try(PrintWriter pw = new PrintWriter(new FileWriter(userIDList, true))){
             pw.println(username + ";" + password + ";" + userIDparameter);
         }
         catch(IOException e){
