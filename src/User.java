@@ -123,6 +123,7 @@ public class User implements UserInterface{
 
     public void setProfilePic(String photoPathway){
         this.photoPathway = photoPathway;
+        writeData();
     }
 
     public String getProfilePic(){
@@ -198,6 +199,7 @@ public class User implements UserInterface{
         if (findUser(followerID)){
             for (int i = 0; i < followerList.size(); i++){
                 if (followerList.get(i).equals(followerID)) {
+                    writeData();
                     return true;
                 }
             }
@@ -205,6 +207,7 @@ public class User implements UserInterface{
             return false;
         }
         followerList.add(followerID);
+        writeData();
         return true;
     }
 
@@ -281,6 +284,7 @@ public class User implements UserInterface{
 
     public void setAccountType(int accountType) {
         this.accountType = accountType;
+        writeData();
     }
 
     public String getPassWord() {
@@ -289,6 +293,7 @@ public class User implements UserInterface{
 
     public void setPassword(String password) {
         this.password = password;
+        writeData();
     }
 
     public boolean findUser(String userID) {
