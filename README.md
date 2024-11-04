@@ -11,7 +11,7 @@ Run "java Main.java && java Main" to compile and run the project.
 
 A list of who submitted which parts of the assignment on Brightspace and Vocareum
 
-- Student 1 - Submitted Report on Brightspace
+- Connor Pugliese - Submitted Vocareum workspace
 
 ## Documentation
 
