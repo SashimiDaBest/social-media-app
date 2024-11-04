@@ -82,8 +82,6 @@ public class User implements UserInterface {
         }
 
         counter.set(0);
-
-        counter.set(0);
     }
 
     public void setUsername(String username) {
@@ -100,19 +98,6 @@ public class User implements UserInterface {
 
     public String createUserID() {
         String id = "U_";
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(userIDList))) {
-            String line = reader.readLine();
-            while (line != null) {
-                counter.incrementAndGet();
-
-                line = reader.readLine();
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
 
         try (BufferedReader reader = new BufferedReader(new FileReader(userIDList))) {
             String line = reader.readLine();
@@ -154,11 +139,8 @@ public class User implements UserInterface {
                 if (followerList.get(i).equals(followerID)) {
                     followerList.remove(i);
                     writeData();
-            for (int i = 0; i < followerList.size(); i++){
-                if (followerList.get(i).equals(followerID)){
-                    followerList.remove(i);
-                    writeData();
                     return true;
+
                 }
             }
         }
@@ -220,7 +202,6 @@ public class User implements UserInterface {
         }
         followerList.add(followerID);
         writeData();
-        followerList.add(followerID);
         return true;
     }
 
@@ -234,7 +215,6 @@ public class User implements UserInterface {
         if (findUser(followingID) && !followingList.contains(followingID) && !blockedList.contains(followingID)) {
             followingList.add(followingID);
             writeData();
-            writeData();
             return true;
         }
         return false;
@@ -244,7 +224,6 @@ public class User implements UserInterface {
     public boolean deleteFollowing(String followingID) {
         if (followingList.contains(followingID)) {
             followingList.remove(followingID);
-            writeData();
             writeData();
             return true;
         }
@@ -260,7 +239,6 @@ public class User implements UserInterface {
         if (findUser(blockedID) && !blockedList.contains(blockedID)) {
             blockedList.add(blockedID);
             writeData();
-            writeData();
             return true;
         }
         return false;
@@ -270,7 +248,6 @@ public class User implements UserInterface {
     public boolean deleteBlock(String blockedID) {
         if (blockedList.contains(blockedID)) {
             blockedList.remove(blockedID);
-            writeData();
             writeData();
             return true;
         }
@@ -285,7 +262,6 @@ public class User implements UserInterface {
     public boolean addChat(String chat_id) {
         chatIDList.add(chat_id);
         writeData();
-        writeData();
         return true;
     }
 
@@ -294,13 +270,11 @@ public class User implements UserInterface {
         Chat newChat = new Chat(recipient_id);
         chatIDList.add(newChat.getChatID());
         writeData();
-        writeData();
     }
 
     //add writeData() method
     public boolean deleteChat(String chat_id) {
         chatIDList.remove(chat_id);
-        writeData();
         writeData();
         return false;
     }
@@ -325,14 +299,11 @@ public class User implements UserInterface {
 
     public boolean findUser(String userID) {
         try (BufferedReader br = new BufferedReader(new FileReader(userIDList))) {
-        try (BufferedReader br = new BufferedReader(new FileReader(userIDList))) {
             String line = br.readLine();
             while (line != null) {
                 if (line.substring(line.length() - 6).equals(userID)) {
-                if (line.substring(line.length() - 6).equals(userID)) {
                     return true;
                 }
-                line = br.readLine();
                 line = br.readLine();
             }
         } catch (Exception e) {
@@ -398,10 +369,4 @@ public class User implements UserInterface {
             e.printStackTrace();
         }
     }
-
-    // for testing
-    public void setUserID(String id) {
-        this.userID = id;
-    }
-
 }
