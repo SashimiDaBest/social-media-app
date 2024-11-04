@@ -45,6 +45,9 @@ public class User implements UserInterface {
     private final String userIDinfo = this.userID + ".txt";
     /** Pathway to the file listing all user IDs. */
     private static final String USERIDLIST = "UserIDList.txt";
+    /**
+     * A lock object used for synchronizing access to critical sections of the code.
+     */
     private static final Object lock = new Object();
     /**
      * Constructs a User by reading user data from a file.
