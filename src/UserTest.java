@@ -161,7 +161,7 @@ public class UserTest {
     }
 
     // this function is just for testing:
-    @Test void testSetUserID() {
+    @Test public void testSetUserID() {
 
         String testID = "random id here";
         User testUser = new User("","");

@@ -369,4 +369,8 @@ public class User implements UserInterface {
             e.printStackTrace();
         }
     }
+
+    public void setUserID(String id) {
+        this.userID = id;
+    }
 }
