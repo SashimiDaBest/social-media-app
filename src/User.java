@@ -44,7 +44,7 @@ public class User implements UserInterface {
     /** File pathway to the user data file. */
     private final String userIDinfo = this.userID + ".txt";
     /** Pathway to the file listing all user IDs. */
-    private static final String userIDList = "UserIDList.txt";
+    private static final String USERIDLIST = "UserIDList.txt";
 
     /**
      * Constructs a User by reading user data from a file.
@@ -61,22 +61,22 @@ public class User implements UserInterface {
             this.photoPathway = br.readLine();
             this.accountType = Integer.parseInt(br.readLine());
             String followers = br.readLine();
-            String followersArray[] = followers.split(";");
+            String[] followersArray = followers.split(";");
             for (String user : followersArray) {
                 followerList.add(user);
             }
             String following = br.readLine();
-            String followingArray[] = following.split(";");
+            String[] followingArray = following.split(";");
             for (String user : followingArray) {
                 followingList.add(user);
             }
             String blocking = br.readLine();
-            String blockingArray[] = blocking.split(";");
+            String[] blockingArray = blocking.split(";");
             for (String user : blockingArray) {
                 blockedList.add(user);
             }
             String chatting = br.readLine();
-            String chattingArray[] = chatting.split(";");
+            String[] chattingArray = chatting.split(";");
             for (String user : chattingArray) {
                 chatIDList.add(user);
             }
@@ -155,7 +155,7 @@ public class User implements UserInterface {
     public String createUserID() {
         String id = "U_";
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(userIDList))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(USERIDLIST))) {
             String line = reader.readLine();
             while (line != null) {
                 counter.incrementAndGet();
@@ -178,10 +178,10 @@ public class User implements UserInterface {
     /**
      * Sets the file pathway to the user's profile picture and updates data storage.
      *
-     * @param photoPathway the file pathway to the profile picture
+     * @param newPhotoPathway the file pathway to the profile picture
      */
-    public void setProfilePic(String photoPathway) {
-        this.photoPathway = photoPathway;
+    public void setProfilePic(String newPhotoPathway) {
+        this.photoPathway = newPhotoPathway;
         writeData();
     }
 
@@ -385,11 +385,11 @@ public class User implements UserInterface {
     /**
      * Adds a chat by its ID to the user's chat list and updates data storage.
      *
-     * @param chat_id the ID of the chat to add
+     * @param chatID the ID of the chat to add
      * @return {@code true} if the chat was successfully added, {@code false} otherwise
      */
-    public boolean addChat(String chat_id) {
-        chatIDList.add(chat_id);
+    public boolean addChat(String chatID) {
+        chatIDList.add(chatID);
         writeData();
         return true;
     }
@@ -397,10 +397,10 @@ public class User implements UserInterface {
     /**
      * Creates a new chat with the specified recipient IDs and updates data storage.
      *
-     * @param recipient_id the list of recipient IDs for the new chat
+     * @param recipientID the list of recipient IDs for the new chat
      */
-    public void createChat(ArrayList<String> recipient_id) {
-        Chat newChat = new Chat(recipient_id);
+    public void createChat(ArrayList<String> recipientID) {
+        Chat newChat = new Chat(recipientID);
         chatIDList.add(newChat.getChatID());
         writeData();
     }
@@ -408,11 +408,11 @@ public class User implements UserInterface {
     /**
      * Deletes a chat by its ID from the user's chat list and updates data storage.
      *
-     * @param chat_id the ID of the chat to delete
+     * @param chatID the ID of the chat to delete
      * @return {@code true} if the chat was successfully deleted, {@code false} otherwise
      */
-    public boolean deleteChat(String chat_id) {
-        chatIDList.remove(chat_id);
+    public boolean deleteChat(String chatID) {
+        chatIDList.remove(chatID);
         writeData();
         return false;
     }
@@ -458,14 +458,14 @@ public class User implements UserInterface {
     /**
      * Searches for a user by their ID within the application data.
      *
-     * @param userID the ID of the user to find
+     * @param userIDToSearch the ID of the user to find
      * @return {@code true} if the user is found, {@code false} otherwise
      */
-    public boolean findUser(String userID) {
-        try (BufferedReader br = new BufferedReader(new FileReader(userIDList))) {
+    public boolean findUser(String userIDToSearch) {
+        try (BufferedReader br = new BufferedReader(new FileReader(USERIDLIST))) {
             String line = br.readLine();
             while (line != null) {
-                if (line.substring(line.length() - 6).equals(userID)) {
+                if (line.substring(line.length() - 6).equals(userIDToSearch)) {
                     return true;
                 }
                 line = br.readLine();
@@ -482,13 +482,14 @@ public class User implements UserInterface {
      * @param chatID the ID of the chat to send the message to
      * @param message the message content
      * @param type the message type (0 for text)
-     * @param userID the ID of the user sending the message
+     * @param senderID the ID of the user sending the message
      * @param username the username of the user sending the message
      * @param userType the type of the user sending the message
      * @return {@code true} if the message was successfully sent, {@code false} otherwise
      * @throws NoChatFoundException if the specified chat ID is not found
      */
-    public boolean sendText(String chatID, String message, int type, String userID, String username, int userType) throws NoChatFoundException {
+    public boolean sendText(String chatID, String message, int type, String senderID, String username, int userType)
+            throws NoChatFoundException {
         if (chatIDList.contains(chatID)) {
             Chat existingChat = null;
             try {
@@ -496,7 +497,7 @@ public class User implements UserInterface {
             } catch (InvalidFileFormatException e) {
                 e.printStackTrace();
             }
-            Message intendedMessage = new Message(userID, type, message);
+            Message intendedMessage = new Message(senderID, type, message);
             existingChat.addMessage(intendedMessage);
             return true;
         }
@@ -507,16 +508,16 @@ public class User implements UserInterface {
      * Verifies if the provided username and password match any user entry in the system.
      *
      * @param username the username to verify
-     * @param password the password to verify
+     * @param passwordToCheck the password to verify
      * @return {@code true} if the username and password match an existing user, {@code false} otherwise
      */
-    public boolean hasLogin(String username, String password) {
-        try (BufferedReader br = new BufferedReader(new FileReader(userIDList))) {
+    public boolean hasLogin(String username, String passwordToCheck) {
+        try (BufferedReader br = new BufferedReader(new FileReader(USERIDLIST))) {
             String userIterator = "";
             while ((userIterator = br.readLine()) != null) {
                 String userN = userIterator.split(";")[0];
                 String passW = userIterator.split(";")[1];
-                if (username.equals(userN) && password.equals(passW)) {
+                if (username.equals(userN) && passwordToCheck.equals(passW)) {
                     return true;
                 }
             }
@@ -533,7 +534,7 @@ public class User implements UserInterface {
      * @return {@code true} if the username is unique and available, {@code false} if it is already taken
      */
     public boolean userNameValidation(String username) {
-        try (BufferedReader br = new BufferedReader(new FileReader(userIDList))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(USERIDLIST))) {
             String userIterator = "";
             while ((userIterator = br.readLine()) != null) {
                 String userN = userIterator.split(";")[0];
@@ -551,12 +552,12 @@ public class User implements UserInterface {
      * Creates a new user entry by saving their username, password, and user ID to the user ID list.
      *
      * @param username the username of the new user
-     * @param password the password of the new user
+     * @param newUserPassword the password of the new user
      * @param userIDparameter the user ID for the new user
      */
-    public void createNewUser(String username, String password, String userIDparameter) {
-        try (PrintWriter pw = new PrintWriter(new FileWriter(userIDList, true))) {
-            pw.println(username + ";" + password + ";" + userIDparameter);
+    public void createNewUser(String username, String newUserPassword, String userIDparameter) {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(USERIDLIST, true))) {
+            pw.println(username + ";" + newUserPassword + ";" + userIDparameter);
         } catch (IOException e) {
             e.printStackTrace();
         }
