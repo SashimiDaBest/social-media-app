@@ -6,13 +6,25 @@ import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 
+/**
+ * Run User Tests Class
+ * <p>
+ * Tests some of the methods and constructors within the User class.
+ * <p>
+ * Status: Complete
+ * </p>
+ *
+ * @author Connor Pugliese
+ * @version 11/03/2024
+ * @since 1.0
+ */
 public class RunUserTests {
 
     @Test
     public void testUserMethods() {
         User[] testUsers = new User[10];
 
-        for(int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++) {
             testUsers[i] = new User("userNumber" + i, "userPassword" + i);
             testUsers[i].createNewUser(testUsers[i].getUsername(), testUsers[i].getPassWord(),
                     testUsers[i].getUserID());
@@ -73,13 +85,13 @@ public class RunUserTests {
         assertEquals("User does not properly remove followers.", expectedFollowerList, testUsers[0].getFollowerList());
         assertEquals("User does not properly remove following users.", expectedFollowingList, testUsers[1].getFollowingList());
 
-        for(int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++) {
             File f = new File("U_000" + i + ".txt");
-            if(f.exists())
+            if (f.exists())
                 f.delete();
         }
 
-        for(int i = 0; i < 2; i++) {
+        for (int i = 0; i < 2; i++) {
             File f = new File("C_000" + i + ".txt");
             if (f.exists())
                 f.delete();
@@ -97,7 +109,7 @@ public class RunUserTests {
 
         // Clear the UserIDList and ChatIDList files
         try (FileWriter fWriter = new FileWriter(f, false);
-        FileWriter gWriter = new FileWriter(g, false)) {
+             FileWriter gWriter = new FileWriter(g, false)) {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

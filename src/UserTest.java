@@ -1,30 +1,29 @@
 import org.junit. Test;
 import org.junit. Ignore;
+
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.io.*;
 
 /**
  * Social Media App - User Tests
+ * <p>
+ * JUnit tests for Message Class
+ * <p>
+ * Status: In Progress
  *
- * JUnit tests for User Class
- *
- * Status: Completed
- *
- * @author derek mctume
- *
+ * @author Derek Mctume
  * @version 11/03/2024
- *
  */
 
 // NOTE: creating a User object also creates a new file
 // In order to avoid unpredictable behaviors, this file is deleted before each
 // asserts statement
 public class UserTest {
-    
-    
+  
     // Second constructor test:
     @Test 
     public void testSecondUserConstructor() {
@@ -121,7 +120,7 @@ public class UserTest {
 
     @Test
     public void testSetPassword() {
-        
+
         String testPassword = "This totally works";
         User testUser = new User("","");
         testUser.setPassword(testPassword);
@@ -139,7 +138,7 @@ public class UserTest {
         String testPic = "i_dont_know_what_image_format_to_use.png";
         User testUser = new User("","");
         testUser.setProfilePic(testPic);
-        
+
         String result = testUser.getProfilePic();
         File testFile = new File(testUser.getUserID() + ".txt");
         testFile.delete();
@@ -153,7 +152,7 @@ public class UserTest {
         int testType = 1;
         User testUser = new User("","");
         testUser.setAccountType(testType);
-        
+
         int result = testUser.getAccountType();
         File testFile = new File(testUser.getUserID() + ".txt");
         testFile.delete();
@@ -257,7 +256,7 @@ public class UserTest {
             " then is should no longer be in the UserArray",true, result1); 
 
         // Test 2: if the blocked ID is not in blocked_ids, then it should return false
-        
+
         String testId2 = "this works";
         User testUser2 = new User("","");
         boolean result2 = testUser2.deleteBlock(testId2);
@@ -319,7 +318,6 @@ public class UserTest {
         boolean result1 = false;
         Chat testChat1 = new Chat(testID1);
         for (String chatID: testUser.getChatIDList()) {
-
             if (chatID.equals(testChat1.getChatID())) {
                 result1 = true;
             }
@@ -332,7 +330,7 @@ public class UserTest {
         
     }
 
-    
+
     // requires createNewUser() to work
     @Test
     public void testHasLogin() {
