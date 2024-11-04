@@ -69,7 +69,7 @@ public class User implements UserInterface{
         blockedList = new ArrayList<String>();
         chatIDList = new ArrayList<String>();
 
-        try(PrintWriter pw = new PrintWriter(new FileWriter(userIDinfo))){
+        try(PrintWriter pw = new PrintWriter(new FileWriter(this.userID + ".txt"))){
             pw.println(this.userID + ";" + this.userName);
             pw.println(this.userName);
             pw.println(this.photoPathway);
@@ -82,7 +82,8 @@ public class User implements UserInterface{
         catch(IOException e){
             e.printStackTrace();
         }
-        
+
+        counter.set(0);
     }
 
     public void setUsername(String username){
@@ -99,6 +100,19 @@ public class User implements UserInterface{
 
     public String createUserID() {
         String id = "U_";
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(userIDList))) {
+            String line = reader.readLine();
+            while (line != null) {
+                counter.incrementAndGet();
+
+                line = reader.readLine();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         String number = String.valueOf(counter.get());
         int length = number.length();
         for (int i = 0; i < 4 - length; i++) {
@@ -122,10 +136,12 @@ public class User implements UserInterface{
     //add writeData() method
     public boolean deleteFollower(String followerID) {
         if (findUser(followerID)){
-            for (int i = 0; i < followingList.size(); i++){
-                if (followingList.get(i).equals(followerID)){
-                    followingList.remove(i);
+            for (int i = 0; i < followerList.size(); i++){
+                if (followerList.get(i).equals(followerID)){
+                    followerList.remove(i);
+                    writeData();
                     return true;
+                    
                 }
             }
         }
@@ -135,7 +151,7 @@ public class User implements UserInterface{
 
     //add writeData() method
     public void writeData(){
-        try(PrintWriter pr = new PrintWriter(new FileWriter(userIDinfo))){
+        try(PrintWriter pr = new PrintWriter(new FileWriter(this.getUserID() + ".txt"))){
             pr.println(this.userID + ";" + this.password);
             pr.println(this.userName);
             pr.println(this.photoPathway);
@@ -188,7 +204,7 @@ public class User implements UserInterface{
         } else {
             return false;
         }
-        followingList.add(followerID);
+        followerList.add(followerID);
         return true;
     }
 
@@ -200,6 +216,7 @@ public class User implements UserInterface{
         //address different types of false conditions?
         if (findUser(followingID) && !followingList.contains(followingID) && !blockedList.contains(followingID)) {
             followingList.add(followingID);
+            writeData();
             return true;
         }
         return false;
@@ -208,6 +225,7 @@ public class User implements UserInterface{
     public boolean deleteFollowing(String followingID) {
         if (followingList.contains(followingID)) {
             followingList.remove(followingID);
+            writeData();
             return true;
         }
         return false;
@@ -220,6 +238,7 @@ public class User implements UserInterface{
     public boolean addBlock(String blockedID) {
         if(findUser(blockedID) && !blockedList.contains(blockedID)){
             blockedList.add(blockedID);
+            writeData();
             return true;
         }
         return false;
@@ -228,6 +247,7 @@ public class User implements UserInterface{
     public boolean deleteBlock(String blockedID) {
         if(blockedList.contains(blockedID)){
             blockedList.remove(blockedID);
+            writeData();
             return true;
         }
         return false;
@@ -239,16 +259,19 @@ public class User implements UserInterface{
     //add writeData() method
     public boolean addChat(String chat_id) {
         chatIDList.add(chat_id);
+        writeData();
         return true;
     }
     //add writeData() method
     public void createChat(ArrayList<String> recipient_id) {
         Chat newChat = new Chat(recipient_id);
         chatIDList.add(newChat.getChatID());
+        writeData();
     }
     //add writeData() method
     public boolean deleteChat(String chat_id) {
         chatIDList.remove(chat_id);
+        writeData();
         return false;
     }
 
@@ -269,16 +292,13 @@ public class User implements UserInterface{
     }
 
     public boolean findUser(String userID) {
-        try (BufferedReader br = new BufferedReader(new FileReader(userIDinfo))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(userIDList))) {
             String line = br.readLine();
-            if (line.substring(0, 6).equals(userID)) {
-                return true;
-            }
             while (line != null){
-                line = br.readLine();
-                if (line.substring(0, 6).equals(userID)) {
+                if (line.substring(line.length() - 6).equals(userID)) {
                     return true;
                 }
+                line = br.readLine();
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -337,7 +357,7 @@ public class User implements UserInterface{
 
 
     public void createNewUser(String username, String password, String userIDparameter) {
-        try(PrintWriter pw = new PrintWriter(new FileWriter(userIDList))){
+        try(PrintWriter pw = new PrintWriter(new FileWriter(userIDList, true))){
             pw.println(username + ";" + password + ";" + userIDparameter);
         }
         catch(IOException e){
@@ -345,17 +365,9 @@ public class User implements UserInterface{
         }
     }
 
-     // for testing 
-     
-    public HashMap<String, String> getUserPass() {
-        return userPass;
+    // for testing
+    public void setUserID(String id) {
+        this.userID = id;
     }
 
-    public ArrayList<String> getUserArray() {
-        return UserArray;
-    }
-
-    public void removeFromUserArray(String id) {
-        UserArray.remove(id);
-    }
 }
