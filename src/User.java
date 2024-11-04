@@ -70,6 +70,7 @@ public class User implements UserInterface{
         chatIDList = new ArrayList<String>();
 
         try(PrintWriter pw = new PrintWriter(new FileWriter(this.userID + ".txt"))){
+        try(PrintWriter pw = new PrintWriter(new FileWriter(this.userID + ".txt"))){
             pw.println(this.userID + ";" + this.userName);
             pw.println(this.userName);
             pw.println(this.photoPathway);
@@ -82,6 +83,8 @@ public class User implements UserInterface{
         catch(IOException e){
             e.printStackTrace();
         }
+
+        counter.set(0);
 
         counter.set(0);
     }
@@ -113,6 +116,19 @@ public class User implements UserInterface{
             e.printStackTrace();
         }
 
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(userIDList))) {
+            String line = reader.readLine();
+            while (line != null) {
+                counter.incrementAndGet();
+
+                line = reader.readLine();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         String number = String.valueOf(counter.get());
         int length = number.length();
         for (int i = 0; i < 4 - length; i++) {
@@ -123,6 +139,7 @@ public class User implements UserInterface{
 
     public void setProfilePic(String photoPathway){
         this.photoPathway = photoPathway;
+        writeData();
     }
 
     public String getProfilePic(){
@@ -140,7 +157,12 @@ public class User implements UserInterface{
                 if (followerList.get(i).equals(followerID)){
                     followerList.remove(i);
                     writeData();
+            for (int i = 0; i < followerList.size(); i++){
+                if (followerList.get(i).equals(followerID)){
+                    followerList.remove(i);
+                    writeData();
                     return true;
+                    
                     
                 }
             }
@@ -151,6 +173,7 @@ public class User implements UserInterface{
 
     //add writeData() method
     public void writeData(){
+        try(PrintWriter pr = new PrintWriter(new FileWriter(this.getUserID() + ".txt"))){
         try(PrintWriter pr = new PrintWriter(new FileWriter(this.getUserID() + ".txt"))){
             pr.println(this.userID + ";" + this.password);
             pr.println(this.userName);
@@ -198,12 +221,15 @@ public class User implements UserInterface{
         if (findUser(followerID)){
             for (int i = 0; i < followerList.size(); i++){
                 if (followerList.get(i).equals(followerID)) {
+                    writeData();
                     return true;
                 }
             }
         } else {
             return false;
         }
+        followerList.add(followerID);
+        writeData();
         followerList.add(followerID);
         return true;
     }
@@ -217,6 +243,7 @@ public class User implements UserInterface{
         if (findUser(followingID) && !followingList.contains(followingID) && !blockedList.contains(followingID)) {
             followingList.add(followingID);
             writeData();
+            writeData();
             return true;
         }
         return false;
@@ -225,6 +252,7 @@ public class User implements UserInterface{
     public boolean deleteFollowing(String followingID) {
         if (followingList.contains(followingID)) {
             followingList.remove(followingID);
+            writeData();
             writeData();
             return true;
         }
@@ -239,6 +267,7 @@ public class User implements UserInterface{
         if(findUser(blockedID) && !blockedList.contains(blockedID)){
             blockedList.add(blockedID);
             writeData();
+            writeData();
             return true;
         }
         return false;
@@ -247,6 +276,7 @@ public class User implements UserInterface{
     public boolean deleteBlock(String blockedID) {
         if(blockedList.contains(blockedID)){
             blockedList.remove(blockedID);
+            writeData();
             writeData();
             return true;
         }
@@ -260,6 +290,7 @@ public class User implements UserInterface{
     public boolean addChat(String chat_id) {
         chatIDList.add(chat_id);
         writeData();
+        writeData();
         return true;
     }
     //add writeData() method
@@ -267,10 +298,12 @@ public class User implements UserInterface{
         Chat newChat = new Chat(recipient_id);
         chatIDList.add(newChat.getChatID());
         writeData();
+        writeData();
     }
     //add writeData() method
     public boolean deleteChat(String chat_id) {
         chatIDList.remove(chat_id);
+        writeData();
         writeData();
         return false;
     }
@@ -281,6 +314,7 @@ public class User implements UserInterface{
 
     public void setAccountType(int accountType) {
         this.accountType = accountType;
+        writeData();
     }
 
     public String getPassWord() {
@@ -289,15 +323,19 @@ public class User implements UserInterface{
 
     public void setPassword(String password) {
         this.password = password;
+        writeData();
     }
 
     public boolean findUser(String userID) {
         try (BufferedReader br = new BufferedReader(new FileReader(userIDList))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(userIDList))) {
             String line = br.readLine();
             while (line != null){
                 if (line.substring(line.length() - 6).equals(userID)) {
+                if (line.substring(line.length() - 6).equals(userID)) {
                     return true;
                 }
+                line = br.readLine();
                 line = br.readLine();
             }
         } catch (Exception e) {
@@ -357,6 +395,7 @@ public class User implements UserInterface{
 
 
     public void createNewUser(String username, String password, String userIDparameter) {
+        try(PrintWriter pw = new PrintWriter(new FileWriter(userIDList, true))){
         try(PrintWriter pw = new PrintWriter(new FileWriter(userIDList, true))){
             pw.println(username + ";" + password + ";" + userIDparameter);
         }
