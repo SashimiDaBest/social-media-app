@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.io.*;
+
 /**
  * User Class
  * <p>
@@ -13,6 +14,7 @@ import java.io.*;
  * <p>
  * Status: Complete
  * </p>
+ *
  * @author Soleil Pham
  * @author Connor Pugliese
  * @author Venkat Mamidi
@@ -21,74 +23,99 @@ import java.io.*;
  * @since 1.0
  */
 public class User implements UserInterface {
-    /** The username of the user. */
-    private String userName;
-    /** The unique user ID. */
-    private String userID;
-    /** The file pathway to the user's profile picture. */
-    private String photoPathway;
-    /** List of follower IDs. */
-    private ArrayList<String> followerList;
-    /** List of IDs that the user is following. */
-    private ArrayList<String> followingList;
-    /** List of blocked user IDs. */
-    private ArrayList<String> blockedList;
-    /** List of chat IDs associated with the user. */
-    private ArrayList<String> chatIDList;
-    /** The type of account (e.g., user type or permissions level). */
-    private int accountType;
-    /** The user's password. */
-    private String password;
-    /** Counter for generating unique user IDs. */
-    private static AtomicInteger counter = new AtomicInteger(0);
-    /** File pathway to the user data file. */
-    private final String userIDinfo = this.userID + ".txt";
-    /** Pathway to the file listing all user IDs. */
+    /**
+     * Pathway to the file listing all user IDs.
+     */
     private static final String USERIDLIST = "UserIDList.txt";
     /**
      * A lock object used for synchronizing access to critical sections of the code.
      */
-    private static final Object lock = new Object();
+    private static final Object LOCK = new Object();
+    /**
+     * Counter for generating unique user IDs.
+     */
+    private static AtomicInteger counter = new AtomicInteger(0);
+    /**
+     * The username of the user.
+     */
+    private String userName;
+    /**
+     * The unique user ID.
+     */
+    private String userID;
+    /**
+     * File pathway to the user data file.
+     */
+    private final String userIDinfo = this.userID + ".txt";
+    /**
+     * The file pathway to the user's profile picture.
+     */
+    private String photoPathway;
+    /**
+     * List of follower IDs.
+     */
+    private ArrayList<String> followerList;
+    /**
+     * List of IDs that the user is following.
+     */
+    private ArrayList<String> followingList;
+    /**
+     * List of blocked user IDs.
+     */
+    private ArrayList<String> blockedList;
+    /**
+     * List of chat IDs associated with the user.
+     */
+    private ArrayList<String> chatIDList;
+    /**
+     * The type of account (e.g., user type or permissions level).
+     */
+    private int accountType;
+    /**
+     * The user's password.
+     */
+    private String password;
+
     /**
      * Constructs a User by reading user data from a file.
      *
      * @param userIdinfo the file pathway containing user data
      */
     public User(String userIdinfo) {
-        synchronized(lock){
-        try (BufferedReader br = new BufferedReader(new FileReader(userIdinfo))) {
-            String line1 = "";
-            line1 = br.readLine();
-            this.userID = line1.split(";")[0];
-            this.password = line1.split(";")[1];
-            this.userName = br.readLine();
-            this.photoPathway = br.readLine();
-            this.accountType = Integer.parseInt(br.readLine());
-            String followers = br.readLine();
-            String[] followersArray = followers.split(";");
-            for (String user : followersArray) {
-                followerList.add(user);
+        synchronized (LOCK) {
+            try (BufferedReader br = new BufferedReader(new FileReader(userIdinfo))) {
+                String line1 = "";
+                line1 = br.readLine();
+                this.userID = line1.split(";")[0];
+                this.password = line1.split(";")[1];
+                this.userName = br.readLine();
+                this.photoPathway = br.readLine();
+                this.accountType = Integer.parseInt(br.readLine());
+                String followers = br.readLine();
+                String[] followersArray = followers.split(";");
+                for (String user : followersArray) {
+                    followerList.add(user);
+                }
+                String following = br.readLine();
+                String[] followingArray = following.split(";");
+                for (String user : followingArray) {
+                    followingList.add(user);
+                }
+                String blocking = br.readLine();
+                String[] blockingArray = blocking.split(";");
+                for (String user : blockingArray) {
+                    blockedList.add(user);
+                }
+                String chatting = br.readLine();
+                String[] chattingArray = chatting.split(";");
+                for (String user : chattingArray) {
+                    chatIDList.add(user);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            String following = br.readLine();
-            String[] followingArray = following.split(";");
-            for (String user : followingArray) {
-                followingList.add(user);
-            }
-            String blocking = br.readLine();
-            String[] blockingArray = blocking.split(";");
-            for (String user : blockingArray) {
-                blockedList.add(user);
-            }
-            String chatting = br.readLine();
-            String[] chattingArray = chatting.split(";");
-            for (String user : chattingArray) {
-                chatIDList.add(user);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
-}
 
     /**
      * Constructs a new User with the specified username and password.
@@ -126,21 +153,21 @@ public class User implements UserInterface {
     }
 
     /**
-     * Sets the username of the user.
-     *
-     * @param username the new username
-     */
-    public void setUsername(String username) {
-        this.userName = username;
-    }
-
-    /**
      * Retrieves the username of the user.
      *
      * @return the username as a {@code String}
      */
     public String getUsername() {
         return this.userName;
+    }
+
+    /**
+     * Sets the username of the user.
+     *
+     * @param username the new username
+     */
+    public void setUsername(String username) {
+        this.userName = username;
     }
 
     /**
@@ -153,13 +180,22 @@ public class User implements UserInterface {
     }
 
     /**
+     * Sets the user ID for the user.
+     *
+     * @param id the new user ID to be set
+     */
+    public synchronized void setUserID(String id) {
+        this.userID = id;
+    }
+
+    /**
      * Generates a new unique user ID.
      *
      * @return the generated user ID as a {@code String}
      */
     public String createUserID() {
         String id = "U_";
-        synchronized(lock){
+        synchronized (LOCK) {
             try (BufferedReader reader = new BufferedReader(new FileReader(USERIDLIST))) {
                 String line = reader.readLine();
                 while (line != null) {
@@ -167,26 +203,16 @@ public class User implements UserInterface {
                     line = reader.readLine();
                 }
             } catch (IOException e) {
-            e.printStackTrace();
-        }
+                e.printStackTrace();
+            }
 
-        String number = String.valueOf(counter.get());
-        int length = number.length();
-        for (int i = 0; i < 4 - length; i++) {
-            id += "0";
+            String number = String.valueOf(counter.get());
+            int length = number.length();
+            for (int i = 0; i < 4 - length; i++) {
+                id += "0";
+            }
+            return id + number;
         }
-        return id + number;
-    }
-}
-
-    /**
-     * Sets the file pathway to the user's profile picture and updates data storage.
-     *
-     * @param newPhotoPathway the file pathway to the profile picture
-     */
-    public synchronized void setProfilePic(String newPhotoPathway) {
-        this.photoPathway = newPhotoPathway;
-        writeData();
     }
 
     /**
@@ -196,6 +222,16 @@ public class User implements UserInterface {
      */
     public synchronized String getProfilePic() {
         return this.photoPathway;
+    }
+
+    /**
+     * Sets the file pathway to the user's profile picture and updates data storage.
+     *
+     * @param newPhotoPathway the file pathway to the profile picture
+     */
+    public synchronized void setProfilePic(String newPhotoPathway) {
+        this.photoPathway = newPhotoPathway;
+        writeData();
     }
 
     /**
@@ -226,7 +262,6 @@ public class User implements UserInterface {
         }
         return false;
     }
-
 
     /**
      * Saves the user's data to a file named with the user ID.
@@ -483,16 +518,16 @@ public class User implements UserInterface {
     /**
      * Sends a message in a specified chat.
      *
-     * @param chatID the ID of the chat to send the message to
-     * @param message the message content
-     * @param type the message type (0 for text)
+     * @param chatID   the ID of the chat to send the message to
+     * @param message  the message content
+     * @param type     the message type (0 for text)
      * @param senderID the ID of the user sending the message
      * @param username the username of the user sending the message
      * @param userType the type of the user sending the message
      * @return {@code true} if the message was successfully sent, {@code false} otherwise
      * @throws NoChatFoundException if the specified chat ID is not found
      */
-    public boolean sendText(String chatID, String message, int type, String senderID, String username, int userType) 
+    public boolean sendText(String chatID, String message, int type, String senderID, String username, int userType)
             throws NoChatFoundException {
         if (chatIDList.contains(chatID)) {
             Chat existingChat = null;
@@ -511,7 +546,7 @@ public class User implements UserInterface {
     /**
      * Verifies if the provided username and password match any user entry in the system.
      *
-     * @param username the username to verify
+     * @param username        the username to verify
      * @param passwordToCheck the password to verify
      * @return {@code true} if the username and password match an existing user, {@code false} otherwise
      */
@@ -555,7 +590,7 @@ public class User implements UserInterface {
     /**
      * Creates a new user entry by saving their username, password, and user ID to the user ID list.
      *
-     * @param username the username of the new user
+     * @param username        the username of the new user
      * @param newUserPassword the password of the new user
      * @param userIDparameter the user ID for the new user
      */
@@ -565,14 +600,5 @@ public class User implements UserInterface {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Sets the user ID for the user.
-     *
-     * @param id the new user ID to be set
-     */
-    public synchronized void setUserID(String id) {
-        this.userID = id;
     }
 }

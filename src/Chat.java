@@ -99,7 +99,8 @@ public class Chat implements ChatInterface {
                 while (line != null) {
                     String[] messageParts = line.split(";", 2);
                     try {
-                        this.messageList.add(new Message(messageParts[0], Integer.parseInt(messageParts[1].substring(0, 1)),
+                        this.messageList.add(new Message(messageParts[0],
+                                Integer.parseInt(messageParts[1].substring(0, 1)),
                                 messageParts[1].substring(1)));
                     } catch (Exception e) {
                         throw new InvalidFileFormatException("Invalid User Message in Chat");

@@ -7,7 +7,7 @@ import java.io.*;
 import java.util.ArrayList;
 
 /**
- * Social Media App - Chat Tests
+ * Chat Tests
  * <p>
  * Test class to test the Chat class
  * <p>
@@ -94,7 +94,8 @@ public class RunChatTests {
         messages.add(new Message("U_0005", 0, "what's up"));
         messages.add(new Message("U_0004", 0, "what going on"));
 
-        assertEquals("Chat does not properly instantiate Messages from file.", messages, testChat.getMessageList());
+        assertEquals("Chat does not properly instantiate Messages from file.",
+                messages, testChat.getMessageList());
 
         if (chatID.exists())
             chatID.delete();
@@ -114,7 +115,8 @@ public class RunChatTests {
         assertThrows("Chat does not properly catch invalid chatIDs when instantiating from file.",
                 InvalidFileFormatException.class, () -> new Chat("C_1234"));
 
-        try (PrintWriter writer = new PrintWriter(new FileOutputStream(testCorruptFile))) {
+        try (PrintWriter writer = new PrintWriter(
+                new FileOutputStream(testCorruptFile))) {
             writer.println("C_1234");
             writer.println("X_0003;U_0004;U_0005");
             writer.println("U_0003;0hey guys");
@@ -177,15 +179,19 @@ public class RunChatTests {
         String userIDFromFile = testMessageInfo[0];
         String messageFromFile = testMessageInfo[1].substring(1); // ignore message type
 
-        assertEquals("testAddMessage; The author's ID does not match up with what is on-file", testMessage.getAuthorID(), userIDFromFile);
-        assertEquals("testAddMessage; The message's contents do not match up with what is on-file", testMessage.getMessage(), messageFromFile);
+        assertEquals("testAddMessage; The author's ID does not match" +
+                "up with what is on-file", testMessage.getAuthorID(), userIDFromFile);
+        assertEquals("testAddMessage; The message's contents do not " +
+                "match up with what is on-file", testMessage.getMessage(), messageFromFile);
 
         try {   // also test whether message type is being written properly
             int messageTypeFromFile = Integer.parseInt(testMessageInfo[1].substring(0, 1));
-            assertEquals("testAddMessage; The message's type does not match up with what is on-file", testMessage.getMessageType(), messageTypeFromFile);
+            assertEquals("testAddMessage; The message's type does not " +
+                    "match up with what is on-file", testMessage.getMessageType(), messageTypeFromFile);
 
         } catch (NumberFormatException e) {
-            throw new RuntimeException("testAddMessage: The message's type could not converted, failing test!");
+            throw new RuntimeException("testAddMessage: The message's type " +
+                    "could not converted, failing test!");
         }
 
     }
@@ -209,7 +215,8 @@ public class RunChatTests {
         testChat1.deleteMessage(testMessage1.getAuthorID());
 
         boolean result = testChat1.getMessageList().contains(testMessage1);
-        assertEquals("testDeleteMessage: The messengerList should no longer contain the message instance!", true, result);
+        assertEquals("testDeleteMessage: The messengerList should no longer" +
+                "contain the message instance!", true, result);
 
         // Check if writeData() accurately represents the changes
         ArrayList<String> fileData = new ArrayList<>();
@@ -232,7 +239,9 @@ public class RunChatTests {
         assertEquals("testAddMessage: ChatID written to file does not match!", testChat1.getChatID(), chatIdFromFile);
 
         // The added message shouldn't be there anymore, so there should only be two lines in the entire file
-        assertEquals("testDeleteMessage: if message is added and then subsequently deleted, then the file should only have two lines! (empty message list)", 2, fileData.size());
+        assertEquals("testDeleteMessage: if message is added and then" +
+                " subsequently deleted, then the file should " +
+                "only have two lines! (empty message list)", 2, fileData.size());
     }
 
     @Test
