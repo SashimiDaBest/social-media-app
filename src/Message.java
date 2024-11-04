@@ -93,7 +93,8 @@ public class Message {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
 
-        Message message = (Message) obj;
-        return this.message.equals(message.message) && this.authorID.equals(message.authorID) && this.messageType == message.messageType;
+        Message messageToCompare = (Message) obj;
+        return this.message.equals(messageToCompare.message) && this.authorID.equals(messageToCompare.authorID) &&
+            this.messageType == messageToCompare.messageType;
     }
 }
