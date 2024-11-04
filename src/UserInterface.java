@@ -35,7 +35,8 @@ public interface UserInterface {
 
     public boolean sendText(String chatID, String message, int type, String userID, String username, int userType) throws NoChatFoundException;
     public boolean hasLogin(String username, String password);
-    public void createNewUser(String username, String password);
+    public void createNewUser(String username, String password, String userIDparameter);
+    public boolean userNameValidation(String username);
 
 
 
