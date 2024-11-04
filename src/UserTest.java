@@ -11,7 +11,7 @@ import java.util.Arrays;
  *
  * Status: In Progress
  *
- * @author derek mctume
+ * @author Derek Mctume
  *
  * @version 11/01/2024
  *
@@ -19,8 +19,8 @@ import java.util.Arrays;
 
 // NOTE: in order for mutator tests to work, accessors must also work
 public class UserTest {
-    
-    
+
+
 
     // Mutators:
     public void testSetUsername() {
@@ -28,17 +28,17 @@ public class UserTest {
         String testName = "This totally works";
         User testUser = new User();
         testUser.setUsername(testName);
-        
+
         String result = testUser.getUsername();
         assertEquals("testSetUsername: Setting username does not work",testName, result);
     }
 
     public void testSetPassword() {
-        
+
         String testPassword = "This totally works";
         User testUser = new User();
         testUser.setPassword(testPassword);
-        
+
         String result = testUser.getPassword();
         assertEquals("testSetPassword: Setting password does not work",testPassword, result);
     }
@@ -48,7 +48,7 @@ public class UserTest {
         String testPic = "i_dont_know_what_image_format_to_use.png";
         User testUser = new User();
         testUser.setProfilePic(testPic);
-        
+
         String result = testUser.getProfilePic();
         assertEquals("testSetProfilePic: Setting the profile pic does not work", testPic, result);
     }
@@ -58,7 +58,7 @@ public class UserTest {
         int testType = 1;
         User testUser = new User();
         testUser.setAccountType(testType);
-        
+
         int result = testUser.getAccountType();
         assertEquals("testSetAccountType: Setting the account type does not work",testType, result);
     }
@@ -88,14 +88,14 @@ public class UserTest {
 
         // Test 3: blocking a user that is already blocked should return false
         String testId3 = "For third test";
-        
+
         User testUser3 = new User();
         testUser3.getBlocked_ids().add(testId3);
         
         boolean result3 = testUser3.addBlock(testId3);
         assertEquals("testAddBlock: Blocking a user that is already blocked should return false",false, result3);
 
-        
+
     }
 
     // Requires addBlock() to work
@@ -109,10 +109,11 @@ public class UserTest {
         User testUser1 = new User();
         testUser1.addBlock(testId1);
         boolean result1 = testUser1.deleteBlock(testId1);
+
         assertEquals("testDeleteBlock: if the blocked ID is removed, then is should no longer be in the UserArray",true, result1); 
 
         // Test 2: if the blocked ID is not in blocked_ids, then it should return false
-        
+
         String testId2 = "this works";
         User testUser2 = new User();
         boolean result2 = testUser2.deleteBlock(testId2);
@@ -165,10 +166,10 @@ public class UserTest {
 
         // Test 2: Should duplicates be prevented???
 
-        
+
     }
 
-    
+
     // requires createNewUser() to work
     public void testHasLogin() {
 
@@ -216,7 +217,7 @@ public class UserTest {
         String valCheck = testUser.getUserPass().get(testName);
 
         assertEquals(true, keyIsIn);
-        assertEquals(testPass, valCheck); 
+        assertEquals(testPass, valCheck);
     }
 
     // requires addChat() to work
