@@ -3,13 +3,13 @@ import org.junit. Ignore;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Social Media App - Message Tests
+ * Message Tests
  *
  * JUnit tests for Message Class
  *
  * Status: In Progress
  *
- * @author derek mctume
+ * @author Derek Mctume
  *
  * @version 11/01/2024
  *
@@ -26,10 +26,11 @@ public class MessageTest {
         boolean result1 = testMessage1.getMessage().equals(param1);
         assertEquals("testGetMessage: Returned message should match the one in the constructor when they are equal",true, result1);
 
-        // Test 2: returns false if message is NOT the one passed to the constructor 
+        // Test 2: returns false if message is NOT the one passed to the constructor
         String param2 = "This doesn't work";
         Message testMessage2 = new Message("ID HERE", 0, "Some other param");
         boolean result2 = testMessage2.getMessage().equals(param2);
+      
         assertEquals("testGotMessage: Returned message should not match the one in the constructor when they aren't equal",false, result2); 
 
     }
@@ -40,6 +41,7 @@ public class MessageTest {
         String param1 = "1347284798";
         Message testMessage1 = new Message(param1, 0, "MESSAGE HERE");
         boolean result1 = testMessage1.getAuthorID().equals(param1);
+
         assertEquals("testGetAuthorID: Returned authorID should match the one in the constructor when they are equal",true, result1); 
 
         // Test 2: same as in testGetAuthorID()
@@ -58,7 +60,7 @@ public class MessageTest {
         assertEquals("testGetMessageType: Returned message type should match the one in the constructor when they are equal",true, result1); 
 
 
-        // Test 2: same as everything else 
+        // Test 2: same as everything else
         int param2 = 1;
         Message testMessage2 = new Message("ID HERE", 0, "MESSAGE HERE");
         boolean result2 = (testMessage2.getMessageType() == param2);
@@ -67,7 +69,7 @@ public class MessageTest {
 
     public void testSetMessage() {
 
-        // Test 1: if there is no image (type == 0), then 
+        // Test 1: if there is no image (type == 0), then
         // set the message to the param and return true
         String message1 = "Test message";
         Message testMessage1 = new Message("09090", 0, "nothing here yet");
@@ -89,7 +91,7 @@ public class MessageTest {
 
 
     public static void main(String[] args) {
-        
+
         MessageTest runTests = new MessageTest();
         runTests.testGetMessage();
         runTests.testGetAuthorID();
