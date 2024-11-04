@@ -5,7 +5,8 @@ CS 180 Team Project
 
 ## Compiling Instructions
 
-Run "java Main.java && java Main" to compile and run the project.
+"java Main.java && java Main" Will be used to compile and run the project.
+Testing instantiation and methods can be done by creating User, Chat, and Message objects in any public static void main(String[] args) using the constructors and methods.
 
 ## Submission Record
 
