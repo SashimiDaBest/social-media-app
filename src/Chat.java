@@ -50,65 +50,67 @@ public class Chat implements ChatInterface {
      * @throws InvalidFileFormatException if the chat file format is invalid
      */
     public Chat(String chatID) throws InvalidFileFormatException {
-        try (BufferedReader reader = new BufferedReader(new FileReader(chatID + ".txt"))) {
+        synchronized (Chat.class) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(chatID + ".txt"))) {
 
-            String line = reader.readLine();
+                String line = reader.readLine();
 
-            try {
-                Integer.parseInt(chatID.substring(2));
-                if (line.length() != 6 || !line.startsWith("C_"))
-                    throw new InvalidFileFormatException("Invalid chatID Format!");
-            } catch (NumberFormatException e) {
-                throw new InvalidFileFormatException("Invalid chatID Format!");
-            }
-
-            this.chatID = line;
-
-            if (line != null) {
-                line = reader.readLine();
-
-                int count = 0;
-                for (int i = 0; i < line.length(); i++) {
-                    if (line.charAt(i) == ';') {
-                        count++;
-                    }
-                }
-
-                String[] members = line.split(";", count + 1);
-
-                for (String member : members) {
-                    try {
-                        Integer.parseInt(member.substring(2));
-                        if (member.length() != 6 || !member.startsWith("U_"))
-                            throw new InvalidFileFormatException("Invalid memberID Format!");
-                    } catch (NumberFormatException e) {
-                        throw new InvalidFileFormatException("Invalid memberID Format!");
-                    }
-                }
-
-                this.memberList = new ArrayList<>(Arrays.asList(members));
-            } else {
-                throw new InvalidFileFormatException("No Users Found in Chat");
-            }
-
-            this.messageList = new ArrayList<>();
-
-            line = reader.readLine();
-
-            while (line != null) {
-                String[] messageParts = line.split(";", 2);
                 try {
-                    this.messageList.add(new Message(messageParts[0], Integer.parseInt(messageParts[1].substring(0, 1)),
-                            messageParts[1].substring(1)));
-                } catch (Exception e) {
-                    throw new InvalidFileFormatException("Invalid User Message in Chat");
+                    Integer.parseInt(chatID.substring(2));
+                    if (line.length() != 6 || !line.startsWith("C_"))
+                        throw new InvalidFileFormatException("Invalid chatID Format!");
+                } catch (NumberFormatException e) {
+                    throw new InvalidFileFormatException("Invalid chatID Format!");
                 }
 
-                line = reader.readLine();
-            }
+                this.chatID = line;
 
-        } catch (IOException e) {
-            e.printStackTrace();
+                if (line != null) {
+                    line = reader.readLine();
+
+                    int count = 0;
+                    for (int i = 0; i < line.length(); i++) {
+                        if (line.charAt(i) == ';') {
+                            count++;
+                        }
+                    }
+
+                    String[] members = line.split(";", count + 1);
+
+                    for (String member : members) {
+                        try {
+                            Integer.parseInt(member.substring(2));
+                            if (member.length() != 6 || !member.startsWith("U_"))
+                                throw new InvalidFileFormatException("Invalid memberID Format!");
+                        } catch (NumberFormatException e) {
+                            throw new InvalidFileFormatException("Invalid memberID Format!");
+                        }
+                    }
+
+                    this.memberList = new ArrayList<>(Arrays.asList(members));
+                } else {
+                    throw new InvalidFileFormatException("No Users Found in Chat");
+                }
+
+                this.messageList = new ArrayList<>();
+
+                line = reader.readLine();
+
+                while (line != null) {
+                    String[] messageParts = line.split(";", 2);
+                    try {
+                        this.messageList.add(new Message(messageParts[0], Integer.parseInt(messageParts[1].substring(0, 1)),
+                                messageParts[1].substring(1)));
+                    } catch (Exception e) {
+                        throw new InvalidFileFormatException("Invalid User Message in Chat");
+                    }
+
+                    line = reader.readLine();
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -123,14 +125,14 @@ public class Chat implements ChatInterface {
         this.memberList = memberList;
         this.messageList = new ArrayList<>();
         writeData();
-
-        try (PrintWriter writer = new PrintWriter(new FileOutputStream(chatIDListDoc, true))) {
-            writer.println(this.chatID);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+        synchronized (Chat.class) {
+            try (PrintWriter writer = new PrintWriter(new FileOutputStream(chatIDListDoc, true))) {
+                writer.println(this.chatID);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+            counter.set(0);
         }
-
-        counter.set(0);
     }
 
     /**
@@ -139,7 +141,7 @@ public class Chat implements ChatInterface {
      * The chat ID and member list are written as the first two lines, followed by each message.
      * </p>
      */
-    public void writeData() {
+    public synchronized void writeData() {
         File chatData = new File(this.chatID + ".txt");
         try (PrintWriter writer = new PrintWriter(new FileOutputStream(chatData, false))) {
 
@@ -164,7 +166,7 @@ public class Chat implements ChatInterface {
      *
      * @return the chat ID
      */
-    public String getChatID() {
+    public synchronized String getChatID() {
         return chatID;
     }
 
@@ -173,27 +175,27 @@ public class Chat implements ChatInterface {
      *
      * @return a unique chat ID in the format "C_XXXX"
      */
-    public String createChatID() {
+    public synchronized String createChatID() {
         String id = "C_";
+        synchronized (Chat.class) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(chatIDListDoc))) {
+                String line = reader.readLine();
+                while (line != null) {
+                    counter.incrementAndGet();
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(chatIDListDoc))) {
-            String line = reader.readLine();
-            while (line != null) {
-                counter.incrementAndGet();
-
-                line = reader.readLine();
+                    line = reader.readLine();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
-        String number = String.valueOf(counter.get());
-        int length = number.length(); //4-1
-        for (int i = 0; i < 4 - length; i++) {
-            id += "0";
+            String number = String.valueOf(counter.get());
+            int length = number.length();
+            for (int i = 0; i < 4 - length; i++) {
+                id += "0";
+            }
         }
-
-        return id + number;
+        return id + counter.get();
     }
 
     /**
@@ -201,7 +203,7 @@ public class Chat implements ChatInterface {
      *
      * @return the member list
      */
-    public ArrayList<String> getMemberList() {
+    public synchronized ArrayList<String> getMemberList() {
         return memberList;
     }
 
@@ -210,7 +212,7 @@ public class Chat implements ChatInterface {
      *
      * @param memberList the new list of member IDs
      */
-    public void setMemberList(ArrayList<String> memberList) {
+    public synchronized void setMemberList(ArrayList<String> memberList) {
         this.memberList = memberList;
     }
 
@@ -219,7 +221,7 @@ public class Chat implements ChatInterface {
      *
      * @return the message list
      */
-    public ArrayList<Message> getMessageList() {
+    public synchronized ArrayList<Message> getMessageList() {
         return messageList;
     }
 
@@ -228,7 +230,7 @@ public class Chat implements ChatInterface {
      *
      * @param message the message to be added
      */
-    public void addMessage(Message message) {
+    public synchronized void addMessage(Message message) {
         messageList.add(message);
         writeData();
     }
@@ -239,7 +241,7 @@ public class Chat implements ChatInterface {
      * @param messageText the new text for the message
      * @param authorID    the ID of the author whose message will be edited
      */
-    public void editMessage(String messageText, String authorID) {
+    public synchronized void editMessage(String messageText, String authorID) {
         for (int i = messageList.size() - 1; i >= 0; i--) {
             if (messageList.get(i).getAuthorID().equals(authorID)) {
                 boolean setSuccessful = messageList.get(i).setMessage(messageText);
@@ -256,7 +258,7 @@ public class Chat implements ChatInterface {
      *
      * @param authorID the ID of the author whose message will be deleted
      */
-    public void deleteMessage(String authorID) {
+    public synchronized void deleteMessage(String authorID) {
         for (int i = messageList.size() - 1; i >= 0; i--) {
             if (messageList.get(i).getAuthorID().equals(authorID)) {
                 messageList.remove(i);

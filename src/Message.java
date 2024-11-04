@@ -73,7 +73,7 @@ public class Message {
      * @param messageText the new content for the message
      * @return {@code true} if the message was successfully updated, {@code false} if the message type is not text
      */
-    public boolean setMessage(String messageText) {
+    public synchronized boolean setMessage(String messageText) {
         if (this.messageType == 0) {
             this.message = messageText;
             return true;
