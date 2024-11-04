@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
+
 /**
  * Chat Class
  * <p>
@@ -11,21 +12,32 @@ import java.util.concurrent.atomic.*;
  * <p>
  * Status: Complete
  * </p>
+ *
  * @author Connor Pugliese
  * @author Soleil Pham
  * @version 11/02/2024
  * @since 1.0
  */
 public class Chat implements ChatInterface {
-    /** The unique identifier for the chat. */
+    /**
+     * The unique identifier for the chat.
+     */
     private String chatID;
-    /** The list of member IDs participating in this chat. */
+    /**
+     * The list of member IDs participating in this chat.
+     */
     private ArrayList<String> memberList;
-    /** The list of messages in this chat. */
+    /**
+     * The list of messages in this chat.
+     */
     private ArrayList<Message> messageList;
-    /** Counter to generate unique chat IDs. */
+    /**
+     * Counter to generate unique chat IDs.
+     */
     private static AtomicInteger counter = new AtomicInteger(0);
-    /** File to store a list of all chat IDs. */
+    /**
+     * File to store a list of all chat IDs.
+     */
     private static String chatIDListDoc = "chatIDList.txt";
 
     /**
@@ -225,7 +237,7 @@ public class Chat implements ChatInterface {
      * Edits the most recent message by the specified author. Updates the file if the edit is successful.
      *
      * @param messageText the new text for the message
-     * @param authorID the ID of the author whose message will be edited
+     * @param authorID    the ID of the author whose message will be edited
      */
     public void editMessage(String messageText, String authorID) {
         for (int i = messageList.size() - 1; i >= 0; i--) {
