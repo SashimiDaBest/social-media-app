@@ -472,7 +472,7 @@ public class UserTest {
         userTests.testSetAccountType();
         userTests.testSetUserID();
 
-        // Every other method:
+        // Everyt other method:
         userTests.testAddBlock();
         userTests.testDeleteBlock();
         userTests.testAddChat();
