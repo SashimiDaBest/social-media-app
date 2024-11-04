@@ -22,7 +22,7 @@ public class SimpleServer {
      * The server socket that listens for client connections.
      */
     private ServerSocket serverSocket;
-//    private ExecutorService executorService;
+    //    private ExecutorService executorService;
 
     /**
      * Initializes a new {@code SimpleServer} that binds to the specified port.
@@ -49,7 +49,7 @@ public class SimpleServer {
         while (true) {
             try {
                 Socket socket = serverSocket.accept();
-//                executorService.submit(new ClientHandler(clientSocket));
+                //                executorService.submit(new ClientHandler(clientSocket));
             } catch (IOException e) {
                 System.out.println("Error accepting connection" + e.getMessage());
             }
@@ -67,6 +67,6 @@ public class SimpleServer {
      */
     public void stop() throws IOException {
         serverSocket.close();
-//        executorService.shutdown();
+        //        executorService.shutdown();
     }
 }

@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 /**
- * Social Media App - User Interface
+ * User Interface
  * <p>
  * Defines the essential behaviors for a user within a social media application, including methods for managing
  * user attributes such as username, profile picture, followers, following, blocked users, chats, and authentication.
@@ -69,7 +69,7 @@ public interface UserInterface {
      * @param follower_id the ID of the follower to be removed
      * @return {@code true} if the follower was successfully removed, {@code false} otherwise
      */
-    public boolean deleteFollower(String follower_id);
+    public boolean deleteFollower(String followerId);
 
     /**
      * Adds a new follower by their ID.
@@ -92,7 +92,7 @@ public interface UserInterface {
      * @param following_id the ID of the user to stop following
      * @return {@code true} if the user was successfully removed from following, {@code false} otherwise
      */
-    public boolean deleteFollowing(String following_id);
+    public boolean deleteFollowing(String followingId);
 
     /**
      * Adds a new user to the following list by their ID.
@@ -138,14 +138,14 @@ public interface UserInterface {
      * @param chat_id the ID of the chat to add
      * @return {@code true} if the chat was successfully added, {@code false} otherwise
      */
-    public boolean addChat(String chat_id);
+    public boolean addChat(String chatId);
 
     /**
      * Creates a new chat with the specified recipient IDs.
      *
      * @param recipient_id the list of recipient IDs for the new chat
      */
-    public void createChat(ArrayList<String> recipient_id);
+    public void createChat(ArrayList<String> recipientId);
 
     /**
      * Deletes a chat by its ID.
@@ -153,7 +153,7 @@ public interface UserInterface {
      * @param chat_id the ID of the chat to delete
      * @return {@code true} if the chat was successfully deleted, {@code false} otherwise
      */
-    public boolean deleteChat(String chat_id);
+    public boolean deleteChat(String chatId);
 
     /**
      * Retrieves the account type of the user.
@@ -203,7 +203,8 @@ public interface UserInterface {
      * @return {@code true} if the message was successfully sent, {@code false} otherwise
      * @throws NoChatFoundException if the specified chat ID is not found
      */
-    public boolean sendText(String chatID, String message, int type, String userID, String username, int userType) throws NoChatFoundException;
+    public boolean sendText(String chatID, String message, int type,
+                            String userID, String username, int userType) throws NoChatFoundException;
 
     /**
      * Verifies if the provided username and password match the user's credentials.
