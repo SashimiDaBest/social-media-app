@@ -1,6 +1,7 @@
 import java.net.*;
 import java.util.*;
 import java.io.*;
+
 /**
  * Client Handler
  * <p>
@@ -12,12 +13,15 @@ import java.io.*;
  * This class implements {@link Runnable} to allow handling client connections in separate threads,
  * supporting concurrent communication with multiple clients.
  * </p>
+ *
  * @author Soleil Pham
  * @version 11/01/2024
  * @since 1.0
  */
 public class ClientHandler implements Runnable {
-    /** The socket representing the client connection. */
+    /**
+     * The socket representing the client connection.
+     */
     private Socket socket;
 
     /**
@@ -28,6 +32,7 @@ public class ClientHandler implements Runnable {
     public ClientHandler(Socket socket) {
         this.socket = socket;
     }
+
     /**
      * Executes the client handling logic. Manages input and output streams for client-server communication.
      * Reads data from the client and sends responses. Ensures resources are properly closed in case of an error.

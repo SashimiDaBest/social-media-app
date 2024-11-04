@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+
 /**
  * Simple Server
  * <p>
@@ -11,12 +12,15 @@ import java.net.Socket;
  * <p>
  * This class could be extended by adding an {@code ExecutorService} for managing multiple clients concurrently.
  * </p>
+ *
  * @author Soleil Pham
  * @version 11/01/2024
  * @since 1.0
  */
 public class SimpleServer {
-    /** The server socket that listens for client connections. */
+    /**
+     * The server socket that listens for client connections.
+     */
     private ServerSocket serverSocket;
 //    private ExecutorService executorService;
 

@@ -1,4 +1,5 @@
 import java.util.*;
+
 /**
  * Chat Interface
  * <p>
@@ -8,6 +9,7 @@ import java.util.*;
  * <p>
  * Status: Complete
  * </p>
+ *
  * @author Soleil Pham
  * @version 11/02/2024
  * @since 1.0
@@ -66,7 +68,7 @@ public interface ChatInterface {
      * by the author's ID.
      *
      * @param messageText the new text for the message
-     * @param authorID the ID of the author whose message will be edited
+     * @param authorID    the ID of the author whose message will be edited
      */
     public void editMessage(String messageText, String authorID);
 
