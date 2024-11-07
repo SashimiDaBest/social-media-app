@@ -73,7 +73,7 @@ public class Message {
      * @param messageText the new content for the message
      * @return {@code true} if the message was successfully updated, {@code false} if the message type is not text
      */
-    public boolean setMessage(String messageText) {
+    public synchronized boolean setMessage(String messageText) {
         if (this.messageType == 0) {
             this.message = messageText;
             return true;
@@ -93,8 +93,9 @@ public class Message {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
 
-        Message messageToCompare = (Message) obj;
-        return this.message.equals(messageToCompare.message) && this.authorID.equals(messageToCompare.authorID) &&
-            this.messageType == messageToCompare.messageType;
+        Message messageObj = (Message) obj;
+        return this.message.equals(messageObj.message) &&
+                this.authorID.equals(messageObj.authorID) &&
+                this.messageType == messageObj.messageType;
     }
 }
