@@ -15,7 +15,7 @@ import java.util.ArrayList;
  *
  * @author Derek Mctume
  * @author Connor Pugliese
- * @version 11/02/2024
+ * @version 11/07/2024
  */
 public class RunChatTests {
     @Test
