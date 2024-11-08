@@ -1,11 +1,7 @@
-import java.awt.event.ActionListener;
 import java.net.*;
-import java.util.*;
 import java.io.*;
 import java.awt.*;
-import java.util.Timer;
 import javax.swing.*;
-import javax.swing.event.*;
 /**
  * Client Handler
  * <p>
@@ -31,15 +27,12 @@ public class ClientHandler implements Runnable {
 
     public static void main(String[] args) {
         try {
-            // Create a socket and connect to the server
-            Socket socket = new Socket("localhost", 5000);
+            Socket socket = new Socket("localhost", 12);
             SwingUtilities.invokeLater(new ClientHandler(socket));
             // Replace "localhost" with the server's IP address if needed
-
             // Now you can use the socket to send and receive data
-
             // Close the socket when done
-            socket.close();
+            // socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -66,10 +59,14 @@ public class ClientHandler implements Runnable {
     public void run() {
         try (BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
-            //Do something here
-            frame = new JFrame("Multi-Page GUI Example");
+
+            frame = new JFrame("Boiler Gram");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(400, 300);
+            frame.setLocationRelativeTo(null);
+            frame.setSize(600, 400);
+
+            JPanel cardPanel = new JPanel(new CardLayout());
+
             frame.setLayout(new CardLayout());
 
             // Create instances of each page
@@ -80,18 +77,18 @@ public class ClientHandler implements Runnable {
             OtherProfilePage page32 = new OtherProfilePage();
 
             // Add pages to the frame
-            frame.add(page1, "page1");
-            frame.add(page21, "page21");
-            frame.add(page22, "page22");
-            frame.add(page31, "page31");
-            frame.add(page32, "page32");
+            cardPanel.add(page1, "page1");
+//            cardPanel.add(page21, "page21");
+//            cardPanel.add(page22, "page22");
+//            cardPanel.add(page31, "page31");
+//            cardPanel.add(page32, "page32");
 
-            // Show the first page
-            CardLayout cardLayout = (CardLayout) frame.getContentPane().getLayout();
-            cardLayout.show(frame.getContentPane(), "Page1");
+            frame.add(cardPanel);
+
+            CardLayout cardLayout = (CardLayout) cardPanel.getLayout();
+            cardLayout.show(cardPanel, "page1");
 
             frame.setVisible(true);
-
         } catch (IOException e) {
             System.err.println("Client connection error: " + e.getMessage());
         }

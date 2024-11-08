@@ -78,14 +78,11 @@ public class SimpleServer {
      * @param args command-line arguments passed to the application (not used)
      */
     public static void main(String[] args) {
-        System.out.println("Hello world!");
-
         try {
-            SimpleServer server = new SimpleServer(12345);
+            SimpleServer server = new SimpleServer(12);
             server.start();
         } catch (IOException e) {
             System.err.println("Server error: " + e.getMessage());
         }
-
     }
 }
