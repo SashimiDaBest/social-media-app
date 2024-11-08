@@ -7,7 +7,7 @@ import java.io.*;
 import java.util.ArrayList;
 
 /**
- * Social Media App - Chat Tests
+ * Chat Tests
  * <p>
  * Test class to test the Chat class
  * <p>
@@ -116,7 +116,8 @@ public class RunChatTests {
         messages.add(new Message("U_0005", 0, "what's up"));
         messages.add(new Message("U_0004", 0, "what going on"));
 
-        assertEquals("Chat does not properly instantiate Messages from file.", messages, testChat.getMessageList());
+        assertEquals("Chat does not properly instantiate Messages from file.",
+                messages, testChat.getMessageList());
 
         // Delete the test file created.
         if (inputDataFile.exists())
@@ -138,7 +139,8 @@ public class RunChatTests {
         assertThrows("Chat does not properly catch invalid chatIDs when instantiating from file.",
                 InvalidFileFormatException.class, () -> new Chat("C_1234"));
 
-        try (PrintWriter writer = new PrintWriter(new FileOutputStream(testCorruptFile))) {
+        try (PrintWriter writer = new PrintWriter(
+                new FileOutputStream(testCorruptFile))) {
             writer.println("C_1234");
             writer.println("X_0003;U_0004;U_0005"); // corrupt line
             writer.println("U_0003;0hey guys");
@@ -213,12 +215,15 @@ public class RunChatTests {
         String userIDFromFile = testMessageInfo[0];
         String messageFromFile = testMessageInfo[1].substring(1); // ignore message type
 
-        assertEquals("testAddMessage; The author's ID does not match up with what is on-file", testMessage.getAuthorID(), userIDFromFile);
-        assertEquals("testAddMessage; The message's contents do not match up with what is on-file", testMessage.getMessage(), messageFromFile);
+        assertEquals("testAddMessage; The author's ID does not match" +
+                "up with what is on-file", testMessage.getAuthorID(), userIDFromFile);
+        assertEquals("testAddMessage; The message's contents do not " +
+                "match up with what is on-file", testMessage.getMessage(), messageFromFile);
 
         try {   // also test whether message type is being written properly
             int messageTypeFromFile = Integer.parseInt(testMessageInfo[1].substring(0, 1));
-            assertEquals("testAddMessage; The message's type does not match up with what is on-file", testMessage.getMessageType(), messageTypeFromFile);
+            assertEquals("testAddMessage; The message's type does not " +
+                    "match up with what is on-file", testMessage.getMessageType(), messageTypeFromFile);
 
         } catch (NumberFormatException e) {
             throw new RuntimeException("testAddMessage: The message's type " +

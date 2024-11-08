@@ -2,11 +2,7 @@ U_0100;mySecret123
 johndoe_92
 profilePic_001.jpg
 0
-<follower>
 U_2412;U_4533;U_5201;U_6312;U_6890
-<following>
 U_4533;U_5201;U_3775;U_5211;U_6890;U_8455
-<blocked>
 U_2334;U_6616;U_6327;U_4225
-<chatID>
 C_7210;C_9323;C_4012;C_6221

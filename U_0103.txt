@@ -2,11 +2,7 @@ U_0103;complexPassword007
 mike_smith_45
 galaxy_explorer_95.jpg
 0
-<follower>
 U_2345;U_3467
-<following>
 U_1852;U_4620
-<blocked>
 U_1740
-<chatID>
 C_1023
