@@ -17,11 +17,15 @@ public class WelcomePage extends JPanel {
         JLabel newAccount = new JLabel("Don't have an account?", JLabel.CENTER);
         JButton newAccountButton = new JButton("Sign Up");
 
+        JPanel titlePanel = new JPanel();
+        titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.Y_AXIS));
+        titlePanel.setBorder(new EmptyBorder(10, 0, 10, 0));
+        title.setAlignmentX(Component.CENTER_ALIGNMENT);
+        titlePanel.add(title);
+
         JPanel inputPanel = new JPanel();
         inputPanel.setLayout(new GridBagLayout());
         inputPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
-
-        inputPanel.add(title);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
@@ -77,6 +81,7 @@ public class WelcomePage extends JPanel {
         JPanel ultimatePanel = new JPanel();
         ultimatePanel.setLayout(new BoxLayout(ultimatePanel, BoxLayout.Y_AXIS));
         ultimatePanel.setBorder(new EmptyBorder(20, 20, 20, 20));
+        ultimatePanel.add(titlePanel);
         ultimatePanel.add(inputPanel);
         ultimatePanel.add(optionsPanel);
 
