@@ -4,7 +4,7 @@ import javax.swing.border.EmptyBorder;
 
 public class WelcomePage extends JPanel {
 
-    public WelcomePage() {
+    public WelcomePage(CardLayout cardLayout, JPanel cardPanel) {
         setLayout(new BorderLayout());
         JLabel title = new JLabel("Welcome to Boiler Gram!", JLabel.CENTER);
         JLabel usernameLabel = new JLabel("Username: ");
@@ -16,6 +16,10 @@ public class WelcomePage extends JPanel {
         JLabel orText = new JLabel("-------- OR --------", JLabel.CENTER);
         JLabel newAccount = new JLabel("Don't have an account?", JLabel.CENTER);
         JButton newAccountButton = new JButton("Sign Up");
+
+        signInButton.addActionListener(e -> cardLayout.show(cardPanel, "Page2"));
+        forgetPasswordButton.addActionListener(e -> cardLayout.show(cardPanel, "Page2"));
+        newAccountButton.addActionListener(e -> cardLayout.show(cardPanel, "Page2"));
 
         //1st Panel - Title
         JPanel titlePanel = new JPanel();
