@@ -15,25 +15,33 @@ import java.util.ArrayList;
  *
  * @author Derek Mctume
  * @author Connor Pugliese
- * @version 11/02/2024
+ * @version 11/07/2024
  */
 public class RunChatTests {
     @Test
     public void testNoReadConstructor() {
+        // Create the list of members the Chat will have.
+        ArrayList<String> memberIDs = new ArrayList<>();
         String member1ID = "U_0001";
         String member2ID = "U_0002";
+        memberIDs.add(member1ID);
+        memberIDs.add(member2ID);
+
+        // Create test messages
         Message testMessage1 = new Message(member1ID, 0, "hey bud!");
         Message testMessage2 = new Message(member2ID, 0, "hey hru!");
 
-        ArrayList<String> memberIDs = new ArrayList<>();
-        memberIDs.add(member1ID);
-        memberIDs.add(member2ID);
+        // Create this Chat using the constructor that does not read from a file and
+        // keep track of the data file it creates.
         Chat testChat = new Chat(memberIDs);
         File outputFile = new File(testChat.getChatID() + ".txt");
+
+        // Add the test messages to the chat.
         testChat.addMessage(testMessage1);
         testChat.addMessage(testMessage2);
         ArrayList<String> dataFileContents = new ArrayList<>();
 
+        // Read the data file contents.
         try (BufferedReader reader = new BufferedReader(new FileReader(outputFile))) {
             String line = reader.readLine();
             while (line != null) {
@@ -45,6 +53,7 @@ public class RunChatTests {
             e.printStackTrace();
         }
 
+        // Create an ArrayList of what the data file created for the chat should contain.
         ArrayList<String> expectedFileContents = new ArrayList<>();
         expectedFileContents.add(testChat.getChatID());
         expectedFileContents.add(member1ID + ";" + member2ID);
@@ -54,16 +63,26 @@ public class RunChatTests {
         assertEquals("Created chat data file does not match expected contents.", expectedFileContents,
                 dataFileContents);
 
+        // Delete files used for testing
         if (outputFile.exists())
             outputFile.delete();
+
+        // Clear list of chat IDs
+        try {
+            PrintWriter clear = new PrintWriter(new FileOutputStream("chatIDList.txt"));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
     public void testReadConstructor() {
-        File chatID = new File("C_1234.txt");
+        // Create the data file that will be read from.
+        File inputDataFile = new File("C_1234.txt");
         Chat testChat = null;
 
-        try (PrintWriter writer = new PrintWriter(new FileOutputStream(chatID))) {
+        // Write data to the data file that will be passed through the constructor.
+        try (PrintWriter writer = new PrintWriter(new FileOutputStream(inputDataFile))) {
             writer.println("C_1234");
             writer.println("U_0003;U_0004;U_0005");
             writer.println("U_0003;0hey guys");
@@ -73,6 +92,7 @@ public class RunChatTests {
             e.printStackTrace();
         }
 
+        // Instantiate the chat using the data file.
         try {
             testChat = new Chat("C_1234");
         } catch (InvalidFileFormatException e) {
@@ -81,6 +101,7 @@ public class RunChatTests {
 
         assertEquals("Chat does not properly instantiate chat ID from file.", testChat.getChatID(), "C_1234");
 
+        // Create a list of what members this Chat should have based on the data file.
         ArrayList<String> expectedMemberIDs = new ArrayList<>();
         expectedMemberIDs.add("U_0003");
         expectedMemberIDs.add("U_0004");
@@ -89,6 +110,7 @@ public class RunChatTests {
         assertEquals("Chat does not properly instantiate member IDs from file.", testChat.getMemberList(),
                 expectedMemberIDs);
 
+        // Create a list of what messages this Chat should have based on the data file.
         ArrayList<Message> messages = new ArrayList<>();
         messages.add(new Message("U_0003", 0, "hey guys"));
         messages.add(new Message("U_0005", 0, "what's up"));
@@ -96,13 +118,15 @@ public class RunChatTests {
 
         assertEquals("Chat does not properly instantiate Messages from file.", messages, testChat.getMessageList());
 
-        if (chatID.exists())
-            chatID.delete();
+        // Delete the test file created.
+        if (inputDataFile.exists())
+            inputDataFile.delete();
 
+        // Make a new test file that will have corrupt data.
         File testCorruptFile = new File("C_1234.txt");
 
         try (PrintWriter writer = new PrintWriter(new FileOutputStream(testCorruptFile))) {
-            writer.println("Chat_1234");
+            writer.println("Chat_1234"); // corrupt line
             writer.println("U_0003;U_0004");
             writer.println("U_0003;0hey guys");
             writer.println("U_0005;0what's up");
@@ -116,7 +140,7 @@ public class RunChatTests {
 
         try (PrintWriter writer = new PrintWriter(new FileOutputStream(testCorruptFile))) {
             writer.println("C_1234");
-            writer.println("X_0003;U_0004;U_0005");
+            writer.println("X_0003;U_0004;U_0005"); // corrupt line
             writer.println("U_0003;0hey guys");
             writer.println("U_0005;0what's up");
             writer.println("U_0004;0what going on");
@@ -127,16 +151,29 @@ public class RunChatTests {
         assertThrows("Chat does not properly catch invalid userIDs when instantiating from file.",
                 InvalidFileFormatException.class, () -> new Chat("C_1234"));
 
+        // Delete files used for testing
         if (testCorruptFile.exists())
             testCorruptFile.delete();
+
+        // Clear list of chat IDs
+        try {
+            PrintWriter clear = new PrintWriter(new FileOutputStream("chatIDList.txt"));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
     public void testAddMessage() {
 
         Chat testChat;
+        ArrayList<String> memberIDs = new ArrayList<>();
+        memberIDs.add("U_0001");
+        memberIDs.add("U_0002");
+        memberIDs.add("U_0003");
+
         try {
-            testChat = new Chat("This works");
+            testChat = new Chat(memberIDs);
 
         } catch (Exception e) {
             throw new RuntimeException("testAddMessage: Chat construction failed, failing test");
@@ -153,7 +190,7 @@ public class RunChatTests {
 
         // Parse chatData
         ArrayList<String> fileData = new ArrayList<>();
-        try (BufferedReader bReader = new BufferedReader(new FileReader(new File(testChat.getChatID())))) {
+        try (BufferedReader bReader = new BufferedReader(new FileReader(testChat.getChatID() + ".txt"))) {
 
             String line = bReader.readLine();
             while (line != null) {
@@ -163,7 +200,6 @@ public class RunChatTests {
 
 
         } catch (IOException e) {
-
             throw new RuntimeException("testAddMessage: Reading from chatData should not throw an error");
         }
 
@@ -185,9 +221,21 @@ public class RunChatTests {
             assertEquals("testAddMessage; The message's type does not match up with what is on-file", testMessage.getMessageType(), messageTypeFromFile);
 
         } catch (NumberFormatException e) {
-            throw new RuntimeException("testAddMessage: The message's type could not converted, failing test!");
+            throw new RuntimeException("testAddMessage: The message's type " +
+                    "could not converted, failing test!");
         }
 
+        // Delete files used for testing
+        File createdFile = new File("C_0000.txt");
+        if(createdFile.exists())
+            createdFile.delete();
+
+        // Clear list of chat IDs
+        try {
+            PrintWriter clear = new PrintWriter(new FileOutputStream("chatIDList.txt"));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     // requires testAddMessage() to work
@@ -198,9 +246,13 @@ public class RunChatTests {
         String testID = "authorID";
         Message testMessage1 = new Message(testID, 0, "This works");
         Chat testChat1;
+        ArrayList<String> memberIDs = new ArrayList<>();
+        memberIDs.add("U_0001");
+        memberIDs.add("U_0002");
+        memberIDs.add("U_0003");
 
         try {
-            testChat1 = new Chat("some chat ID");
+            testChat1 = new Chat(memberIDs);
         } catch (Exception e) {
             throw new RuntimeException("testDeleteMessage: Chat construction should not throw any errors");
         }
@@ -209,11 +261,12 @@ public class RunChatTests {
         testChat1.deleteMessage(testMessage1.getAuthorID());
 
         boolean result = testChat1.getMessageList().contains(testMessage1);
-        assertEquals("testDeleteMessage: The messengerList should no longer contain the message instance!", true, result);
+        assertEquals("testDeleteMessage: The messengerList should no longer" +
+                " contain the message instance!", false, result);
 
         // Check if writeData() accurately represents the changes
         ArrayList<String> fileData = new ArrayList<>();
-        try (BufferedReader bReader = new BufferedReader(new FileReader(new File(testChat1.getChatID())))) {
+        try (BufferedReader bReader = new BufferedReader(new FileReader(testChat1.getChatID() + ".txt"))) {
 
             String line = bReader.readLine();
             while (line != null) {
@@ -232,11 +285,26 @@ public class RunChatTests {
         assertEquals("testAddMessage: ChatID written to file does not match!", testChat1.getChatID(), chatIdFromFile);
 
         // The added message shouldn't be there anymore, so there should only be two lines in the entire file
-        assertEquals("testDeleteMessage: if message is added and then subsequently deleted, then the file should only have two lines! (empty message list)", 2, fileData.size());
+        assertEquals("testDeleteMessage: if message is added and then" +
+                " subsequently deleted, then the file should " +
+                "only have two lines! (empty message list)", 2, fileData.size());
+
+        // Delete files used for testing
+        File createdFile = new File("C_0000.txt");
+        if(createdFile.exists())
+            createdFile.delete();
+
+        // Clear list of chat IDs
+        try {
+            PrintWriter clear = new PrintWriter(new FileOutputStream("chatIDList.txt"));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
     public void testEditMessage() {
+        // Create a new Chat with placeholder members and messages.
         ArrayList<String> memberIDs = new ArrayList<>();
         memberIDs.add("U_0001");
         memberIDs.add("U_0002");
@@ -248,8 +316,21 @@ public class RunChatTests {
         testChat.addMessage(testMessage1);
         testChat.addMessage(testMessage2);
 
+        // Ensure that when the message is edited, it is properly reflected in the Messages list.
         testChat.editMessage("this is a new message", "U_0001");
         assertEquals("editMessage method does not properly edit the most recent message by the selected author.",
                 "this is a new message", testChat.getMessageList().get(0).getMessage());
+
+        // Delete files used for testing
+        File createdFile = new File("C_0000.txt");
+        if(createdFile.exists())
+            createdFile.delete();
+
+        // Clear list of chat IDs
+        try {
+            PrintWriter clear = new PrintWriter(new FileOutputStream("chatIDList.txt"));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
