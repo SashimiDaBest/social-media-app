@@ -1,0 +1,10 @@
+C_0103;
+U_1523;U_2048;U_3245;U_5599;U_4123;U_1010
+0
+U_1010;0Testdata123xyz
+U_2048;0Random string test
+U_3245;0173902843294
+U_5599;0This should be a valid entry
+U_4123;0Another test line
+U_1010;0More data just to check
+U_3245;0Test end data for validation

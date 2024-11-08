@@ -1,5 +1,5 @@
 /**
- * NoChatFoundException
+ * Social Media App - NoChatFoundException
  * <p>
  * A custom exception that is thrown when a specified chat ID cannot be found.
  * This exception is used to signal the absence of a chat in cases where one is expected,
