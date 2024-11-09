@@ -19,9 +19,7 @@ import javax.swing.*;
  * @since 1.0
  */
 public class ClientHandler implements Runnable {
-    /**
-     * The socket representing the client connection.
-     */
+
     private Socket socket;
     private JFrame frame;
     private CardLayout cardLayout;
@@ -32,19 +30,11 @@ public class ClientHandler implements Runnable {
             Socket socket = new Socket("localhost", 12);
             SwingUtilities.invokeLater(new ClientHandler(socket));
             // Replace "localhost" with the server's IP address if needed
-            // Now you can use the socket to send and receive data
-            // Close the socket when done
-            // socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    /**
-     * Initializes a new ClientHandler with the specified client socket.
-     *
-     * @param socket the socket representing the client connection
-     */
     public ClientHandler(Socket socket) {
         this.socket = socket;
     }
@@ -67,8 +57,6 @@ public class ClientHandler implements Runnable {
             frame.setLocationRelativeTo(null);
             frame.setSize(600, 400);
 
-            JPanel cardPanel = new JPanel(new CardLayout());
-
             cardLayout = new CardLayout();
             cardPanel = new JPanel(cardLayout);
 
@@ -87,6 +75,8 @@ public class ClientHandler implements Runnable {
 
             frame.add(cardPanel);
             frame.setVisible(true);
+
+            out.write("hello");
         } catch (IOException e) {
             System.err.println("Client connection error: " + e.getMessage());
         }
