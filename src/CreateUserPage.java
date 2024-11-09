@@ -1,32 +1,37 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.border.EmptyBorder;
 
-public class CreateUserPage extends JPanel {
+public class CreateUserPage extends JComponent {
 
     public CreateUserPage(CardLayout cardLayout, JPanel cardPanel) {
         setLayout(new BorderLayout());
-        JLabel title = new JLabel("Welcome to Boiler Gram!", JLabel.CENTER);
+
+        JLabel title = new JLabel("Boiler Gram!", JLabel.CENTER);
+        JLabel slogan = new JLabel("Sign up to text all your boilermakers!", JLabel.CENTER);
         JLabel usernameLabel = new JLabel("Username: ");
         JLabel passwordLabel = new JLabel("Password: ");
         JTextField usernameField = new JTextField(15);
         JPasswordField passwordField = new JPasswordField(15);
-        JButton signInButton = new JButton("Sign In");
-        JButton forgetPasswordButton = new JButton("Forget Password?");
-        JLabel orText = new JLabel("-------- OR --------", JLabel.CENTER);
-        JLabel newAccount = new JLabel("Don't have an account?", JLabel.CENTER);
-        JButton newAccountButton = new JButton("Sign Up");
+        JButton signUpButton = new JButton("Sign Up");
 
-        signInButton.addActionListener(e -> cardLayout.show(cardPanel, "Page2"));
-        forgetPasswordButton.addActionListener(e -> cardLayout.show(cardPanel, "Page2"));
-        newAccountButton.addActionListener(e -> cardLayout.show(cardPanel, "Page2"));
+        signUpButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(null, "Welcome to Boiler Gram!", "Welcome Message", JOptionPane.INFORMATION_MESSAGE);
+                cardLayout.show(cardPanel, "feedViewPage");
+            }
+        });
 
         //1st Panel - Title
         JPanel titlePanel = new JPanel();
         titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.Y_AXIS));
         titlePanel.setBorder(new EmptyBorder(10, 0, 10, 0));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
+        slogan.setAlignmentX(Component.CENTER_ALIGNMENT);
         titlePanel.add(title);
+        titlePanel.add(slogan);
 
         //2nd Panel - Text Input
         JPanel inputPanel = new JPanel();
@@ -68,21 +73,10 @@ public class CreateUserPage extends JPanel {
         optionsPanel.setLayout(new BoxLayout(optionsPanel, BoxLayout.Y_AXIS));
         optionsPanel.setBorder(new EmptyBorder(10, 0, 10, 0));
 
-        signInButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        forgetPasswordButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        orText.setAlignmentX(Component.CENTER_ALIGNMENT);
-        newAccount.setAlignmentX(Component.CENTER_ALIGNMENT);
-        newAccountButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        signUpButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        optionsPanel.add(signInButton);
+        optionsPanel.add(signUpButton);
         optionsPanel.add(Box.createVerticalStrut(10));
-        optionsPanel.add(forgetPasswordButton);
-        optionsPanel.add(Box.createVerticalStrut(10));
-        optionsPanel.add(orText);
-        optionsPanel.add(Box.createVerticalStrut(10));
-        optionsPanel.add(newAccount);
-        optionsPanel.add(Box.createVerticalStrut(5));
-        optionsPanel.add(newAccountButton);
 
         //4th Panel - Group All Components
         JPanel ultimatePanel = new JPanel();
@@ -94,5 +88,7 @@ public class CreateUserPage extends JPanel {
 
         add(ultimatePanel, BorderLayout.CENTER);
     }
+
+
 
 }

@@ -124,9 +124,27 @@ public class User implements UserInterface {
      * @param userName the username of the new user
      * @param password the password of the new user
      */
-    public User(String userName, String password) {
-
+    public User(String userName, String password) throws InvalidCreateAccountException {
+        if (userName == null) { // && !unique
+            throw new InvalidCreateAccountException("Invalid Username");
+        }
         this.userName = userName;
+
+        boolean haveLetter = false;
+        boolean haveNumber = false;
+        for (int i = 0; i < password.length(); i++) {
+            if (Character.isLetter(password.charAt(i))) {
+                haveLetter = true;
+            }
+            if (Character.isDigit(password.charAt(i))) {
+                haveNumber = true;
+            }
+        }
+
+        if (password.length() < 10 || (!haveLetter && !haveNumber)) {
+            throw new InvalidCreateAccountException("Invalid password");
+        }
+
         this.password = password;
         this.userID = createUserID();
         this.accountType = 0;

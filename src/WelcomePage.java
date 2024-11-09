@@ -12,14 +12,11 @@ public class WelcomePage extends JPanel {
         JTextField usernameField = new JTextField(15);
         JPasswordField passwordField = new JPasswordField(15);
         JButton signInButton = new JButton("Sign In");
-        JButton forgetPasswordButton = new JButton("Forget Password?");
-        JLabel orText = new JLabel("-------- OR --------", JLabel.CENTER);
         JLabel newAccount = new JLabel("Don't have an account?", JLabel.CENTER);
         JButton newAccountButton = new JButton("Sign Up");
 
-        signInButton.addActionListener(e -> cardLayout.show(cardPanel, "Page2"));
-        forgetPasswordButton.addActionListener(e -> cardLayout.show(cardPanel, "Page2"));
-        newAccountButton.addActionListener(e -> cardLayout.show(cardPanel, "Page2"));
+        signInButton.addActionListener(e -> cardLayout.show(cardPanel, "feedViewPage"));
+        newAccountButton.addActionListener(e -> cardLayout.show(cardPanel, "createUserPage"));
 
         //1st Panel - Title
         JPanel titlePanel = new JPanel();
@@ -69,16 +66,10 @@ public class WelcomePage extends JPanel {
         optionsPanel.setBorder(new EmptyBorder(10, 0, 10, 0));
 
         signInButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        forgetPasswordButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        orText.setAlignmentX(Component.CENTER_ALIGNMENT);
         newAccount.setAlignmentX(Component.CENTER_ALIGNMENT);
         newAccountButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         optionsPanel.add(signInButton);
-        optionsPanel.add(Box.createVerticalStrut(10));
-        optionsPanel.add(forgetPasswordButton);
-        optionsPanel.add(Box.createVerticalStrut(10));
-        optionsPanel.add(orText);
         optionsPanel.add(Box.createVerticalStrut(10));
         optionsPanel.add(newAccount);
         optionsPanel.add(Box.createVerticalStrut(5));

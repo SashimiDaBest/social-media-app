@@ -73,17 +73,17 @@ public class ClientHandler implements Runnable {
             cardPanel = new JPanel(cardLayout);
 
             // Create instances of each page
-            WelcomePage page1 = new WelcomePage(cardLayout, cardPanel);
-            CreateUserPage page21 = new CreateUserPage(cardLayout, cardPanel);
-            FeedViewPage page22 = new FeedViewPage(cardLayout, cardPanel);
-            UserProfilePage page31 = new UserProfilePage(cardLayout, cardPanel);
-            OtherProfilePage page32 = new OtherProfilePage(cardLayout, cardPanel);
+            WelcomePage welcomePage = new WelcomePage(cardLayout, cardPanel);
+            CreateUserPage createUserPage = new CreateUserPage(cardLayout, cardPanel);
+            FeedViewPage feedViewPage = new FeedViewPage(cardLayout, cardPanel);
+            UserProfilePage userProfilePage = new UserProfilePage(cardLayout, cardPanel);
+            OtherProfilePage otherProfilePage = new OtherProfilePage(cardLayout, cardPanel);
 
-            cardPanel.add(page1, "page1");
-            cardPanel.add(page21, "page21");
-            cardPanel.add(page22, "page22");
-            cardPanel.add(page31, "page31");
-            cardPanel.add(page32, "page32");
+            cardPanel.add(welcomePage, "welcomePage");
+            cardPanel.add(createUserPage, "createUserPage");
+            cardPanel.add(feedViewPage, "feedViewPage");
+            cardPanel.add(userProfilePage, "userProfilePage");
+            cardPanel.add(otherProfilePage, "otherProfilePage");
 
             frame.add(cardPanel);
             frame.setVisible(true);
