@@ -1,7 +1,10 @@
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.net.*;
 import java.io.*;
 import java.awt.*;
 import javax.swing.*;
+
 /**
  * Client Handler
  * <p>
@@ -24,6 +27,12 @@ public class ClientHandler implements Runnable {
     private JFrame frame;
     private CardLayout cardLayout;
     private JPanel cardPanel;
+
+    private WelcomePage welcomePage;
+    private CreateUserPage createUserPage;
+    private FeedViewPage feedViewPage;
+    private UserProfilePage userProfilePage;
+    private OtherProfilePage otherProfilePage;
 
     public static void main(String[] args) {
         try {
@@ -61,11 +70,11 @@ public class ClientHandler implements Runnable {
             cardPanel = new JPanel(cardLayout);
 
             // Create instances of each page
-            WelcomePage welcomePage = new WelcomePage(cardLayout, cardPanel);
-            CreateUserPage createUserPage = new CreateUserPage(cardLayout, cardPanel);
-            FeedViewPage feedViewPage = new FeedViewPage(cardLayout, cardPanel);
-            UserProfilePage userProfilePage = new UserProfilePage(cardLayout, cardPanel);
-            OtherProfilePage otherProfilePage = new OtherProfilePage(cardLayout, cardPanel);
+            welcomePage = new WelcomePage(cardLayout, cardPanel);
+            createUserPage = new CreateUserPage(cardLayout, cardPanel);
+            feedViewPage = new FeedViewPage(cardLayout, cardPanel);
+            userProfilePage = new UserProfilePage(cardLayout, cardPanel);
+            otherProfilePage = new OtherProfilePage(cardLayout, cardPanel);
 
             cardPanel.add(welcomePage, "welcomePage");
             cardPanel.add(createUserPage, "createUserPage");
@@ -76,10 +85,48 @@ public class ClientHandler implements Runnable {
             frame.add(cardPanel);
             frame.setVisible(true);
 
+            setupActionListeners();
             out.write("hello");
 
         } catch (IOException e) {
             System.err.println("Client connection error: " + e.getMessage());
         }
+    }
+
+    private void setupActionListeners() {
+
+        welcomePage.getSignInButton().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String username = welcomePage.getUsernameField().getText();
+                String password = welcomePage.getPasswordField().getText();
+
+                boolean haveLetter = false;
+                boolean haveNumber = false;
+                for (int i = 0; i < password.length(); i++) {
+                    if (Character.isLetter(password.charAt(i))) {
+                        haveLetter = true;
+                    }
+                    if (Character.isDigit(password.charAt(i))) {
+                        haveNumber = true;
+                    }
+                }
+
+                if (username == null || !User.userNameValidation(username) || (password == null || password.length() < 10 || (!haveLetter && !haveNumber))) {
+                    JOptionPane.showMessageDialog(null, "Please enter a valid username or password \n " +
+                            "Password should be 10 characters or more \n " +
+                            "Password should contains letters AND numbers \n " +
+                            "Password should not have ;", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    cardLayout.show(cardPanel, "feedViewPage");
+                }
+            }
+        });
+
+        welcomePage.getNewAccountButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(cardPanel, "createUserPage");
+            }
+        });
     }
 }

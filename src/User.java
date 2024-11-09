@@ -125,9 +125,7 @@ public class User implements UserInterface {
      * @param password the password of the new user
      */
     public User(String userName, String password) throws InvalidCreateAccountException {
-        if (userName == null || !userNameValidation(userName)) { // && !unique
-            throw new InvalidCreateAccountException("Invalid Username");
-        }
+
         this.userName = userName;
 
         boolean haveLetter = false;
@@ -592,7 +590,7 @@ public class User implements UserInterface {
      * @param username the username to validate
      * @return {@code true} if the username is unique and available, {@code false} if it is already taken
      */
-    public synchronized boolean userNameValidation(String username) {
+    public static synchronized boolean userNameValidation(String username) {
         try (BufferedReader br = new BufferedReader(new FileReader(USERIDLIST))) {
             String userIterator = "";
             while ((userIterator = br.readLine()) != null) {
