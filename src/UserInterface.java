@@ -230,6 +230,8 @@ public interface UserInterface {
      * @param username the username to validate
      * @return {@code true} if the username is valid, {@code false} otherwise
      */
-    public boolean userNameValidation(String username);
+    public static boolean userNameValidation(String username) {
+        return false;
+    };
 
 }

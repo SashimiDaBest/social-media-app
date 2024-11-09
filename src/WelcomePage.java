@@ -1,22 +1,25 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.border.EmptyBorder;
 
 public class WelcomePage extends JPanel {
 
+    private String username;
+    private String password;
+
+    private JLabel title = new JLabel("Welcome to Boiler Gram!", JLabel.CENTER);
+    private JLabel usernameLabel = new JLabel("Username: ");
+    private JLabel passwordLabel = new JLabel("Password: ");
+    private JTextField usernameField = new JTextField(15);
+    private JPasswordField passwordField = new JPasswordField(15);
+    private JButton signInButton = new JButton("Sign In");
+    private JLabel newAccount = new JLabel("Don't have an account?", JLabel.CENTER);
+    private JButton newAccountButton = new JButton("Sign Up");
+
     public WelcomePage(CardLayout cardLayout, JPanel cardPanel) {
         setLayout(new BorderLayout());
-        JLabel title = new JLabel("Welcome to Boiler Gram!", JLabel.CENTER);
-        JLabel usernameLabel = new JLabel("Username: ");
-        JLabel passwordLabel = new JLabel("Password: ");
-        JTextField usernameField = new JTextField(15);
-        JPasswordField passwordField = new JPasswordField(15);
-        JButton signInButton = new JButton("Sign In");
-        JLabel newAccount = new JLabel("Don't have an account?", JLabel.CENTER);
-        JButton newAccountButton = new JButton("Sign Up");
-
-        signInButton.addActionListener(e -> cardLayout.show(cardPanel, "feedViewPage"));
-        newAccountButton.addActionListener(e -> cardLayout.show(cardPanel, "createUserPage"));
 
         //1st Panel - Title
         JPanel titlePanel = new JPanel();
@@ -84,6 +87,23 @@ public class WelcomePage extends JPanel {
         ultimatePanel.add(optionsPanel);
 
         add(ultimatePanel, BorderLayout.CENTER);
+    }
+
+
+    public JButton getSignInButton() {
+        return signInButton;
+    }
+
+    public JButton getNewAccountButton() {
+        return newAccountButton;
+    }
+
+    public JTextField getUsernameField() {
+        return usernameField;
+    }
+
+    public JPasswordField getPasswordField() {
+        return passwordField;
     }
 
 }
