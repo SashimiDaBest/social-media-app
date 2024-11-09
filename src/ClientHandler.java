@@ -77,9 +77,26 @@ public class ClientHandler implements Runnable {
             frame.setVisible(true);
 
             out.write("hello");
+
+            welcomePageOperation();
+
+
+
         } catch (IOException e) {
             System.err.println("Client connection error: " + e.getMessage());
         }
     }
 
+    public void welcomePageOperation() {
+
+    }
+    public void feedPageOperation() {
+
+    }
+    public void userPageOperation() {
+
+    }
+    public void otherPageOperation() {
+
+    }
 }
