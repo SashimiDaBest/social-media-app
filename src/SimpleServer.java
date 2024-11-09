@@ -94,4 +94,17 @@ public class SimpleServer {
             System.err.println("Server error: " + e.getMessage());
         }
     }
+
+    public void welcomePageOperation() {
+
+    }
+    public void feedPageOperation() {
+
+    }
+    public void userPageOperation() {
+
+    }
+    public void otherPageOperation() {
+
+    }
 }
