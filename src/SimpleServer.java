@@ -3,6 +3,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 /**
  * Simple Server
@@ -25,6 +28,8 @@ public class SimpleServer {
      */
     private ServerSocket serverSocket;
 //    private ExecutorService executorService;
+    private static ArrayList<User> users;
+    private static ArrayList<Chat> chats;
 
     /**
      * Initializes a new {@code SimpleServer} that binds to the specified port.
@@ -34,6 +39,26 @@ public class SimpleServer {
      */
     public SimpleServer(int port) throws IOException {
         serverSocket = new ServerSocket(port);
+        if(users == null && chats == null) {
+            users = new ArrayList<>();
+            chats = new ArrayList<>();
+
+            File dataDirectory = new File("Sample Test Folder");
+            System.out.println(dataDirectory.getAbsolutePath());
+            File[] userFiles = dataDirectory.listFiles((_, name) -> name.startsWith("U_02"));
+            for (File userFile : userFiles) {
+                users.add(new User(userFile.getAbsolutePath()));
+            }
+
+            File[] chatFiles = dataDirectory.listFiles((_, name) -> name.startsWith("C_02"));
+            for (File chatFile : chatFiles) {
+                try {
+                    chats.add(new Chat(chatFile.getAbsolutePath().substring(0, chatFile.getAbsolutePath().lastIndexOf("."))));
+                } catch (InvalidFileFormatException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
     }
 
     /**
@@ -48,10 +73,10 @@ public class SimpleServer {
      */
     public void start() throws IOException {
         try {
-            Socket socket = serverSocket.accept();
-            action();
+            // Socket socket = serverSocket.accept();
+            //action();
 //          executorService.submit(new ClientHandler(clientSocket));
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.out.println("Error accepting connection" + e.getMessage());
         }
     }
@@ -89,6 +114,7 @@ public class SimpleServer {
         try {
             SimpleServer server = new SimpleServer(12);
             server.start();
+            server.feedPageOperation();
 
         } catch (IOException e) {
             System.err.println("Server error: " + e.getMessage());
@@ -99,7 +125,22 @@ public class SimpleServer {
 
     }
     public void feedPageOperation() {
+        Scanner input = new Scanner(System.in);
+        System.out.print("Welcome to your Feed! What would you like to do?\n" +
+                "1 - Create a new chat with selected users\n" +
+                "2 - Open an existing chat\n" +
+                "3 - View your profile\n" +
+                "4 - View another user's profile\n" +
+                "* - Type at any time to return to this home page\n");
 
+        switch (input.nextLine()) {
+            case "1":
+                System.out.println("Type the names of the users you'd like to chat with on separate lines." +
+                        "Type [DONE] when you are finished or * to cancel.");
+                for (User user : users) {
+                    System.out.println(user.getUsername());
+                }
+        }
     }
     public void userPageOperation() {
 

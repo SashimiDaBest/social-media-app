@@ -91,6 +91,10 @@ public class User implements UserInterface {
                 this.userName = br.readLine();
                 this.photoPathway = br.readLine();
                 this.accountType = Integer.parseInt(br.readLine());
+                this.followerList = new ArrayList<>();
+                this.followingList = new ArrayList<>();
+                this.blockedList = new ArrayList<>();
+                this.chatIDList = new ArrayList<>();
                 String followers = br.readLine();
                 String[] followersArray = followers.split(";");
                 for (String user : followersArray) {
