@@ -536,6 +536,29 @@ public class User implements UserInterface {
     }
 
     /**
+     * Searches for a user by their username within the application data.
+     *
+     * @param usernameToSearch the username of the user whose ID will be found
+     * @return The ID of the user with the username in the parameter
+     */
+    public synchronized String findIDFromUsername(String usernameToSearch) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(USERIDLIST))) {
+            String line = reader.readLine();
+            while (line != null) {
+                if (line.split(";")[0].equals(usernameToSearch)) {
+                    return line.split(";")[2];
+                }
+
+                line = reader.readLine();
+            }
+
+            return null;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
      * Sends a message in a specified chat.
      *
      * @param chatID   the ID of the chat to send the message to
