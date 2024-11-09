@@ -24,6 +24,8 @@ public class ClientHandler implements Runnable {
      */
     private Socket socket;
     private JFrame frame;
+    private CardLayout cardLayout;
+    private JPanel cardPanel;
 
     public static void main(String[] args) {
         try {
@@ -67,27 +69,23 @@ public class ClientHandler implements Runnable {
 
             JPanel cardPanel = new JPanel(new CardLayout());
 
-            frame.setLayout(new CardLayout());
+            cardLayout = new CardLayout();
+            cardPanel = new JPanel(cardLayout);
 
             // Create instances of each page
-            WelcomePage page1 = new WelcomePage();
-            CreateUserPage page21 = new CreateUserPage();
-            FeedViewPage page22 = new FeedViewPage();
-            UserProfilePage page31 = new UserProfilePage();
-            OtherProfilePage page32 = new OtherProfilePage();
+            WelcomePage welcomePage = new WelcomePage(cardLayout, cardPanel);
+            CreateUserPage createUserPage = new CreateUserPage(cardLayout, cardPanel);
+            FeedViewPage feedViewPage = new FeedViewPage(cardLayout, cardPanel);
+            UserProfilePage userProfilePage = new UserProfilePage(cardLayout, cardPanel);
+            OtherProfilePage otherProfilePage = new OtherProfilePage(cardLayout, cardPanel);
 
-            // Add pages to the frame
-            cardPanel.add(page1, "page1");
-//            cardPanel.add(page21, "page21");
-//            cardPanel.add(page22, "page22");
-//            cardPanel.add(page31, "page31");
-//            cardPanel.add(page32, "page32");
+            cardPanel.add(welcomePage, "welcomePage");
+            cardPanel.add(createUserPage, "createUserPage");
+            cardPanel.add(feedViewPage, "feedViewPage");
+            cardPanel.add(userProfilePage, "userProfilePage");
+            cardPanel.add(otherProfilePage, "otherProfilePage");
 
             frame.add(cardPanel);
-
-            CardLayout cardLayout = (CardLayout) cardPanel.getLayout();
-            cardLayout.show(cardPanel, "page1");
-
             frame.setVisible(true);
         } catch (IOException e) {
             System.err.println("Client connection error: " + e.getMessage());

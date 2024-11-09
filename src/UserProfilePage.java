@@ -1,10 +1,21 @@
 import javax.swing.*;
-import java.awt.*;
+        import java.awt.*;
+        import javax.swing.border.EmptyBorder;
 
-public class UserProfilePage extends JFrame {
-    public UserProfilePage() {
+public class UserProfilePage extends JPanel {
+    public UserProfilePage(CardLayout cardLayout, JPanel cardPanel) {
         setLayout(new BorderLayout());
-        JLabel label = new JLabel("Welcome to Page 3.1");
-        add(label, BorderLayout.CENTER);
+        JLabel title = new JLabel("User Profile Page", JLabel.CENTER);
+
+        JPanel navigationPanel = new JPanel(new BorderLayout());
+        JButton backButton = new JButton("Back");
+        JButton nextButton = new JButton("Next");
+        navigationPanel.add(backButton, BorderLayout.WEST);
+        navigationPanel.add(nextButton, BorderLayout.EAST);
+
+        add(title, BorderLayout.NORTH);
+        add(navigationPanel, BorderLayout.SOUTH);
     }
+
 }
+
