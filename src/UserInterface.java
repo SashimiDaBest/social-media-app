@@ -213,7 +213,9 @@ public interface UserInterface {
      * @param password the password to verify
      * @return {@code true} if login is successful, {@code false} otherwise
      */
-    public boolean hasLogin(String username, String password);
+    public static boolean hasLogin(String username, String password) {
+        return false;
+    };
 
     /**
      * Creates a new user with the specified username, password, and user ID.

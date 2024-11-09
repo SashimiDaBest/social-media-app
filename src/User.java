@@ -568,7 +568,7 @@ public class User implements UserInterface {
      * @param passwordToCheck the password to verify
      * @return {@code true} if the username and password match an existing user, {@code false} otherwise
      */
-    public synchronized boolean hasLogin(String username, String passwordToCheck) {
+    public static synchronized boolean hasLogin(String username, String passwordToCheck) {
         try (BufferedReader br = new BufferedReader(new FileReader(USERIDLIST))) {
             String userIterator = "";
             while ((userIterator = br.readLine()) != null) {

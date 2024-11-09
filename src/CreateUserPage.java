@@ -6,23 +6,16 @@ import javax.swing.border.EmptyBorder;
 
 public class CreateUserPage extends JComponent {
 
+    private JLabel title = new JLabel("Boiler Gram!", JLabel.CENTER);
+    private JLabel slogan = new JLabel("Sign up to text all your boilermakers!", JLabel.CENTER);
+    private JLabel usernameLabel = new JLabel("Username: ");
+    private JLabel passwordLabel = new JLabel("Password: ");
+    private JTextField usernameField = new JTextField(15);
+    private JPasswordField passwordField = new JPasswordField(15);
+    private JButton signUpButton = new JButton("Sign Up");
+
     public CreateUserPage(CardLayout cardLayout, JPanel cardPanel) {
         setLayout(new BorderLayout());
-
-        JLabel title = new JLabel("Boiler Gram!", JLabel.CENTER);
-        JLabel slogan = new JLabel("Sign up to text all your boilermakers!", JLabel.CENTER);
-        JLabel usernameLabel = new JLabel("Username: ");
-        JLabel passwordLabel = new JLabel("Password: ");
-        JTextField usernameField = new JTextField(15);
-        JPasswordField passwordField = new JPasswordField(15);
-        JButton signUpButton = new JButton("Sign Up");
-
-        signUpButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null, "Welcome to Boiler Gram!", "Welcome Message", JOptionPane.INFORMATION_MESSAGE);
-                cardLayout.show(cardPanel, "feedViewPage");
-            }
-        });
 
         //1st Panel - Title
         JPanel titlePanel = new JPanel();
@@ -89,6 +82,8 @@ public class CreateUserPage extends JComponent {
         add(ultimatePanel, BorderLayout.CENTER);
     }
 
-
+    public JButton getSignUpButtonButton() {
+        return signUpButton;
+    }
 
 }

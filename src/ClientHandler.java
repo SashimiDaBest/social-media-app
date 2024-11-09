@@ -33,6 +33,8 @@ public class ClientHandler implements Runnable {
     private UserProfilePage userProfilePage;
     private OtherProfilePage otherProfilePage;
 
+    private User user;
+
     public static void main(String[] args) {
         try {
             Socket socket = new Socket("localhost", 12);
@@ -110,12 +112,14 @@ public class ClientHandler implements Runnable {
                     }
                 }
 
-                if (username == null || !User.userNameValidation(username) || (password == null || password.length() < 10 || (!haveLetter && !haveNumber))) {
+                if (!User.hasLogin(username, password) || username == null || !User.userNameValidation(username) || (password == null || password.length() < 10 || (!haveLetter && !haveNumber))) {
                     JOptionPane.showMessageDialog(null, "Please enter a valid username or password \n " +
                             "Password should be 10 characters or more \n " +
                             "Password should contains letters AND numbers \n " +
                             "Password should not have ;", "Error", JOptionPane.ERROR_MESSAGE);
                 } else {
+                    String userID = ""; //replace this with method to find userID based on username
+                    user = new User(userID);
                     cardLayout.show(cardPanel, "feedViewPage");
                 }
             }
@@ -125,6 +129,13 @@ public class ClientHandler implements Runnable {
             @Override
             public void actionPerformed(ActionEvent e) {
                 cardLayout.show(cardPanel, "createUserPage");
+            }
+        });
+
+        createUserPage.getSignUpButtonButton().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(null, "Welcome to Boiler Gram!", "Welcome Message", JOptionPane.INFORMATION_MESSAGE);
+                cardLayout.show(cardPanel, "feedViewPage");
             }
         });
     }
