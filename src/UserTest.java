@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.io.*;
 
 /**
- * Social Media App - User Tests
+ * User Tests
  * <p>
  * JUnit tests for Message Class
  * <p>
@@ -22,9 +22,9 @@ import java.io.*;
 // In order to avoid unpredictable behaviors, this file is deleted before each
 // asserts statement
 public class UserTest {
-  
+
     // Second constructor test:
-    @Test 
+    @Test
     public void testSecondUserConstructor() {
 
         String username = "username";
@@ -35,33 +35,33 @@ public class UserTest {
         boolean result2 = testUser.getPassWord().equals(password);
 
         assertEquals("testSecondUserConstructor: assigning username does not work",
-            true, result1);
+                true, result1);
         assertEquals("testSecondUserConstructor: assigning password does not work",
-            true, result2);
+                true, result2);
 
         // for fields created as null, 0, or empty
         boolean result3 = (testUser.getAccountType() == 0);
         assertEquals("testSecondUserConstructor: account type was not constructed as 0",
-            true, result3);
+                true, result3);
 
         boolean result4 = (testUser.getProfilePic() == null);
         assertEquals("testSecondUserConstructor: profile pic was not concructed as null",
-            true, result4);
+                true, result4);
 
         boolean result5 = testUser.getFollowerList().isEmpty() &&
-            testUser.getFollowingList().isEmpty() &&
-            testUser.getBlockedList().isEmpty() &&
-            testUser.getChatIDList().isEmpty();
-        
-        assertEquals("testSecondUserConstructor: one or more of the array lists" + 
-        "was not constucted as empty",
-            true, result5);
+                testUser.getFollowingList().isEmpty() &&
+                testUser.getBlockedList().isEmpty() &&
+                testUser.getChatIDList().isEmpty();
+
+        assertEquals("testSecondUserConstructor: one or more of the array lists" +
+                        "was not constucted as empty",
+                true, result5);
 
         // now check the file was created
         File testUserFile = new File(testUser.getUserID() + ".txt");
         ArrayList<String> fileContents = new ArrayList<>();
 
-        try(BufferedReader bReader = new BufferedReader(new FileReader(testUserFile))) {
+        try (BufferedReader bReader = new BufferedReader(new FileReader(testUserFile))) {
 
             String line = bReader.readLine();
             while (line != null) {
@@ -71,7 +71,7 @@ public class UserTest {
 
         } catch (IOException e) {
             throw new RuntimeException("testSecondUserConstructor: error while trying to read the file" +
-                "created after User construction!");
+                    "created after User construction!");
         }
 
         testUserFile.delete();
@@ -83,7 +83,7 @@ public class UserTest {
 
         boolean result7 = fileContents.get(1).equals(testUser.getUsername() );
         assertEquals("testSecondUserConstructor: 2nd line of new User file is wrong",
-            true, result7);
+                true, result7);
 
         // profilepic path should be null, but's printed as a String
         boolean result8 = fileContents.get(2).equals("" + testUser.getProfilePic());
@@ -117,56 +117,56 @@ public class UserTest {
     public void testSetUsername() {
 
         String testName = "This totally works";
-        User testUser = new User("","");
+        User testUser = new User("", "");
         testUser.setUsername(testName);
 
         String result = testUser.getUsername();
         File testFile = new File(testUser.getUserID() + ".txt");
         testFile.delete();
         assertEquals("testSetUsername: Setting username does not work",
-            testName, result);
+                testName, result);
     }
 
     @Test
     public void testSetPassword() {
 
         String testPassword = "This totally works";
-        User testUser = new User("","");
+        User testUser = new User("", "");
         testUser.setPassword(testPassword);
-        
+
         String result = testUser.getPassWord();
         File testFile = new File(testUser.getUserID() + ".txt");
         testFile.delete();
         assertEquals("testSetPassword: Setting password does not work",
-            testPassword, result);
+                testPassword, result);
     }
 
     @Test
     public void testSetProfilePic() {
 
         String testPic = "i_dont_know_what_image_format_to_use.png";
-        User testUser = new User("","");
+        User testUser = new User("", "");
         testUser.setProfilePic(testPic);
 
         String result = testUser.getProfilePic();
         File testFile = new File(testUser.getUserID() + ".txt");
         testFile.delete();
-        assertEquals("testSetProfilePic: Setting the profile pic does not work", 
-            testPic, result);
+        assertEquals("testSetProfilePic: Setting the profile pic does not work",
+                testPic, result);
     }
 
     @Test
     public void testSetAccountType() {
 
         int testType = 1;
-        User testUser = new User("","");
+        User testUser = new User("", "");
         testUser.setAccountType(testType);
 
         int result = testUser.getAccountType();
         File testFile = new File(testUser.getUserID() + ".txt");
         testFile.delete();
         assertEquals("testSetAccountType: Setting the account type does not work",
-            testType, result);
+                testType, result);
     }
 
     // this function is just for testing:
@@ -174,18 +174,17 @@ public class UserTest {
     public void testSetUserID() {
 
         String testID = "random id here";
-        User testUser = new User("","");
+        User testUser = new User("", "");
         testUser.setUserID(testID);
-        
+
         String result = testUser.getUserID();
         File testFile = new File(testUser.getUserID() + ".txt");
         testFile.delete();
-        assertEquals("testSetUserID: Setting the user ID does not work", 
-            testID, result);
+        assertEquals("testSetUserID: Setting the user ID does not work",
+                testID, result);
     }
 
     // All other methods
-
 
     // NOTE: Block methods DO NOT UPDATE UserArray as of 11/1/24
     @Test
@@ -195,8 +194,8 @@ public class UserTest {
         String testId1 = "U_0101";
         User blocker = new User("","");
 
-        blocker.createNewUser("some random username", 
-            "some random password", testId1); // to be blocked
+        blocker.createNewUser("some random username",
+                "some random password", testId1); // to be blocked
 
         boolean result1 = blocker.addBlock(testId1);
 
@@ -234,7 +233,7 @@ public class UserTest {
         }
         
         assertEquals("testAddBlock: Blocking a user not in UserIDList should return false",
-            false, result2);
+                false, result2);
 
         // Test 3: blocking a user that is already blocked should return false
         String testId3 = "U_8732";
@@ -243,7 +242,7 @@ public class UserTest {
         blocker3.getBlockedList().add(testId3);
 
         blocker3.createNewUser("", "", testId3); // being blocked
-        
+
         boolean result3 = blocker3.addBlock(testId3);
 
         File blockerFile3 = new File(blocker3.getUserID() + ".txt");
@@ -258,8 +257,8 @@ public class UserTest {
         }
 
         assertEquals("testAddBlock: Blocking a user that is already " +
-            "blocked should return false",false, result3);
-        
+                "blocked should return false", false, result3);
+
     }
 
     // Requires addBlock() to work
@@ -458,7 +457,6 @@ public class UserTest {
 
     }
 
-
     // requires getPassword() and setUseID to work
     @Test
     public void testCreateNewUser() {
@@ -472,15 +470,15 @@ public class UserTest {
         testUser1.setUserID(testUserID);
 
         testUser1.createNewUser(testUser1.getUsername(), testUser1.getPassWord(), testUser1.getUserID());
-        
+
         String fileContents;
         try (BufferedReader bReader = new BufferedReader(new FileReader("UserIDList.txt"))) {
 
             fileContents = bReader.readLine(); // there should only be one line
 
-        } catch(IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException("testCreateNewUser: userIDFile was" +
-                " not properly created; could not read!");
+                    " not properly created; could not read!");
         }
 
         String[] parsedInfo = fileContents.split(";");
@@ -494,10 +492,10 @@ public class UserTest {
 
 
         assertEquals("testCreateNewUser: the username returned from the file" +
-            " was not the one passed to the user's constructor!",true, usernameChecksOut);
+                " was not the one passed to the user's constructor!", true, usernameChecksOut);
 
         assertEquals("testCreateNewUser: the password returned from" +
-            " the file was not the one passed to the user's constructor!",true, passwordChecksOut);
+                " the file was not the one passed to the user's constructor!", true, passwordChecksOut);
 
         assertEquals("testCreateNewUser: the userID returned from" +
             " the file was passed to the user!",true, userIDChecksOut);
@@ -517,7 +515,6 @@ public class UserTest {
     @Test
     public void testSendText() {
 
-
         // Test 1: tests successfully sending a message to an existing chat
         User testSender = new User("sender", "senderPass");
         testSender.setUserID("U_8921");
@@ -528,8 +525,10 @@ public class UserTest {
         testSender.addChat(testChatID);
 
         try {
-            boolean result1 = testSender.sendText(testChatID, "SOME randoM MeZage", 0, testSender.getUserID(), testSender.getUsername(), 0);
-            assertEquals("testSendText: Successful function call should return successful",true, result1);
+            boolean result1 = testSender.sendText(testChatID, "SOME randoM MeZage", 0,
+                    testSender.getUserID(), testSender.getUsername(), 0);
+            assertEquals("testSendText: Successful function call should return successful",
+                    true, result1);
 
             // check if the message was added (can't go by reference, you gotta read the chat file)
 
@@ -558,10 +557,10 @@ public class UserTest {
 
             assertEquals("testSendText: The Chat's messages doesn't contain the sent messages!",true, result2);
 
-        } catch(NoChatFoundException e) {
+        } catch (NoChatFoundException e) {
             throw new RuntimeException("testSendText: sending a text to" +
-                " an existing chat throws a NoChatFoundException!");
-        
+                    " an existing chat throws a NoChatFoundException!");
+
         }
         // Delete chat files
         File chat1 = new File("C_0000.txt");
@@ -592,7 +591,6 @@ public class UserTest {
 
     }
 
-    
     public static void main(String[] args) {
 
         // General file that needs to be cleared everytime
