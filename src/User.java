@@ -124,9 +124,25 @@ public class User implements UserInterface {
      * @param userName the username of the new user
      * @param password the password of the new user
      */
-    public User(String userName, String password) {
+    public User(String userName, String password) throws InvalidCreateAccountException {
 
         this.userName = userName;
+
+        boolean haveLetter = false;
+        boolean haveNumber = false;
+        for (int i = 0; i < password.length(); i++) {
+            if (Character.isLetter(password.charAt(i))) {
+                haveLetter = true;
+            }
+            if (Character.isDigit(password.charAt(i))) {
+                haveNumber = true;
+            }
+        }
+
+        if (password == null || password.length() < 10 || (!haveLetter && !haveNumber)) {
+            throw new InvalidCreateAccountException("Invalid password");
+        }
+
         this.password = password;
         this.userID = createUserID();
         this.accountType = 0;
@@ -151,6 +167,7 @@ public class User implements UserInterface {
 
         counter.set(0);
     }
+
 
     /**
      * Retrieves the username of the user.
@@ -522,6 +539,29 @@ public class User implements UserInterface {
     }
 
     /**
+     * Searches for a user by their username within the application data.
+     *
+     * @param usernameToSearch the username of the user whose ID will be found
+     * @return The ID of the user with the username in the parameter
+     */
+    public synchronized String findIDFromUsername(String usernameToSearch) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(USERIDLIST))) {
+            String line = reader.readLine();
+            while (line != null) {
+                if (line.split(";")[0].equals(usernameToSearch)) {
+                    return line.split(";")[2];
+                }
+
+                line = reader.readLine();
+            }
+
+            return null;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
      * Sends a message in a specified chat.
      *
      * @param chatID   the ID of the chat to send the message to
@@ -556,7 +596,8 @@ public class User implements UserInterface {
      * @param passwordToCheck the password to verify
      * @return {@code true} if the username and password match an existing user, {@code false} otherwise
      */
-    public synchronized boolean hasLogin(String username, String passwordToCheck) {
+
+    public static synchronized boolean hasLogin(String username, String passwordToCheck) {
         try (BufferedReader br = new BufferedReader(new FileReader(USERIDLIST))) {
             String userIterator = "";
             while ((userIterator = br.readLine()) != null) {
@@ -578,7 +619,7 @@ public class User implements UserInterface {
      * @param username the username to validate
      * @return {@code true} if the username is unique and available, {@code false} if it is already taken
      */
-    public synchronized boolean userNameValidation(String username) {
+    public static synchronized boolean userNameValidation(String username) {
         try (BufferedReader br = new BufferedReader(new FileReader(USERIDLIST))) {
             String userIterator = "";
             while ((userIterator = br.readLine()) != null) {

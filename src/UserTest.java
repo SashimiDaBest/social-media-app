@@ -1,4 +1,6 @@
-import org.junit. Test;
+import org.junit.Test;
+import org.junit.Ignore;
+
 
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertEquals;
@@ -81,6 +83,7 @@ public class UserTest {
         assertEquals("testSecondUserConstructor: 1st line of new User file is wrong: \n",
             true, result6);
 
+
         boolean result7 = fileContents.get(1).equals(testUser.getUsername() );
         assertEquals("testSecondUserConstructor: 2nd line of new User file is wrong",
                 true, result7);
@@ -110,6 +113,7 @@ public class UserTest {
         } catch (IOException e) {
             System.out.println("Clearing UserIdFile should not fail");
         }
+
     }
 
     // Mutators:
@@ -170,8 +174,10 @@ public class UserTest {
     }
 
     // this function is just for testing:
+
     @Test
     public void testSetUserID() {
+
 
         String testID = "random id here";
         User testUser = new User("", "");
@@ -193,6 +199,7 @@ public class UserTest {
         // Test 1: blocking an ID that has not already blocked should return true
         String testId1 = "U_0101";
         User blocker = new User("","");
+
 
         blocker.createNewUser("some random username",
                 "some random password", testId1); // to be blocked
@@ -217,6 +224,7 @@ public class UserTest {
         String testId2 = "U_9090";
         User blocker2 = new User("","");
 
+
         blocker2.createNewUser("", "", "wrong ID, man");
 
         boolean result2 = blocker2.addBlock(testId2);
@@ -238,6 +246,7 @@ public class UserTest {
         // Test 3: blocking a user that is already blocked should return false
         String testId3 = "U_8732";
         User blocker3 = new User("","");
+
 
         blocker3.getBlockedList().add(testId3);
 
@@ -272,6 +281,7 @@ public class UserTest {
 
         User testUser1 = new User("","");
         testUser1.createNewUser("", "", testId1);
+
         testUser1.addBlock(testId1);
         boolean result1 = testUser1.deleteBlock(testId1);
 
@@ -292,12 +302,13 @@ public class UserTest {
 
         String testId2 = "U_4108";
         User testUser2 = new User("","");
+
         boolean result2 = testUser2.deleteBlock(testId2);
 
         File testFile2 = new File(testUser2.getUserID() + ".txt");
         testFile2.delete();
         assertEquals("testDeleteBlock: if the blocked ID is not in blockedIds," +
-            " then it should return false",false, result2);
+                " then it should return false", false, result2);
 
         try (PrintWriter pWriter = new PrintWriter(new FileOutputStream(new File("UserIDList.txt")))) {
             pWriter.write("");
@@ -315,6 +326,7 @@ public class UserTest {
 
         String testChat1 = "C_0319";
         User testUser1 = new User("","");
+
         boolean funcResult1 = testUser1.addChat(testChat1);
         boolean result1 = testUser1.getChatIDList().contains(testChat1);
 
@@ -418,7 +430,6 @@ public class UserTest {
         }
         
     }
-
     // requires createNewUser() to work
     @Test
     public void testHasLogin() {
@@ -444,7 +455,6 @@ public class UserTest {
             System.out.println("Clearing UserIdFile should not fail");
         }
         
-
         // Test 2: returns false if user's username and password is not found in the userIDList file
         User testUser2 = new User("some other username", "some other password");
 
@@ -454,7 +464,6 @@ public class UserTest {
 
         assertEquals("testHasLogin: UserIdList shouldn't contain" +
             " a username and password that wasn't written to it",false, result2);
-
     }
 
     // requires getPassword() and setUseID to work
@@ -498,9 +507,7 @@ public class UserTest {
                 " the file was not the one passed to the user's constructor!", true, passwordChecksOut);
 
         assertEquals("testCreateNewUser: the userID returned from" +
-            " the file was passed to the user!",true, userIDChecksOut);
-
-
+                " the file was passed to the user!", true, userIDChecksOut);
         // Clear UserIDList.txt
         try (PrintWriter pWriter = new PrintWriter(new FileOutputStream(new File("UserIDList.txt")))) {
             pWriter.write("");
@@ -508,7 +515,6 @@ public class UserTest {
         } catch (IOException e) {
             System.out.println("Clearing UserIdFile should not fail");
         }
-        
     }
 
     // requires addChat() to work
@@ -529,7 +535,6 @@ public class UserTest {
                     testSender.getUserID(), testSender.getUsername(), 0);
             assertEquals("testSendText: Successful function call should return successful",
                     true, result1);
-
             // check if the message was added (can't go by reference, you gotta read the chat file)
 
             boolean result2 = false;
@@ -588,7 +593,6 @@ public class UserTest {
         // Clear chat files
         File chat3 = new File("C_0000.txt");
         chat3.delete();
-
     }
 
     public static void main(String[] args) {
