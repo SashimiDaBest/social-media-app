@@ -169,7 +169,6 @@ public class User implements UserInterface {
     }
 
 
-
     /**
      * Retrieves the username of the user.
      *
@@ -446,9 +445,15 @@ public class User implements UserInterface {
      * @return {@code true} if the chat was successfully added, {@code false} otherwise
      */
     public synchronized boolean addChat(String chatID) {
-        chatIDList.add(chatID);
-        writeData();
-        return true;
+
+        if (!chatIDList.contains(chatID)) {
+            chatIDList.add(chatID);
+            writeData();
+            return true;
+        }
+
+        return false;
+
     }
 
     /**
@@ -591,6 +596,7 @@ public class User implements UserInterface {
      * @param passwordToCheck the password to verify
      * @return {@code true} if the username and password match an existing user, {@code false} otherwise
      */
+
     public static synchronized boolean hasLogin(String username, String passwordToCheck) {
         try (BufferedReader br = new BufferedReader(new FileReader(USERIDLIST))) {
             String userIterator = "";
