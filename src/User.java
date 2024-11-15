@@ -129,9 +129,7 @@ public class User implements UserInterface {
      * @param password the password of the new user
      */
     public User(String userName, String password) throws InvalidCreateAccountException {
-        if (userName == null || !userNameValidation(userName)) { // && !unique
-            throw new InvalidCreateAccountException("Invalid Username");
-        }
+
         this.userName = userName;
 
         boolean haveLetter = false;
@@ -173,7 +171,6 @@ public class User implements UserInterface {
 
         counter.set(0);
     }
-
 
 
     /**
@@ -452,9 +449,15 @@ public class User implements UserInterface {
      * @return {@code true} if the chat was successfully added, {@code false} otherwise
      */
     public synchronized boolean addChat(String chatID) {
-        chatIDList.add(chatID);
-        writeData();
-        return true;
+
+        if (!chatIDList.contains(chatID)) {
+            chatIDList.add(chatID);
+            writeData();
+            return true;
+        }
+
+        return false;
+
     }
 
     /**
@@ -620,7 +623,8 @@ public class User implements UserInterface {
      * @param passwordToCheck the password to verify
      * @return {@code true} if the username and password match an existing user, {@code false} otherwise
      */
-    public synchronized boolean hasLogin(String username, String passwordToCheck) {
+
+    public static synchronized boolean hasLogin(String username, String passwordToCheck) {
         try (BufferedReader br = new BufferedReader(new FileReader(USERIDLIST))) {
             String userIterator = "";
             while ((userIterator = br.readLine()) != null) {
@@ -642,7 +646,7 @@ public class User implements UserInterface {
      * @param username the username to validate
      * @return {@code true} if the username is unique and available, {@code false} if it is already taken
      */
-    public synchronized boolean userNameValidation(String username) {
+    public static synchronized boolean userNameValidation(String username) {
         try (BufferedReader br = new BufferedReader(new FileReader(USERIDLIST))) {
             String userIterator = "";
             while ((userIterator = br.readLine()) != null) {
