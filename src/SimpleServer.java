@@ -148,14 +148,13 @@ public class SimpleServer {
         do {
             String loggedinUserID = "U_0200"; // will be received from client
             Scanner input = new Scanner(System.in);
-            System.out.print("""
-                    Welcome to your Feed! What would you like to do?
-                    1 - Create a new chat with selected users
-                    2 - Open an existing chat
-                    3 - View your profile
-                    4 - View another user's profile
-                    5 - Exit
-                    """);
+            System.out.print(
+                    "Welcome to your Feed! What would you like to do?\n" +
+                    "1 - Create a new chat with selected users\n" +
+                    "2 - Open an existing chat\n" +
+                    "3 - View your profile\n" +
+                    "4 - View another user's profile\n" +
+                    "5 - Exit\n");
 
             switch (input.nextLine()) {
                 case "1":
@@ -265,12 +264,11 @@ public class SimpleServer {
                                     System.out.println(chat.getMessageList().get(i).getMessage());
                                 }
                                 System.out.println("---------------------------------------------------------------------");
-                                System.out.print("""
-                                        1 - Compose message
-                                        2 - Delete previous message
-                                        3 - Edit previous message
-                                        4 - Exit chat
-                                        """);
+                                System.out.print(
+                                        "1 - Compose message\n" +
+                                        "2 - Delete previous message\n" +
+                                        "3 - Edit previous message\n" +
+                                        "4 - Exit chat\n");
                                 switch (input.nextLine()) {
                                     case "1":
                                         System.out.println("Enter your message:");
