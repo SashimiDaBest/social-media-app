@@ -24,6 +24,7 @@ public class SimpleServer {
      * The server socket that listens for client connections.
      */
     private ServerSocket serverSocket;
+    private User user;
 //    private ExecutorService executorService;
 
     /**
@@ -107,4 +108,6 @@ public class SimpleServer {
     public void otherPageOperation() {
 
     }
+
 }
+
