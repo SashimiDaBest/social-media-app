@@ -105,11 +105,12 @@ public class ClientHandler implements Runnable {
     }
 
     public void welcomePage(Scanner scanner) {
-        System.out.println("Welcome to the Welcome Page\n" +
-                "1 - Sign in\n" +
-                "2 - Sign up\n");
-        String input = scanner.nextLine();
+
         while (true) {
+            System.out.println("Welcome to the Welcome Page\n" +
+                    "1 - Sign in\n" +
+                    "2 - Sign up\n");
+            String input = scanner.nextLine();
             if (input.equals("1")) {
                 System.out.print("Username: ");
                 String username = scanner.nextLine();
@@ -120,7 +121,7 @@ public class ClientHandler implements Runnable {
                 //read and see if the user can be created
                 String messageFromServer = "";
                 if (messageFromServer.equals("")){
-                    feedPage();
+                    feedPage(scanner);
                     break;
                 }
                 //else show error message and do something
@@ -134,7 +135,7 @@ public class ClientHandler implements Runnable {
                 //read and see if the user can be created
                 String messageFromServer = "";
                 if (messageFromServer.equals("")){
-                    feedPage();
+                    feedPage(scanner);
                     break;
                 }
                 //else show error message and do something
@@ -144,10 +145,32 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    public void feedPage() {
+    public void feedPage(Scanner scanner) {
+        while (true) {
+            System.out.println("Welcome to the Feed Page\n" +
+                    "1 - Go to User Profile\n" +
+                    "2 - Add User\n" +
+                    "3 - View All Chat IDs\n" +
+                    "4 - View Chat's Messages");
+            String input = scanner.nextLine();
+            if (input.equals("1")) {
+                userPage(scanner);
+                break;
+            } else if (input.equals("2")) {
 
+            } else if (input.equals("3")) {
+
+            } else if (input.equals("4")) {
+
+            } else {
+                System.out.println("Invalid input");
+            }
+        }
     }
 
+    public void userPage(Scanner scanner) {
+
+    }
 
 
 
