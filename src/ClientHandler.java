@@ -84,7 +84,6 @@ public class ClientHandler implements Runnable {
 
             frame.add(cardPanel);
             frame.setVisible(true);
-            System.out.println("HELLO");
             setupActionListeners();
             out.write("hello");
 
@@ -98,19 +97,11 @@ public class ClientHandler implements Runnable {
         welcomePage.getSignInButton().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String username = welcomePage.getUsernameField().getText();
-                System.out.println(username);
                 char[] password = welcomePage.getPasswordField().getPassword();
                 String passwordString = new String(password);
-                System.out.println(new String(password));
 
-                if (!isInvalidPassword(password) || password.length < 10) {
-                    JOptionPane.showMessageDialog(null, "Password should be 10 characters or more \n " +
-                            "Password should contains letters AND numbers \n " +
-                            "Password should not have ;", "Error", JOptionPane.ERROR_MESSAGE);
-                } else if (!User.hasLogin(username, passwordString)) {
-                    JOptionPane.showMessageDialog(null, "Username and/or password is incorrect", "Error", JOptionPane.ERROR_MESSAGE);
-                } else if (username == null || password == null) {
-                    JOptionPane.showMessageDialog(null, "Username and/or password is empty", "Error", JOptionPane.ERROR_MESSAGE);
+                if (username == null || password == null) {
+                    JOptionPane.showMessageDialog(null, "ERROR CONDITION", "Error", JOptionPane.ERROR_MESSAGE);
                 } else {
                     String userID = ""; //replace this with method to find userID based on username
 //                    user = new User(userID);
@@ -130,19 +121,11 @@ public class ClientHandler implements Runnable {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String username = welcomePage.getUsernameField().getText();
-                System.out.println(username);
                 char[] password = welcomePage.getPasswordField().getPassword();
                 String passwordString = new String(password);
-                System.out.println(new String(password));
 
-                if (!isInvalidPassword(password) || password.length < 10) {
-                    JOptionPane.showMessageDialog(null, "Password should be 10 characters or more \n " +
-                            "Password should contains letters AND numbers \n " +
-                            "Password should not have ;", "Error", JOptionPane.ERROR_MESSAGE);
-                } else if (!User.hasLogin(username, passwordString)) {
-                    JOptionPane.showMessageDialog(null, "Username and/or password is incorrect", "Error", JOptionPane.ERROR_MESSAGE);
-                } else if (username == null || password == null) {
-                    JOptionPane.showMessageDialog(null, "Username and/or password is empty", "Error", JOptionPane.ERROR_MESSAGE);
+                if (username == null || password == null) {
+                    JOptionPane.showMessageDialog(null, "ERROR CONDITION", "Error", JOptionPane.ERROR_MESSAGE);
                 } else {
                     String userID = ""; // Replace with method to find userID based on username
 //                    user = new User(userID);
@@ -156,16 +139,12 @@ public class ClientHandler implements Runnable {
     public synchronized boolean isInvalidPassword(char[] password) {
         boolean haveLetter = false;
         boolean haveNumber = false;
-        System.out.println("HI out" + password.length);
         for (char c : password) {
-            System.out.println("HI");
-            System.out.println(c);
             if (Character.isLetter(c)) {
                 haveLetter = true;
             }
             if (Character.isDigit(c)) {
                 haveNumber = true;
-                System.out.println("have number");
             }
         }
         return haveLetter && haveNumber;
