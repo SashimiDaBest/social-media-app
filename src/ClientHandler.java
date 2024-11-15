@@ -39,7 +39,6 @@ public class ClientHandler implements Runnable {
         try {
             Socket socket = new Socket("localhost", 12);
             SwingUtilities.invokeLater(new ClientHandler(socket));
-            // Replace "localhost" with the server's IP address if needed
         } catch (IOException e) {
             e.printStackTrace();
         }
