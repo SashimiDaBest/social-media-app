@@ -3,6 +3,7 @@ import java.awt.event.ActionListener;
 import java.net.*;
 import java.io.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Scanner;
 import javax.swing.*;
 
@@ -157,11 +158,42 @@ public class ClientHandler implements Runnable {
                 userPage(scanner);
                 break;
             } else if (input.equals("2")) {
-
+                boolean makeGroup = false;
+                ArrayList<String> usernames = new ArrayList<>();
+                while (!makeGroup) {
+                    System.out.print("Add Group (Y/N): ");
+                    if (scanner.nextLine().equals("Y")) {
+                        if (usernames.isEmpty()) {
+                            System.out.print("Can't make group - group is empty!");
+                            continue;
+                        }
+                        makeGroup = true;
+                    } else {
+                        System.out.print("Friend Username: ");
+                        String friendUsername = scanner.nextLine();
+                        //check if username is valid - depends whether both account is private or public
+                        //write to server
+                        String messageFromServer = "";
+                        if (messageFromServer.equals("")){
+                            System.out.println("Add Username Successfully");
+                            usernames.add(friendUsername);
+                        } else {
+                            System.out.println("Invalid Friend Username");
+                        }
+                    }
+                }
+                //write to server to prep for creating chat
+                //write a list of verified usernames
+                //create chat on server side
+                System.out.println("Chat created");
             } else if (input.equals("3")) {
-
+                //write to server to get the list
+                //read and print chat id
             } else if (input.equals("4")) {
-
+                System.out.print("Chat ID: ");
+                String chatID = scanner.nextLine();
+                //write to server and make sure chat exist
+                //read and print the last 10 messages sent
             } else {
                 System.out.println("Invalid input");
             }
