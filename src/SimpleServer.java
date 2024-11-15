@@ -31,6 +31,8 @@ public class SimpleServer {
     private static ArrayList<User> users;
     private static ArrayList<Chat> chats;
     private User user;
+    private BufferedReader clientReader;
+    private PrintWriter clientWriter;
 
     /**
      * Initializes a new {@code SimpleServer} that binds to the specified port.
@@ -75,6 +77,9 @@ public class SimpleServer {
     public void start() throws IOException {
         try {
             Socket socket = serverSocket.accept();
+            clientReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            clientWriter = new PrintWriter(socket.getOutputStream());
+
             ClientHandler clientHandler = new ClientHandler(socket);
             Thread newClientThread = new Thread(clientHandler);
             newClientThread.start();
