@@ -96,3 +96,5 @@ A comprehensive overview of each class, covering its functionality, the testing 
 - **Functionality**: Tests basic `User` functionalities like managing followers, file operations, and lists.
 - **Testing**: Provides basic unit tests for `User`, confirming core functionality and file persistence.
 - **Relationships**: Directly tests `User`, ensuring proper data handling and interactions.
+
+# Testing IO For Phase 2
