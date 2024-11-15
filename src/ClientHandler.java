@@ -106,7 +106,6 @@ public class ClientHandler implements Runnable {
     }
 
     public void welcomePage(Scanner scanner) {
-
         while (true) {
             System.out.println("Welcome to the Welcome Page\n" +
                     "1 - Sign in\n" +
@@ -201,7 +200,30 @@ public class ClientHandler implements Runnable {
     }
 
     public void userPage(Scanner scanner) {
+        while (true) {
+            System.out.println("Welcome to the Feed Page\n" +
+                    "1 - Change User Profile\n" +
+                    "2 - View Follower\n" +
+                    "3 - View Following\n" +
+                    "4 - View Blocked\n" +
+                    "5 - Go Back to Feed View");
+            //Display username and private/public tag
+            String input = scanner.nextLine();
+            if (input.equals("1")) {
 
+            } else if (input.equals("2")) {
+
+            } else if (input.equals("3")) {
+
+            } else if (input.equals("4")) {
+
+            } else if (input.equals("5")) {
+                feedPage(scanner);
+                break;
+            } else {
+                System.out.println("Invalid input");
+            }
+        }
     }
 
 
