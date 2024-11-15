@@ -4,6 +4,7 @@ import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.io.*;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -65,48 +66,15 @@ public class SimpleServer {
         }
     }
 
-    public void action() {
-
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(System.in))) {
-            String userRequest = in.readLine();
-            String username = ""; // some parsed form of userRequest
-
-            if (userRequest.equals("...")) {
-                userPageOperation(username);
-            }
-
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    /**
-     * Stops the server by closing the server socket and releasing associated resources.
-     * <p>
-     * This method closes the server socket, which will terminate any ongoing connections.
-     * If an {@code ExecutorService} were in use, it would also be shut down here to clean up resources.
-     * </p>
-     *
-     * @throws IOException if an I/O error occurs when closing the server socket
-     */
     public void stop() throws IOException {
         serverSocket.close();
-        //    executorService.shutdown();
     }
 
-    /**
-     * The main method that serves as the application's entry point. Prints a welcome message,
-     * initializes a {@code SimpleServer} on port 12345, and starts the server to listen for
-     * incoming client connections. Handles any {@code IOException} that may occur during server setup.
-     *
-     * @param args command-line arguments passed to the application (not used)
-     */
     public static void main(String[] args) {
         try {
             SimpleServer server = new SimpleServer(12);
             server.start();
-            server.feedPageOperation();
+            server.welcomePageOperation();
 
         } catch (IOException e) {
             System.err.println("Server error: " + e.getMessage());

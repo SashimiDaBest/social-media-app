@@ -3,6 +3,7 @@ import java.awt.event.ActionListener;
 import java.net.*;
 import java.io.*;
 import java.awt.*;
+import java.util.Scanner;
 import javax.swing.*;
 
 /**
@@ -50,9 +51,30 @@ public class ClientHandler implements Runnable {
 
     @Override
     public void run() {
+        Scanner scanner = new Scanner(System.in);
         try (BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
+            int page = 0;
 
+            switch (page) {
+                case 0:
+                    welcomePage(scanner);
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    break;
+                default:
+                    break;
+            }
+
+
+
+            /*
             frame = new JFrame("Boiler Gram");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setLocationRelativeTo(null);
@@ -75,14 +97,51 @@ public class ClientHandler implements Runnable {
 
             frame.add(cardPanel);
             frame.setVisible(true);
-            setupActionListeners();
+//            setupActionListeners();
             out.write("hello");
-
+           */
         } catch (IOException e) {
             System.err.println("Client connection error: " + e.getMessage());
         }
     }
 
+    public void welcomePage(Scanner scanner) {
+        System.out.println("Welcome to the Welcome Page\n" +
+                "1 - Sign in\n" +
+                "2 - Sign up\n");
+        String input = scanner.nextLine();
+        while (true) {
+            if (input.equals("1")) {
+                System.out.print("Username: ");
+                String username = scanner.nextLine();
+                System.out.print("Password: ");
+                String password = scanner.nextLine();
+                break;
+            } else if (input.equals("2")) {
+                System.out.print("Username: ");
+                String username = scanner.nextLine();
+                System.out.print("Password: ");
+                String password = scanner.nextLine();
+                //checkPassword and Username requirement boolean method
+                //write user and password to server and initialize user
+                feedPage();
+                break;
+            } else {
+                System.out.println("Invalid input");
+            }
+        }
+    }
+
+    public void feedPage() {
+
+    }
+
+
+
+
+
+
+    /*
     private void setupActionListeners() {
 
         welcomePage.getSignInButton().addActionListener(new ActionListener() {
@@ -126,4 +185,5 @@ public class ClientHandler implements Runnable {
 
         });
     }
+     */
 }
