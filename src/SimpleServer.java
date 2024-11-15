@@ -112,7 +112,7 @@ public class SimpleServer {
      */
     public void stop() throws IOException {
         serverSocket.close();
-    //    executorService.shutdown();
+        //    executorService.shutdown();
     }
 
     /**
@@ -306,14 +306,12 @@ public class SimpleServer {
         }
         while (continueFeed);
     }
-
-
     // Derek's Main Changes
 
     // grabs user from users ArrayList based off userID; returns null if not found
     public User grabUserByID(String userID) {
 
-        for (User user: users) {
+        for (User user : users) {
             if (user.getUserID().equals(userID)) {
                 return user;
             }
@@ -324,7 +322,7 @@ public class SimpleServer {
     // grabs user from users ArrayList based off username
     public User grabUserByName(String username) {
 
-        for (User user: users) {
+        for (User user : users) {
             if (user.getUsername().equals(username)) {
                 return user;
             }
@@ -338,7 +336,7 @@ public class SimpleServer {
 
         // find which user to work with:
         User currentClient = null;
-        for (User user: users) {
+        for (User user : users) {
             if (user.getUsername().equals(clientUserName)) {
                 currentClient = user;
             }
@@ -358,7 +356,7 @@ public class SimpleServer {
             e.printStackTrace();
         }
 
-        while(true) {
+        while (true) {
 
             // main screen
             System.out.println(
@@ -378,7 +376,7 @@ public class SimpleServer {
                 while (true) {
                     System.out.println("Currently followed by: ");
                     // NOTE: only shows IDs for now
-                    for (String userID: currentClient.getFollowerList()) {
+                    for (String userID : currentClient.getFollowerList()) {
                         System.out.println(userID);
                     }
 
@@ -433,7 +431,7 @@ public class SimpleServer {
                 while (true) {
                     System.out.println("Currently following: ");
                     // NOTE: only shows IDs for now
-                    for (String userID: currentClient.getFollowingList()) {
+                    for (String userID : currentClient.getFollowingList()) {
                         System.out.println(userID);
                     }
 
@@ -540,7 +538,7 @@ public class SimpleServer {
                 while (true) {
                     System.out.println("Currently blocked: ");
                     // NOTE: only shows IDs for now
-                    for (String userID: currentClient.getBlockedList()) {
+                    for (String userID : currentClient.getBlockedList()) {
                         System.out.println(userID);
                     }
 
@@ -651,7 +649,7 @@ public class SimpleServer {
                 System.out.println("Exiting user page...");
                 break;
 
-            }else { // invalid choice selection
+            } else { // invalid choice selection
                 System.out.println("Invalid selection");
                 continue;
             }
@@ -659,6 +657,7 @@ public class SimpleServer {
         userInput.close();
 
     }
+
     public void otherPageOperation() {
 
     }
