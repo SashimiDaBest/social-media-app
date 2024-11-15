@@ -115,7 +115,15 @@ public class ClientHandler implements Runnable {
                 String username = scanner.nextLine();
                 System.out.print("Password: ");
                 String password = scanner.nextLine();
-                break;
+                //checkPassword and Username requirement boolean method
+                //write user and password to server and initialize user
+                //read and see if the user can be created
+                String messageFromServer = "";
+                if (messageFromServer.equals("")){
+                    feedPage();
+                    break;
+                }
+                //else show error message and do something
             } else if (input.equals("2")) {
                 System.out.print("Username: ");
                 String username = scanner.nextLine();
@@ -123,8 +131,13 @@ public class ClientHandler implements Runnable {
                 String password = scanner.nextLine();
                 //checkPassword and Username requirement boolean method
                 //write user and password to server and initialize user
-                feedPage();
-                break;
+                //read and see if the user can be created
+                String messageFromServer = "";
+                if (messageFromServer.equals("")){
+                    feedPage();
+                    break;
+                }
+                //else show error message and do something
             } else {
                 System.out.println("Invalid input");
             }
