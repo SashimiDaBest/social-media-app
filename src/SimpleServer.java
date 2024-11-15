@@ -191,8 +191,8 @@ public class SimpleServer {
                     System.out.println("New chat created!");
                     break;
                 case "2":
-                    System.out.println("Enter the number (ex. 0001) of the Chat you'd like to open! Type * to return to" +
-                            " the main menu.");
+                    System.out.println("Enter the number (ex. 0001) of the Chat you'd like to open! Type * to return" +
+                            " to the main menu.");
                     for (Chat chat : chats) {
                         String chatOutput = "";
                         if (chat.getMemberList().contains(loggedinUserID)) {
