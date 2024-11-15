@@ -126,18 +126,4 @@ public class ClientHandler implements Runnable {
 
         });
     }
-  
-    public synchronized boolean isInvalidPassword(char[] password) {
-        boolean haveLetter = false;
-        boolean haveNumber = false;
-        for (char c : password) {
-            if (Character.isLetter(c)) {
-                haveLetter = true;
-            }
-            if (Character.isDigit(c)) {
-                haveNumber = true;
-            }
-        }
-        return haveLetter && haveNumber;
-    }
 }
