@@ -48,14 +48,6 @@ public class ClientHandler implements Runnable {
         this.socket = socket;
     }
 
-    /**
-     * Executes the client handling logic. Manages input and output streams for client-server communication.
-     * Reads data from the client and sends responses. Ensures resources are properly closed in case of an error.
-     * <p>
-     * This method runs when the thread is started, allowing the server to handle each client connection
-     * in a separate thread.
-     * </p>
-     */
     @Override
     public void run() {
         try (BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -69,7 +61,6 @@ public class ClientHandler implements Runnable {
             cardLayout = new CardLayout();
             cardPanel = new JPanel(cardLayout);
 
-            // Create instances of each page
             welcomePage = new WelcomePage(cardLayout, cardPanel);
             createUserPage = new CreateUserPage(cardLayout, cardPanel);
             feedViewPage = new FeedViewPage(cardLayout, cardPanel);
