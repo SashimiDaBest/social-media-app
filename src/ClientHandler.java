@@ -140,4 +140,10 @@ public class ClientHandler implements Runnable {
             }
         });
     }
+
+    // to be used by server:
+    public User getClientUser() {
+        return this.user;
+    }
+
 }
