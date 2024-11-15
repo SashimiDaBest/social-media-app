@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="f670f7b9-d625-4a9d-9f5c-5d165161aa9d" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/Chat.java" beforeDir="false" afterPath="$PROJECT_DIR$/Chat.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RunUserTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/RunUserTests.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SimpleServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/SimpleServer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/User.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 5
+}]]></component>
+  <component name="ProjectId" id="2oXEnLSo6QaPAsx8iRc6j9q8Ixh" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.UserTest.executor": "Run",
+    "JUnit.RunUserTests.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/mctum/OneDrive/Desktop/Project 5 - Main Local Repository/social-media-app"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="f670f7b9-d625-4a9d-9f5c-5d165161aa9d" name="Changes" comment="" />
+      <created>1731007686308</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1731007686308</updated>
+    </task>
+    <servers />
+  </component>
+</project>
