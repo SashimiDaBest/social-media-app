@@ -23,57 +23,34 @@ import java.util.Scanner;
  * @since 1.0
  */
 public class SimpleServer {
-    /**
-     * The server socket that listens for client connections.
-     */
     private ServerSocket serverSocket;
-    //    private ExecutorService executorService;
     private static ArrayList<User> users;
     private static ArrayList<Chat> chats;
     private User user;
     private BufferedReader clientReader;
     private PrintWriter clientWriter;
 
-    /**
-     * Initializes a new {@code SimpleServer} that binds to the specified port.
-     *
-     * @param port the port on which the server will listen for incoming connections
-     * @throws IOException if an I/O error occurs when opening the socket
-     */
     public SimpleServer(int port) throws IOException {
         serverSocket = new ServerSocket(port);
-        if (users == null && chats == null) {
-            users = new ArrayList<>();
-            chats = new ArrayList<>();
+        users = new ArrayList<>();
+        chats = new ArrayList<>();
 
-            File dataDirectory = new File("Sample Test Folder");
-            System.out.println(dataDirectory.getAbsolutePath());
-            File[] userFiles = dataDirectory.listFiles((ignored, name) -> name.startsWith("U_02"));
-            for (File userFile : userFiles) {
-                users.add(new User(userFile.getAbsolutePath()));
-            }
+        File dataDirectory = new File("Sample Test Folder");
+        File[] userFiles = dataDirectory.listFiles((ignored, name) -> name.startsWith("U_02"));
+        for (File userFile : userFiles) {
+            users.add(new User(userFile.getAbsolutePath()));
+        }
 
-            File[] chatFiles = dataDirectory.listFiles((ignored, name) -> name.startsWith("C_02"));
-            for (File chatFile : chatFiles) {
-                try {
-                    chats.add(new Chat(chatFile.getAbsolutePath().substring(0, chatFile.getAbsolutePath().lastIndexOf("."))));
-                } catch (InvalidFileFormatException e) {
-                    throw new RuntimeException(e);
-                }
+        File[] chatFiles = dataDirectory.listFiles((ignored, name) -> name.startsWith("C_02"));
+        for (File chatFile : chatFiles) {
+            try {
+                chats.add(new Chat(chatFile.getAbsolutePath().substring(0, chatFile.getAbsolutePath().lastIndexOf("."))));
+            } catch (InvalidFileFormatException e) {
+                throw new RuntimeException(e);
             }
         }
     }
 
-    /**
-     * Starts the server and waits for client connections.
-     * <p>
-     * This method enters an infinite loop where it listens for incoming client connections.
-     * Upon a successful connection, a new socket is created. Optionally, the connection could
-     * be handled by a {@code ClientHandler} using an {@code ExecutorService} for concurrent processing.
-     * </p>
-     *
-     * @throws IOException if an I/O error occurs while waiting for a connection
-     */
     public void start() throws IOException {
         try {
             Socket socket = serverSocket.accept();
@@ -83,9 +60,6 @@ public class SimpleServer {
             ClientHandler clientHandler = new ClientHandler(socket);
             Thread newClientThread = new Thread(clientHandler);
             newClientThread.start();
-
-            //action();
-//          executorService.submit(new ClientHandler(clientSocket));
         } catch (Exception e) {
             System.out.println("Error accepting connection" + e.getMessage());
         }
