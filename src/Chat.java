@@ -56,7 +56,7 @@ public class Chat implements ChatInterface {
                 String line = reader.readLine();
 
                 try {
-                    Integer.parseInt(chatID.substring(2));
+                    Integer.parseInt(line.substring(2));
                     if (line.length() != 6 || !line.startsWith("C_"))
                         throw new InvalidFileFormatException("Invalid chatID Format!");
                 } catch (NumberFormatException e) {
