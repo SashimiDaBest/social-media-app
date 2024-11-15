@@ -34,8 +34,6 @@ public class ClientHandler implements Runnable {
     private UserProfilePage userProfilePage;
     private OtherProfilePage otherProfilePage;
 
-    private User user;
-
     public static void main(String[] args) {
         try {
             Socket socket = new Socket("localhost", 12);
@@ -86,7 +84,6 @@ public class ClientHandler implements Runnable {
 
             frame.add(cardPanel);
             frame.setVisible(true);
-
             setupActionListeners();
             out.write("hello");
 
@@ -100,27 +97,14 @@ public class ClientHandler implements Runnable {
         welcomePage.getSignInButton().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String username = welcomePage.getUsernameField().getText();
-                String password = welcomePage.getPasswordField().getText();
+                char[] password = welcomePage.getPasswordField().getPassword();
+                String passwordString = new String(password);
 
-                boolean haveLetter = false;
-                boolean haveNumber = false;
-                for (int i = 0; i < password.length(); i++) {
-                    if (Character.isLetter(password.charAt(i))) {
-                        haveLetter = true;
-                    }
-                    if (Character.isDigit(password.charAt(i))) {
-                        haveNumber = true;
-                    }
-                }
-
-                if (!User.hasLogin(username, password) || username == null || !User.userNameValidation(username) || (password == null || password.length() < 10 || (!haveLetter && !haveNumber))) {
-                    JOptionPane.showMessageDialog(null, "Please enter a valid username or password \n " +
-                            "Password should be 10 characters or more \n " +
-                            "Password should contains letters AND numbers \n " +
-                            "Password should not have ;", "Error", JOptionPane.ERROR_MESSAGE);
+                if (username == null || password == null) {
+                    JOptionPane.showMessageDialog(null, "ERROR CONDITION", "Error", JOptionPane.ERROR_MESSAGE);
                 } else {
                     String userID = ""; //replace this with method to find userID based on username
-                    user = new User(userID);
+//                    user = new User(userID);
                     cardLayout.show(cardPanel, "feedViewPage");
                 }
             }
@@ -134,16 +118,35 @@ public class ClientHandler implements Runnable {
         });
 
         createUserPage.getSignUpButtonButton().addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null, "Welcome to Boiler Gram!", "Welcome Message", JOptionPane.INFORMATION_MESSAGE);
-                cardLayout.show(cardPanel, "feedViewPage");
+                String username = welcomePage.getUsernameField().getText();
+                char[] password = welcomePage.getPasswordField().getPassword();
+                String passwordString = new String(password);
+
+                if (username == null || password == null) {
+                    JOptionPane.showMessageDialog(null, "ERROR CONDITION", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    String userID = ""; // Replace with method to find userID based on username
+//                    user = new User(userID);
+                    cardLayout.show(cardPanel, "feedViewPage");
+                }
             }
+
         });
     }
-
-    // to be used by server:
-    public User getClientUser() {
-        return this.user;
+  
+    public synchronized boolean isInvalidPassword(char[] password) {
+        boolean haveLetter = false;
+        boolean haveNumber = false;
+        for (char c : password) {
+            if (Character.isLetter(c)) {
+                haveLetter = true;
+            }
+            if (Character.isDigit(c)) {
+                haveNumber = true;
+            }
+        }
+        return haveLetter && haveNumber;
     }
-
 }

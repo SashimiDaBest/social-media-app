@@ -30,6 +30,7 @@ public class SimpleServer {
     //    private ExecutorService executorService;
     private static ArrayList<User> users;
     private static ArrayList<Chat> chats;
+    private User user;
 
     /**
      * Initializes a new {@code SimpleServer} that binds to the specified port.
@@ -661,4 +662,6 @@ public class SimpleServer {
     public void otherPageOperation() {
 
     }
+
 }
+

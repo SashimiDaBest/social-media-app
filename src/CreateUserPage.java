@@ -86,4 +86,11 @@ public class CreateUserPage extends JComponent {
         return signUpButton;
     }
 
+    public JTextField getUsernameField() {
+        return usernameField;
+    }
+
+    public JPasswordField getPasswordField() {
+        return passwordField;
+    }
 }
