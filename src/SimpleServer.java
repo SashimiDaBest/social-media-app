@@ -4,6 +4,7 @@ import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.io.*;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -23,57 +24,34 @@ import java.util.Scanner;
  * @since 1.0
  */
 public class SimpleServer {
-    /**
-     * The server socket that listens for client connections.
-     */
     private ServerSocket serverSocket;
-    //    private ExecutorService executorService;
     private static ArrayList<User> users;
     private static ArrayList<Chat> chats;
     private User user;
     private BufferedReader clientReader;
     private PrintWriter clientWriter;
 
-    /**
-     * Initializes a new {@code SimpleServer} that binds to the specified port.
-     *
-     * @param port the port on which the server will listen for incoming connections
-     * @throws IOException if an I/O error occurs when opening the socket
-     */
     public SimpleServer(int port) throws IOException {
         serverSocket = new ServerSocket(port);
-        if (users == null && chats == null) {
-            users = new ArrayList<>();
-            chats = new ArrayList<>();
+        users = new ArrayList<>();
+        chats = new ArrayList<>();
 
-            File dataDirectory = new File("Sample Test Folder");
-            System.out.println(dataDirectory.getAbsolutePath());
-            File[] userFiles = dataDirectory.listFiles((ignored, name) -> name.startsWith("U_02"));
-            for (File userFile : userFiles) {
-                users.add(new User(userFile.getAbsolutePath()));
-            }
+        File dataDirectory = new File("Sample Test Folder");
+        File[] userFiles = dataDirectory.listFiles((ignored, name) -> name.startsWith("U_02"));
+        for (File userFile : userFiles) {
+            users.add(new User(userFile.getAbsolutePath()));
+        }
 
-            File[] chatFiles = dataDirectory.listFiles((ignored, name) -> name.startsWith("C_02"));
-            for (File chatFile : chatFiles) {
-                try {
-                    chats.add(new Chat(chatFile.getAbsolutePath().substring(0, chatFile.getAbsolutePath().lastIndexOf("."))));
-                } catch (InvalidFileFormatException e) {
-                    throw new RuntimeException(e);
-                }
+        File[] chatFiles = dataDirectory.listFiles((ignored, name) -> name.startsWith("C_02"));
+        for (File chatFile : chatFiles) {
+            try {
+                chats.add(new Chat(chatFile.getAbsolutePath().substring(0, chatFile.getAbsolutePath().lastIndexOf("."))));
+            } catch (InvalidFileFormatException e) {
+                throw new RuntimeException(e);
             }
         }
     }
 
-    /**
-     * Starts the server and waits for client connections.
-     * <p>
-     * This method enters an infinite loop where it listens for incoming client connections.
-     * Upon a successful connection, a new socket is created. Optionally, the connection could
-     * be handled by a {@code ClientHandler} using an {@code ExecutorService} for concurrent processing.
-     * </p>
-     *
-     * @throws IOException if an I/O error occurs while waiting for a connection
-     */
     public void start() throws IOException {
         try {
             Socket socket = serverSocket.accept();
@@ -83,56 +61,20 @@ public class SimpleServer {
             ClientHandler clientHandler = new ClientHandler(socket);
             Thread newClientThread = new Thread(clientHandler);
             newClientThread.start();
-
-            //action();
-//          executorService.submit(new ClientHandler(clientSocket));
         } catch (Exception e) {
             System.out.println("Error accepting connection" + e.getMessage());
         }
     }
 
-    public void action() {
-
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(System.in))) {
-            String userRequest = in.readLine();
-            String username = ""; // some parsed form of userRequest
-
-            if (userRequest.equals("...")) {
-                userPageOperation(username);
-            }
-
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    /**
-     * Stops the server by closing the server socket and releasing associated resources.
-     * <p>
-     * This method closes the server socket, which will terminate any ongoing connections.
-     * If an {@code ExecutorService} were in use, it would also be shut down here to clean up resources.
-     * </p>
-     *
-     * @throws IOException if an I/O error occurs when closing the server socket
-     */
     public void stop() throws IOException {
         serverSocket.close();
-        //    executorService.shutdown();
     }
 
-    /**
-     * The main method that serves as the application's entry point. Prints a welcome message,
-     * initializes a {@code SimpleServer} on port 12345, and starts the server to listen for
-     * incoming client connections. Handles any {@code IOException} that may occur during server setup.
-     *
-     * @param args command-line arguments passed to the application (not used)
-     */
     public static void main(String[] args) {
         try {
             SimpleServer server = new SimpleServer(12);
             server.start();
-            server.feedPageOperation();
+            server.welcomePageOperation();
 
         } catch (IOException e) {
             System.err.println("Server error: " + e.getMessage());

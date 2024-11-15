@@ -3,6 +3,7 @@ import java.awt.event.ActionListener;
 import java.net.*;
 import java.io.*;
 import java.awt.*;
+import java.util.Scanner;
 import javax.swing.*;
 
 /**
@@ -38,7 +39,6 @@ public class ClientHandler implements Runnable {
         try {
             Socket socket = new Socket("localhost", 12);
             SwingUtilities.invokeLater(new ClientHandler(socket));
-            // Replace "localhost" with the server's IP address if needed
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -48,19 +48,32 @@ public class ClientHandler implements Runnable {
         this.socket = socket;
     }
 
-    /**
-     * Executes the client handling logic. Manages input and output streams for client-server communication.
-     * Reads data from the client and sends responses. Ensures resources are properly closed in case of an error.
-     * <p>
-     * This method runs when the thread is started, allowing the server to handle each client connection
-     * in a separate thread.
-     * </p>
-     */
     @Override
     public void run() {
+        Scanner scanner = new Scanner(System.in);
         try (BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
+            int page = 0;
 
+            switch (page) {
+                case 0:
+                    welcomePage(scanner);
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    break;
+                default:
+                    break;
+            }
+
+
+
+            /*
             frame = new JFrame("Boiler Gram");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setLocationRelativeTo(null);
@@ -69,7 +82,6 @@ public class ClientHandler implements Runnable {
             cardLayout = new CardLayout();
             cardPanel = new JPanel(cardLayout);
 
-            // Create instances of each page
             welcomePage = new WelcomePage(cardLayout, cardPanel);
             createUserPage = new CreateUserPage(cardLayout, cardPanel);
             feedViewPage = new FeedViewPage(cardLayout, cardPanel);
@@ -84,14 +96,51 @@ public class ClientHandler implements Runnable {
 
             frame.add(cardPanel);
             frame.setVisible(true);
-            setupActionListeners();
+//            setupActionListeners();
             out.write("hello");
-
+           */
         } catch (IOException e) {
             System.err.println("Client connection error: " + e.getMessage());
         }
     }
 
+    public void welcomePage(Scanner scanner) {
+        System.out.println("Welcome to the Welcome Page\n" +
+                "1 - Sign in\n" +
+                "2 - Sign up\n");
+        String input = scanner.nextLine();
+        while (true) {
+            if (input.equals("1")) {
+                System.out.print("Username: ");
+                String username = scanner.nextLine();
+                System.out.print("Password: ");
+                String password = scanner.nextLine();
+                break;
+            } else if (input.equals("2")) {
+                System.out.print("Username: ");
+                String username = scanner.nextLine();
+                System.out.print("Password: ");
+                String password = scanner.nextLine();
+                //checkPassword and Username requirement boolean method
+                //write user and password to server and initialize user
+                feedPage();
+                break;
+            } else {
+                System.out.println("Invalid input");
+            }
+        }
+    }
+
+    public void feedPage() {
+
+    }
+
+
+
+
+
+
+    /*
     private void setupActionListeners() {
 
         welcomePage.getSignInButton().addActionListener(new ActionListener() {
@@ -135,18 +184,5 @@ public class ClientHandler implements Runnable {
 
         });
     }
-  
-    public synchronized boolean isInvalidPassword(char[] password) {
-        boolean haveLetter = false;
-        boolean haveNumber = false;
-        for (char c : password) {
-            if (Character.isLetter(c)) {
-                haveLetter = true;
-            }
-            if (Character.isDigit(c)) {
-                haveNumber = true;
-            }
-        }
-        return haveLetter && haveNumber;
-    }
+     */
 }
