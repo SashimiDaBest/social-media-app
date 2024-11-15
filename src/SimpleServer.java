@@ -27,7 +27,7 @@ public class SimpleServer {
      * The server socket that listens for client connections.
      */
     private ServerSocket serverSocket;
-//    private ExecutorService executorService;
+    //    private ExecutorService executorService;
     private static ArrayList<User> users;
     private static ArrayList<Chat> chats;
 
@@ -39,7 +39,7 @@ public class SimpleServer {
      */
     public SimpleServer(int port) throws IOException {
         serverSocket = new ServerSocket(port);
-        if(users == null && chats == null) {
+        if (users == null && chats == null) {
             users = new ArrayList<>();
             chats = new ArrayList<>();
 
@@ -103,6 +103,7 @@ public class SimpleServer {
         serverSocket.close();
 //        executorService.shutdown();
     }
+
     /**
      * The main method that serves as the application's entry point. Prints a welcome message,
      * initializes a {@code SimpleServer} on port 12345, and starts the server to listen for
@@ -124,27 +125,182 @@ public class SimpleServer {
     public void welcomePageOperation() {
 
     }
-    public void feedPageOperation() {
-        Scanner input = new Scanner(System.in);
-        System.out.print("Welcome to your Feed! What would you like to do?\n" +
-                "1 - Create a new chat with selected users\n" +
-                "2 - Open an existing chat\n" +
-                "3 - View your profile\n" +
-                "4 - View another user's profile\n" +
-                "* - Type at any time to return to this home page\n");
 
-        switch (input.nextLine()) {
-            case "1":
-                System.out.println("Type the names of the users you'd like to chat with on separate lines." +
-                        "Type [DONE] when you are finished or * to cancel.");
-                for (User user : users) {
-                    System.out.println(user.getUsername());
-                }
+    /**
+     * This method loops the user's Feed, giving them options to create chats, view chats, view their own profile,
+     * view another user's profile, and exit the Feed. Chatting can also be done within this feed, as the user can
+     * create messages, edit messages, and delete messages within each Chat.
+     */
+    public void feedPageOperation() {
+        boolean continueFeed = true;
+        do {
+            String loggedinUserID = "U_0200"; // will be received from client
+            Scanner input = new Scanner(System.in);
+            System.out.print("""
+                    Welcome to your Feed! What would you like to do?
+                    1 - Create a new chat with selected users
+                    2 - Open an existing chat
+                    3 - View your profile
+                    4 - View another user's profile
+                    5 - Exit
+                    """);
+
+            switch (input.nextLine()) {
+                case "1":
+                    System.out.println("Type the names of the users you'd like to chat with on separate lines." +
+                            "Type [DONE] when you are finished.");
+                    for (User user : users) {
+                        if (!user.getUserID().equals(loggedinUserID)) {
+                            System.out.println(user.getUsername());
+                        }
+                    }
+                    System.out.println("Create a new chat with:");
+                    ArrayList<String> usersToChatWith = new ArrayList<>();
+                    usersToChatWith.add(loggedinUserID);
+
+                    while (true) {
+                        String username = input.nextLine();
+                        if (!username.equals("[DONE]")) {
+                            boolean success = false;
+                            boolean self = false;
+                            for (User user : users) {
+                                if (username.equals(user.getUsername())) {
+                                    usersToChatWith.add(user.getUserID());
+                                    success = true;
+                                } else if (User.findIDFromUsername(username).equals(loggedinUserID)) {
+                                    self = true;
+                                }
+                            }
+                            if (self) {
+                                System.out.println("You cannot add yourself to a chat!");
+                            } else if (!success) {
+                                System.out.println("User does not exist or cannot be added to a chat!");
+                            }
+
+                        } else {
+                            Chat newChat = new Chat(usersToChatWith);
+                            chats.add(newChat);
+                            for (User user : users) {
+                                if (usersToChatWith.contains(user.getUserID())) {
+                                    user.addChat(newChat.getChatID());
+                                }
+                            }
+                            break;
+                        }
+                    }
+                    System.out.println("New chat created!");
+                    break;
+                case "2":
+                    System.out.println("Enter the number (ex. 0001) of the Chat you'd like to open! Type * to return to" +
+                            " the main menu.");
+                    for (Chat chat : chats) {
+                        String chatOutput = "";
+                        if (chat.getMemberList().contains(loggedinUserID)) {
+                            chatOutput = "Chat #" + chat.getChatID().substring(2) + " (With ";
+                            for (int i = 0; i < chat.getMemberList().size(); i++) {
+                                if (!chat.getMemberList().get(i).equals(loggedinUserID)) {
+                                    chatOutput += User.findUsernameFromID(chat.getMemberList().get(i));
+
+                                    if (i != chat.getMemberList().size() - 1) {
+                                        chatOutput += ", ";
+                                    }
+                                }
+                                if (i == chat.getMemberList().size() - 1) {
+                                    chatOutput += ")";
+                                }
+                            }
+                        }
+                        if (!chatOutput.isEmpty())
+                            System.out.println(chatOutput);
+                    }
+
+                    String selectedChatID = input.nextLine();
+                    boolean viewChat = true;
+                    do {
+                        for (Chat chat : chats) {
+                            if (("C_" + selectedChatID).equals(chat.getChatID())) {
+                                System.out.print(
+                                        "---------------------------------------------------------------------\n" +
+                                                "Chat #" + chat.getChatID().substring(2) +
+                                                "\nMembers: You, ");
+
+                                for (int i = 0; i < chat.getMemberList().size(); i++) {
+                                    if (!chat.getMemberList().get(i).equals(loggedinUserID)) {
+                                        System.out.print(User.findUsernameFromID(chat.getMemberList().get(i)));
+
+                                        if (i != chat.getMemberList().size() - 1) {
+                                            System.out.print(", ");
+                                        } else {
+                                            System.out.println("\n");
+                                        }
+                                    }
+                                }
+
+                                int indexOfFirstMessageToDisplay;
+                                if (chat.getMessageList().size() < 5)
+                                    indexOfFirstMessageToDisplay = 0;
+                                else
+                                    indexOfFirstMessageToDisplay = chat.getMessageList().size() - 5;
+                                System.out.println("[Displaying up to 5 most recent messages]");
+
+                                for (int i = indexOfFirstMessageToDisplay; i < chat.getMessageList().size(); i++) {
+                                    if (chat.getMessageList().get(i).getAuthorID().equals(loggedinUserID)) {
+                                        System.out.print("You: ");
+                                    } else {
+                                        System.out.print(
+                                                User.findUsernameFromID(chat.getMessageList().get(i).getAuthorID()) + ": ");
+                                    }
+
+                                    System.out.println(chat.getMessageList().get(i).getMessage());
+                                }
+                                System.out.println("---------------------------------------------------------------------");
+                                System.out.print("""
+                                        1 - Compose message
+                                        2 - Delete previous message
+                                        3 - Edit previous message
+                                        4 - Exit chat
+                                        """);
+                                switch (input.nextLine()) {
+                                    case "1":
+                                        System.out.println("Enter your message:");
+                                        chat.addMessage(new Message(loggedinUserID, 0, input.nextLine()));
+                                        break;
+                                    case "2":
+                                        chat.deleteMessage(loggedinUserID);
+                                        System.out.println("Message deleted!");
+                                        break;
+                                    case "3":
+                                        System.out.println("Enter your replacement message:");
+                                        chat.editMessage(input.nextLine(), loggedinUserID);
+                                        break;
+                                    case "4":
+                                        viewChat = false;
+                                        break;
+                                    default:
+                                        System.out.println("Invalid choice!");
+                                        break;
+                                }
+                            }
+                        }
+                    } while (viewChat);
+                case "3":
+                    // make call to userPageOperation as appropriate
+                    break;
+                case "4":
+                    // make call to otherPageOperation as appropriate
+                    break;
+                case "5":
+                    continueFeed = false;
+                    break;
+            }
         }
+        while (continueFeed);
     }
+
     public void userPageOperation() {
 
     }
+
     public void otherPageOperation() {
 
     }

@@ -545,12 +545,35 @@ public class User implements UserInterface {
      * @param usernameToSearch the username of the user whose ID will be found
      * @return The ID of the user with the username in the parameter
      */
-    public synchronized String findIDFromUsername(String usernameToSearch) {
+    public static synchronized String findIDFromUsername(String usernameToSearch) {
         try (BufferedReader reader = new BufferedReader(new FileReader(USERIDLIST))) {
             String line = reader.readLine();
             while (line != null) {
                 if (line.split(";")[0].equals(usernameToSearch)) {
                     return line.split(";")[2];
+                }
+
+                line = reader.readLine();
+            }
+
+            return null;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Searches for a user by their ID within the application data.
+     *
+     * @param idToSearch the ID of the user whose username will be found
+     * @return The username of the user with the ID in the parameter
+     */
+    public static synchronized String findUsernameFromID(String idToSearch) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(USERIDLIST))) {
+            String line = reader.readLine();
+            while (line != null) {
+                if (line.split(";")[2].equals(idToSearch)) {
+                    return line.split(";")[0];
                 }
 
                 line = reader.readLine();
