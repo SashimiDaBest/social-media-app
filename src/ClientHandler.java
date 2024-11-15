@@ -135,7 +135,7 @@ public class ClientHandler implements Runnable {
 
         });
     }
-
+  
     public synchronized boolean isInvalidPassword(char[] password) {
         boolean haveLetter = false;
         boolean haveNumber = false;
