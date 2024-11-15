@@ -3,6 +3,7 @@ import java.awt.event.ActionListener;
 import java.net.*;
 import java.io.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Scanner;
 import javax.swing.*;
 
@@ -105,17 +106,26 @@ public class ClientHandler implements Runnable {
     }
 
     public void welcomePage(Scanner scanner) {
-        System.out.println("Welcome to the Welcome Page\n" +
-                "1 - Sign in\n" +
-                "2 - Sign up\n");
-        String input = scanner.nextLine();
+
         while (true) {
+            System.out.println("Welcome to the Welcome Page\n" +
+                    "1 - Sign in\n" +
+                    "2 - Sign up\n");
+            String input = scanner.nextLine();
             if (input.equals("1")) {
                 System.out.print("Username: ");
                 String username = scanner.nextLine();
                 System.out.print("Password: ");
                 String password = scanner.nextLine();
-                break;
+                //checkPassword and Username requirement boolean method
+                //write user and password to server and initialize user
+                //read and see if the user can be created
+                String messageFromServer = "";
+                if (messageFromServer.equals("")){
+                    feedPage(scanner);
+                    break;
+                }
+                //else show error message and do something
             } else if (input.equals("2")) {
                 System.out.print("Username: ");
                 String username = scanner.nextLine();
@@ -123,18 +133,76 @@ public class ClientHandler implements Runnable {
                 String password = scanner.nextLine();
                 //checkPassword and Username requirement boolean method
                 //write user and password to server and initialize user
-                feedPage();
-                break;
+                //read and see if the user can be created
+                String messageFromServer = "";
+                if (messageFromServer.equals("")){
+                    feedPage(scanner);
+                    break;
+                }
+                //else show error message and do something
             } else {
                 System.out.println("Invalid input");
             }
         }
     }
 
-    public void feedPage() {
-
+    public void feedPage(Scanner scanner) {
+        while (true) {
+            System.out.println("Welcome to the Feed Page\n" +
+                    "1 - Go to User Profile\n" +
+                    "2 - Add User\n" +
+                    "3 - View All Chat IDs\n" +
+                    "4 - View Chat's Messages");
+            String input = scanner.nextLine();
+            if (input.equals("1")) {
+                userPage(scanner);
+                break;
+            } else if (input.equals("2")) {
+                boolean makeGroup = false;
+                ArrayList<String> usernames = new ArrayList<>();
+                while (!makeGroup) {
+                    System.out.print("Add Group (Y/N): ");
+                    if (scanner.nextLine().equals("Y")) {
+                        if (usernames.isEmpty()) {
+                            System.out.print("Can't make group - group is empty!");
+                            continue;
+                        }
+                        makeGroup = true;
+                    } else {
+                        System.out.print("Friend Username: ");
+                        String friendUsername = scanner.nextLine();
+                        //check if username is valid - depends whether both account is private or public
+                        //write to server
+                        String messageFromServer = "";
+                        if (messageFromServer.equals("")){
+                            System.out.println("Add Username Successfully");
+                            usernames.add(friendUsername);
+                        } else {
+                            System.out.println("Invalid Friend Username");
+                        }
+                    }
+                }
+                //write to server to prep for creating chat
+                //write a list of verified usernames
+                //create chat on server side
+                System.out.println("Chat created");
+            } else if (input.equals("3")) {
+                //write to server to get the list
+                //read and print chat id
+            } else if (input.equals("4")) {
+                System.out.print("Chat ID: ");
+                String chatID = scanner.nextLine();
+                //write to server and make sure chat exist
+                //read and print the last 10 messages sent
+            } else {
+                System.out.println("Invalid input");
+            }
+        }
     }
 
+    public void userPage(Scanner scanner) {
+
+    }
 
 
 

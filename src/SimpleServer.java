@@ -82,7 +82,7 @@ public class SimpleServer {
     }
 
     public void welcomePageOperation() {
-
+        //read message from client and do whatever client said to do
     }
 
     /**
