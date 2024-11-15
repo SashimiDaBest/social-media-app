@@ -336,8 +336,6 @@ public class SimpleServer {
 
     public void userPageOperation(String clientUserName) {
 
-        Scanner userInput = new Scanner(System.in);
-
         // find which user to work with:
         User currentClient = null;
         for (User user : users) {
@@ -360,305 +358,311 @@ public class SimpleServer {
             e.printStackTrace();
         }
 
-        while (true) {
+        try {
+            while (true) {
 
-            // main screen
-            System.out.println(
-                    currentClient.getUsername() + "\n" +
-                            clientAccountType + "\n" +
-                            currentClient.getProfilePic() + "\n" +
-                            "1 - Follwers\n" +
-                            "2 - Following\n" +
-                            "3 - Blocked\n" +
-                            "0 - Exit");
+                // main screen
+                System.out.println(
+                        currentClient.getUsername() + "\n" +
+                                clientAccountType + "\n" +
+                                currentClient.getProfilePic() + "\n" +
+                                "1 - Follwers\n" +
+                                "2 - Following\n" +
+                                "3 - Blocked\n" +
+                                "0 - Exit");
 
 
-            String mainChoice = userInput.nextLine();
+                String mainChoice = clientReader.readLine();
 
-            if (mainChoice.equals("1")) { // show followers
+                if (mainChoice.equals("1")) { // show followers
 
-                while (true) {
-                    System.out.println("Currently followed by: ");
-                    // NOTE: only shows IDs for now
-                    for (String userID : currentClient.getFollowerList()) {
-                        System.out.println(userID);
-                    }
+                    while (true) {
+                        System.out.println("Currently followed by: ");
+                        // NOTE: only shows IDs for now
+                        for (String userID : currentClient.getFollowerList()) {
+                            System.out.println(userID);
+                        }
 
-                    System.out.println("Press 0 to exit\nPress 1 to view a profile");
-                    String displayChoice = userInput.nextLine();
+                        System.out.println("Press 0 to exit\nPress 1 to view a profile");
+                        String displayChoice = clientReader.readLine();
 
-                    if (displayChoice.equals("0")) { // return to main menu
-                        break;
+                        if (displayChoice.equals("0")) { // return to main menu
+                            break;
 
-                    } else if (displayChoice.equals("1")) { // profile view
+                        } else if (displayChoice.equals("1")) { // profile view
 
-                        while (true) {
-                            System.out.println("Please select a profile; Press 0 to go back at any time");
-                            String profile = userInput.nextLine(); // because options are IDs for now, this is also an ID
+                            while (true) {
+                                System.out.println("Please select a profile; Press 0 to go back at any time");
+                                String profile = clientReader.readLine(); // because options are IDs for now, this is also an ID
 
-                            if (profile.equals("0")) { // go back to Follower screen
-                                break;
+                                if (profile.equals("0")) { // go back to Follower screen
+                                    break;
 
-                            } else if (!currentClient.getFollowerList().contains(profile) && !profile.equals("0")) {
-                                System.out.println("The selected user is not following you, please try again");
-                                continue;
+                                } else if (!currentClient.getFollowerList().contains(profile) && !profile.equals("0")) {
+                                    System.out.println("The selected user is not following you, please try again");
+                                    continue;
 
-                            } else { // display selected profile's info
+                                } else { // display selected profile's info
 
-                                User profiledUser = this.grabUserByID(profile);
+                                    User profiledUser = this.grabUserByID(profile);
 
-                                System.out.println(profile + "\nSome of their current followers:");
-                                for (int i = 0; i < 3; i++) {
-                                    System.out.println(profiledUser.getFollowerList().get(i));
-                                    if (i == 2) {
-                                        System.out.println("...");
+                                    System.out.println(profile + "\nSome of their current followers:");
+                                    for (int i = 0; i < 3; i++) {
+                                        System.out.println(profiledUser.getFollowerList().get(i));
+                                        if (i == 2) {
+                                            System.out.println("...");
+                                        }
                                     }
-                                }
-                                System.out.println("Some of who they're currently following:");
-                                for (int i = 0; i < 3; i++) {
-                                    System.out.println(profiledUser.getFollowingList().get(i));
-                                    if (i == 2) {
-                                        System.out.println("...");
+                                    System.out.println("Some of who they're currently following:");
+                                    for (int i = 0; i < 3; i++) {
+                                        System.out.println(profiledUser.getFollowingList().get(i));
+                                        if (i == 2) {
+                                            System.out.println("...");
+                                        }
                                     }
                                 }
                             }
+
+                        } else { // redisplay Follower screen on invalid input
+                            System.out.println("displayChoice is invalid, try again");
+                            continue;
+                        }
+                    } // end of main screen option
+
+                } else if (mainChoice.equals("2")) { // show following
+
+                    while (true) {
+                        System.out.println("Currently following: ");
+                        // NOTE: only shows IDs for now
+                        for (String userID : currentClient.getFollowingList()) {
+                            System.out.println(userID);
                         }
 
-                    } else { // redisplay Follower screen on invalid input
-                        System.out.println("displayChoice is invalid, try again");
-                        continue;
-                    }
-                } // end of main screen option
+                        System.out.println("Press 0 to exit\nPress 1 to view a profile\n" +
+                                "Press 2 to follow someone new\nPress 3 to un-follow someone");
+                        String displayChoice = clientReader.readLine();
 
-            } else if (mainChoice.equals("2")) { // show following
+                        if (displayChoice.equals("0")) { // return to main menu
+                            break;
 
-                while (true) {
-                    System.out.println("Currently following: ");
-                    // NOTE: only shows IDs for now
-                    for (String userID : currentClient.getFollowingList()) {
-                        System.out.println(userID);
-                    }
+                        } else if (displayChoice.equals("1")) { // profile view
 
-                    System.out.println("Press 0 to exit\nPress 1 to view a profile\n" +
-                            "Press 2 to follow someone new\nPress 3 to un-follow someone");
-                    String displayChoice = userInput.nextLine();
+                            while (true) {
+                                System.out.println("Please select a profile; Press 0 to go back at any time");
+                                String profile = clientReader.readLine(); // because options are IDs for now, this is also an ID
 
-                    if (displayChoice.equals("0")) { // return to main menu
-                        break;
+                                if (profile.equals("0")) { // go back to Following screen
+                                    break;
 
-                    } else if (displayChoice.equals("1")) { // profile view
+                                } else if (!currentClient.getFollowingList().contains(profile) && !profile.equals("0")) {
+                                    System.out.println("You are not following the selected user, please try again");
+                                    continue;
 
-                        while (true) {
-                            System.out.println("Please select a profile; Press 0 to go back at any time");
-                            String profile = userInput.nextLine(); // because options are IDs for now, this is also an ID
+                                } else { // display selected profile's information
 
-                            if (profile.equals("0")) { // go back to Following screen
-                                break;
+                                    User profiledUser = this.grabUserByID(profile);
 
-                            } else if (!currentClient.getFollowingList().contains(profile) && !profile.equals("0")) {
-                                System.out.println("You are not following the selected user, please try again");
-                                continue;
-
-                            } else { // display selected profile's information
-
-                                User profiledUser = this.grabUserByID(profile);
-
-                                System.out.println(profile + "\nSome of their current followers:");
-                                for (int i = 0; i < 3; i++) {
-                                    System.out.println(profiledUser.getFollowerList().get(i));
-                                    if (i == 2) {
-                                        System.out.println("...");
+                                    System.out.println(profile + "\nSome of their current followers:");
+                                    for (int i = 0; i < 3; i++) {
+                                        System.out.println(profiledUser.getFollowerList().get(i));
+                                        if (i == 2) {
+                                            System.out.println("...");
+                                        }
                                     }
-                                }
-                                System.out.println("Some of who they're currently following:");
-                                for (int i = 0; i < 3; i++) {
-                                    System.out.println(profiledUser.getFollowingList().get(i));
-                                    if (i == 2) {
-                                        System.out.println("...");
-                                    }
-                                }
-                            }
-                        }
-
-                    } else if (displayChoice.equals("2")) { // follow someone new
-
-                        while (true) {
-
-                            System.out.println("Enter the ID of someone you want to follow\n" +
-                                    "Press 0 to exit at anytime to go back");
-
-                            String addedUser = userInput.nextLine();
-
-                            if (addedUser.equals("0")) {
-                                break;
-
-                            } else if (this.grabUserByID(addedUser) == null) {
-                                System.out.println("User is not found in the database; try again");
-                                continue;
-
-                            } else {
-                                currentClient.addFollowing(addedUser);
-                                System.out.println("You are now following " + addedUser + "!");
-                            }
-
-                        }
-
-                    } else if (displayChoice.equals("3")) { // unfollow someone you're already following
-
-                        while (true) {
-
-                            System.out.println("Enter the ID of a follower you want to un-follow\n" +
-                                    "Press 0 to exit at anytime to go back");
-
-                            String unfollowedUser = userInput.nextLine();
-
-                            if (unfollowedUser.equals("0")) {
-                                break;
-
-                            } else if (this.grabUserByID(unfollowedUser) == null) {
-                                System.out.println("User is not found in the database; try again");
-                                continue;
-
-                            } else if (!currentClient.getFollowingList().contains(unfollowedUser)) {
-                                System.out.println("You can't unfollow someone you're not currently following!");
-                                continue;
-
-                            } else {
-
-                                currentClient.deleteFollowing(unfollowedUser);
-                                System.out.println("You are no longer following " + unfollowedUser + "...");
-                            }
-                        }
-
-                    } else { // redisplay Following screen on invalid input
-                        System.out.println("displayChoice was invalid, try again");
-                        continue;
-                    }
-
-                } // end of main screen option
-
-            } else if (mainChoice.equals("3")) { // show blocked
-
-                while (true) {
-                    System.out.println("Currently blocked: ");
-                    // NOTE: only shows IDs for now
-                    for (String userID : currentClient.getBlockedList()) {
-                        System.out.println(userID);
-                    }
-
-                    System.out.println("Press 0 to exit\nPress 1 to view a profile\n" +
-                            "Press 2 to block someone\nPress 3 to unblock someone");
-                    String displayChoice = userInput.nextLine();
-
-                    if (displayChoice.equals("0")) { // return to main menu
-                        break;
-
-                    } else if (displayChoice.equals("1")) { // profile view
-
-                        while (true) {
-                            System.out.println("Please select a profile; Press 0 to go back at any time");
-                            String profile = userInput.nextLine(); // because options are IDs for now, this is also an ID
-
-                            if (profile.equals("0")) { // go back to Blocked screen
-                                break;
-
-                            } else if (!currentClient.getBlockedList().contains(profile) && !profile.equals("0")) {
-                                System.out.println("Selected is not blocked, please try again");
-                                continue;
-
-                            } else { // display selected profile's information
-
-                                User profiledUser = this.grabUserByID(profile);
-
-                                System.out.println(profile + "\nSome of their current followers:");
-                                for (int i = 0; i < 3; i++) {
-                                    System.out.println(profiledUser.getFollowerList().get(i));
-                                    if (i == 2) {
-                                        System.out.println("...");
-                                    }
-                                }
-                                System.out.println("Some of who they're currently following:");
-                                for (int i = 0; i < 3; i++) {
-                                    System.out.println(profiledUser.getFollowingList().get(i));
-                                    if (i == 2) {
-                                        System.out.println("...");
+                                    System.out.println("Some of who they're currently following:");
+                                    for (int i = 0; i < 3; i++) {
+                                        System.out.println(profiledUser.getFollowingList().get(i));
+                                        if (i == 2) {
+                                            System.out.println("...");
+                                        }
                                     }
                                 }
                             }
-                        }
 
+                        } else if (displayChoice.equals("2")) { // follow someone new
 
-                    } else if (displayChoice.equals("2")) { // block someone new
+                            while (true) {
 
-                        while (true) {
+                                System.out.println("Enter the ID of someone you want to follow\n" +
+                                        "Press 0 to exit at anytime to go back");
 
-                            System.out.println("Enter the ID of someone you want to block\n" +
-                                    "Press 0 to exit at anytime to go back");
+                                String addedUser = clientReader.readLine();
 
-                            String blockedUser = userInput.nextLine();
+                                if (addedUser.equals("0")) {
+                                    break;
 
-                            if (blockedUser.equals("0")) {
-                                break;
+                                } else if (this.grabUserByID(addedUser) == null) {
+                                    System.out.println("User is not found in the database; try again");
+                                    continue;
 
-                            } else if (this.grabUserByID(blockedUser) == null) {
-                                System.out.println("User is not found in the database; try again");
-                                continue;
-
-                            } else { // block also automatically unfollows them
-                                currentClient.addBlock(blockedUser);
-
-                                if (currentClient.getFollowingList().contains(blockedUser)) {
-                                    currentClient.deleteFollowing(blockedUser);
-                                    System.out.println("You have successfully blocked and un-followed " + blockedUser + "...");
                                 } else {
-                                    System.out.println("You have successfully blocked " + blockedUser + "...");
+                                    currentClient.addFollowing(addedUser);
+                                    System.out.println("You are now following " + addedUser + "!");
+                                }
+
+                            }
+
+                        } else if (displayChoice.equals("3")) { // unfollow someone you're already following
+
+                            while (true) {
+
+                                System.out.println("Enter the ID of a follower you want to un-follow\n" +
+                                        "Press 0 to exit at anytime to go back");
+
+                                String unfollowedUser = clientReader.readLine();
+
+                                if (unfollowedUser.equals("0")) {
+                                    break;
+
+                                } else if (this.grabUserByID(unfollowedUser) == null) {
+                                    System.out.println("User is not found in the database; try again");
+                                    continue;
+
+                                } else if (!currentClient.getFollowingList().contains(unfollowedUser)) {
+                                    System.out.println("You can't unfollow someone you're not currently following!");
+                                    continue;
+
+                                } else {
+
+                                    currentClient.deleteFollowing(unfollowedUser);
+                                    System.out.println("You are no longer following " + unfollowedUser + "...");
                                 }
                             }
 
+                        } else { // redisplay Following screen on invalid input
+                            System.out.println("displayChoice was invalid, try again");
+                            continue;
                         }
 
-                    } else if (displayChoice.equals("3")) { // unblock someone already blocked
+                    } // end of main screen option
 
-                        while (true) {
+                } else if (mainChoice.equals("3")) { // show blocked
 
-                            System.out.println("Enter the ID of someone you've blocked who you want to un-block\n" +
-                                    "Press 0 to exit at anytime to go back");
+                    while (true) {
+                        System.out.println("Currently blocked: ");
+                        // NOTE: only shows IDs for now
+                        for (String userID : currentClient.getBlockedList()) {
+                            System.out.println(userID);
+                        }
 
-                            String unBlockedUser = userInput.nextLine();
+                        System.out.println("Press 0 to exit\nPress 1 to view a profile\n" +
+                                "Press 2 to block someone\nPress 3 to unblock someone");
+                        String displayChoice = clientReader.readLine();
 
-                            if (unBlockedUser.equals("0")) {
-                                break;
+                        if (displayChoice.equals("0")) { // return to main menu
+                            break;
 
-                            } else if (this.grabUserByID(unBlockedUser) == null) {
-                                System.out.println("User is not found in the database; try again");
-                                continue;
+                        } else if (displayChoice.equals("1")) { // profile view
 
-                            } else if (!currentClient.getBlockedList().contains(unBlockedUser)) {
-                                System.out.println("You can't unblock someone you haven't blocked!");
-                                continue;
+                            while (true) {
+                                System.out.println("Please select a profile; Press 0 to go back at any time");
+                                String profile = clientReader.readLine(); // because options are IDs for now, this is also an ID
 
-                            } else {
-                                currentClient.deleteBlock(unBlockedUser);
-                                System.out.println("You have un-blocked " + unBlockedUser + "!");
+                                if (profile.equals("0")) { // go back to Blocked screen
+                                    break;
+
+                                } else if (!currentClient.getBlockedList().contains(profile) && !profile.equals("0")) {
+                                    System.out.println("Selected is not blocked, please try again");
+                                    continue;
+
+                                } else { // display selected profile's information
+
+                                    User profiledUser = this.grabUserByID(profile);
+
+                                    System.out.println(profile + "\nSome of their current followers:");
+                                    for (int i = 0; i < 3; i++) {
+                                        System.out.println(profiledUser.getFollowerList().get(i));
+                                        if (i == 2) {
+                                            System.out.println("...");
+                                        }
+                                    }
+                                    System.out.println("Some of who they're currently following:");
+                                    for (int i = 0; i < 3; i++) {
+                                        System.out.println(profiledUser.getFollowingList().get(i));
+                                        if (i == 2) {
+                                            System.out.println("...");
+                                        }
+                                    }
+                                }
                             }
+
+
+                        } else if (displayChoice.equals("2")) { // block someone new
+
+                            while (true) {
+
+                                System.out.println("Enter the ID of someone you want to block\n" +
+                                        "Press 0 to exit at anytime to go back");
+
+                                String blockedUser = clientReader.readLine();
+
+                                if (blockedUser.equals("0")) {
+                                    break;
+
+                                } else if (this.grabUserByID(blockedUser) == null) {
+                                    System.out.println("User is not found in the database; try again");
+                                    continue;
+
+                                } else { // block also automatically unfollows them
+                                    currentClient.addBlock(blockedUser);
+
+                                    if (currentClient.getFollowingList().contains(blockedUser)) {
+                                        currentClient.deleteFollowing(blockedUser);
+                                        System.out.println("You have successfully blocked and un-followed " + blockedUser + "...");
+                                    } else {
+                                        System.out.println("You have successfully blocked " + blockedUser + "...");
+                                    }
+                                }
+
+                            }
+
+                        } else if (displayChoice.equals("3")) { // unblock someone already blocked
+
+                            while (true) {
+
+                                System.out.println("Enter the ID of someone you've blocked who you want to un-block\n" +
+                                        "Press 0 to exit at anytime to go back");
+
+                                String unBlockedUser = clientReader.readLine();
+
+                                if (unBlockedUser.equals("0")) {
+                                    break;
+
+                                } else if (this.grabUserByID(unBlockedUser) == null) {
+                                    System.out.println("User is not found in the database; try again");
+                                    continue;
+
+                                } else if (!currentClient.getBlockedList().contains(unBlockedUser)) {
+                                    System.out.println("You can't unblock someone you haven't blocked!");
+                                    continue;
+
+                                } else {
+                                    currentClient.deleteBlock(unBlockedUser);
+                                    System.out.println("You have un-blocked " + unBlockedUser + "!");
+                                }
+                            }
+
+                        } else { // redisplay Following screen on invalid input
+                            System.out.println("displayChoice was invalid, try again");
+                            continue;
                         }
-
-                    } else { // redisplay Following screen on invalid input
-                        System.out.println("displayChoice was invalid, try again");
-                        continue;
                     }
+
+                } else if (mainChoice.equals("0")) {
+                    System.out.println("Exiting user page...");
+                    break;
+
+                } else { // invalid choice selection
+                    System.out.println("Invalid selection");
+                    continue;
                 }
-
-            } else if (mainChoice.equals("0")) {
-                System.out.println("Exiting user page...");
-                break;
-
-            } else { // invalid choice selection
-                System.out.println("Invalid selection");
-                continue;
             }
+            
+        } catch (IOException e) {
+            System.out.println("Could not read from user; User Profile stream should not throw an error!");
+            e.printStackTrace();
         }
-        userInput.close();
+        
 
     }
 
