@@ -82,7 +82,58 @@ public class SimpleServer {
     }
 
     public void welcomePageOperation() {
-        //read message from client and do whatever client said to do
+
+        boolean signedIn = false;
+
+        try {
+            while(true) {
+
+                // Don't run again if options 1 or 2 are succesful
+                if (signedIn == true) {
+                    break;
+                }
+
+                clientWriter.println("1 - Sign In\n2 - Create New Account");
+            
+                String mainChoice = clientReader.readLine();
+
+                if (mainChoice.equals("1")) {
+
+                    // Sign In functionality
+                    while (true) {
+                        clientWriter.println("Enter username: ");
+                        String username = clientReader.readLine();
+
+                        clientWriter.println("Enter password");
+                        String password = clientReader.readLine();
+
+                        // if username/password is valid
+                        if (User.hasLogin(username, password)) {
+                            clientWriter.println("You have entered the user feed!");
+                            signedIn = true;
+                            break;
+                        
+                        } else {
+                            clientWriter.println("Please enter a valid username or password!");
+                            continue;
+                        }
+                    }
+
+                } else if (mainChoice.equals("2")) {
+
+
+                } else { // response was invalid
+                    clientWriter.println("Invalid argument, try again");
+                    continue;
+                }
+            }    
+
+        } catch (IOException e) {
+            System.out.println("Could not read from client; no errors should be thrown!");
+            e.printStackTrace();
+        }
+
+
     }
 
     /**
@@ -599,7 +650,7 @@ public class SimpleServer {
                     continue;
                 }
             }
-            
+
         } catch (IOException e) {
             System.out.println("Could not read from user; User Profile stream should not throw an error!");
             e.printStackTrace();

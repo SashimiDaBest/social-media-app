@@ -72,8 +72,6 @@ public class ClientHandler implements Runnable {
                     break;
             }
 
-
-
             /*
             frame = new JFrame("Boiler Gram");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -204,7 +202,7 @@ public class ClientHandler implements Runnable {
 
     }
 
-
+    
 
 
 
