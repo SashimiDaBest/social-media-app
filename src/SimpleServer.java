@@ -46,12 +46,12 @@ public class SimpleServer {
 
             File dataDirectory = new File("Sample Test Folder");
             System.out.println(dataDirectory.getAbsolutePath());
-            File[] userFiles = dataDirectory.listFiles((_, name) -> name.startsWith("U_02"));
+            File[] userFiles = dataDirectory.listFiles((ignored, name) -> name.startsWith("U_02"));
             for (File userFile : userFiles) {
                 users.add(new User(userFile.getAbsolutePath()));
             }
 
-            File[] chatFiles = dataDirectory.listFiles((_, name) -> name.startsWith("C_02"));
+            File[] chatFiles = dataDirectory.listFiles((ignored, name) -> name.startsWith("C_02"));
             for (File chatFile : chatFiles) {
                 try {
                     chats.add(new Chat(chatFile.getAbsolutePath().substring(0, chatFile.getAbsolutePath().lastIndexOf("."))));
