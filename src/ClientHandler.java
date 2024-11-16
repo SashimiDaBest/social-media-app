@@ -98,75 +98,89 @@ public class ClientHandler implements Runnable {
     }
 
     public void welcomePage(Scanner scanner) {
+
         try {
-
-            boolean isSignedIn = false;
-
-            while (true) {
-
-                // move on once finally signed in 
-                if (isSignedIn) {
-                    feedPage(scanner);
-                    break;
-                }
-
-                System.out.print("Welcome to the Welcome Page\n" +
-                        "1 - Sign in\n" +
-                        "2 - Sign up\n");
-                String mainChoice = scanner.nextLine();
-                this.write(mainChoice);
-
-                // for Sigining In 
-                if (mainChoice.equals("1")) {
-
-                    while (true) {
-                        System.out.print("Username: ");
-                        String username = scanner.nextLine();
-                        this.write(username);
-
-                        System.out.print("Password: ");
-                        String password = scanner.nextLine();
-                        this.write(password);
-
-                        String messageFromServer = br.readLine();
-
-                        // successfully signing in 
-                        if (messageFromServer.equals("Successful sign-in")) {
-                            System.out.println("You have entered the user feed!");
-                            isSignedIn = true;
-                            break;
-
-                        } else if (messageFromServer.equals("Sign-in was unsuccessful")) {
-                            System.out.println("Unsuccesful sign-in, please try again");
-                            continue;
-
-                        }
-                    }
-
-                // for creating a new account
-                } else if (mainChoice.equals("2")) {
-                    System.out.print("Username: ");
-                    String username = scanner.nextLine();
-                    System.out.print("Password: ");
-                    String password = scanner.nextLine();
-                    //checkPassword and Username requirement boolean method
-                    //write user and password to server and initialize user
-                    //read and see if the user can be created
-                    String messageFromServer = "";
-                    if (messageFromServer.equals("")) {
+                boolean isSignedIn = false;
+    
+                while (true) {
+    
+                    // move on once finally signed in 
+                    if (isSignedIn) {
                         feedPage(scanner);
                         break;
                     }
-
-                } else {
-                    System.out.println("Invalid main input, please try again");
-                    continue;
+    
+                    System.out.print("Welcome to the Welcome Page\n" +
+                            "1 - Sign in\n" +
+                            "2 - Sign up\n");
+                    String mainChoice = scanner.nextLine();
+                    this.write(mainChoice);
+    
+                    // for Sigining In 
+                    if (mainChoice.equals("1")) {
+    
+                        while (true) {
+                            System.out.print("Username: ");
+                            String username = scanner.nextLine();
+                            this.write(username);
+    
+                            System.out.print("Password: ");
+                            String password = scanner.nextLine();
+                            this.write(password);
+    
+                            // Wait for validation from the server
+                            String messageFromServer = br.readLine();
+    
+                            // successfully signing in 
+                            if (messageFromServer.equals("Successful sign-in")) {
+                                System.out.println("You have entered the user feed!");
+                                isSignedIn = true;
+                                break;
+    
+                            } else if (messageFromServer.equals("Sign-in was unsuccessful")) {
+                                System.out.println("Unsuccesful sign-in, please try again");
+                                continue;
+    
+                            }
+                        }
+    
+                    // for creating a new account
+                    } else if (mainChoice.equals("2")) {
+    
+                        while(true) {
+                            System.out.print("New Username: ");
+                            String username = scanner.nextLine();
+                            this.write(username);
+    
+                            System.out.print("Password: ");
+                            String password = scanner.nextLine();
+                            this.write(password);
+                           
+                            // Wait on server validation
+                            String messageFromServer = br.readLine();
+    
+                            if (messageFromServer.equals("User creation successful")) {
+                                System.out.println("Successfuly created new account!");
+                                isSignedIn = true;
+                                break;
+                            
+                            } else if (messageFromServer.equals("Invalid fields")) {
+                                System.out.println("One of the fields is invalid, please try again");
+                                continue;
+                            }
+                        }
+    
+                    } else {
+                        System.out.println("Invalid main input, please try again");
+                        continue;
+                    }
                 }
-            }
 
         } catch (IOException e) {
+            System.out.println("Could not read information from server; this error should not occur");
             throw new RuntimeException(e);
         }
+   
     }
 
     public void feedPage(Scanner scanner) {
