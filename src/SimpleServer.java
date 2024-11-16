@@ -651,6 +651,7 @@ public class SimpleServer {
                 }
             }
 
+
         } catch (IOException e) {
             System.out.println("Could not read from user; User Profile stream should not throw an error!");
             e.printStackTrace();
