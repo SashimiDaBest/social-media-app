@@ -5,6 +5,7 @@ import java.io.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Scanner;
+import javax.sound.midi.Soundbank;
 import javax.swing.*;
 
 /**
@@ -37,14 +38,15 @@ public class ClientHandler implements Runnable {
     private FeedViewPage feedViewPage;
     private UserProfilePage userProfilePage;
     private OtherProfilePage otherProfilePage;
-
-    private BufferedWriter serverWriter;
+    private BufferedWriter bw;
+    BufferedReader br;
 
     public ClientHandler(String hostname, int port) throws IOException {
         this.hostname = hostname;
         this.port = port;
         this.socket = new Socket(hostname, port);
-        this.serverWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+        this.bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+        this.br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
     }
 
     public static void main(String[] args) {
@@ -63,7 +65,8 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         Scanner scanner = new Scanner(System.in);
-        welcomePage(scanner);
+        userPage(scanner);
+//        welcomePage(scanner);
 
         /*
             frame = new JFrame("Boiler Gram");
@@ -180,13 +183,12 @@ public class ClientHandler implements Runnable {
     public void feedPage(Scanner scanner) {
         try (BufferedReader serverReader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
             while (true) {
-                System.out.print("""
-                        Welcome to your Feed! What would you like to do?
-                        1 - Create a new chat with selected users
-                        2 - Open an existing chat
-                        3 - View your profile
-                        4 - View another user's profile
-                        """);
+                System.out.print(
+                        "Welcome to your Feed! What would you like to do?\n" +
+                        "1 - Create a new chat with selected users\n" +
+                        "2 - Open an existing chat\n" +
+                        "3 - View your profile\n" +
+                        "4 - View another user's profile\n");
                 String input = scanner.nextLine();
                 if (input.equals("1")) {
                     write("1");
@@ -262,33 +264,69 @@ public class ClientHandler implements Runnable {
     }
 
     public void userPage(Scanner scanner) {
+        String username = "";
+        String accountType = "";
+        try {
+            br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            String line = br.readLine();
+            username = line;
+            if (line != null) {
+                if (line.equals("1")) {
+                    accountType = "private";
+                } else {
+                    accountType = "public";
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         while (true) {
-            System.out.println("Welcome to the Feed Page\n" +
+            System.out.println("Welcome to the User Page\n" +
+                    "USERNAME: " + username + "\n" +
+                    "ACCOUNT_TYPE: " + accountType + "\n" +
                     "1 - Change User Profile\n" +
                     "2 - View Follower\n" +
                     "3 - View Following\n" +
                     "4 - View Blocked\n" +
-                    "5 - Go Back to Feed View");
+                    "5 - Go Back to Feed View\n" +
+                    "Input: ");
+
             //Display username and private/public tag
             String input = scanner.nextLine();
             if (input.equals("1")) {
                 write("1");
             } else if (input.equals("2")) {
                 write("2");
+                readAndPrint();
+                System.out.print("Do you want to view Other (Y/N): ");
+                String input2 = scanner.nextLine();
+                if (input2.equals("Y")) {
+                    System.out.print("Other Username: ");
+                    String otherUsername = scanner.nextLine();
+                    otherPage(scanner, otherUsername);
+                    break;
+                }
             } else if (input.equals("3")) {
                 write("3");
+                readAndPrint();
+                System.out.print("Do you want to view Other (Y/N): ");
+                String input2 = scanner.nextLine();
+                if (input2.equals("Y")) {
+                    System.out.print("Other Username: ");
+                    String otherUsername = scanner.nextLine();
+                    otherPage(scanner, otherUsername);
+                    break;
+                }
             } else if (input.equals("4")) {
                 write("4");
-                try (BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
-                    String blocked = br.readLine();
-                    System.out.println(blocked);
-                    while (blocked != null) {
-                        blocked = br.readLine();
-                        System.out.println(blocked);
-                    }
-                    br.close();
-                } catch (Exception e) {
-                    System.err.println("Server error: " + e.getMessage());
+                readAndPrint();
+                System.out.print("Do you want to view Other (Y/N): ");
+                String input2 = scanner.nextLine();
+                if (input2.equals("Y")) {
+                    System.out.print("Other Username: ");
+                    String otherUsername = scanner.nextLine();
+                    otherPage(scanner, otherUsername);
+                    break;
                 }
             } else if (input.equals("5")) {
                 feedPage(scanner);
@@ -299,17 +337,84 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    public void otherPage(Scanner scanner, String otherUsername) {
+        String username = "";
+        String accountType = "";
+        try {
+            br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            String line = br.readLine();
+            username = line;
+            if (line != null) {
+                if (line.equals("1")) {
+                    accountType = "private";
+                } else {
+                    accountType = "public";
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        while (true) {
+            System.out.println("Welcome to the Other Page\n" +
+                    "USERNAME: " + username + "\n" +
+                    "ACCOUNT_TYPE: " + accountType + "\n" +
+                    "1 - Follow/Unfollow Other\n" +
+                    "2 - Block/Unblock Other\n" +
+                    "3 - View Follower\n" +
+                    "4 - View Following\n" +
+                    "5 - Go Back to Feed View\n" +
+                    "Input: ");
+            String input = scanner.nextLine();
+            if (input.equals("1")) {
+
+            } else if (input.equals("2")) {
+
+            } else if (input.equals("3")) {
+                //if other is public
+                write("3");
+                readAndPrint();
+            } else if (input.equals("4")) {
+                //if other is public
+                write("4");
+                readAndPrint();
+            } else if (input.equals("5")) {
+                feedPage(scanner);
+                break;
+            } else {
+                System.out.println("Invalid input");
+            }
+        }
+    }
+
+    public boolean readAndPrint() {
+        try {
+            String line = br.readLine();
+            System.out.println(line);
+            while (line != null) {
+                line = br.readLine();
+                System.out.println(line);
+            }
+            br.close();
+            return true;
+        } catch (Exception e) {
+            System.err.println("Server error: " + e.getMessage());
+            return false;
+        }
+    }
+
     public boolean write(String outMessage) {
         try {
-            serverWriter.write(outMessage);
-            serverWriter.newLine();
-            serverWriter.flush();
+            bw.write(outMessage);
+            bw.newLine();
+            bw.flush();
             return true;
         } catch (IOException e) {
             System.err.println("Error while writing message: " + e.getMessage());
             return false;
         }
     }
+
+    //if user click exit, close bufferedwriter and bufferedreader to close the underlying socket as well
 
     /*
     private void setupActionListeners() {

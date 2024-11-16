@@ -66,7 +66,7 @@ public interface UserInterface {
     /**
      * Removes a follower by their ID.
      *
-     * @param follower_id the ID of the follower to be removed
+     * @param followerId the ID of the follower to be removed
      * @return {@code true} if the follower was successfully removed, {@code false} otherwise
      */
     public boolean deleteFollower(String followerId);
@@ -89,7 +89,7 @@ public interface UserInterface {
     /**
      * Removes a following user by their ID.
      *
-     * @param following_id the ID of the user to stop following
+     * @param followingId the ID of the user to stop following
      * @return {@code true} if the user was successfully removed from following, {@code false} otherwise
      */
     public boolean deleteFollowing(String followingId);
@@ -135,7 +135,7 @@ public interface UserInterface {
     /**
      * Adds a chat by its ID.
      *
-     * @param chat_id the ID of the chat to add
+     * @param chatId the ID of the chat to add
      * @return {@code true} if the chat was successfully added, {@code false} otherwise
      */
     public boolean addChat(String chatId);
@@ -143,14 +143,14 @@ public interface UserInterface {
     /**
      * Creates a new chat with the specified recipient IDs.
      *
-     * @param recipient_id the list of recipient IDs for the new chat
+     * @param recipientId the list of recipient IDs for the new chat
      */
     public void createChat(ArrayList<String> recipientId);
 
     /**
      * Deletes a chat by its ID.
      *
-     * @param chat_id the ID of the chat to delete
+     * @param chatId the ID of the chat to delete
      * @return {@code true} if the chat was successfully deleted, {@code false} otherwise
      */
     public boolean deleteChat(String chatId);

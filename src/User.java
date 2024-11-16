@@ -69,6 +69,7 @@ public class User implements UserInterface {
     private ArrayList<String> chatIDList;
     /**
      * The type of account (e.g., user type or permissions level).
+     *
      */
     private int accountType;
     /**
