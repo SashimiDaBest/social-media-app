@@ -83,40 +83,27 @@ public class SimpleServer {
 
     public void welcomePageOperation() {
 
-        boolean signedIn = false;
-
         try {
             while(true) {
-
-                // Don't run again if options 1 or 2 are succesful
-                if (signedIn == true) {
-                    break;
-                }
-
                 clientWriter.println("1 - Sign In\n2 - Create New Account");
             
                 String mainChoice = clientReader.readLine();
 
                 if (mainChoice.equals("1")) {
+                    clientWriter.println("Enter username: ");
+                    String username = clientReader.readLine();
 
-                    // Sign In functionality
-                    while (true) {
-                        clientWriter.println("Enter username: ");
-                        String username = clientReader.readLine();
+                    clientWriter.println("Enter password");
+                    String password = clientReader.readLine();
 
-                        clientWriter.println("Enter password");
-                        String password = clientReader.readLine();
-
-                        // if username/password is valid
-                        if (User.hasLogin(username, password)) {
-                            clientWriter.println("You have entered the user feed!");
-                            signedIn = true;
-                            break;
+                    // if username/password is valid
+                    if (User.hasLogin(username, password)) {
+                        clientWriter.println("You have entered the user feed!");
+                        break;
+                    
+                    } else {
+                        clientWriter.println("Please enter a valid username or password!");
                         
-                        } else {
-                            clientWriter.println("Please enter a valid username or password!");
-                            continue;
-                        }
                     }
 
                 } else if (mainChoice.equals("2")) {
@@ -136,6 +123,11 @@ public class SimpleServer {
 
     }
 
+    /**
+     * This method loops the user's Feed, giving them options to create chats, view chats, view their own profile,
+     * view another user's profile, and exit the Feed. Chatting can also be done within this feed, as the user can
+     * create messages, edit messages, and delete messages within each Chat.
+     */
     public void feedPageOperation() {
         boolean continueFeed = true;
         do {
@@ -643,7 +635,6 @@ public class SimpleServer {
                     continue;
                 }
             }
-
 
         } catch (IOException e) {
             System.out.println("Could not read from user; User Profile stream should not throw an error!");
