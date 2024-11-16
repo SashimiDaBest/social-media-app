@@ -144,6 +144,14 @@ public class ClientHandler implements Runnable {
                     // tell the server we are creating a new chat
                     write("1");
 
+                    // receive the list of available users from the server
+                    // and display it to the client
+                    String receivedUserList = serverReader.readLine();
+                    String[] userList = receivedUserList.split(";");
+                    for (String username : userList) {
+                        System.out.println(username);
+                    }
+
                     boolean makeGroup = false;
                     ArrayList<String> usernames = new ArrayList<>();
                     while (!makeGroup) {
@@ -155,11 +163,12 @@ public class ClientHandler implements Runnable {
                             }
                             makeGroup = true;
                         } else {
-                            System.out.print("Friend Username: ");
+                            System.out.print("Username to add: ");
                             String friendUsername = scanner.nextLine();
-
                             //check if username is valid - depends whether both account is private or public
                             //write to server
+                            write(friendUsername);
+
                             // if the user you want to add is private, you have to be following them to msg
                             String messageFromServer = "";
                             if (messageFromServer.equals("")) {

@@ -163,13 +163,30 @@ public class SimpleServer {
      */
     public void feedPageOperation() {
         try {
-            String feedPageOperation = clientReader.readLine();
-            if (feedPageOperation.equals("1")) {
+            // read from client what operation we are doing
+            String clientChosenOperation = clientReader.readLine();
+
+            // create chat with selected users
+            if (clientChosenOperation.equals("1")) {
+
                 // write list of available users to chat with to the client
                 String listOfAvailableUsers = "";
-                for (User u : users) {
+                for (int i = 0; i < users.size(); i++) {
+                    if (!users.get(i).getUserID().equals(user.getUserID())) {
+                        listOfAvailableUsers += users.get(i).getUsername();
 
+                        // separate list of users with semicolons
+                        if (i != users.size() - 1) {
+                            listOfAvailableUsers += ";";
+                        }
+                    }
                 }
+
+                // write list of available users to client
+                clientWriter.println(listOfAvailableUsers);
+                clientWriter.flush();
+
+
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
