@@ -145,12 +145,12 @@ public class User implements UserInterface {
         counter.set(0);
     }
 
-    public String getUsername() {
-        return this.userName;
-    }
-
     public void setUsername(String username) {
         this.userName = username;
+    }
+
+    public String getUsername() {
+        return this.userName;
     }
 
     public String getUserID() {
