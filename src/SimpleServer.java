@@ -24,6 +24,7 @@ import java.util.Scanner;
  * @version 11/01/2024
  * @since 1.0
  */
+//TODO: remember to close br and bw later on
 public class SimpleServer {
     private static int PORT = 12;
     private ServerSocket serverSocket;
@@ -71,6 +72,7 @@ public class SimpleServer {
             }
         } catch (Exception e) {
             System.out.println("Error accepting connection" + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -88,7 +90,7 @@ public class SimpleServer {
     }
 
     public void welcomePageOperation() {
-
+        System.out.println("This is welcome page");
         boolean isSignedIn = false;
 
         try {
@@ -176,12 +178,9 @@ public class SimpleServer {
                     continue;
                 }
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
 
     /**
@@ -190,6 +189,7 @@ public class SimpleServer {
      * create messages, edit messages, and delete messages within each Chat.
      */
     public void feedPageOperation() {
+        System.out.println("This is feed page");
         try {
             String clientChosenOperation = br.readLine();
 
@@ -417,8 +417,12 @@ public class SimpleServer {
 //    }
 
     public void userPageOperation() {
+        System.out.println("This is user page");
         ArrayList<String> people;
+        System.out.println("Username: " + user.getUsername());
+        System.out.println("Account type: " + user.getAccountType());
         try {
+            System.out.println("sending account information...");
             bw.write(user.getUsername());
             bw.newLine();
             bw.write(user.getAccountType());
@@ -430,11 +434,19 @@ public class SimpleServer {
         try {
             String input = br.readLine();
             do {
-                System.out.println(input);
+                System.out.println("client input: " + input);
                 if (input.equals("1")) {
-                    System.out.println("Hello");
+                    System.out.println("Image Storing...");
                 } else if (input.equals("2")) {
                     write(user.getFollowerList());
+                    try {
+                        if (br.readLine().equals("VIEW")) {
+                            otherPageOperation();
+                            break;
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 } else if (input.equals("3")) {
                     write(user.getFollowingList());
                 } else if (input.equals("4")) {
@@ -443,7 +455,7 @@ public class SimpleServer {
                     feedPageOperation();
                     break;
                 } else {
-                    System.out.println("ERROR: " + input);
+                    System.out.println("ERROR: input " + input + " doesn't match expected!");
                 }
                 if (input != null) {
                     input = br.readLine();
@@ -452,21 +464,28 @@ public class SimpleServer {
                 }
             } while (input != null);
         } catch (Exception e) {
-            System.err.println("Server error: " + e.getMessage());
+            System.err.println("ERROR: server " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    public void otherPageOperation(Scanner scanner) {
+    public void otherPageOperation() {
+        System.out.println("This is other user page");
         ArrayList<String> people;
         try {
-            User otherUser = new User(br.readLine());
+            User otherUser = new User("Sample Test Folder/" + User.findIDFromUsername(br.readLine()) + ".txt");
+            System.out.println(otherUser.getUsername());
+            System.out.println(otherUser.getUserID());
+            System.out.println(otherUser.getAccountType());
+            System.out.println(otherUser.getFollowerList());
+            System.out.println(otherUser.getFollowingList());
+            System.out.println(otherUser.getBlockedList());
             String input = br.readLine();
             do {
-                System.out.println(input);
+                System.out.println("client input: " + input);
                 if (input.equals("1")) {
                     if (user.getFollowingList().contains(otherUser.getUsername())) {
-                        //remove following
+                        user.deleteFollowing(otherUser.getUsername());
                         bw.write("unfollowed " + otherUser.getUsername());
                     } else {
                         user.addFollowing(otherUser.getUserID());
@@ -476,7 +495,7 @@ public class SimpleServer {
                     bw.flush();
                 } else if (input.equals("2")) {
                     if (user.getBlockedList().contains(otherUser.getUsername())) {
-                        //remove blocked
+                        user.deleteBlock(otherUser.getUsername());
                         bw.write("unblocked " + otherUser.getUsername());
                     } else {
                         user.addBlock(otherUser.getUserID());
@@ -525,21 +544,22 @@ public class SimpleServer {
     }
 
     public boolean write(ArrayList<String> people) {
+        System.out.println("write()");
         try {
             for (int i = 0; i < people.size(); i++) {
+                System.out.println("people: " + User.findUsernameFromID(people.get(i)));
                 bw.write(people.get(i));
                 bw.newLine();
+                bw.flush();
             }
+            bw.write("END");
+            bw.newLine();
             bw.flush();
             return true;
         } catch (Exception e) {
-            System.out.println("Could not write to server");
+            System.out.println("ERROR: write() can't write to client");
             e.printStackTrace();
             return false;
         }
     }
-
-    //remember to close br and bw later on
-
 }
-

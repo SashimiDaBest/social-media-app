@@ -555,14 +555,17 @@ public class User implements UserInterface {
     public static synchronized String findIDFromUsername(String usernameToSearch) {
         try (BufferedReader reader = new BufferedReader(new FileReader(USERIDLIST))) {
             String line = reader.readLine();
+            if (line.split(";")[0].equals(usernameToSearch)) {
+                System.out.println(line);
+                return line.split(";")[2];
+            }
             while (line != null) {
-                if (line.split(";")[0].equals(usernameToSearch)) {
+                line = reader.readLine();
+                if (line != null && line.split(";")[0].equals(usernameToSearch)) {
+                    System.out.println(line);
                     return line.split(";")[2];
                 }
-
-                line = reader.readLine();
             }
-
             return null;
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -578,14 +581,17 @@ public class User implements UserInterface {
     public static synchronized String findUsernameFromID(String idToSearch) {
         try (BufferedReader reader = new BufferedReader(new FileReader(USERIDLIST))) {
             String line = reader.readLine();
+            if (line.split(";")[2].equals(idToSearch)) {
+                System.out.println(line);
+                return line.split(";")[0];
+            }
             while (line != null) {
-                if (line.split(";")[2].equals(idToSearch)) {
+                line = reader.readLine();
+                if (line != null && line.split(";")[2].equals(idToSearch)) {
+                    System.out.println(line);
                     return line.split(";")[0];
                 }
-
-                line = reader.readLine();
             }
-
             return null;
         } catch (IOException e) {
             throw new RuntimeException(e);

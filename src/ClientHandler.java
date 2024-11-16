@@ -341,10 +341,25 @@ public class ClientHandler implements Runnable {
                 System.out.print("Do you want to view Other (Y/N): ");
                 String input2 = scanner.nextLine();
                 if (input2.equals("Y")) {
-                    System.out.print("Other Username: ");
-                    String otherUsername = scanner.nextLine();
-                    otherPage(scanner, otherUsername, username, accountType);
-                    break;
+                    try {
+                        bw.write("VIEW");
+                        bw.newLine();
+                        bw.flush();
+                        System.out.print("Other Username: ");
+                        String otherUsername = scanner.nextLine();
+                        otherPage(scanner, otherUsername, username, accountType);
+                        break;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    try {
+                        bw.write("NO VIEW");
+                        bw.newLine();
+                        bw.flush();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             } else if (input.equals("3")) {
                 write("3");
@@ -400,6 +415,7 @@ public class ClientHandler implements Runnable {
             System.out.println("Welcome to the Other Page\n" +
                     "USERNAME: " + username + "\n" +
                     "ACCOUNT_TYPE: " + accountType + "\n" +
+                    "OTHER USERNAME: " + otherUsername + "\n" +
                     "1 - Follow/Unfollow Other\n" +
                     "2 - Block/Unblock Other\n" +
                     "3 - View Follower\n" +
