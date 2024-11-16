@@ -4,6 +4,7 @@ import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.io.*;
+import java.sql.Array;
 import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -33,7 +34,8 @@ public class SimpleServer {
     private BufferedReader clientReader;
     private PrintWriter clientWriter;
     private Socket socket;
-
+    private BufferedWriter bw;
+    private BufferedReader br;
     public SimpleServer(int port) throws IOException {
         serverSocket = new ServerSocket(port);
         users = new ArrayList<>();
@@ -59,9 +61,13 @@ public class SimpleServer {
         System.out.println("Server is listening on port " + PORT);
         try {
             while (true) {
-                socket = serverSocket.accept();
+                this.socket = serverSocket.accept();
                 System.out.println("New client connected");
-                welcomePageOperation();
+                this.bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+                this.br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+//                welcomePageOperation();
+//                user = new User("U_0108.txt");
+                userPageOperation();
             }
         } catch (Exception e) {
             System.out.println("Error accepting connection" + e.getMessage());
@@ -86,7 +92,7 @@ public class SimpleServer {
         boolean isSignedIn = false;
 
         try {
-            while(true) {
+            while (true) {
 
                 // Stop once either options 1 or 2 are successful
                 if (isSignedIn) {
@@ -101,7 +107,7 @@ public class SimpleServer {
                 if (mainChoice.equals("1")) {
 
                     while (true) {
-                        
+
                         // Wait for client answer
                         String username = clientReader.readLine();
 
@@ -112,20 +118,26 @@ public class SimpleServer {
                         if (User.hasLogin(username, password)) {
                             clientWriter.println("Successful sign-in");
                             isSignedIn = true;
+                            for (User u : users) {
+                                if (u.getUsername().equals(username)) {
+                                    this.user = u;
+                                    break;
+                                }
+                            }
                             break;
-                        
-                        // if existing username/password is invalid
+
+                            // if existing username/password is invalid
                         } else {
                             clientWriter.println("Sign-in was unsuccessful");
                             continue;
                         }
                     }
 
-                // for creating a new account
+                    // for creating a new account
                 } else if (mainChoice.equals("2")) {
 
                     while (true) {
-                        
+
                         // wait for client answer
                         String newUsername = clientReader.readLine();
 
@@ -135,11 +147,13 @@ public class SimpleServer {
                         // if new username/password is valid
                         try {
                             User newUser = new User(newUsername, newPassword);
+                            newUser.createNewUser(newUsername, newPassword, newUser.getUserID());
                             users.add(newUser);
+                            this.user = newUser;
                             isSignedIn = true;
                             break;
 
-                        // if new username/password is invalid
+                            // if new username/password is invalid
                         } catch (InvalidCreateAccountException e) {
                             clientWriter.println("Please enter a valid username or password!");
                             continue;
@@ -150,7 +164,7 @@ public class SimpleServer {
                     clientWriter.println("Invalid argument, try again");
                     continue;
                 }
-            }    
+            }
 
         } catch (IOException e) {
             System.out.println("Could not read from client; no errors should be thrown!");
@@ -167,28 +181,52 @@ public class SimpleServer {
      */
     public void feedPageOperation() {
         try {
-            // read from client what operation we are doing
             String clientChosenOperation = clientReader.readLine();
 
-            // create chat with selected users
+            // 1 - Chat Creation
             if (clientChosenOperation.equals("1")) {
 
-                // write list of available users to chat with to the client
+                // Write list of available users to chat with to the client
                 String listOfAvailableUsers = "";
                 for (int i = 0; i < users.size(); i++) {
-                    if (!users.get(i).getUserID().equals(user.getUserID())) {
-                        listOfAvailableUsers += users.get(i).getUsername();
-
-                        // separate list of users with semicolons
+                    if (!users.get(i).getUserID().equals(user.getUserID())) {   // <- Do not include the logged-in user
+                        listOfAvailableUsers += users.get(i).getUsername();     // in the list of available users to
+                        // chat with
+                        // Separate list of users with semicolons
                         if (i != users.size() - 1) {
                             listOfAvailableUsers += ";";
                         }
                     }
                 }
 
-                // write list of available users to client
+                // Write list of available users to client
                 clientWriter.println(listOfAvailableUsers);
                 clientWriter.flush();
+
+                // Read each selected user from client and make sure they can be chatted with
+                String usernameToCheck = clientReader.readLine();
+                while (!usernameToCheck.equals("[DONE]")) {
+
+                    // Identify the target user
+                    User targetUser = null;
+                    for (User u : users) {
+                        if (u.getUsername().equals(usernameToCheck)) {
+                            targetUser = u;
+                            break;
+                        }
+                    }
+
+                    // Check if the target can be chatted with and report back to client
+                    if (user.checkChatAbility(targetUser)) {
+                        clientWriter.println("");
+                        clientWriter.flush();
+                    } else {
+                        clientWriter.println("User cannot be chatted with!");
+                        clientWriter.flush();
+                    }
+
+                    usernameToCheck = clientReader.readLine();
+                }
 
 
             }
@@ -361,49 +399,44 @@ public class SimpleServer {
 //        while (continueFeed);
 //    }
 
-
-    public User grabUserByID(String userID) {
-
-        for (User user : users) {
-            if (user.getUserID().equals(userID)) {
-                return user;
-            }
+    public void userPageOperation() {
+        ArrayList<String> people;
+        try {
+            bw.write(user.getUsername());
+            bw.newLine();
+            bw.write(user.getAccountType());
+            bw.newLine();
+            bw.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return null;
-    }
-
-    public User grabUserByName(String username) {
-
-        for (User user : users) {
-            if (user.getUsername().equals(username)) {
-                return user;
-            }
-        }
-        return null;
-    }
-
-    public void userPageOperation(String clientUserName) {
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+        try {
             String input = br.readLine();
-            while (input != null) {
-                input = br.readLine();
+            do {
+                System.out.println(input);
                 if (input.equals("1")) {
-
+                    System.out.println("Hello");
                 } else if (input.equals("2")) {
-
+                    write(user.getFollowerList());
                 } else if (input.equals("3")) {
-
+                    write(user.getFollowingList());
                 } else if (input.equals("4")) {
-
+                    write(user.getBlockedList());
                 } else if (input.equals("5")) {
-
+                    feedPageOperation();
+                    break;
                 } else {
                     System.out.println("ERROR: " + input);
+                }
+                if (input != null) {
+                    input = br.readLine();
+                } else {
                     break;
                 }
-            }
+            } while (input != null);
         } catch (Exception e) {
             System.err.println("Server error: " + e.getMessage());
+            e.printStackTrace();
         }
         /*
         // find which user to work with:
@@ -736,9 +769,83 @@ public class SimpleServer {
 */
     }
 
-    public void otherPageOperation() {
+    public void otherPageOperation(Scanner scanner) {
+        ArrayList<String> people;
+        try {
+            bw.write(user.getUsername());
+            bw.newLine();
+            bw.write(user.getAccountType());
+            bw.newLine();
+            bw.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            //read in other username
+            User otherUser = new User(br.readLine());//revise
+            String input = br.readLine();
+            do {
+                System.out.println(input);
+                if (input.equals("1")) {
 
+                } else if (input.equals("2")) {
+
+                } else if (input.equals("3")) {
+                    try {
+                        if (otherUser.getAccountType() == 1 && user.getFollowerList().contains(otherUser.getUsername())) {
+                            bw.write("message");
+                        } else {
+                            bw.write("no message");
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    write(user.getFollowerList());
+                } else if (input.equals("4")) {
+                    try {
+                        if (otherUser.getAccountType() == 1 && user.getFollowingList().contains(otherUser.getUsername())) {
+                            bw.write("message");
+                        } else {
+                            bw.write("no message");
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    write(user.getFollowingList());
+                } else if (input.equals("5")) {
+                    feedPageOperation();
+                    break;
+                } else {
+                    System.out.println("ERROR: " + input);
+                }
+                if (input != null) {
+                    input = br.readLine();
+                } else {
+                    break;
+                }
+            } while (input != null);
+        } catch (Exception e) {
+            System.err.println("Server error: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
+
+    public boolean write(ArrayList<String> people) {
+        try {
+            for (int i = 0; i < people.size(); i++) {
+                bw.write(people.get(i));
+                bw.newLine();
+            }
+            bw.flush();
+            return true;
+        } catch (Exception e) {
+            System.out.println("Could not write to server");
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    //remember to close br and bw later on
 
 }
 
