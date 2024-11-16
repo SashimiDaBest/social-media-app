@@ -44,4 +44,14 @@ public interface MessageInterface {
      */
     public boolean setMessage(String messageText);
 
+    /**
+     * Compares this {@code Message} to another object for equality based on author ID, message type, and content.
+     *
+     * @param obj the object to compare to this message
+     * @return {@code true} if the object is a {@code Message} with the same author ID, message type, and content;
+     * {@code false} otherwise
+     */
+    @Override
+    public boolean equals(Object obj);
+
 }

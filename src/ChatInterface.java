@@ -85,4 +85,12 @@ public interface ChatInterface {
      * @return the counter value as an {@code int}
      */
     public int getCounter();
+
+    /**
+     * Determines if this chat is equal to another object based on the chat ID.
+     *
+     * @param obj the object to compare
+     * @return {@code true} if the object is a Chat with the same chat ID, otherwise {@code false}
+     */
+    public boolean equals(Object obj);
 }

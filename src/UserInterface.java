@@ -38,6 +38,13 @@ public interface UserInterface {
     public String getUserID();
 
     /**
+     * Sets the user ID for the user.
+     *
+     * @param id the new user ID to be set
+     */
+    public void setUserID(String id);
+
+    /**
      * Generates a unique user ID.
      *
      * @return the generated user ID as a {@code String}
@@ -72,6 +79,18 @@ public interface UserInterface {
      * @return {@code true} if the follower was successfully removed, {@code false} otherwise
      */
     public boolean deleteFollower(String followerId);
+
+    /**
+     * Saves the user's data to a file named with the user ID.
+     * <p>
+     * Writes the user's ID, password, username, profile picture pathway, account type,
+     * follower list, following list, blocked list, and chat ID list to the file. Each section
+     * is written in a specific format, with lists separated by semicolons.
+     * <p>
+     * This method ensures that any changes to the user's information are persisted in the file system.
+     * </p>
+     */
+    public void writeData();
 
     /**
      * Adds a new follower by their ID.
@@ -194,6 +213,26 @@ public interface UserInterface {
     public boolean findUser(String userID);
 
     /**
+     * Searches for a user by their username within the application data.
+     *
+     * @param usernameToSearch the username of the user whose ID will be found
+     * @return The ID of the user with the username in the parameter
+     */
+    public static String findIDFromUsername(String usernameToSearch){
+        return null;
+    }
+
+    /**
+     * Searches for a user by their ID within the application data.
+     *
+     * @param idToSearch the ID of the user whose username will be found
+     * @return The username of the user with the ID in the parameter
+     */
+    public static String findUsernameFromID(String idToSearch){
+        return null;
+    }
+
+    /**
      * Sends a message in a chat.
      *
      * @param chatID the ID of the chat to send the message to
@@ -218,6 +257,20 @@ public interface UserInterface {
     public static boolean hasLogin(String username, String password) {
         return false;
     };
+
+    /**
+     * Checks if two users are able to form a chat together. If the target user has a public
+     * account, they can be chatted with, but if they have a private account, the user wishing
+     * to initiate the chat must be following them. If either user has the other blocked, they
+     * cannot be chatted with.
+     *
+     * @param userToChatWith The targeted User to chat with.
+     * @return Whether the user calling the method is able to chat with the target.
+     */
+    public static boolean checkChatAbility(User userToChatWith) {
+        return false;
+    }
+
 
     /**
      * Creates a new user with the specified username, password, and user ID.
