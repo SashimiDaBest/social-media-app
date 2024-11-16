@@ -211,14 +211,15 @@ public class ClientHandler implements Runnable {
     }
 
     public void feedPage(Scanner scanner) {
+        boolean continueFeed = true;
         try {
-            while (true) {
+            do {
                 System.out.print(
                         "Welcome to your Feed! What would you like to do?\n" +
-                        "1 - Create a new chat with selected users\n" +
-                        "2 - Open an existing chat\n" +
-                        "3 - View your profile\n" +
-                        "4 - View another user's profile\n");
+                                "1 - Create a new chat with selected users\n" +
+                                "2 - Open an existing chat\n" +
+                                "3 - View your profile\n" +
+                                "4 - View another user's profile\n");
                 String input = scanner.nextLine();
                 if (input.equals("1")) {
                     write("1");
@@ -257,6 +258,8 @@ public class ClientHandler implements Runnable {
                                 usernames.add(friendUsername);
                             } else if (serverValidityResponse.equals("self")) {
                                 System.out.println("You cannot add yourself to a chat!");
+                            } else if (serverValidityResponse.equals("That user does not exist!")) {
+                                System.out.println("That user does not exist!");
                             } else {
                                 System.out.println("The user you are trying to chat with has blocked you," +
                                         " you have blocked them, or their account is private.");
@@ -276,23 +279,86 @@ public class ClientHandler implements Runnable {
 
                     System.out.println("Chat created successfully!");
                 } else if (input.equals("2")) {
-                    System.out.print("Chat ID: ");
-                    String chatID = scanner.nextLine();
-                    //write to server and make sure chat exist
-                    //read and print the last 10 messages sent
-                } else if (input.equals("4")) {
-                    //write to server to get the list
-                    //read and print chat id
+                    write("2");
+
+                    // Obtain and display all chats this user is a member of from the client.
+                    System.out.println("Enter the number (ex. 0001) of the chat you'd like to open!");
+
+                    String userChats = br.readLine();
+                    String[] chatList = userChats.split(";");
+                    for (String chat : chatList) {
+                        System.out.println(chat);
+                    }
+
+                    // Write the selected chat to the server.
+                    String chatNumber = scanner.nextLine();
+                    write(chatNumber);
+
+                    // Obtain the server's response -- either the chat is invalid or the selected
+                    // chat will be displayed.
+                    String serverChatResponse = br.readLine();
+                    if (serverChatResponse.equals("Invalid Chat")) {
+                        System.out.println("Invalid chat selection!");
+                    } else {
+                        // Read the chat menu from the server, looping through the menu
+                        // until the client requests to stop.
+                        boolean viewChat = true;
+                        do {
+                            String[] chatMenuLines = serverChatResponse.split(";");
+                            for (String line : chatMenuLines) {
+                                System.out.println(line);
+                            }
+
+                            // Collect and write the client's decision.
+                            switch (scanner.nextLine()) {
+                                case "1":
+                                    write("1");
+
+                                    // Compose Message
+                                    System.out.println("Enter message to compose:");
+                                    String message = scanner.nextLine();
+                                    write(message);
+
+                                    serverChatResponse = br.readLine();
+                                    break;
+                                case "2":
+                                    write("2");
+
+                                    // Delete Previous Message
+                                    System.out.println("Message deleted!");
+
+                                    serverChatResponse = br.readLine();
+                                    break;
+                                case "3":
+                                    write("3");
+
+                                    // Edit Previous Message
+                                    System.out.println("Enter replacement message:");
+                                    String replacement = scanner.nextLine();
+                                    write(replacement);
+
+                                    serverChatResponse = br.readLine();
+                                    break;
+                                case "4":
+                                    write("4");
+
+                                    // End chat loop
+                                    viewChat = false;
+                            }
+                        } while (viewChat);
+                    }
                 } else if (input.equals("3")) {
                     userPage(scanner);
                     break;
+                } else if (input.equals("4")) {
                 } else {
                     System.out.println("Invalid input");
                 }
-            }
+            } while (continueFeed);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
     }
 
     //TODO: figure out how to take and store images & add log in log out feature
