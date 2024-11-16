@@ -118,7 +118,7 @@ public class ClientHandler implements Runnable {
                 //write user and password to server and initialize user
                 //read and see if the user can be created
                 String messageFromServer = "";
-                if (messageFromServer.equals("")){
+                if (messageFromServer.equals("")) {
                     feedPage(scanner);
                     break;
                 }
@@ -132,7 +132,7 @@ public class ClientHandler implements Runnable {
                 //write user and password to server and initialize user
                 //read and see if the user can be created
                 String messageFromServer = "";
-                if (messageFromServer.equals("")){
+                if (messageFromServer.equals("")) {
                     feedPage(scanner);
                     break;
                 }
@@ -144,58 +144,69 @@ public class ClientHandler implements Runnable {
     }
 
     public void feedPage(Scanner scanner) {
-        while (true) {
-            System.out.println("Welcome to the Feed Page\n" +
-                    "1 - Go to User Profile\n" +
-                    "2 - Add User\n" +
-                    "3 - View All Chat IDs\n" +
-                    "4 - View Chat's Messages");
-            String input = scanner.nextLine();
-            if (input.equals("1")) {
-                userPage(scanner);
-                break;
-            } else if (input.equals("2")) {
-                boolean makeGroup = false;
-                ArrayList<String> usernames = new ArrayList<>();
-                while (!makeGroup) {
-                    System.out.print("Add Group (Y/N): ");
-                    if (scanner.nextLine().equals("Y")) {
-                        if (usernames.isEmpty()) {
-                            System.out.print("Can't make group - group is empty!");
-                            continue;
-                        }
-                        makeGroup = true;
-                    } else {
-                        System.out.print("Friend Username: ");
-                        String friendUsername = scanner.nextLine();
-                        //check if username is valid - depends whether both account is private or public
-                        //write to server
-                        String messageFromServer = "";
-                        if (messageFromServer.equals("")){
-                            System.out.println("Add Username Successfully");
-                            usernames.add(friendUsername);
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+             PrintWriter writer = new PrintWriter(socket.getOutputStream())) {
+            while (true) {
+                System.out.print(
+                        "Welcome to your Feed! What would you like to do?\n" +
+                                "1 - Create a new chat with selected users\n" +
+                                "2 - Open an existing chat\n" +
+                                "3 - View your profile\n" +
+                                "4 - View another user's profile\n");
+                String input = scanner.nextLine();
+                if (input.equals("1")) {
+                    write("1");
+
+                    boolean makeGroup = false;
+                    ArrayList<String> usernames = new ArrayList<>();
+                    while (!makeGroup) {
+                        System.out.print("Add Group (Y/N): ");
+                        if (scanner.nextLine().equals("Y")) {
+                            if (usernames.isEmpty()) {
+                                System.out.print("Can't make group - group is empty!");
+                                continue;
+                            }
+                            makeGroup = true;
                         } else {
-                            System.out.println("Invalid Friend Username");
+                            System.out.print("Friend Username: ");
+                            String friendUsername = scanner.nextLine();
+
+                            //check if username is valid - depends whether both account is private or public
+                            //write to server
+                            // if the user you want to add is private, you have to be following them to msg
+                            String messageFromServer = "";
+                            if (messageFromServer.equals("")) {
+                                System.out.println("Add Username Successfully");
+                                usernames.add(friendUsername);
+                            } else {
+                                System.out.println("Invalid Friend Username");
+                            }
                         }
                     }
+                    //write to server to prep for creating chat
+                    //write a list of verified usernames
+                    //create chat on server side
+                    System.out.println("Chat created");
+                } else if (input.equals("2")) {
+                    System.out.print("Chat ID: ");
+                    String chatID = scanner.nextLine();
+                    //write to server and make sure chat exist
+                    //read and print the last 10 messages sent
+                } else if (input.equals("4")) {
+                    //write to server to get the list
+                    //read and print chat id
+                } else if (input.equals("3")) {
+                    userPage(scanner);
+                    break;
+                } else {
+                    System.out.println("Invalid input");
                 }
-                //write to server to prep for creating chat
-                //write a list of verified usernames
-                //create chat on server side
-                System.out.println("Chat created");
-            } else if (input.equals("3")) {
-                //write to server to get the list
-                //read and print chat id
-            } else if (input.equals("4")) {
-                System.out.print("Chat ID: ");
-                String chatID = scanner.nextLine();
-                //write to server and make sure chat exist
-                //read and print the last 10 messages sent
-            } else {
-                System.out.println("Invalid input");
             }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
+
 
     public void userPage(Scanner scanner) {
         while (true) {
@@ -236,10 +247,6 @@ public class ClientHandler implements Runnable {
         }
         return true;
     }
-
-
-
-
 
     /*
     private void setupActionListeners() {
