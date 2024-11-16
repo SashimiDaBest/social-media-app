@@ -136,11 +136,6 @@ public class SimpleServer {
 
     }
 
-    /**
-     * This method loops the user's Feed, giving them options to create chats, view chats, view their own profile,
-     * view another user's profile, and exit the Feed. Chatting can also be done within this feed, as the user can
-     * create messages, edit messages, and delete messages within each Chat.
-     */
     public void feedPageOperation() {
         boolean continueFeed = true;
         do {
@@ -303,9 +298,8 @@ public class SimpleServer {
         }
         while (continueFeed);
     }
-    // Derek's Main Changes
 
-    // grabs user from users ArrayList based off userID; returns null if not found
+
     public User grabUserByID(String userID) {
 
         for (User user : users) {
@@ -316,7 +310,6 @@ public class SimpleServer {
         return null;
     }
 
-    // grabs user from users ArrayList based off username
     public User grabUserByName(String username) {
 
         for (User user : users) {
