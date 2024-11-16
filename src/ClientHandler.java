@@ -37,11 +37,15 @@ public class ClientHandler implements Runnable {
     private FeedViewPage feedViewPage;
     private UserProfilePage userProfilePage;
     private OtherProfilePage otherProfilePage;
+    private BufferedWriter bw;
+    BufferedReader br;
 
     public ClientHandler(String hostname, int port) throws IOException {
         this.hostname = hostname;
         this.port = port;
         this.socket = new Socket(hostname, port);
+        this.bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+        this.br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
     }
 
     public static void main(String[] args) {
@@ -60,7 +64,8 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         Scanner scanner = new Scanner(System.in);
-        welcomePage(scanner);
+        userPage(scanner);
+//        welcomePage(scanner);
 
         /*
             frame = new JFrame("Boiler Gram");
@@ -254,28 +259,21 @@ public class ClientHandler implements Runnable {
                     "2 - View Follower\n" +
                     "3 - View Following\n" +
                     "4 - View Blocked\n" +
-                    "5 - Go Back to Feed View");
+                    "5 - Go Back to Feed View\n" +
+                    "Input: ");
             //Display username and private/public tag
             String input = scanner.nextLine();
             if (input.equals("1")) {
                 write("1");
             } else if (input.equals("2")) {
                 write("2");
+                readAndPrint();
             } else if (input.equals("3")) {
                 write("3");
+                readAndPrint();
             } else if (input.equals("4")) {
                 write("4");
-                try (BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
-                    String blocked = br.readLine();
-                    System.out.println(blocked);
-                    while (blocked != null) {
-                        blocked = br.readLine();
-                        System.out.println(blocked);
-                    }
-                    br.close();
-                } catch (Exception e) {
-                    System.err.println("Server error: " + e.getMessage());
-                }
+                readAndPrint();
             } else if (input.equals("5")) {
                 feedPage(scanner);
                 break;
@@ -285,8 +283,24 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    public boolean readAndPrint() {
+        try {
+            String line = br.readLine();
+            System.out.println(line);
+            while (line != null) {
+                line = br.readLine();
+                System.out.println(line);
+            }
+            br.close();
+            return true;
+        } catch (Exception e) {
+            System.err.println("Server error: " + e.getMessage());
+            return false;
+        }
+    }
+
     public boolean write(String outMessage) {
-        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()))) {
+        try {
             bw.write(outMessage);
             bw.newLine();
             bw.flush();
@@ -296,6 +310,8 @@ public class ClientHandler implements Runnable {
             return false;
         }
     }
+
+    //if user click exit, close bufferedwriter and bufferedreader to close the underlying socket as well
 
     /*
     private void setupActionListeners() {

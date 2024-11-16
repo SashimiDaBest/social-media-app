@@ -4,6 +4,7 @@ import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.io.*;
+import java.sql.Array;
 import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -33,7 +34,7 @@ public class SimpleServer {
     private BufferedReader clientReader;
     private PrintWriter clientWriter;
     private Socket socket;
-
+    private BufferedWriter bw;
     public SimpleServer(int port) throws IOException {
         serverSocket = new ServerSocket(port);
         users = new ArrayList<>();
@@ -59,11 +60,12 @@ public class SimpleServer {
         System.out.println("Server is listening on port " + PORT);
         try {
             while (true) {
-                socket = serverSocket.accept();
+                this.socket = serverSocket.accept();
                 System.out.println("New client connected");
-                clientReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                clientWriter = new PrintWriter(socket.getOutputStream(), true);
-                welcomePageOperation();
+                this.bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+//                welcomePageOperation();
+                user = new User("U_0108.txt");
+                userPageOperation();
             }
         } catch (Exception e) {
             System.out.println("Error accepting connection" + e.getMessage());
@@ -395,7 +397,7 @@ public class SimpleServer {
 //        while (continueFeed);
 //    }
 
-
+/*
     public User grabUserByID(String userID) {
 
         for (User user : users) {
@@ -415,29 +417,36 @@ public class SimpleServer {
         }
         return null;
     }
-
-    public void userPageOperation(String clientUserName) {
+*/
+    public void userPageOperation() {
+        ArrayList<String> people;
         try (BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
             String input = br.readLine();
-            while (input != null) {
-                input = br.readLine();
+            do {
+                System.out.println(input);
                 if (input.equals("1")) {
-
+                    System.out.println("Hello");
                 } else if (input.equals("2")) {
-
+                    write(user.getFollowerList());
                 } else if (input.equals("3")) {
-
+                    write(user.getFollowingList());
                 } else if (input.equals("4")) {
-
+                    write(user.getBlockedList());
                 } else if (input.equals("5")) {
-
+                    feedPageOperation();
+                    break;
                 } else {
                     System.out.println("ERROR: " + input);
+                }
+                if (input != null) {
+                    input = br.readLine();
+                } else {
                     break;
                 }
-            }
+            } while (input != null);
         } catch (Exception e) {
             System.err.println("Server error: " + e.getMessage());
+            e.printStackTrace();
         }
         /*
         // find which user to work with:
@@ -772,6 +781,21 @@ public class SimpleServer {
 
     public void otherPageOperation() {
 
+    }
+
+    public boolean write(ArrayList<String> people) {
+        try {
+            for (int i = 0; i < people.size(); i++) {
+                bw.write(people.get(i));
+                bw.newLine();
+            }
+            bw.flush();
+            return true;
+        } catch (Exception e) {
+            System.out.println("Could not write to server");
+            e.printStackTrace();
+            return false;
+        }
     }
 
 }
