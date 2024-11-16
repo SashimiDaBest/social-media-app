@@ -170,13 +170,12 @@ public class ClientHandler implements Runnable {
     public void feedPage(Scanner scanner) {
         try (BufferedReader serverReader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
             while (true) {
-                System.out.print("""
-                        Welcome to your Feed! What would you like to do?
-                        1 - Create a new chat with selected users
-                        2 - Open an existing chat
-                        3 - View your profile
-                        4 - View another user's profile
-                        """);
+                System.out.print(
+                        "Welcome to your Feed! What would you like to do?\n" +
+                        "1 - Create a new chat with selected users\n" +
+                        "2 - Open an existing chat\n" +
+                        "3 - View your profile\n" +
+                        "4 - View another user's profile\n");
                 String input = scanner.nextLine();
                 if (input.equals("1")) {
                     write("1");
