@@ -31,11 +31,10 @@ public class SimpleServer {
     private static ArrayList<User> users;
     private static ArrayList<Chat> chats;
     private User user;
-    private BufferedReader clientReader;
-    private PrintWriter clientWriter;
     private Socket socket;
     private BufferedWriter bw;
     private BufferedReader br;
+
     public SimpleServer(int port) throws IOException {
         serverSocket = new ServerSocket(port);
         users = new ArrayList<>();
@@ -67,9 +66,9 @@ public class SimpleServer {
                 System.out.println("New client connected");
                 this.bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
                 this.br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-//                welcomePageOperation();
+                welcomePageOperation();
 //                user = new User("U_0108.txt");
-                userPageOperation();
+//                userPageOperation();
             }
         } catch (Exception e) {
             System.out.println("Error accepting connection" + e.getMessage());
@@ -86,7 +85,6 @@ public class SimpleServer {
             server.start();
         } catch (Exception e) {
             System.out.println("Server exception: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
@@ -104,7 +102,7 @@ public class SimpleServer {
                 }
 
                 // Wait for client to make a choice
-                String mainChoice = clientReader.readLine();
+                String mainChoice = br.readLine();
 
                 // for Signing In                
                 if (mainChoice.equals("1")) {
@@ -112,15 +110,16 @@ public class SimpleServer {
                     while (true) {
 
                         // Wait for client answer
-                        String username = clientReader.readLine();
+                        String username = br.readLine();
 
                         // Wait for client answer
-                        String password = clientReader.readLine();
+                        String password = br.readLine();
 
                         // if existing username/password is valid
                         if (User.hasLogin(username, password)) {
-                            clientWriter.println("Successful sign-in");
-                            clientWriter.flush();
+                            bw.write("Successful sign-in");
+                            bw.newLine();
+                            bw.flush();
                             isSignedIn = true;
                             for (User u : users) {
                                 if (u.getUsername().equals(username)) {
@@ -132,8 +131,9 @@ public class SimpleServer {
 
                             // if existing username/password is invalid
                         } else {
-                            clientWriter.println("Sign-in was unsuccessful");
-                            clientWriter.flush();
+                            bw.write("Sign-in was unsuccessful");
+                            bw.newLine();
+                            bw.flush();
                             continue;
                         }
                     }
@@ -144,10 +144,10 @@ public class SimpleServer {
                     while (true) {
 
                         // wait for client answer
-                        String newUsername = clientReader.readLine();
+                        String newUsername = br.readLine();
 
                         // wait for client answer
-                        String newPassword = clientReader.readLine();
+                        String newPassword = br.readLine();
 
                         // if new username/password is valid
                         try {
@@ -157,20 +157,22 @@ public class SimpleServer {
                             this.user = newUser;
                             isSignedIn = true;
 
-                            clientWriter.println("User creation successful");
-                            clientWriter.flush();
+                            bw.write("User creation successful");
+                            bw.newLine();
+                            bw.flush();
                             break;
 
                             // if new username/password is invalid
                         } catch (InvalidCreateAccountException e) {
-                            clientWriter.println("Invalid fields");
-                            clientWriter.flush();
+                            bw.write("Invalid fields");
+                            bw.newLine();
+                            bw.flush();
                             continue;
                         }
                     }
 
                 } else { // response was invalid
-                    // tries continues with the clientHandler 
+                    // tries continues with the clientHandler
                     continue;
                 }
             }
@@ -189,7 +191,7 @@ public class SimpleServer {
      */
     public void feedPageOperation() {
         try {
-            String clientChosenOperation = clientReader.readLine();
+            String clientChosenOperation = br.readLine();
 
             // 1 - Chat Creation
             if (clientChosenOperation.equals("1")) {
@@ -208,11 +210,12 @@ public class SimpleServer {
                 }
 
                 // Write list of available users to client
-                clientWriter.println(listOfAvailableUsers);
-                clientWriter.flush();
+                bw.write(listOfAvailableUsers);
+                bw.newLine();
+                bw.flush();
 
                 // Read each selected user from client and make sure they can be chatted with
-                String usernameToCheck = clientReader.readLine();
+                String usernameToCheck = br.readLine();
                 while (!usernameToCheck.equals("[DONE]")) {
 
                     // Identify the target user
@@ -225,15 +228,21 @@ public class SimpleServer {
                     }
 
                     // Check if the target can be chatted with and report back to client
-                    if (user.checkChatAbility(targetUser)) {
-                        clientWriter.println("");
-                        clientWriter.flush();
-                    } else {
-                        clientWriter.println("User cannot be chatted with!");
-                        clientWriter.flush();
+                    switch (user.checkChatAbility(targetUser)) {
+                        case "true":
+                            bw.write("");
+                            break;
+                        case "self":
+                            bw.write("self");
+                            break;
+                        case "false":
+                            bw.write("User cannot be chatted with!");
+                            break;
                     }
+                    bw.newLine();
+                    bw.flush();
 
-                    usernameToCheck = clientReader.readLine();
+                    usernameToCheck = br.readLine();
                 }
 
 
@@ -483,7 +492,7 @@ public class SimpleServer {
                                 "0 - Exit");
 
 
-                String mainChoice = clientReader.readLine();
+                String mainChoice = br.readLine();
 
                 if (mainChoice.equals("1")) { // show followers
 
@@ -495,7 +504,7 @@ public class SimpleServer {
                         }
 
                         System.out.println("Press 0 to exit\nPress 1 to view a profile");
-                        String displayChoice = clientReader.readLine();
+                        String displayChoice = br.readLine();
 
                         if (displayChoice.equals("0")) { // return to main menu
                             break;
@@ -504,7 +513,7 @@ public class SimpleServer {
 
                             while (true) {
                                 System.out.println("Please select a profile; Press 0 to go back at any time");
-                                String profile = clientReader.readLine(); // because options are IDs for now, this is also an ID
+                                String profile = br.readLine(); // because options are IDs for now, this is also an ID
 
                                 if (profile.equals("0")) { // go back to Follower screen
                                     break;
@@ -551,7 +560,7 @@ public class SimpleServer {
 
                         System.out.println("Press 0 to exit\nPress 1 to view a profile\n" +
                                 "Press 2 to follow someone new\nPress 3 to un-follow someone");
-                        String displayChoice = clientReader.readLine();
+                        String displayChoice = br.readLine();
 
                         if (displayChoice.equals("0")) { // return to main menu
                             break;
@@ -560,7 +569,7 @@ public class SimpleServer {
 
                             while (true) {
                                 System.out.println("Please select a profile; Press 0 to go back at any time");
-                                String profile = clientReader.readLine(); // because options are IDs for now, this is also an ID
+                                String profile = br.readLine(); // because options are IDs for now, this is also an ID
 
                                 if (profile.equals("0")) { // go back to Following screen
                                     break;
@@ -597,7 +606,7 @@ public class SimpleServer {
                                 System.out.println("Enter the ID of someone you want to follow\n" +
                                         "Press 0 to exit at anytime to go back");
 
-                                String addedUser = clientReader.readLine();
+                                String addedUser = br.readLine();
 
                                 if (addedUser.equals("0")) {
                                     break;
@@ -620,7 +629,7 @@ public class SimpleServer {
                                 System.out.println("Enter the ID of a follower you want to un-follow\n" +
                                         "Press 0 to exit at anytime to go back");
 
-                                String unfollowedUser = clientReader.readLine();
+                                String unfollowedUser = br.readLine();
 
                                 if (unfollowedUser.equals("0")) {
                                     break;
@@ -658,7 +667,7 @@ public class SimpleServer {
 
                         System.out.println("Press 0 to exit\nPress 1 to view a profile\n" +
                                 "Press 2 to block someone\nPress 3 to unblock someone");
-                        String displayChoice = clientReader.readLine();
+                        String displayChoice = br.readLine();
 
                         if (displayChoice.equals("0")) { // return to main menu
                             break;
@@ -667,7 +676,7 @@ public class SimpleServer {
 
                             while (true) {
                                 System.out.println("Please select a profile; Press 0 to go back at any time");
-                                String profile = clientReader.readLine(); // because options are IDs for now, this is also an ID
+                                String profile = br.readLine(); // because options are IDs for now, this is also an ID
 
                                 if (profile.equals("0")) { // go back to Blocked screen
                                     break;
@@ -705,7 +714,7 @@ public class SimpleServer {
                                 System.out.println("Enter the ID of someone you want to block\n" +
                                         "Press 0 to exit at anytime to go back");
 
-                                String blockedUser = clientReader.readLine();
+                                String blockedUser = br.readLine();
 
                                 if (blockedUser.equals("0")) {
                                     break;
@@ -734,7 +743,7 @@ public class SimpleServer {
                                 System.out.println("Enter the ID of someone you've blocked who you want to un-block\n" +
                                         "Press 0 to exit at anytime to go back");
 
-                                String unBlockedUser = clientReader.readLine();
+                                String unBlockedUser = br.readLine();
 
                                 if (unBlockedUser.equals("0")) {
                                     break;

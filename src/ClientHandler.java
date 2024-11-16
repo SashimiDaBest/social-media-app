@@ -66,8 +66,8 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         Scanner scanner = new Scanner(System.in);
-        userPage(scanner);
-//        welcomePage(scanner);
+        //userPage(scanner);
+        welcomePage(scanner);
 
         /*
             frame = new JFrame("Boiler Gram");
@@ -228,6 +228,8 @@ public class ClientHandler implements Runnable {
                             if (serverValidityResponse.isEmpty()) {
                                 System.out.println("User selected successfully!");
                                 usernames.add(friendUsername);
+                            } else if (serverValidityResponse.equals("self")) {
+                                System.out.println("You cannot add yourself to a chat!");
                             } else {
                                 System.out.println("The user you are trying to chat with has blocked you," +
                                         " you have blocked them, or their account is private.");

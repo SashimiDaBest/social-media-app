@@ -648,17 +648,21 @@ public class User implements UserInterface {
      * cannot be chatted with.
      *
      * @param userToChatWith The targeted User to chat with.
-     * @return Whether the user calling the method is able to chat with the target.
+     * @return Whether the user calling the method is able to chat with the target, or if they
+     * are trying to chat with themselves.
      */
-    public synchronized boolean checkChatAbility(User userToChatWith) {
+    public synchronized String checkChatAbility(User userToChatWith) {
         if (this.getBlockedList().contains(userToChatWith.getUserID()) ||
                 userToChatWith.getBlockedList().contains(this.userID)) {
-            return false;
+            return "false";
+        }
+        if (this.userID.equals(userToChatWith.userID)) {
+            return "self";
         }
         if (userToChatWith.getAccountType() == 0) {
-            return true;
+            return "true";
         } else {
-            return userToChatWith.getFollowerList().contains(this.userID);
+            return String.valueOf(userToChatWith.getFollowerList().contains(this.userID));
         }
     }
 
