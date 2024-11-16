@@ -42,7 +42,7 @@ public class SimpleServer {
         chats = new ArrayList<>();
 
         File dataDirectory = new File("Sample Test Folder");
-        File[] userFiles = dataDirectory.listFiles((ignored, name) -> name.startsWith("U_02"));
+        File[] userFiles = dataDirectory.listFiles((ignored, name) -> name.startsWith("U_"));
         for (File userFile : userFiles) {
             User newUser = new User(userFile.getAbsolutePath());
             users.add(newUser);
@@ -134,7 +134,7 @@ public class SimpleServer {
                             bw.write("Sign-in was unsuccessful");
                             bw.newLine();
                             bw.flush();
-                            continue;
+                            break;
                         }
                     }
 

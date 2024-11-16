@@ -100,6 +100,11 @@ public class ClientHandler implements Runnable {
 
         try {
                 boolean isSignedIn = false;
+
+                // for redirecting after option 1 fails
+                String signUpDecision = "";
+                String mainChoice = "";
+                
     
                 while (true) {
     
@@ -108,12 +113,20 @@ public class ClientHandler implements Runnable {
                         feedPage(scanner);
                         break;
                     }
-    
-                    System.out.print("Welcome to the Welcome Page\n" +
+
+                    // skip first screen if sign in has already been attempted
+                    if (!signUpDecision.equals("")) {
+                        mainChoice = signUpDecision;      
+                    
+                    } else {
+                        System.out.print("Welcome to the Welcome Page\n" +
                             "1 - Sign in\n" +
                             "2 - Sign up\n");
-                    String mainChoice = scanner.nextLine();
-                    this.write(mainChoice);
+                            mainChoice = scanner.nextLine();
+                            this.write(mainChoice);
+                    }
+                    
+                    
     
                     // for Sigining In 
                     if (mainChoice.equals("1")) {
@@ -137,8 +150,23 @@ public class ClientHandler implements Runnable {
                                 break;
     
                             } else if (messageFromServer.equals("Sign-in was unsuccessful")) {
-                                System.out.println("Unsuccesful sign-in, please try again");
-                                continue;
+                                
+                                while(true) {
+                                    System.out.println("1 - Retry signing in\n2 - Create account");
+
+                                    signUpDecision = scanner.nextLine();
+                                    this.write(signUpDecision);
+                                    // System.out.println("signUpDecision: " + signUpDecision);
+                                    
+                                    if (signUpDecision.equals("1") || signUpDecision.equals("2")) {
+                                        break;
+
+                                    } else {
+                                        System.out.println("Invalid response, please try again");
+                                        continue;
+                                    }
+                                }
+                                break;
     
                             }
                         }
