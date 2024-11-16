@@ -64,7 +64,7 @@ public class SimpleServer {
                 System.out.println("New client connected");
                 this.bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 //                welcomePageOperation();
-                user = new User("U_0108.txt");
+//                user = new User("U_0108.txt");
                 userPageOperation();
             }
         } catch (Exception e) {
@@ -397,27 +397,6 @@ public class SimpleServer {
 //        while (continueFeed);
 //    }
 
-/*
-    public User grabUserByID(String userID) {
-
-        for (User user : users) {
-            if (user.getUserID().equals(userID)) {
-                return user;
-            }
-        }
-        return null;
-    }
-
-    public User grabUserByName(String username) {
-
-        for (User user : users) {
-            if (user.getUsername().equals(username)) {
-                return user;
-            }
-        }
-        return null;
-    }
-*/
     public void userPageOperation() {
         ArrayList<String> people;
         try (BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
@@ -780,7 +759,35 @@ public class SimpleServer {
     }
 
     public void otherPageOperation() {
-
+        ArrayList<String> people;
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+            String input = br.readLine();
+            do {
+                System.out.println(input);
+                if (input.equals("1")) {
+                    System.out.println("Hello");
+                } else if (input.equals("2")) {
+                    write(user.getFollowerList());
+                } else if (input.equals("3")) {
+                    write(user.getFollowingList());
+                } else if (input.equals("4")) {
+                    write(user.getBlockedList());
+                } else if (input.equals("5")) {
+                    feedPageOperation();
+                    break;
+                } else {
+                    System.out.println("ERROR: " + input);
+                }
+                if (input != null) {
+                    input = br.readLine();
+                } else {
+                    break;
+                }
+            } while (input != null);
+        } catch (Exception e) {
+            System.err.println("Server error: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     public boolean write(ArrayList<String> people) {

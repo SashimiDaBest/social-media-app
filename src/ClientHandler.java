@@ -254,7 +254,7 @@ public class ClientHandler implements Runnable {
 
     public void userPage(Scanner scanner) {
         while (true) {
-            System.out.println("Welcome to the Feed Page\n" +
+            System.out.println("Welcome to the User Page\n" +
                     "1 - Change User Profile\n" +
                     "2 - View Follower\n" +
                     "3 - View Following\n" +
@@ -268,10 +268,48 @@ public class ClientHandler implements Runnable {
             } else if (input.equals("2")) {
                 write("2");
                 readAndPrint();
+                //select user
+                //go to their profile page
             } else if (input.equals("3")) {
                 write("3");
                 readAndPrint();
+                //select user
+                //go to their profile page
             } else if (input.equals("4")) {
+                write("4");
+                readAndPrint();
+                //select user
+                //go to their profile page
+            } else if (input.equals("5")) {
+                feedPage(scanner);
+                break;
+            } else {
+                System.out.println("Invalid input");
+            }
+        }
+    }
+
+    public void otherPage(Scanner scanner) {
+        while (true) {
+            System.out.println("Welcome to the Other Page\n" +
+                    "1 - Follow/Unfollow Other\n" +
+                    "2 - Block/Unblock Other\n" +
+                    "3 - View Follower\n" +
+                    "4 - View Following\n" +
+                    "5 - Go Back to Feed View\n" +
+                    "Input: ");
+            //Display username and private/public tag
+            String input = scanner.nextLine();
+            if (input.equals("1")) {
+
+            } else if (input.equals("2")) {
+
+            } else if (input.equals("3")) {
+                //if other is public
+                write("3");
+                readAndPrint();
+            } else if (input.equals("4")) {
+                //if other is public
                 write("4");
                 readAndPrint();
             } else if (input.equals("5")) {
