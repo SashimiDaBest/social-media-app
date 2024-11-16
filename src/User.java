@@ -641,6 +641,27 @@ public class User implements UserInterface {
     }
 
     /**
+     * Checks if two users are able to form a chat together. If the target user has a public
+     * account, they can be chatted with, but if they have a private account, the user wishing
+     * to initiate the chat must be following them. If either user has the other blocked, they
+     * cannot be chatted with.
+     *
+     * @param userToChatWith The targeted User to chat with.
+     * @return Whether the user calling the method is able to chat with the target.
+     */
+    public synchronized boolean checkChatAbility(User userToChatWith) {
+        if (this.getBlockedList().contains(userToChatWith.getUserID()) ||
+                userToChatWith.getBlockedList().contains(this.userID)) {
+            return false;
+        }
+        if (userToChatWith.getAccountType() == 0) {
+            return true;
+        } else {
+            return userToChatWith.getFollowerList().contains(this.userID);
+        }
+    }
+
+    /**
      * Checks if the specified username is available for a new user.
      *
      * @param username the username to validate
