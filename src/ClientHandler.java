@@ -38,13 +38,10 @@ public class ClientHandler implements Runnable {
     private UserProfilePage userProfilePage;
     private OtherProfilePage otherProfilePage;
 
-    private BufferedWriter serverWriter;
-
     public ClientHandler(String hostname, int port) throws IOException {
         this.hostname = hostname;
         this.port = port;
         this.socket = new Socket(hostname, port);
-        this.serverWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
     }
 
     public static void main(String[] args) {
@@ -289,10 +286,10 @@ public class ClientHandler implements Runnable {
     }
 
     public boolean write(String outMessage) {
-        try {
-            serverWriter.write(outMessage);
-            serverWriter.newLine();
-            serverWriter.flush();
+        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()))) {
+            bw.write(outMessage);
+            bw.newLine();
+            bw.flush();
             return true;
         } catch (IOException e) {
             System.err.println("Error while writing message: " + e.getMessage());
