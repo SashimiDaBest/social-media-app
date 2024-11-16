@@ -3,6 +3,8 @@ import java.awt.event.ActionListener;
 import java.net.*;
 import java.io.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Scanner;
 import javax.swing.*;
 
 /**
@@ -22,6 +24,8 @@ import javax.swing.*;
  * @since 1.0
  */
 public class ClientHandler implements Runnable {
+    private String hostname;
+    private int port;
 
     private Socket socket;
     private JFrame frame;
@@ -34,33 +38,31 @@ public class ClientHandler implements Runnable {
     private UserProfilePage userProfilePage;
     private OtherProfilePage otherProfilePage;
 
+    public ClientHandler(String hostname, int port) throws IOException{
+        this.hostname = hostname;
+        this.port = port;
+        this.socket = new Socket(hostname, port);
+    }
+
     public static void main(String[] args) {
+        String hostname = "localhost"; // Server hostname
+        int port = 12345;              // Port number
+
         try {
-            Socket socket = new Socket("localhost", 12);
-            SwingUtilities.invokeLater(new ClientHandler(socket));
-            // Replace "localhost" with the server's IP address if needed
+            ClientHandler client = new ClientHandler(hostname, port);
+            Thread clientThread = new Thread(client);
+            clientThread.start();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public ClientHandler(Socket socket) {
-        this.socket = socket;
-    }
-
-    /**
-     * Executes the client handling logic. Manages input and output streams for client-server communication.
-     * Reads data from the client and sends responses. Ensures resources are properly closed in case of an error.
-     * <p>
-     * This method runs when the thread is started, allowing the server to handle each client connection
-     * in a separate thread.
-     * </p>
-     */
     @Override
     public void run() {
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-             PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
+        Scanner scanner = new Scanner(System.in);
+        welcomePage(scanner);
 
+        /*
             frame = new JFrame("Boiler Gram");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setLocationRelativeTo(null);
@@ -69,7 +71,6 @@ public class ClientHandler implements Runnable {
             cardLayout = new CardLayout();
             cardPanel = new JPanel(cardLayout);
 
-            // Create instances of each page
             welcomePage = new WelcomePage(cardLayout, cardPanel);
             createUserPage = new CreateUserPage(cardLayout, cardPanel);
             feedViewPage = new FeedViewPage(cardLayout, cardPanel);
@@ -84,14 +85,208 @@ public class ClientHandler implements Runnable {
 
             frame.add(cardPanel);
             frame.setVisible(true);
-            setupActionListeners();
+//            setupActionListeners();
             out.write("hello");
+           */
+    }
 
+    public void welcomePage(Scanner scanner) {
+        try (BufferedReader serverReader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+            
+            boolean isSignedIn = false;
+
+            while (true) {
+
+                // move on once finally signed in 
+                if (isSignedIn) {
+                    feedPage(scanner);
+                    break;
+                }
+
+                System.out.println("Welcome to the Welcome Page\n" +
+                        "1 - Sign in\n" +
+                        "2 - Sign up\n");
+                String mainChoice = scanner.nextLine();
+                this.write(mainChoice);
+
+                // for Sigining In 
+                if (mainChoice.equals("1")) {
+
+                    while(true) {
+                        System.out.print("Username: ");
+                        String username = scanner.nextLine();
+                        this.write(username);
+
+                        System.out.print("Password: ");
+                        String password = scanner.nextLine();
+                        this.write(password);
+                        
+                        String messageFromServer = serverReader.readLine();
+
+                        // successfully signing in 
+                        if (messageFromServer.equals("Successful sign-in")) {
+                            System.out.println("You have entered the user feed!");
+                            isSignedIn = true;
+                            break;
+                        
+                        } else if (messageFromServer.equals("Sign-in was unsuccessful")){
+                            System.out.println("Unsuccesful sign-in, please try again");
+                            continue;
+
+                        } else {
+                            System.out.println("Server sent incomprehensible message; rerunning page");
+                            break;
+                        }
+                    }
+                    
+                    //else show error message and do something
+                } else if (mainChoice.equals("2")) {
+                    System.out.print("Username: ");
+                    String username = scanner.nextLine();
+                    System.out.print("Password: ");
+                    String password = scanner.nextLine();
+                    //checkPassword and Username requirement boolean method
+                    //write user and password to server and initialize user
+                    //read and see if the user can be created
+                    String messageFromServer = "";
+                    if (messageFromServer.equals("")) {
+                        feedPage(scanner);
+                        break;
+                    }
+                    //else show error message and do something
+                } else {
+                    System.out.println("Invalid input");
+                }
+            }
+            
         } catch (IOException e) {
-            System.err.println("Client connection error: " + e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
+    public void feedPage(Scanner scanner) {
+        try (BufferedReader serverReader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+            while (true) {
+                System.out.print(
+                        "Welcome to your Feed! What would you like to do?\n" +
+                                "1 - Create a new chat with selected users\n" +
+                                "2 - Open an existing chat\n" +
+                                "3 - View your profile\n" +
+                                "4 - View another user's profile\n");
+                String input = scanner.nextLine();
+                if (input.equals("1")) {
+                    // tell the server we are creating a new chat
+                    write("1");
+
+                    // receive the list of available users from the server
+                    // and display it to the client
+                    String receivedUserList = serverReader.readLine();
+                    String[] userList = receivedUserList.split(";");
+                    for (String username : userList) {
+                        System.out.println(username);
+                    }
+
+                    boolean makeGroup = false;
+                    ArrayList<String> usernames = new ArrayList<>();
+                    while (!makeGroup) {
+                        System.out.print("Add Group (Y/N): ");
+                        if (scanner.nextLine().equals("Y")) {
+                            if (usernames.isEmpty()) {
+                                System.out.print("Can't make group - group is empty!");
+                                continue;
+                            }
+                            makeGroup = true;
+                        } else {
+                            System.out.print("Username to add: ");
+                            String friendUsername = scanner.nextLine();
+                            //check if username is valid - depends whether both account is private or public
+                            //write to server
+                            write(friendUsername);
+
+                            // if the user you want to add is private, you have to be following them to msg
+                            String messageFromServer = "";
+                            if (messageFromServer.equals("")) {
+                                System.out.println("Add Username Successfully");
+                                usernames.add(friendUsername);
+                            } else {
+                                System.out.println("Invalid Friend Username");
+                            }
+                        }
+                    }
+                    //write to server to prep for creating chat
+                    //write a list of verified usernames
+                    //create chat on server side
+                    System.out.println("Chat created");
+                } else if (input.equals("2")) {
+                    System.out.print("Chat ID: ");
+                    String chatID = scanner.nextLine();
+                    //write to server and make sure chat exist
+                    //read and print the last 10 messages sent
+                } else if (input.equals("4")) {
+                    //write to server to get the list
+                    //read and print chat id
+                } else if (input.equals("3")) {
+                    userPage(scanner);
+                    break;
+                } else {
+                    System.out.println("Invalid input");
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void userPage(Scanner scanner) {
+        while (true) {
+            System.out.println("Welcome to the Feed Page\n" +
+                    "1 - Change User Profile\n" +
+                    "2 - View Follower\n" +
+                    "3 - View Following\n" +
+                    "4 - View Blocked\n" +
+                    "5 - Go Back to Feed View");
+            //Display username and private/public tag
+            String input = scanner.nextLine();
+            if (input.equals("1")) {
+                write("1");
+            } else if (input.equals("2")) {
+                write("2");
+            } else if (input.equals("3")) {
+                write("3");
+            } else if (input.equals("4")) {
+                write("4");
+                try (BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+                    String blocked = br.readLine();
+                    System.out.println(blocked);
+                    while (blocked != null) {
+                        blocked = br.readLine();
+                        System.out.println(blocked);
+                    }
+                    br.close();
+                } catch (Exception e) {
+                    System.err.println("Server error: " + e.getMessage());
+                }
+            } else if (input.equals("5")) {
+                feedPage(scanner);
+                break;
+            } else {
+                System.out.println("Invalid input");
+            }
+        }
+    }
+
+    public boolean write(String outMessage) {
+        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()))) {
+            bw.write(outMessage);
+            bw.newLine();
+            bw.flush();
+        } catch (Exception e) {
+            System.err.println("Client connection error: " + e.getMessage());
+        }
+        return true;
+    }
+
+    /*
     private void setupActionListeners() {
 
         welcomePage.getSignInButton().addActionListener(new ActionListener() {
@@ -135,18 +330,5 @@ public class ClientHandler implements Runnable {
 
         });
     }
-  
-    public synchronized boolean isInvalidPassword(char[] password) {
-        boolean haveLetter = false;
-        boolean haveNumber = false;
-        for (char c : password) {
-            if (Character.isLetter(c)) {
-                haveLetter = true;
-            }
-            if (Character.isDigit(c)) {
-                haveNumber = true;
-            }
-        }
-        return haveLetter && haveNumber;
-    }
+     */
 }

@@ -4,6 +4,7 @@ import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.io.*;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -23,118 +24,139 @@ import java.util.Scanner;
  * @since 1.0
  */
 public class SimpleServer {
-    /**
-     * The server socket that listens for client connections.
-     */
+    private static int PORT = 12;
     private ServerSocket serverSocket;
-    //    private ExecutorService executorService;
+
     private static ArrayList<User> users;
     private static ArrayList<Chat> chats;
     private User user;
+    private BufferedReader clientReader;
+    private PrintWriter clientWriter;
+    private Socket socket;
 
-    /**
-     * Initializes a new {@code SimpleServer} that binds to the specified port.
-     *
-     * @param port the port on which the server will listen for incoming connections
-     * @throws IOException if an I/O error occurs when opening the socket
-     */
     public SimpleServer(int port) throws IOException {
         serverSocket = new ServerSocket(port);
-        if (users == null && chats == null) {
-            users = new ArrayList<>();
-            chats = new ArrayList<>();
+        users = new ArrayList<>();
+        chats = new ArrayList<>();
 
-            File dataDirectory = new File("Sample Test Folder");
-            System.out.println(dataDirectory.getAbsolutePath());
-            File[] userFiles = dataDirectory.listFiles((ignored, name) -> name.startsWith("U_02"));
-            for (File userFile : userFiles) {
-                users.add(new User(userFile.getAbsolutePath()));
-            }
+        File dataDirectory = new File("Sample Test Folder");
+        File[] userFiles = dataDirectory.listFiles((ignored, name) -> name.startsWith("U_02"));
+        for (File userFile : userFiles) {
+            users.add(new User(userFile.getAbsolutePath()));
+        }
 
-            File[] chatFiles = dataDirectory.listFiles((ignored, name) -> name.startsWith("C_02"));
-            for (File chatFile : chatFiles) {
-                try {
-                    chats.add(new Chat(chatFile.getAbsolutePath().substring(0, chatFile.getAbsolutePath().lastIndexOf("."))));
-                } catch (InvalidFileFormatException e) {
-                    throw new RuntimeException(e);
-                }
+        File[] chatFiles = dataDirectory.listFiles((ignored, name) -> name.startsWith("C_02"));
+        for (File chatFile : chatFiles) {
+            try {
+                chats.add(new Chat(chatFile.getAbsolutePath().substring(0, chatFile.getAbsolutePath().lastIndexOf("."))));
+            } catch (InvalidFileFormatException e) {
+                throw new RuntimeException(e);
             }
         }
     }
 
-    /**
-     * Starts the server and waits for client connections.
-     * <p>
-     * This method enters an infinite loop where it listens for incoming client connections.
-     * Upon a successful connection, a new socket is created. Optionally, the connection could
-     * be handled by a {@code ClientHandler} using an {@code ExecutorService} for concurrent processing.
-     * </p>
-     *
-     * @throws IOException if an I/O error occurs while waiting for a connection
-     */
     public void start() throws IOException {
+        System.out.println("Server is listening on port " + PORT);
         try {
-            Socket socket = serverSocket.accept();
-            ClientHandler clientHandler = new ClientHandler(socket);
-            Thread newClientThread = new Thread(clientHandler);
-            newClientThread.start();
-
-            //action();
-//          executorService.submit(new ClientHandler(clientSocket));
+            while (true) {
+                socket = serverSocket.accept();
+                System.out.println("New client connected");
+                welcomePageOperation();
+            }
         } catch (Exception e) {
             System.out.println("Error accepting connection" + e.getMessage());
         }
     }
 
-    public void action() {
-
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(System.in))) {
-            String userRequest = in.readLine();
-            String username = ""; // some parsed form of userRequest
-
-            if (userRequest.equals("...")) {
-                userPageOperation(username);
-            }
-
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    /**
-     * Stops the server by closing the server socket and releasing associated resources.
-     * <p>
-     * This method closes the server socket, which will terminate any ongoing connections.
-     * If an {@code ExecutorService} were in use, it would also be shut down here to clean up resources.
-     * </p>
-     *
-     * @throws IOException if an I/O error occurs when closing the server socket
-     */
     public void stop() throws IOException {
         serverSocket.close();
-        //    executorService.shutdown();
     }
 
-    /**
-     * The main method that serves as the application's entry point. Prints a welcome message,
-     * initializes a {@code SimpleServer} on port 12345, and starts the server to listen for
-     * incoming client connections. Handles any {@code IOException} that may occur during server setup.
-     *
-     * @param args command-line arguments passed to the application (not used)
-     */
     public static void main(String[] args) {
         try {
-            SimpleServer server = new SimpleServer(12);
+            SimpleServer server = new SimpleServer(PORT);
             server.start();
-            server.feedPageOperation();
-
-        } catch (IOException e) {
-            System.err.println("Server error: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Server exception: " + e.getMessage());
         }
     }
 
     public void welcomePageOperation() {
+
+        boolean isSignedIn = false;
+
+        try {
+            while(true) {
+
+                // Stop once either options 1 or 2 are successful
+                if (isSignedIn) {
+                    feedPageOperation();
+                    break;
+                }
+
+                // Wait for client to make a choice
+                String mainChoice = clientReader.readLine();
+
+                // for Signing In                
+                if (mainChoice.equals("1")) {
+
+                    while (true) {
+                        
+                        // Wait for client answer
+                        String username = clientReader.readLine();
+
+                        // Wait for client answer
+                        String password = clientReader.readLine();
+
+                        // if existing username/password is valid
+                        if (User.hasLogin(username, password)) {
+                            clientWriter.println("Successful sign-in");
+                            isSignedIn = true;
+                            break;
+                        
+                        // if existing username/password is invalid
+                        } else {
+                            clientWriter.println("Sign-in was unsuccessful");
+                            continue;
+                        }
+                    }
+
+                // for creating a new account
+                } else if (mainChoice.equals("2")) {
+
+                    while (true) {
+                        
+                        // wait for client answer
+                        String newUsername = clientReader.readLine();
+
+                        // wait for client answer
+                        String newPassword = clientReader.readLine();
+
+                        // if new username/password is valid
+                        try {
+                            User newUser = new User(newUsername, newPassword);
+                            users.add(newUser);
+                            isSignedIn = true;
+                            break;
+
+                        // if new username/password is invalid
+                        } catch (InvalidCreateAccountException e) {
+                            clientWriter.println("Please enter a valid username or password!");
+                            continue;
+                        }
+                    }
+
+                } else { // response was invalid
+                    clientWriter.println("Invalid argument, try again");
+                    continue;
+                }
+            }    
+
+        } catch (IOException e) {
+            System.out.println("Could not read from client; no errors should be thrown!");
+            e.printStackTrace();
+        }
+
 
     }
 
@@ -144,172 +166,202 @@ public class SimpleServer {
      * create messages, edit messages, and delete messages within each Chat.
      */
     public void feedPageOperation() {
-        boolean continueFeed = true;
-        do {
-            String loggedinUserID = "U_0200"; // will be received from client
-            Scanner input = new Scanner(System.in);
-            System.out.print("""
-                    Welcome to your Feed! What would you like to do?
-                    1 - Create a new chat with selected users
-                    2 - Open an existing chat
-                    3 - View your profile
-                    4 - View another user's profile
-                    5 - Exit
-                    """);
+        try {
+            // read from client what operation we are doing
+            String clientChosenOperation = clientReader.readLine();
 
-            switch (input.nextLine()) {
-                case "1":
-                    System.out.println("Type the names of the users you'd like to chat with on separate lines." +
-                            "Type [DONE] when you are finished.");
-                    for (User user : users) {
-                        if (!user.getUserID().equals(loggedinUserID)) {
-                            System.out.println(user.getUsername());
+            // create chat with selected users
+            if (clientChosenOperation.equals("1")) {
+
+                // write list of available users to chat with to the client
+                String listOfAvailableUsers = "";
+                for (int i = 0; i < users.size(); i++) {
+                    if (!users.get(i).getUserID().equals(user.getUserID())) {
+                        listOfAvailableUsers += users.get(i).getUsername();
+
+                        // separate list of users with semicolons
+                        if (i != users.size() - 1) {
+                            listOfAvailableUsers += ";";
                         }
                     }
-                    System.out.println("Create a new chat with:");
-                    ArrayList<String> usersToChatWith = new ArrayList<>();
-                    usersToChatWith.add(loggedinUserID);
+                }
 
-                    while (true) {
-                        String username = input.nextLine();
-                        if (!username.equals("[DONE]")) {
-                            boolean success = false;
-                            boolean self = false;
-                            for (User user : users) {
-                                if (username.equals(user.getUsername())) {
-                                    usersToChatWith.add(user.getUserID());
-                                    success = true;
-                                } else if (User.findIDFromUsername(username).equals(loggedinUserID)) {
-                                    self = true;
-                                }
-                            }
-                            if (self) {
-                                System.out.println("You cannot add yourself to a chat!");
-                            } else if (!success) {
-                                System.out.println("User does not exist or cannot be added to a chat!");
-                            }
+                // write list of available users to client
+                clientWriter.println(listOfAvailableUsers);
+                clientWriter.flush();
 
-                        } else {
-                            Chat newChat = new Chat(usersToChatWith);
-                            chats.add(newChat);
-                            for (User user : users) {
-                                if (usersToChatWith.contains(user.getUserID())) {
-                                    user.addChat(newChat.getChatID());
-                                }
-                            }
-                            break;
-                        }
-                    }
-                    System.out.println("New chat created!");
-                    break;
-                case "2":
-                    System.out.println("Enter the number (ex. 0001) of the Chat you'd like to open! Type * to return" +
-                            " to the main menu.");
-                    for (Chat chat : chats) {
-                        String chatOutput = "";
-                        if (chat.getMemberList().contains(loggedinUserID)) {
-                            chatOutput = "Chat #" + chat.getChatID().substring(2) + " (With ";
-                            for (int i = 0; i < chat.getMemberList().size(); i++) {
-                                if (!chat.getMemberList().get(i).equals(loggedinUserID)) {
-                                    chatOutput += User.findUsernameFromID(chat.getMemberList().get(i));
-                                    if (i != chat.getMemberList().size() - 1) {
-                                        chatOutput += ", ";
-                                    }
-                                }
-                                if (i == chat.getMemberList().size() - 1) {
-                                    chatOutput += ")";
-                                }
-                            }
-                        }
-                        if (!chatOutput.isEmpty())
-                            System.out.println(chatOutput);
-                    }
 
-                    String selectedChatID = input.nextLine();
-                    boolean viewChat = true;
-                    do {
-                        for (Chat chat : chats) {
-                            if (("C_" + selectedChatID).equals(chat.getChatID())) {
-                                System.out.print(
-                                        "---------------------------------------------------------------------\n" +
-                                                "Chat #" + chat.getChatID().substring(2) +
-                                                "\nMembers: You, ");
-
-                                for (int i = 0; i < chat.getMemberList().size(); i++) {
-                                    if (!chat.getMemberList().get(i).equals(loggedinUserID)) {
-                                        System.out.print(User.findUsernameFromID(chat.getMemberList().get(i)));
-
-                                        if (i != chat.getMemberList().size() - 1) {
-                                            System.out.print(", ");
-                                        } else {
-                                            System.out.println("\n");
-                                        }
-                                    }
-                                }
-
-                                int indexOfFirstMessageToDisplay;
-                                if (chat.getMessageList().size() < 5)
-                                    indexOfFirstMessageToDisplay = 0;
-                                else
-                                    indexOfFirstMessageToDisplay = chat.getMessageList().size() - 5;
-                                System.out.println("[Displaying up to 5 most recent messages]");
-
-                                for (int i = indexOfFirstMessageToDisplay; i < chat.getMessageList().size(); i++) {
-                                    if (chat.getMessageList().get(i).getAuthorID().equals(loggedinUserID)) {
-                                        System.out.print("You: ");
-                                    } else {
-                                        System.out.print(
-                                                User.findUsernameFromID(chat.getMessageList().get(i).getAuthorID()) + ": ");
-                                    }
-
-                                    System.out.println(chat.getMessageList().get(i).getMessage());
-                                }
-                                System.out.println("---------------------------------------------------------------------");
-                                System.out.print("""
-                                        1 - Compose message
-                                        2 - Delete previous message
-                                        3 - Edit previous message
-                                        4 - Exit chat
-                                        """);
-                                switch (input.nextLine()) {
-                                    case "1":
-                                        System.out.println("Enter your message:");
-                                        chat.addMessage(new Message(loggedinUserID, 0, input.nextLine()));
-                                        break;
-                                    case "2":
-                                        chat.deleteMessage(loggedinUserID);
-                                        System.out.println("Message deleted!");
-                                        break;
-                                    case "3":
-                                        System.out.println("Enter your replacement message:");
-                                        chat.editMessage(input.nextLine(), loggedinUserID);
-                                        break;
-                                    case "4":
-                                        viewChat = false;
-                                        break;
-                                    default:
-                                        System.out.println("Invalid choice!");
-                                        break;
-                                }
-                            }
-                        }
-                    } while (viewChat);
-                case "3":
-                    // make call to userPageOperation as appropriate
-                    break;
-                case "4":
-                    // make call to otherPageOperation as appropriate
-                    break;
-                case "5":
-                    continueFeed = false;
-                    break;
             }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        while (continueFeed);
-    }
-    // Derek's Main Changes
 
-    // grabs user from users ArrayList based off userID; returns null if not found
+    }
+
+//    public void feedPageOperation() {
+//        boolean continueFeed = true;
+//        do {
+//            String loggedinUserID = "U_0200"; // will be received from client
+//            Scanner input = new Scanner(System.in);
+//            System.out.print(
+//                    "Welcome to your Feed! What would you like to do?\n" +
+//                    "1 - Create a new chat with selected users\n" +
+//                    "2 - Open an existing chat\n" +
+//                    "3 - View your profile\n" +
+//                    "4 - View another user's profile\n" +
+//                    "5 - Exit\n");
+//
+//            switch (input.nextLine()) {
+//                case "1":
+//                    System.out.println("Type the names of the users you'd like to chat with on separate lines." +
+//                            "Type [DONE] when you are finished.");
+//                    for (User user : users) {
+//                        if (!user.getUserID().equals(loggedinUserID)) {
+//                            System.out.println(user.getUsername());
+//                        }
+//                    }
+//                    System.out.println("Create a new chat with:");
+//                    ArrayList<String> usersToChatWith = new ArrayList<>();
+//                    usersToChatWith.add(loggedinUserID);
+//
+//                    while (true) {
+//                        String username = input.nextLine();
+//                        if (!username.equals("[DONE]")) {
+//                            boolean success = false;
+//                            boolean self = false;
+//                            for (User user : users) {
+//                                if (username.equals(user.getUsername())) {
+//                                    usersToChatWith.add(user.getUserID());
+//                                    success = true;
+//                                } else if (User.findIDFromUsername(username).equals(loggedinUserID)) {
+//                                    self = true;
+//                                }
+//                            }
+//                            if (self) {
+//                                System.out.println("You cannot add yourself to a chat!");
+//                            } else if (!success) {
+//                                System.out.println("User does not exist or cannot be added to a chat!");
+//                            }
+//
+//                        } else {
+//                            Chat newChat = new Chat(usersToChatWith);
+//                            chats.add(newChat);
+//                            for (User user : users) {
+//                                if (usersToChatWith.contains(user.getUserID())) {
+//                                    user.addChat(newChat.getChatID());
+//                                }
+//                            }
+//                            break;
+//                        }
+//                    }
+//                    System.out.println("New chat created!");
+//                    break;
+//                case "2":
+//                    System.out.println("Enter the number (ex. 0001) of the Chat you'd like to open! Type * to return" +
+//                            " to the main menu.");
+//                    for (Chat chat : chats) {
+//                        String chatOutput = "";
+//                        if (chat.getMemberList().contains(loggedinUserID)) {
+//                            chatOutput = "Chat #" + chat.getChatID().substring(2) + " (With ";
+//                            for (int i = 0; i < chat.getMemberList().size(); i++) {
+//                                if (!chat.getMemberList().get(i).equals(loggedinUserID)) {
+//                                    chatOutput += User.findUsernameFromID(chat.getMemberList().get(i));
+//                                    if (i != chat.getMemberList().size() - 1) {
+//                                        chatOutput += ", ";
+//                                    }
+//                                }
+//                                if (i == chat.getMemberList().size() - 1) {
+//                                    chatOutput += ")";
+//                                }
+//                            }
+//                        }
+//                        if (!chatOutput.isEmpty())
+//                            System.out.println(chatOutput);
+//                    }
+//
+//                    String selectedChatID = input.nextLine();
+//                    boolean viewChat = true;
+//                    do {
+//                        for (Chat chat : chats) {
+//                            if (("C_" + selectedChatID).equals(chat.getChatID())) {
+//                                System.out.print(
+//                                        "---------------------------------------------------------------------\n" +
+//                                                "Chat #" + chat.getChatID().substring(2) +
+//                                                "\nMembers: You, ");
+//
+//                                for (int i = 0; i < chat.getMemberList().size(); i++) {
+//                                    if (!chat.getMemberList().get(i).equals(loggedinUserID)) {
+//                                        System.out.print(User.findUsernameFromID(chat.getMemberList().get(i)));
+//
+//                                        if (i != chat.getMemberList().size() - 1) {
+//                                            System.out.print(", ");
+//                                        } else {
+//                                            System.out.println("\n");
+//                                        }
+//                                    }
+//                                }
+//
+//                                int indexOfFirstMessageToDisplay;
+//                                if (chat.getMessageList().size() < 5)
+//                                    indexOfFirstMessageToDisplay = 0;
+//                                else
+//                                    indexOfFirstMessageToDisplay = chat.getMessageList().size() - 5;
+//                                System.out.println("[Displaying up to 5 most recent messages]");
+//
+//                                for (int i = indexOfFirstMessageToDisplay; i < chat.getMessageList().size(); i++) {
+//                                    if (chat.getMessageList().get(i).getAuthorID().equals(loggedinUserID)) {
+//                                        System.out.print("You: ");
+//                                    } else {
+//                                        System.out.print(
+//                                                User.findUsernameFromID(chat.getMessageList().get(i).getAuthorID()) + ": ");
+//                                    }
+//
+//                                    System.out.println(chat.getMessageList().get(i).getMessage());
+//                                }
+//                                System.out.println("---------------------------------------------------------------------");
+//                                System.out.print(
+//                                        "1 - Compose message\n" +
+//                                        "2 - Delete previous message\n" +
+//                                        "3 - Edit previous message\n" +
+//                                        "4 - Exit chat\n");
+//                                switch (input.nextLine()) {
+//                                    case "1":
+//                                        System.out.println("Enter your message:");
+//                                        chat.addMessage(new Message(loggedinUserID, 0, input.nextLine()));
+//                                        break;
+//                                    case "2":
+//                                        chat.deleteMessage(loggedinUserID);
+//                                        System.out.println("Message deleted!");
+//                                        break;
+//                                    case "3":
+//                                        System.out.println("Enter your replacement message:");
+//                                        chat.editMessage(input.nextLine(), loggedinUserID);
+//                                        break;
+//                                    case "4":
+//                                        viewChat = false;
+//                                        break;
+//                                    default:
+//                                        System.out.println("Invalid choice!");
+//                                        break;
+//                                }
+//                            }
+//                        }
+//                    } while (viewChat);
+//                case "3":
+//                    // make call to userPageOperation as appropriate
+//                    break;
+//                case "4":
+//                    // make call to otherPageOperation as appropriate
+//                    break;
+//                case "5":
+//                    continueFeed = false;
+//                    break;
+//            }
+//        }
+//        while (continueFeed);
+//    }
+
+
     public User grabUserByID(String userID) {
 
         for (User user : users) {
@@ -320,7 +372,6 @@ public class SimpleServer {
         return null;
     }
 
-    // grabs user from users ArrayList based off username
     public User grabUserByName(String username) {
 
         for (User user : users) {
@@ -332,9 +383,29 @@ public class SimpleServer {
     }
 
     public void userPageOperation(String clientUserName) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+            String input = br.readLine();
+            while (input != null) {
+                input = br.readLine();
+                if (input.equals("1")) {
 
-        Scanner userInput = new Scanner(System.in);
+                } else if (input.equals("2")) {
 
+                } else if (input.equals("3")) {
+
+                } else if (input.equals("4")) {
+
+                } else if (input.equals("5")) {
+
+                } else {
+                    System.out.println("ERROR: " + input);
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Server error: " + e.getMessage());
+        }
+        /*
         // find which user to work with:
         User currentClient = null;
         for (User user : users) {
@@ -357,306 +428,312 @@ public class SimpleServer {
             e.printStackTrace();
         }
 
-        while (true) {
+        try {
+            while (true) {
 
-            // main screen
-            System.out.println(
-                    currentClient.getUsername() + "\n" +
-                            clientAccountType + "\n" +
-                            currentClient.getProfilePic() + "\n" +
-                            "1 - Follwers\n" +
-                            "2 - Following\n" +
-                            "3 - Blocked\n" +
-                            "0 - Exit");
+                // main screen
+                System.out.println(
+                        currentClient.getUsername() + "\n" +
+                                clientAccountType + "\n" +
+                                currentClient.getProfilePic() + "\n" +
+                                "1 - Follwers\n" +
+                                "2 - Following\n" +
+                                "3 - Blocked\n" +
+                                "0 - Exit");
 
 
-            String mainChoice = userInput.nextLine();
+                String mainChoice = clientReader.readLine();
 
-            if (mainChoice.equals("1")) { // show followers
+                if (mainChoice.equals("1")) { // show followers
 
-                while (true) {
-                    System.out.println("Currently followed by: ");
-                    // NOTE: only shows IDs for now
-                    for (String userID : currentClient.getFollowerList()) {
-                        System.out.println(userID);
-                    }
+                    while (true) {
+                        System.out.println("Currently followed by: ");
+                        // NOTE: only shows IDs for now
+                        for (String userID : currentClient.getFollowerList()) {
+                            System.out.println(userID);
+                        }
 
-                    System.out.println("Press 0 to exit\nPress 1 to view a profile");
-                    String displayChoice = userInput.nextLine();
+                        System.out.println("Press 0 to exit\nPress 1 to view a profile");
+                        String displayChoice = clientReader.readLine();
 
-                    if (displayChoice.equals("0")) { // return to main menu
-                        break;
+                        if (displayChoice.equals("0")) { // return to main menu
+                            break;
 
-                    } else if (displayChoice.equals("1")) { // profile view
+                        } else if (displayChoice.equals("1")) { // profile view
 
-                        while (true) {
-                            System.out.println("Please select a profile; Press 0 to go back at any time");
-                            String profile = userInput.nextLine(); // because options are IDs for now, this is also an ID
+                            while (true) {
+                                System.out.println("Please select a profile; Press 0 to go back at any time");
+                                String profile = clientReader.readLine(); // because options are IDs for now, this is also an ID
 
-                            if (profile.equals("0")) { // go back to Follower screen
-                                break;
+                                if (profile.equals("0")) { // go back to Follower screen
+                                    break;
 
-                            } else if (!currentClient.getFollowerList().contains(profile) && !profile.equals("0")) {
-                                System.out.println("The selected user is not following you, please try again");
-                                continue;
+                                } else if (!currentClient.getFollowerList().contains(profile) && !profile.equals("0")) {
+                                    System.out.println("The selected user is not following you, please try again");
+                                    continue;
 
-                            } else { // display selected profile's info
+                                } else { // display selected profile's info
 
-                                User profiledUser = this.grabUserByID(profile);
+                                    User profiledUser = this.grabUserByID(profile);
 
-                                System.out.println(profile + "\nSome of their current followers:");
-                                for (int i = 0; i < 3; i++) {
-                                    System.out.println(profiledUser.getFollowerList().get(i));
-                                    if (i == 2) {
-                                        System.out.println("...");
+                                    System.out.println(profile + "\nSome of their current followers:");
+                                    for (int i = 0; i < 3; i++) {
+                                        System.out.println(profiledUser.getFollowerList().get(i));
+                                        if (i == 2) {
+                                            System.out.println("...");
+                                        }
                                     }
-                                }
-                                System.out.println("Some of who they're currently following:");
-                                for (int i = 0; i < 3; i++) {
-                                    System.out.println(profiledUser.getFollowingList().get(i));
-                                    if (i == 2) {
-                                        System.out.println("...");
+                                    System.out.println("Some of who they're currently following:");
+                                    for (int i = 0; i < 3; i++) {
+                                        System.out.println(profiledUser.getFollowingList().get(i));
+                                        if (i == 2) {
+                                            System.out.println("...");
+                                        }
                                     }
                                 }
                             }
+
+                        } else { // redisplay Follower screen on invalid input
+                            System.out.println("displayChoice is invalid, try again");
+                            continue;
+                        }
+                    } // end of main screen option
+
+                } else if (mainChoice.equals("2")) { // show following
+
+                    while (true) {
+                        System.out.println("Currently following: ");
+                        // NOTE: only shows IDs for now
+                        for (String userID : currentClient.getFollowingList()) {
+                            System.out.println(userID);
                         }
 
-                    } else { // redisplay Follower screen on invalid input
-                        System.out.println("displayChoice is invalid, try again");
-                        continue;
-                    }
-                } // end of main screen option
+                        System.out.println("Press 0 to exit\nPress 1 to view a profile\n" +
+                                "Press 2 to follow someone new\nPress 3 to un-follow someone");
+                        String displayChoice = clientReader.readLine();
 
-            } else if (mainChoice.equals("2")) { // show following
+                        if (displayChoice.equals("0")) { // return to main menu
+                            break;
 
-                while (true) {
-                    System.out.println("Currently following: ");
-                    // NOTE: only shows IDs for now
-                    for (String userID : currentClient.getFollowingList()) {
-                        System.out.println(userID);
-                    }
+                        } else if (displayChoice.equals("1")) { // profile view
 
-                    System.out.println("Press 0 to exit\nPress 1 to view a profile\n" +
-                            "Press 2 to follow someone new\nPress 3 to un-follow someone");
-                    String displayChoice = userInput.nextLine();
+                            while (true) {
+                                System.out.println("Please select a profile; Press 0 to go back at any time");
+                                String profile = clientReader.readLine(); // because options are IDs for now, this is also an ID
 
-                    if (displayChoice.equals("0")) { // return to main menu
-                        break;
+                                if (profile.equals("0")) { // go back to Following screen
+                                    break;
 
-                    } else if (displayChoice.equals("1")) { // profile view
+                                } else if (!currentClient.getFollowingList().contains(profile) && !profile.equals("0")) {
+                                    System.out.println("You are not following the selected user, please try again");
+                                    continue;
 
-                        while (true) {
-                            System.out.println("Please select a profile; Press 0 to go back at any time");
-                            String profile = userInput.nextLine(); // because options are IDs for now, this is also an ID
+                                } else { // display selected profile's information
 
-                            if (profile.equals("0")) { // go back to Following screen
-                                break;
+                                    User profiledUser = this.grabUserByID(profile);
 
-                            } else if (!currentClient.getFollowingList().contains(profile) && !profile.equals("0")) {
-                                System.out.println("You are not following the selected user, please try again");
-                                continue;
-
-                            } else { // display selected profile's information
-
-                                User profiledUser = this.grabUserByID(profile);
-
-                                System.out.println(profile + "\nSome of their current followers:");
-                                for (int i = 0; i < 3; i++) {
-                                    System.out.println(profiledUser.getFollowerList().get(i));
-                                    if (i == 2) {
-                                        System.out.println("...");
+                                    System.out.println(profile + "\nSome of their current followers:");
+                                    for (int i = 0; i < 3; i++) {
+                                        System.out.println(profiledUser.getFollowerList().get(i));
+                                        if (i == 2) {
+                                            System.out.println("...");
+                                        }
                                     }
-                                }
-                                System.out.println("Some of who they're currently following:");
-                                for (int i = 0; i < 3; i++) {
-                                    System.out.println(profiledUser.getFollowingList().get(i));
-                                    if (i == 2) {
-                                        System.out.println("...");
-                                    }
-                                }
-                            }
-                        }
-
-                    } else if (displayChoice.equals("2")) { // follow someone new
-
-                        while (true) {
-
-                            System.out.println("Enter the ID of someone you want to follow\n" +
-                                    "Press 0 to exit at anytime to go back");
-
-                            String addedUser = userInput.nextLine();
-
-                            if (addedUser.equals("0")) {
-                                break;
-
-                            } else if (this.grabUserByID(addedUser) == null) {
-                                System.out.println("User is not found in the database; try again");
-                                continue;
-
-                            } else {
-                                currentClient.addFollowing(addedUser);
-                                System.out.println("You are now following " + addedUser + "!");
-                            }
-
-                        }
-
-                    } else if (displayChoice.equals("3")) { // unfollow someone you're already following
-
-                        while (true) {
-
-                            System.out.println("Enter the ID of a follower you want to un-follow\n" +
-                                    "Press 0 to exit at anytime to go back");
-
-                            String unfollowedUser = userInput.nextLine();
-
-                            if (unfollowedUser.equals("0")) {
-                                break;
-
-                            } else if (this.grabUserByID(unfollowedUser) == null) {
-                                System.out.println("User is not found in the database; try again");
-                                continue;
-
-                            } else if (!currentClient.getFollowingList().contains(unfollowedUser)) {
-                                System.out.println("You can't unfollow someone you're not currently following!");
-                                continue;
-
-                            } else {
-
-                                currentClient.deleteFollowing(unfollowedUser);
-                                System.out.println("You are no longer following " + unfollowedUser + "...");
-                            }
-                        }
-
-                    } else { // redisplay Following screen on invalid input
-                        System.out.println("displayChoice was invalid, try again");
-                        continue;
-                    }
-
-                } // end of main screen option
-
-            } else if (mainChoice.equals("3")) { // show blocked
-
-                while (true) {
-                    System.out.println("Currently blocked: ");
-                    // NOTE: only shows IDs for now
-                    for (String userID : currentClient.getBlockedList()) {
-                        System.out.println(userID);
-                    }
-
-                    System.out.println("Press 0 to exit\nPress 1 to view a profile\n" +
-                            "Press 2 to block someone\nPress 3 to unblock someone");
-                    String displayChoice = userInput.nextLine();
-
-                    if (displayChoice.equals("0")) { // return to main menu
-                        break;
-
-                    } else if (displayChoice.equals("1")) { // profile view
-
-                        while (true) {
-                            System.out.println("Please select a profile; Press 0 to go back at any time");
-                            String profile = userInput.nextLine(); // because options are IDs for now, this is also an ID
-
-                            if (profile.equals("0")) { // go back to Blocked screen
-                                break;
-
-                            } else if (!currentClient.getBlockedList().contains(profile) && !profile.equals("0")) {
-                                System.out.println("Selected is not blocked, please try again");
-                                continue;
-
-                            } else { // display selected profile's information
-
-                                User profiledUser = this.grabUserByID(profile);
-
-                                System.out.println(profile + "\nSome of their current followers:");
-                                for (int i = 0; i < 3; i++) {
-                                    System.out.println(profiledUser.getFollowerList().get(i));
-                                    if (i == 2) {
-                                        System.out.println("...");
-                                    }
-                                }
-                                System.out.println("Some of who they're currently following:");
-                                for (int i = 0; i < 3; i++) {
-                                    System.out.println(profiledUser.getFollowingList().get(i));
-                                    if (i == 2) {
-                                        System.out.println("...");
+                                    System.out.println("Some of who they're currently following:");
+                                    for (int i = 0; i < 3; i++) {
+                                        System.out.println(profiledUser.getFollowingList().get(i));
+                                        if (i == 2) {
+                                            System.out.println("...");
+                                        }
                                     }
                                 }
                             }
-                        }
 
+                        } else if (displayChoice.equals("2")) { // follow someone new
 
-                    } else if (displayChoice.equals("2")) { // block someone new
+                            while (true) {
 
-                        while (true) {
+                                System.out.println("Enter the ID of someone you want to follow\n" +
+                                        "Press 0 to exit at anytime to go back");
 
-                            System.out.println("Enter the ID of someone you want to block\n" +
-                                    "Press 0 to exit at anytime to go back");
+                                String addedUser = clientReader.readLine();
 
-                            String blockedUser = userInput.nextLine();
+                                if (addedUser.equals("0")) {
+                                    break;
 
-                            if (blockedUser.equals("0")) {
-                                break;
+                                } else if (this.grabUserByID(addedUser) == null) {
+                                    System.out.println("User is not found in the database; try again");
+                                    continue;
 
-                            } else if (this.grabUserByID(blockedUser) == null) {
-                                System.out.println("User is not found in the database; try again");
-                                continue;
-
-                            } else { // block also automatically unfollows them
-                                currentClient.addBlock(blockedUser);
-
-                                if (currentClient.getFollowingList().contains(blockedUser)) {
-                                    currentClient.deleteFollowing(blockedUser);
-                                    System.out.println("You have successfully blocked and un-followed " + blockedUser + "...");
                                 } else {
-                                    System.out.println("You have successfully blocked " + blockedUser + "...");
+                                    currentClient.addFollowing(addedUser);
+                                    System.out.println("You are now following " + addedUser + "!");
+                                }
+
+                            }
+
+                        } else if (displayChoice.equals("3")) { // unfollow someone you're already following
+
+                            while (true) {
+
+                                System.out.println("Enter the ID of a follower you want to un-follow\n" +
+                                        "Press 0 to exit at anytime to go back");
+
+                                String unfollowedUser = clientReader.readLine();
+
+                                if (unfollowedUser.equals("0")) {
+                                    break;
+
+                                } else if (this.grabUserByID(unfollowedUser) == null) {
+                                    System.out.println("User is not found in the database; try again");
+                                    continue;
+
+                                } else if (!currentClient.getFollowingList().contains(unfollowedUser)) {
+                                    System.out.println("You can't unfollow someone you're not currently following!");
+                                    continue;
+
+                                } else {
+
+                                    currentClient.deleteFollowing(unfollowedUser);
+                                    System.out.println("You are no longer following " + unfollowedUser + "...");
                                 }
                             }
 
+                        } else { // redisplay Following screen on invalid input
+                            System.out.println("displayChoice was invalid, try again");
+                            continue;
                         }
 
-                    } else if (displayChoice.equals("3")) { // unblock someone already blocked
+                    } // end of main screen option
 
-                        while (true) {
+                } else if (mainChoice.equals("3")) { // show blocked
 
-                            System.out.println("Enter the ID of someone you've blocked who you want to un-block\n" +
-                                    "Press 0 to exit at anytime to go back");
+                    while (true) {
+                        System.out.println("Currently blocked: ");
+                        // NOTE: only shows IDs for now
+                        for (String userID : currentClient.getBlockedList()) {
+                            System.out.println(userID);
+                        }
 
-                            String unBlockedUser = userInput.nextLine();
+                        System.out.println("Press 0 to exit\nPress 1 to view a profile\n" +
+                                "Press 2 to block someone\nPress 3 to unblock someone");
+                        String displayChoice = clientReader.readLine();
 
-                            if (unBlockedUser.equals("0")) {
-                                break;
+                        if (displayChoice.equals("0")) { // return to main menu
+                            break;
 
-                            } else if (this.grabUserByID(unBlockedUser) == null) {
-                                System.out.println("User is not found in the database; try again");
-                                continue;
+                        } else if (displayChoice.equals("1")) { // profile view
 
-                            } else if (!currentClient.getBlockedList().contains(unBlockedUser)) {
-                                System.out.println("You can't unblock someone you haven't blocked!");
-                                continue;
+                            while (true) {
+                                System.out.println("Please select a profile; Press 0 to go back at any time");
+                                String profile = clientReader.readLine(); // because options are IDs for now, this is also an ID
 
-                            } else {
-                                currentClient.deleteBlock(unBlockedUser);
-                                System.out.println("You have un-blocked " + unBlockedUser + "!");
+                                if (profile.equals("0")) { // go back to Blocked screen
+                                    break;
+
+                                } else if (!currentClient.getBlockedList().contains(profile) && !profile.equals("0")) {
+                                    System.out.println("Selected is not blocked, please try again");
+                                    continue;
+
+                                } else { // display selected profile's information
+
+                                    User profiledUser = this.grabUserByID(profile);
+
+                                    System.out.println(profile + "\nSome of their current followers:");
+                                    for (int i = 0; i < 3; i++) {
+                                        System.out.println(profiledUser.getFollowerList().get(i));
+                                        if (i == 2) {
+                                            System.out.println("...");
+                                        }
+                                    }
+                                    System.out.println("Some of who they're currently following:");
+                                    for (int i = 0; i < 3; i++) {
+                                        System.out.println(profiledUser.getFollowingList().get(i));
+                                        if (i == 2) {
+                                            System.out.println("...");
+                                        }
+                                    }
+                                }
                             }
+
+
+                        } else if (displayChoice.equals("2")) { // block someone new
+
+                            while (true) {
+
+                                System.out.println("Enter the ID of someone you want to block\n" +
+                                        "Press 0 to exit at anytime to go back");
+
+                                String blockedUser = clientReader.readLine();
+
+                                if (blockedUser.equals("0")) {
+                                    break;
+
+                                } else if (this.grabUserByID(blockedUser) == null) {
+                                    System.out.println("User is not found in the database; try again");
+                                    continue;
+
+                                } else { // block also automatically unfollows them
+                                    currentClient.addBlock(blockedUser);
+
+                                    if (currentClient.getFollowingList().contains(blockedUser)) {
+                                        currentClient.deleteFollowing(blockedUser);
+                                        System.out.println("You have successfully blocked and un-followed " + blockedUser + "...");
+                                    } else {
+                                        System.out.println("You have successfully blocked " + blockedUser + "...");
+                                    }
+                                }
+
+                            }
+
+                        } else if (displayChoice.equals("3")) { // unblock someone already blocked
+
+                            while (true) {
+
+                                System.out.println("Enter the ID of someone you've blocked who you want to un-block\n" +
+                                        "Press 0 to exit at anytime to go back");
+
+                                String unBlockedUser = clientReader.readLine();
+
+                                if (unBlockedUser.equals("0")) {
+                                    break;
+
+                                } else if (this.grabUserByID(unBlockedUser) == null) {
+                                    System.out.println("User is not found in the database; try again");
+                                    continue;
+
+                                } else if (!currentClient.getBlockedList().contains(unBlockedUser)) {
+                                    System.out.println("You can't unblock someone you haven't blocked!");
+                                    continue;
+
+                                } else {
+                                    currentClient.deleteBlock(unBlockedUser);
+                                    System.out.println("You have un-blocked " + unBlockedUser + "!");
+                                }
+                            }
+
+                        } else { // redisplay Following screen on invalid input
+                            System.out.println("displayChoice was invalid, try again");
+                            continue;
                         }
-
-                    } else { // redisplay Following screen on invalid input
-                        System.out.println("displayChoice was invalid, try again");
-                        continue;
                     }
+
+                } else if (mainChoice.equals("0")) {
+                    System.out.println("Exiting user page...");
+                    break;
+
+                } else { // invalid choice selection
+                    System.out.println("Invalid selection");
+                    continue;
                 }
-
-            } else if (mainChoice.equals("0")) {
-                System.out.println("Exiting user page...");
-                break;
-
-            } else { // invalid choice selection
-                System.out.println("Invalid selection");
-                continue;
             }
-        }
-        userInput.close();
 
+        } catch (IOException e) {
+            System.out.println("Could not read from user; User Profile stream should not throw an error!");
+            e.printStackTrace();
+        }
+        
+*/
     }
 
     public void otherPageOperation() {
