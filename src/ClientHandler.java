@@ -226,13 +226,18 @@ public class ClientHandler implements Runnable {
                 System.out.println("Invalid input");
             }
         }
-
-        public void readAndWrite(String inMessage) {
-
-        }
     }
 
-
+    public boolean readAndWrite(String outMessage) {
+        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()))) {
+            bw.write(outMessage);
+            bw.newLine();
+            bw.flush();
+        } catch (Exception e) {
+            System.err.println("Client connection error: " + e.getMessage());
+        }
+        return true;
+    }
 
 
 
