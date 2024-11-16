@@ -124,6 +124,7 @@ public class ClientHandler implements Runnable {
                         String password = scanner.nextLine();
                         this.write(password);
 
+                        // Wait for validation from the server
                         String messageFromServer = serverReader.readLine();
 
                         // successfully signing in 
@@ -136,29 +137,38 @@ public class ClientHandler implements Runnable {
                             System.out.println("Unsuccesful sign-in, please try again");
                             continue;
 
-                        } else {
-                            System.out.println("Server sent incomprehensible message; rerunning page");
-                            break;
                         }
                     }
 
-                    //else show error message and do something
+                // for creating a new account
                 } else if (mainChoice.equals("2")) {
-                    System.out.print("Username: ");
-                    String username = scanner.nextLine();
-                    System.out.print("Password: ");
-                    String password = scanner.nextLine();
-                    //checkPassword and Username requirement boolean method
-                    //write user and password to server and initialize user
-                    //read and see if the user can be created
-                    String messageFromServer = "";
-                    if (messageFromServer.equals("")) {
-                        feedPage(scanner);
-                        break;
+
+                    while(true) {
+                        System.out.print("New Username: ");
+                        String username = scanner.nextLine();
+                        this.write(username);
+
+                        System.out.print("Password: ");
+                        String password = scanner.nextLine();
+                        this.write(password);
+                       
+                        // Wait on server validation
+                        String messageFromServer = serverReader.readLine();
+
+                        if (messageFromServer.equals("User creation successful")) {
+                            System.out.println("Successfuly created new account!");
+                            isSignedIn = true;
+                            break;
+                        
+                        } else if (messageFromServer.equals("Invalid fields")) {
+                            System.out.println("One of the fields is invalid, please try again");
+                            continue;
+                        }
                     }
-                    //else show error message and do something
+
                 } else {
-                    System.out.println("Invalid input");
+                    System.out.println("Invalid main input, please try again");
+                    continue;
                 }
             }
 

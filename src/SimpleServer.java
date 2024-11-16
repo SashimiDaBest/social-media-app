@@ -42,7 +42,9 @@ public class SimpleServer {
         File dataDirectory = new File("Sample Test Folder");
         File[] userFiles = dataDirectory.listFiles((ignored, name) -> name.startsWith("U_02"));
         for (File userFile : userFiles) {
-            users.add(new User(userFile.getAbsolutePath()));
+            User newUser = new User(userFile.getAbsolutePath());
+            users.add(newUser);
+            newUser.createNewUser(newUser.getUsername(), newUser.getPassWord(), newUser.getUserID());
         }
 
         File[] chatFiles = dataDirectory.listFiles((ignored, name) -> name.startsWith("C_02"));
@@ -80,6 +82,7 @@ public class SimpleServer {
             server.start();
         } catch (Exception e) {
             System.out.println("Server exception: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -113,6 +116,7 @@ public class SimpleServer {
                         // if existing username/password is valid
                         if (User.hasLogin(username, password)) {
                             clientWriter.println("Successful sign-in");
+                            clientWriter.flush();
                             isSignedIn = true;
                             for (User u : users) {
                                 if (u.getUsername().equals(username)) {
@@ -125,6 +129,7 @@ public class SimpleServer {
                             // if existing username/password is invalid
                         } else {
                             clientWriter.println("Sign-in was unsuccessful");
+                            clientWriter.flush();
                             continue;
                         }
                     }
@@ -147,23 +152,26 @@ public class SimpleServer {
                             users.add(newUser);
                             this.user = newUser;
                             isSignedIn = true;
+
+                            clientWriter.println("User creation successful");
+                            clientWriter.flush();
                             break;
 
                             // if new username/password is invalid
                         } catch (InvalidCreateAccountException e) {
-                            clientWriter.println("Please enter a valid username or password!");
+                            clientWriter.println("Invalid fields");
+                            clientWriter.flush();
                             continue;
                         }
                     }
 
                 } else { // response was invalid
-                    clientWriter.println("Invalid argument, try again");
+                    // tries continues with the clientHandler 
                     continue;
                 }
             }
 
         } catch (IOException e) {
-            System.out.println("Could not read from client; no errors should be thrown!");
             e.printStackTrace();
         }
 
