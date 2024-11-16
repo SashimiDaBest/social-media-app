@@ -5,6 +5,7 @@ import java.io.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Scanner;
+import javax.sound.midi.Soundbank;
 import javax.swing.*;
 
 /**
@@ -253,14 +254,33 @@ public class ClientHandler implements Runnable {
     }
 
     public void userPage(Scanner scanner) {
+        String username = "";
+        String accountType = "";
+        try {
+            br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            String line = br.readLine();
+            username = line;
+            if (line != null) {
+                if (line.equals("1")) {
+                    accountType = "private";
+                } else {
+                    accountType = "public";
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         while (true) {
             System.out.println("Welcome to the User Page\n" +
+                    "USERNAME: " + username + "\n" +
+                    "ACCOUNT_TYPE: " + accountType + "\n" +
                     "1 - Change User Profile\n" +
                     "2 - View Follower\n" +
                     "3 - View Following\n" +
                     "4 - View Blocked\n" +
                     "5 - Go Back to Feed View\n" +
                     "Input: ");
+
             //Display username and private/public tag
             String input = scanner.nextLine();
             if (input.equals("1")) {
@@ -268,18 +288,36 @@ public class ClientHandler implements Runnable {
             } else if (input.equals("2")) {
                 write("2");
                 readAndPrint();
-                //select user
-                //go to their profile page
+                System.out.print("Do you want to view Other (Y/N): ");
+                String input2 = scanner.nextLine();
+                if (input2.equals("Y")) {
+                    System.out.print("Other Username: ");
+                    String otherUsername = scanner.nextLine();
+                    otherPage(scanner, otherUsername);
+                    break;
+                }
             } else if (input.equals("3")) {
                 write("3");
                 readAndPrint();
-                //select user
-                //go to their profile page
+                System.out.print("Do you want to view Other (Y/N): ");
+                String input2 = scanner.nextLine();
+                if (input2.equals("Y")) {
+                    System.out.print("Other Username: ");
+                    String otherUsername = scanner.nextLine();
+                    otherPage(scanner, otherUsername);
+                    break;
+                }
             } else if (input.equals("4")) {
                 write("4");
                 readAndPrint();
-                //select user
-                //go to their profile page
+                System.out.print("Do you want to view Other (Y/N): ");
+                String input2 = scanner.nextLine();
+                if (input2.equals("Y")) {
+                    System.out.print("Other Username: ");
+                    String otherUsername = scanner.nextLine();
+                    otherPage(scanner, otherUsername);
+                    break;
+                }
             } else if (input.equals("5")) {
                 feedPage(scanner);
                 break;
@@ -289,16 +327,33 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    public void otherPage(Scanner scanner) {
+    public void otherPage(Scanner scanner, String otherUsername) {
+        String username = "";
+        String accountType = "";
+        try {
+            br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            String line = br.readLine();
+            username = line;
+            if (line != null) {
+                if (line.equals("1")) {
+                    accountType = "private";
+                } else {
+                    accountType = "public";
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         while (true) {
             System.out.println("Welcome to the Other Page\n" +
+                    "USERNAME: " + username + "\n" +
+                    "ACCOUNT_TYPE: " + accountType + "\n" +
                     "1 - Follow/Unfollow Other\n" +
                     "2 - Block/Unblock Other\n" +
                     "3 - View Follower\n" +
                     "4 - View Following\n" +
                     "5 - Go Back to Feed View\n" +
                     "Input: ");
-            //Display username and private/public tag
             String input = scanner.nextLine();
             if (input.equals("1")) {
 

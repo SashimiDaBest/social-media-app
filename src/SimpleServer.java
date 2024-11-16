@@ -35,6 +35,7 @@ public class SimpleServer {
     private PrintWriter clientWriter;
     private Socket socket;
     private BufferedWriter bw;
+    private BufferedReader br;
     public SimpleServer(int port) throws IOException {
         serverSocket = new ServerSocket(port);
         users = new ArrayList<>();
@@ -63,6 +64,7 @@ public class SimpleServer {
                 this.socket = serverSocket.accept();
                 System.out.println("New client connected");
                 this.bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+                this.br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 //                welcomePageOperation();
 //                user = new User("U_0108.txt");
                 userPageOperation();
@@ -399,7 +401,17 @@ public class SimpleServer {
 
     public void userPageOperation() {
         ArrayList<String> people;
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+        try {
+            bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            bw.write(user.getUsername());
+            bw.newLine();
+            bw.write(user.getAccountType());
+            bw.newLine();
+            bw.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
             String input = br.readLine();
             do {
                 System.out.println(input);
@@ -758,20 +770,35 @@ public class SimpleServer {
 */
     }
 
-    public void otherPageOperation() {
+    public void otherPageOperation(Scanner scanner) {
         ArrayList<String> people;
+        try {
+            bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            bw.write(user.getUsername());
+            bw.newLine();
+            bw.write(user.getAccountType());
+            bw.newLine();
+            bw.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         try (BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+            //read in other username
             String input = br.readLine();
             do {
                 System.out.println(input);
                 if (input.equals("1")) {
-                    System.out.println("Hello");
+
                 } else if (input.equals("2")) {
-                    write(user.getFollowerList());
+
                 } else if (input.equals("3")) {
-                    write(user.getFollowingList());
+                    if (user.getAccountType() == 0) {
+                        write(user.getFollowingList());
+                    }
                 } else if (input.equals("4")) {
-                    write(user.getBlockedList());
+                    if (user.getAccountType() == 0) {
+                        write(user.getBlockedList());
+                    }
                 } else if (input.equals("5")) {
                     feedPageOperation();
                     break;
@@ -804,6 +831,8 @@ public class SimpleServer {
             return false;
         }
     }
+
+    //remember to close br and bw later on
 
 }
 
