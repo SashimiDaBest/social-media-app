@@ -24,6 +24,8 @@ import javax.swing.*;
  * @since 1.0
  */
 public class ClientHandler implements Runnable {
+    private String hostname;
+    private int port;
 
     private Socket socket;
     private JFrame frame;
@@ -36,43 +38,31 @@ public class ClientHandler implements Runnable {
     private UserProfilePage userProfilePage;
     private OtherProfilePage otherProfilePage;
 
+    public ClientHandler(String hostname, int port) throws IOException{
+        this.hostname = hostname;
+        this.port = port;
+        this.socket = new Socket(hostname, port);
+    }
+
     public static void main(String[] args) {
+        String hostname = "localhost"; // Server hostname
+        int port = 12345;              // Port number
+
         try {
-            Socket socket = new Socket("localhost", 12);
-            SwingUtilities.invokeLater(new ClientHandler(socket));
+            ClientHandler client = new ClientHandler(hostname, port);
+            Thread clientThread = new Thread(client);
+            clientThread.start();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public ClientHandler(Socket socket) {
-        this.socket = socket;
-    }
-
     @Override
     public void run() {
         Scanner scanner = new Scanner(System.in);
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-             PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
-            int page = 0;
+        welcomePage(scanner);
 
-            switch (page) {
-                case 0:
-                    welcomePage(scanner);
-                    break;
-                case 1:
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-                case 4:
-                    break;
-                default:
-                    break;
-            }
-
-            /*
+        /*
             frame = new JFrame("Boiler Gram");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setLocationRelativeTo(null);
@@ -98,9 +88,6 @@ public class ClientHandler implements Runnable {
 //            setupActionListeners();
             out.write("hello");
            */
-        } catch (IOException e) {
-            System.err.println("Client connection error: " + e.getMessage());
-        }
     }
 
     public void welcomePage(Scanner scanner) {
@@ -207,7 +194,6 @@ public class ClientHandler implements Runnable {
         }
     }
 
-
     public void userPage(Scanner scanner) {
         while (true) {
             System.out.println("Welcome to the Feed Page\n" +
@@ -219,13 +205,24 @@ public class ClientHandler implements Runnable {
             //Display username and private/public tag
             String input = scanner.nextLine();
             if (input.equals("1")) {
-
+                write("1");
             } else if (input.equals("2")) {
-
+                write("2");
             } else if (input.equals("3")) {
-
+                write("3");
             } else if (input.equals("4")) {
-
+                write("4");
+                try (BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+                    String blocked = br.readLine();
+                    System.out.println(blocked);
+                    while (blocked != null) {
+                        blocked = br.readLine();
+                        System.out.println(blocked);
+                    }
+                    br.close();
+                } catch (Exception e) {
+                    System.err.println("Server error: " + e.getMessage());
+                }
             } else if (input.equals("5")) {
                 feedPage(scanner);
                 break;

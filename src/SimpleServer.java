@@ -24,12 +24,15 @@ import java.util.Scanner;
  * @since 1.0
  */
 public class SimpleServer {
+    private static int PORT = 12;
     private ServerSocket serverSocket;
+
     private static ArrayList<User> users;
     private static ArrayList<Chat> chats;
     private User user;
     private BufferedReader clientReader;
     private PrintWriter clientWriter;
+    private Socket socket;
 
     public SimpleServer(int port) throws IOException {
         serverSocket = new ServerSocket(port);
@@ -53,14 +56,13 @@ public class SimpleServer {
     }
 
     public void start() throws IOException {
+        System.out.println("Server is listening on port " + PORT);
         try {
-            Socket socket = serverSocket.accept();
-            clientReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            clientWriter = new PrintWriter(socket.getOutputStream());
-
-            ClientHandler clientHandler = new ClientHandler(socket);
-            Thread newClientThread = new Thread(clientHandler);
-            newClientThread.start();
+            while (true) {
+                socket = serverSocket.accept();
+                System.out.println("New client connected");
+                welcomePageOperation();
+            }
         } catch (Exception e) {
             System.out.println("Error accepting connection" + e.getMessage());
         }
@@ -72,12 +74,10 @@ public class SimpleServer {
 
     public static void main(String[] args) {
         try {
-            SimpleServer server = new SimpleServer(12);
+            SimpleServer server = new SimpleServer(PORT);
             server.start();
-            server.welcomePageOperation();
-
-        } catch (IOException e) {
-            System.err.println("Server error: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Server exception: " + e.getMessage());
         }
     }
 
@@ -363,7 +363,29 @@ public class SimpleServer {
     }
 
     public void userPageOperation(String clientUserName) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+            String input = br.readLine();
+            while (input != null) {
+                input = br.readLine();
+                if (input.equals("1")) {
 
+                } else if (input.equals("2")) {
+
+                } else if (input.equals("3")) {
+
+                } else if (input.equals("4")) {
+
+                } else if (input.equals("5")) {
+
+                } else {
+                    System.out.println("ERROR: " + input);
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Server error: " + e.getMessage());
+        }
+        /*
         // find which user to work with:
         User currentClient = null;
         for (User user : users) {
@@ -691,7 +713,7 @@ public class SimpleServer {
             e.printStackTrace();
         }
         
-
+*/
     }
 
     public void otherPageOperation() {
