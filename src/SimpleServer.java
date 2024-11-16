@@ -410,7 +410,6 @@ public class SimpleServer {
     public void userPageOperation() {
         ArrayList<String> people;
         try {
-            bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             bw.write(user.getUsername());
             bw.newLine();
             bw.write(user.getAccountType());
@@ -781,7 +780,6 @@ public class SimpleServer {
     public void otherPageOperation(Scanner scanner) {
         ArrayList<String> people;
         try {
-            bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             bw.write(user.getUsername());
             bw.newLine();
             bw.write(user.getAccountType());
@@ -790,8 +788,9 @@ public class SimpleServer {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+        try {
             //read in other username
+            User otherUser = new User(br.readLine());//revise
             String input = br.readLine();
             do {
                 System.out.println(input);
@@ -800,13 +799,27 @@ public class SimpleServer {
                 } else if (input.equals("2")) {
 
                 } else if (input.equals("3")) {
-                    if (user.getAccountType() == 0) {
-                        write(user.getFollowingList());
+                    try {
+                        if (otherUser.getAccountType() == 1 && user.getFollowerList().contains(otherUser.getUsername())) {
+                            bw.write("message");
+                        } else {
+                            bw.write("no message");
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
+                    write(user.getFollowerList());
                 } else if (input.equals("4")) {
-                    if (user.getAccountType() == 0) {
-                        write(user.getBlockedList());
+                    try {
+                        if (otherUser.getAccountType() == 1 && user.getFollowingList().contains(otherUser.getUsername())) {
+                            bw.write("message");
+                        } else {
+                            bw.write("no message");
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
+                    write(user.getFollowingList());
                 } else if (input.equals("5")) {
                     feedPageOperation();
                     break;

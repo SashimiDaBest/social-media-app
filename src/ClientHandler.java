@@ -3,6 +3,7 @@ import java.awt.event.ActionListener;
 import java.net.*;
 import java.io.*;
 import java.awt.*;
+import java.security.spec.ECField;
 import java.util.ArrayList;
 import java.util.Scanner;
 import javax.sound.midi.Soundbank;
@@ -97,7 +98,7 @@ public class ClientHandler implements Runnable {
     }
 
     public void welcomePage(Scanner scanner) {
-        try (BufferedReader serverReader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+        try {
 
             boolean isSignedIn = false;
 
@@ -127,8 +128,7 @@ public class ClientHandler implements Runnable {
                         String password = scanner.nextLine();
                         this.write(password);
 
-                        // Wait for validation from the server
-                        String messageFromServer = serverReader.readLine();
+                        String messageFromServer = br.readLine();
 
                         // successfully signing in 
                         if (messageFromServer.equals("Successful sign-in")) {
@@ -145,28 +145,17 @@ public class ClientHandler implements Runnable {
 
                 // for creating a new account
                 } else if (mainChoice.equals("2")) {
-
-                    while(true) {
-                        System.out.print("New Username: ");
-                        String username = scanner.nextLine();
-                        this.write(username);
-
-                        System.out.print("Password: ");
-                        String password = scanner.nextLine();
-                        this.write(password);
-                       
-                        // Wait on server validation
-                        String messageFromServer = serverReader.readLine();
-
-                        if (messageFromServer.equals("User creation successful")) {
-                            System.out.println("Successfuly created new account!");
-                            isSignedIn = true;
-                            break;
-                        
-                        } else if (messageFromServer.equals("Invalid fields")) {
-                            System.out.println("One of the fields is invalid, please try again");
-                            continue;
-                        }
+                    System.out.print("Username: ");
+                    String username = scanner.nextLine();
+                    System.out.print("Password: ");
+                    String password = scanner.nextLine();
+                    //checkPassword and Username requirement boolean method
+                    //write user and password to server and initialize user
+                    //read and see if the user can be created
+                    String messageFromServer = "";
+                    if (messageFromServer.equals("")) {
+                        feedPage(scanner);
+                        break;
                     }
 
                 } else {
@@ -181,7 +170,7 @@ public class ClientHandler implements Runnable {
     }
 
     public void feedPage(Scanner scanner) {
-        try (BufferedReader serverReader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+        try {
             while (true) {
                 System.out.print(
                         "Welcome to your Feed! What would you like to do?\n" +
@@ -195,7 +184,7 @@ public class ClientHandler implements Runnable {
 
                     // Display list of users from the server
                     System.out.println("List of users to chat with:");
-                    String receivedUserList = serverReader.readLine();
+                    String receivedUserList = br.readLine();
                     String[] userList = receivedUserList.split(";");
                     for (String username : userList) {
                         System.out.println(username);
@@ -221,7 +210,7 @@ public class ClientHandler implements Runnable {
 
                             // Write the username to the server to ensure the user can chat with them
                             write(friendUsername);
-                            String serverValidityResponse = serverReader.readLine();
+                            String serverValidityResponse = br.readLine();
                             if (serverValidityResponse.isEmpty()) {
                                 System.out.println("User selected successfully!");
                                 usernames.add(friendUsername);
@@ -267,7 +256,6 @@ public class ClientHandler implements Runnable {
         String username = "";
         String accountType = "";
         try {
-            br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String line = br.readLine();
             username = line;
             if (line != null) {
@@ -341,7 +329,6 @@ public class ClientHandler implements Runnable {
         String username = "";
         String accountType = "";
         try {
-            br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String line = br.readLine();
             username = line;
             if (line != null) {
@@ -370,13 +357,49 @@ public class ClientHandler implements Runnable {
             } else if (input.equals("2")) {
 
             } else if (input.equals("3")) {
-                //if other is public
                 write("3");
+                boolean canView = false;
+                try {
+                    String line = br.readLine();
+                    if (line.equals("message")) {
+                        canView = true;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 readAndPrint();
+                if (canView) {
+                    System.out.print("Do you want to view Other (Y/N): ");
+                    String input2 = scanner.nextLine();
+                    if (input2.equals("Y")) {
+                        System.out.print("Other Username: ");
+                        String other = scanner.nextLine();
+                        otherPage(scanner, other);
+                        break;
+                    }
+                }
             } else if (input.equals("4")) {
-                //if other is public
                 write("4");
+                boolean canView = false;
+                try {
+                    String line = br.readLine();
+                    if (line.equals("message")) {
+                        canView = true;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 readAndPrint();
+                if (canView) {
+                    System.out.print("Do you want to view Other (Y/N): ");
+                    String input2 = scanner.nextLine();
+                    if (input2.equals("Y")) {
+                        System.out.print("Other Username: ");
+                        String other = scanner.nextLine();
+                        otherPage(scanner, other);
+                        break;
+                    }
+                }
             } else if (input.equals("5")) {
                 feedPage(scanner);
                 break;
