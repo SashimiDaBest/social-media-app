@@ -39,8 +39,9 @@ public class ClientHandler implements Runnable {
     private FeedViewPage feedViewPage;
     private UserProfilePage userProfilePage;
     private OtherProfilePage otherProfilePage;
+
     private BufferedWriter bw;
-    BufferedReader br;
+    private BufferedReader br;
 
     public ClientHandler(String hostname, int port) throws IOException {
         this.hostname = hostname;
@@ -66,9 +67,7 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         Scanner scanner = new Scanner(System.in);
-        //userPage(scanner);
         welcomePage(scanner);
-
         /*
             frame = new JFrame("Boiler Gram");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -268,6 +267,17 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    //TODO: figure out how to take and store images & add log in log out feature
+    //TODO: if user click exit, close bufferedwriter and bufferedreader to close the underlying socket as well
+    /**
+     * read 2 lines and replace value of username and account type
+     * take in user input
+     * 1st input is incomplete - image storing
+     * 2nd input - view all followers; take other username and redirect to other profile page
+     * 3nd and 4th input does the same for following and follower
+     * 5th input redirect to feed page
+     * @param scanner
+     */
     public void userPage(Scanner scanner) {
         String username = "";
         String accountType = "";
@@ -294,8 +304,6 @@ public class ClientHandler implements Runnable {
                     "4 - View Blocked\n" +
                     "5 - Go Back to Feed View\n" +
                     "Input: ");
-
-            //Display username and private/public tag
             String input = scanner.nextLine();
             if (input.equals("1")) {
                 write("1");
@@ -307,7 +315,7 @@ public class ClientHandler implements Runnable {
                 if (input2.equals("Y")) {
                     System.out.print("Other Username: ");
                     String otherUsername = scanner.nextLine();
-                    otherPage(scanner, otherUsername);
+                    otherPage(scanner, otherUsername, username, accountType);
                     break;
                 }
             } else if (input.equals("3")) {
@@ -318,7 +326,7 @@ public class ClientHandler implements Runnable {
                 if (input2.equals("Y")) {
                     System.out.print("Other Username: ");
                     String otherUsername = scanner.nextLine();
-                    otherPage(scanner, otherUsername);
+                    otherPage(scanner, otherUsername, username, accountType);
                     break;
                 }
             } else if (input.equals("4")) {
@@ -329,7 +337,7 @@ public class ClientHandler implements Runnable {
                 if (input2.equals("Y")) {
                     System.out.print("Other Username: ");
                     String otherUsername = scanner.nextLine();
-                    otherPage(scanner, otherUsername);
+                    otherPage(scanner, otherUsername, username, accountType);
                     break;
                 }
             } else if (input.equals("5")) {
@@ -341,22 +349,25 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    public void otherPage(Scanner scanner, String otherUsername) {
-        String username = "";
-        String accountType = "";
-        try {
-            String line = br.readLine();
-            username = line;
-            if (line != null) {
-                if (line.equals("1")) {
-                    accountType = "private";
-                } else {
-                    accountType = "public";
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    /**
+     * Send other username over to server
+     * 1st and 2nd input - add or remove other from following/blocked list - incomplete
+     * note: only when the private other user follow user will both be able to chat
+     * 3rd and 4th input - figure out if user have permission to view; display list; give option to navigate to another user profile
+     * 5th input redirect to feed page
+     * @param scanner
+     * @param otherUsername
+     * @param username
+     * @param accountType
+     */
+    public void otherPage(Scanner scanner, String otherUsername, String username, String accountType) {
+       try {
+           bw.write(otherUsername);
+           bw.newLine();
+           bw.flush();
+       } catch (IOException e) {
+           e.printStackTrace();
+       }
         while (true) {
             System.out.println("Welcome to the Other Page\n" +
                     "USERNAME: " + username + "\n" +
@@ -369,9 +380,19 @@ public class ClientHandler implements Runnable {
                     "Input: ");
             String input = scanner.nextLine();
             if (input.equals("1")) {
-
+                write("1");
+                try {
+                    System.out.print(br.readLine());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             } else if (input.equals("2")) {
-
+                write("2");
+                try {
+                    System.out.print(br.readLine());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             } else if (input.equals("3")) {
                 write("3");
                 boolean canView = false;
@@ -390,7 +411,7 @@ public class ClientHandler implements Runnable {
                     if (input2.equals("Y")) {
                         System.out.print("Other Username: ");
                         String other = scanner.nextLine();
-                        otherPage(scanner, other);
+                        otherPage(scanner, other, username, accountType);
                         break;
                     }
                 }
@@ -412,7 +433,7 @@ public class ClientHandler implements Runnable {
                     if (input2.equals("Y")) {
                         System.out.print("Other Username: ");
                         String other = scanner.nextLine();
-                        otherPage(scanner, other);
+                        otherPage(scanner, other, username, accountType);
                         break;
                     }
                 }
@@ -452,8 +473,6 @@ public class ClientHandler implements Runnable {
             return false;
         }
     }
-
-    //if user click exit, close bufferedwriter and bufferedreader to close the underlying socket as well
 
     /*
     private void setupActionListeners() {
