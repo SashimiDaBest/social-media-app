@@ -2,6 +2,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Scanner;
 import javax.swing.*;
@@ -304,6 +305,7 @@ public class ClientHandler implements Runnable {
                 write("1");
             } else if (input.equals("2")) {
                 write("2");
+                System.out.println("List of followers:");
                 readAndPrint();
                 System.out.print("Do you want to view Other (Y/N): ");
                 String input2 = scanner.nextLine();
@@ -444,12 +446,13 @@ public class ClientHandler implements Runnable {
     public boolean readAndPrint() {
         try {
             String line = br.readLine();
-            System.out.println(line);
-            while (line != null) {
+            while (line != null && !line.equals("END")) {
                 line = br.readLine();
+                if (line.equals("END")) {
+                    return true;
+                }
                 System.out.println(line);
             }
-            br.close();
             return true;
         } catch (Exception e) {
             System.err.println("Server error: " + e.getMessage());
