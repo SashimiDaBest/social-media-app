@@ -208,7 +208,9 @@ public class ClientHandler implements Runnable {
             //Display username and private/public tag
             String input = scanner.nextLine();
             if (input.equals("1")) {
-
+                System.out.print("Image Path: ");
+                String imagePath = scanner.nextLine();
+                //read image path, get image, send to server for server to store
             } else if (input.equals("2")) {
 
             } else if (input.equals("3")) {
@@ -221,6 +223,10 @@ public class ClientHandler implements Runnable {
             } else {
                 System.out.println("Invalid input");
             }
+        }
+
+        public void readAndWrite(String inMessage) {
+
         }
     }
 
