@@ -226,7 +226,7 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    public boolean readAndWrite(String outMessage) {
+    public boolean write(String outMessage) {
         try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()))) {
             bw.write(outMessage);
             bw.newLine();
