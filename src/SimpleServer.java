@@ -43,7 +43,7 @@ public class SimpleServer {
         chats = new ArrayList<>();
 
         File dataDirectory = new File("Sample Test Folder");
-        File[] userFiles = dataDirectory.listFiles((ignored, name) -> name.startsWith("U_02"));
+        File[] userFiles = dataDirectory.listFiles((ignored, name) -> name.startsWith("U_"));
         for (File userFile : userFiles) {
             User newUser = new User(userFile.getAbsolutePath());
             users.add(newUser);
@@ -72,6 +72,7 @@ public class SimpleServer {
             }
         } catch (Exception e) {
             System.out.println("Error accepting connection" + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -89,7 +90,7 @@ public class SimpleServer {
     }
 
     public void welcomePageOperation() {
-
+        System.out.println("This is welcome page");
         boolean isSignedIn = false;
 
         try {
@@ -188,6 +189,7 @@ public class SimpleServer {
      * create messages, edit messages, and delete messages within each Chat.
      */
     public void feedPageOperation() {
+        System.out.println("This is feed page");
         try {
             String clientChosenOperation = br.readLine();
 
@@ -251,7 +253,10 @@ public class SimpleServer {
     }
 
     public void userPageOperation() {
+        System.out.println("This is user page");
         ArrayList<String> people;
+        System.out.println("hi " + user.getUsername());
+        System.out.println("hello " + user.getAccountType());
         try {
             bw.write(user.getUsername());
             bw.newLine();
@@ -292,6 +297,7 @@ public class SimpleServer {
     }
 
     public void otherPageOperation(Scanner scanner) {
+        System.out.println("This is other user page");
         ArrayList<String> people;
         try {
             User otherUser = new User(br.readLine());
@@ -361,9 +367,13 @@ public class SimpleServer {
     public boolean write(ArrayList<String> people) {
         try {
             for (int i = 0; i < people.size(); i++) {
+                System.out.println(people.get(i));
                 bw.write(people.get(i));
                 bw.newLine();
+                bw.flush();
             }
+            bw.write("END");
+            bw.newLine();
             bw.flush();
             return true;
         } catch (Exception e) {
