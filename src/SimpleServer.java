@@ -166,7 +166,10 @@ public class SimpleServer {
             String feedPageOperation = clientReader.readLine();
             if (feedPageOperation.equals("1")) {
                 // write list of available users to chat with to the client
+                String listOfAvailableUsers = "";
+                for (User u : users) {
 
+                }
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
