@@ -13,4 +13,9 @@ charlieblack89;superSecurePass_2024;U_0106
 james_bond_007;ComplexPassword_007;U_0107
 lucas_wilson_29;StrongPass_456;U_0108
 emily_davis_98;MySuperSecure_123;U_0109
-nina_king_42;ThunderBoltPass89;U_0110
+nina_king_42;ThunderBoltPass89;U_0110LilyParker;quietStream98;U_0204
+SophiaJones;blueSkies456;U_0202
+JamesMcCoy;starryNights123;U_0203
+EthanLara;rainyMornings1;U_0201
+AvaSimpson;sunnySailor92;U_0200
+SoleilPham;testing123;U_0020
