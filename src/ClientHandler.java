@@ -91,42 +91,76 @@ public class ClientHandler implements Runnable {
     }
 
     public void welcomePage(Scanner scanner) {
-        while (true) {
-            System.out.println("Welcome to the Welcome Page\n" +
-                    "1 - Sign in\n" +
-                    "2 - Sign up\n");
-            String input = scanner.nextLine();
-            if (input.equals("1")) {
-                System.out.print("Username: ");
-                String username = scanner.nextLine();
-                System.out.print("Password: ");
-                String password = scanner.nextLine();
-                //checkPassword and Username requirement boolean method
-                //write user and password to server and initialize user
-                //read and see if the user can be created
-                String messageFromServer = "";
-                if (messageFromServer.equals("")) {
+        try (BufferedReader serverReader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+            
+            boolean isSignedIn = false;
+
+            while (true) {
+
+                // move on once finally signed in 
+                if (isSignedIn) {
                     feedPage(scanner);
                     break;
                 }
-                //else show error message and do something
-            } else if (input.equals("2")) {
-                System.out.print("Username: ");
-                String username = scanner.nextLine();
-                System.out.print("Password: ");
-                String password = scanner.nextLine();
-                //checkPassword and Username requirement boolean method
-                //write user and password to server and initialize user
-                //read and see if the user can be created
-                String messageFromServer = "";
-                if (messageFromServer.equals("")) {
-                    feedPage(scanner);
-                    break;
+
+                System.out.println("Welcome to the Welcome Page\n" +
+                        "1 - Sign in\n" +
+                        "2 - Sign up\n");
+                String mainChoice = scanner.nextLine();
+                this.write(mainChoice);
+
+                // for Sigining In 
+                if (mainChoice.equals("1")) {
+
+                    while(true) {
+                        System.out.print("Username: ");
+                        String username = scanner.nextLine();
+                        this.write(username);
+
+                        System.out.print("Password: ");
+                        String password = scanner.nextLine();
+                        this.write(password);
+                        
+                        String messageFromServer = serverReader.readLine();
+
+                        // successfully signing in 
+                        if (messageFromServer.equals("Successful sign-in")) {
+                            System.out.println("You have entered the user feed!");
+                            isSignedIn = true;
+                            break;
+                        
+                        } else if (messageFromServer.equals("Sign-in was unsuccessful")){
+                            System.out.println("Unsuccesful sign-in, please try again");
+                            continue;
+
+                        } else {
+                            System.out.println("Server sent incomprehensible message; rerunning page");
+                            break;
+                        }
+                    }
+                    
+                    //else show error message and do something
+                } else if (mainChoice.equals("2")) {
+                    System.out.print("Username: ");
+                    String username = scanner.nextLine();
+                    System.out.print("Password: ");
+                    String password = scanner.nextLine();
+                    //checkPassword and Username requirement boolean method
+                    //write user and password to server and initialize user
+                    //read and see if the user can be created
+                    String messageFromServer = "";
+                    if (messageFromServer.equals("")) {
+                        feedPage(scanner);
+                        break;
+                    }
+                    //else show error message and do something
+                } else {
+                    System.out.println("Invalid input");
                 }
-                //else show error message and do something
-            } else {
-                System.out.println("Invalid input");
             }
+            
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

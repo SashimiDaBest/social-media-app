@@ -90,31 +90,33 @@ public class SimpleServer {
 
                 // Stop once either options 1 or 2 are successful
                 if (isSignedIn) {
+                    feedPageOperation();
                     break;
                 }
 
-                clientWriter.println("1 - Sign In\n2 - Create New Account");
+                // Wait for client to make a choice
                 String mainChoice = clientReader.readLine();
 
                 // for Signing In                
                 if (mainChoice.equals("1")) {
 
                     while (true) {
-                        clientWriter.println("Enter username: ");
+                        
+                        // Wait for client answer
                         String username = clientReader.readLine();
 
-                        clientWriter.println("Enter password");
+                        // Wait for client answer
                         String password = clientReader.readLine();
 
                         // if existing username/password is valid
                         if (User.hasLogin(username, password)) {
-                            clientWriter.println("You have entered the user feed!");
+                            clientWriter.println("Successful sign-in");
                             isSignedIn = true;
                             break;
                         
                         // if existing username/password is invalid
                         } else {
-                            clientWriter.println("Please enter a valid username or password!");
+                            clientWriter.println("Sign-in was unsuccessful");
                             continue;
                         }
                     }
@@ -123,17 +125,19 @@ public class SimpleServer {
                 } else if (mainChoice.equals("2")) {
 
                     while (true) {
-                        clientWriter.println("Create a new username: ");
+                        
+                        // wait for client answer
                         String newUsername = clientReader.readLine();
 
-                        clientWriter.println("Create a new password: ");
+                        // wait for client answer
                         String newPassword = clientReader.readLine();
 
                         // if new username/password is valid
                         try {
                             User newUser = new User(newUsername, newPassword);
                             users.add(newUser);
-                            
+                            isSignedIn = true;
+                            break;
 
                         // if new username/password is invalid
                         } catch (InvalidCreateAccountException e) {
