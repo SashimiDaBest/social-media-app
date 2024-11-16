@@ -133,7 +133,8 @@ public class SimpleServer {
                         try {
                             User newUser = new User(newUsername, newPassword);
                             users.add(newUser);
-                            
+                            isSignedIn = true;
+                            break;
 
                         // if new username/password is invalid
                         } catch (InvalidCreateAccountException e) {
