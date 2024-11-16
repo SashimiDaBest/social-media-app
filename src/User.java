@@ -82,6 +82,9 @@ public class User implements UserInterface {
      *
      * @param userIdinfo the file pathway containing user data
      */
+
+    private final String SAMPLE_FOLDER = "Sample Test Folder/";
+
     public User(String userIdinfo) {
         synchronized (LOCK) {
             try (BufferedReader br = new BufferedReader(new FileReader(userIdinfo))) {
@@ -157,7 +160,7 @@ public class User implements UserInterface {
         blockedList = new ArrayList<String>();
         chatIDList = new ArrayList<String>();
 
-        try (PrintWriter pw = new PrintWriter(new FileWriter(this.userID + ".txt"))) {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(SAMPLE_FOLDER + this.userID + ".txt"))) {
             pw.println(this.userID + ";" + this.userName);
             pw.println(this.userName);
             pw.println(this.photoPathway);

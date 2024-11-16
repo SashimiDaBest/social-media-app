@@ -97,7 +97,8 @@ public class SimpleServer {
 
                 // Stop once either options 1 or 2 are successful
                 if (isSignedIn) {
-                    feedPageOperation();
+                    // feedPageOperation();
+                    userPageOperation();
                     break;
                 }
 
