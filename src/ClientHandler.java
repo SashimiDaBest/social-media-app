@@ -144,8 +144,7 @@ public class ClientHandler implements Runnable {
     }
 
     public void feedPage(Scanner scanner) {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-             PrintWriter writer = new PrintWriter(socket.getOutputStream())) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
             while (true) {
                 System.out.print(
                         "Welcome to your Feed! What would you like to do?\n" +
@@ -219,9 +218,7 @@ public class ClientHandler implements Runnable {
             //Display username and private/public tag
             String input = scanner.nextLine();
             if (input.equals("1")) {
-                System.out.print("Image Path: ");
-                String imagePath = scanner.nextLine();
-                //read image path, get image, send to server for server to store
+
             } else if (input.equals("2")) {
 
             } else if (input.equals("3")) {

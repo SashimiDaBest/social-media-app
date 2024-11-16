@@ -83,31 +83,64 @@ public class SimpleServer {
 
     public void welcomePageOperation() {
 
+        boolean isSignedIn = false;
+
         try {
             while(true) {
+
+                // Stop once either options 1 or 2 are successful
+                if (isSignedIn) {
+                    break;
+                }
+
                 clientWriter.println("1 - Sign In\n2 - Create New Account");
-            
                 String mainChoice = clientReader.readLine();
 
+                // for Signing In                
                 if (mainChoice.equals("1")) {
-                    clientWriter.println("Enter username: ");
-                    String username = clientReader.readLine();
 
-                    clientWriter.println("Enter password");
-                    String password = clientReader.readLine();
+                    while (true) {
+                        clientWriter.println("Enter username: ");
+                        String username = clientReader.readLine();
 
-                    // if username/password is valid
-                    if (User.hasLogin(username, password)) {
-                        clientWriter.println("You have entered the user feed!");
-                        break;
-                    
-                    } else {
-                        clientWriter.println("Please enter a valid username or password!");
+                        clientWriter.println("Enter password");
+                        String password = clientReader.readLine();
+
+                        // if existing username/password is valid
+                        if (User.hasLogin(username, password)) {
+                            clientWriter.println("You have entered the user feed!");
+                            isSignedIn = true;
+                            break;
                         
+                        // if existing username/password is invalid
+                        } else {
+                            clientWriter.println("Please enter a valid username or password!");
+                            continue;
+                        }
                     }
 
+                // for creating a new account
                 } else if (mainChoice.equals("2")) {
 
+                    while (true) {
+                        clientWriter.println("Create a new username: ");
+                        String newUsername = clientReader.readLine();
+
+                        clientWriter.println("Create a new password: ");
+                        String newPassword = clientReader.readLine();
+
+                        // if new username/password is valid
+                        try {
+                            User newUser = new User(newUsername, newPassword);
+                            users.add(newUser);
+                            
+
+                        // if new username/password is invalid
+                        } catch (InvalidCreateAccountException e) {
+                            clientWriter.println("Please enter a valid username or password!");
+                            continue;
+                        }
+                    }
 
                 } else { // response was invalid
                     clientWriter.println("Invalid argument, try again");
