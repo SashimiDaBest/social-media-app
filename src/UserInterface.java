@@ -14,6 +14,8 @@ import java.util.ArrayList;
  * @since 1.0
  */
 public interface UserInterface {
+
+
     /**
      * Sets the username of the user.
      *

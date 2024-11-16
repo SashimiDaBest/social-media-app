@@ -1,20 +1,17 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.io.*;
-
 /**
  * User Class
  * <p>
- * Represents a user within the social media application. Stores user information such as username,
- * user ID, profile picture, followers, following, blocked users, and associated chats.
- * Provides methods for managing user data, such as adding followers, creating chats, and updating profile info.
- * <p>
+ * Represents a user within the social media application. It stores user
+ * information such as username, user ID, profile picture, followers,
+ * following, blocked users, and associated chats. Provides methods for
+ * managing user data, such as adding followers, creating chats, and
+ * updating profile information.
+ *
  * Status: Complete
  * </p>
- *
  * @author Soleil Pham
  * @author Connor Pugliese
  * @author Venkat Mamidi
@@ -22,65 +19,37 @@ import java.io.*;
  * @version 11/02/2024
  * @since 1.0
  */
+
 public class User implements UserInterface {
-    /**
-     * Pathway to the file listing all user IDs.
-     */
+    /** Path to the user ID list file */
     private static final String USERIDLIST = "UserIDList.txt";
-    /**
-     * A lock object used for synchronizing access to critical sections of the code.
-     */
+    /** Lock object for thread-safe operations */
     private static final Object LOCK = new Object();
-    /**
-     * Counter for generating unique user IDs.
-     */
+    /** Counter for generating unique user IDs */
     private static AtomicInteger counter = new AtomicInteger(0);
-    /**
-     * The username of the user.
-     */
+    /** The user's username */
     private String userName;
-    /**
-     * The unique user ID.
-     */
+    /** The user's unique ID */
     private String userID;
-    /**
-     * File pathway to the user data file.
-     */
-    private final String userIDinfo = this.userID + ".txt";
-    /**
-     * The file pathway to the user's profile picture.
-     */
+    /** Path to the user's profile picture */
     private String photoPathway;
-    /**
-     * List of follower IDs.
-     */
+    /** List of followers' user IDs */
     private ArrayList<String> followerList;
-    /**
-     * List of IDs that the user is following.
-     */
+    /** List of following users' IDs */
     private ArrayList<String> followingList;
-    /**
-     * List of blocked user IDs.
-     */
+    /** List of blocked users' IDs */
     private ArrayList<String> blockedList;
-    /**
-     * List of chat IDs associated with the user.
-     */
+    /** List of chat IDs associated with the user */
     private ArrayList<String> chatIDList;
-    /**
-     * The type of account (e.g., user type or permissions level).
-     *
-     */
+    /** The user's account type (e.g., regular or admin) */
     private int accountType;
-    /**
-     * The user's password.
-     */
+    /** The user's password */
     private String password;
 
     /**
-     * Constructs a User by reading user data from a file.
+     * Constructs a User object by loading user data from a file.
      *
-     * @param userIdinfo the file pathway containing user data
+     * @param userIdinfo The path to the file containing user information
      */
 
     private final String SAMPLE_FOLDER = "Sample Test Folder/";
@@ -126,11 +95,11 @@ public class User implements UserInterface {
     }
 
     /**
-     * Constructs a new User with the specified username and password.
-     * Initializes a new unique user ID and creates a new data file for the user.
+     * Constructs a User object and initializes it with a username and password.
      *
-     * @param userName the username of the new user
-     * @param password the password of the new user
+     * @param userName The username of the user
+     * @param password The password of the user
+     * @throws InvalidCreateAccountException If the password is invalid
      */
     public User(String userName, String password) throws InvalidCreateAccountException {
 
@@ -176,48 +145,22 @@ public class User implements UserInterface {
         counter.set(0);
     }
 
-
-    /**
-     * Retrieves the username of the user.
-     *
-     * @return the username as a {@code String}
-     */
     public String getUsername() {
         return this.userName;
     }
 
-    /**
-     * Sets the username of the user.
-     *
-     * @param username the new username
-     */
     public void setUsername(String username) {
         this.userName = username;
     }
 
-    /**
-     * Retrieves the unique user ID.
-     *
-     * @return the user ID as a {@code String}
-     */
     public String getUserID() {
         return this.userID;
     }
 
-    /**
-     * Sets the user ID for the user.
-     *
-     * @param id the new user ID to be set
-     */
     public synchronized void setUserID(String id) {
         this.userID = id;
     }
 
-    /**
-     * Generates a new unique user ID.
-     *
-     * @return the generated user ID as a {@code String}
-     */
     public String createUserID() {
         String id = "U_";
         synchronized (LOCK) {
@@ -240,40 +183,19 @@ public class User implements UserInterface {
         }
     }
 
-    /**
-     * Retrieves the profile picture pathway.
-     *
-     * @return the profile picture pathway as a {@code String}
-     */
     public synchronized String getProfilePic() {
         return this.photoPathway;
     }
 
-    /**
-     * Sets the file pathway to the user's profile picture and updates data storage.
-     *
-     * @param newPhotoPathway the file pathway to the profile picture
-     */
     public synchronized void setProfilePic(String newPhotoPathway) {
         this.photoPathway = newPhotoPathway;
         writeData();
     }
 
-    /**
-     * Retrieves the list of follower IDs.
-     *
-     * @return an {@code ArrayList} of follower IDs
-     */
     public ArrayList<String> getFollowerList() {
         return followerList;
     }
 
-    /**
-     * Removes a follower by their ID and updates data storage.
-     *
-     * @param followerID the ID of the follower to be removed
-     * @return {@code true} if the follower was successfully removed, {@code false} otherwise
-     */
     public synchronized boolean deleteFollower(String followerID) {
         if (findUser(followerID)) {
             for (int i = 0; i < followerList.size(); i++) {
@@ -288,16 +210,6 @@ public class User implements UserInterface {
         return false;
     }
 
-    /**
-     * Saves the user's data to a file named with the user ID.
-     * <p>
-     * Writes the user's ID, password, username, profile picture pathway, account type,
-     * follower list, following list, blocked list, and chat ID list to the file. Each section
-     * is written in a specific format, with lists separated by semicolons.
-     * <p>
-     * This method ensures that any changes to the user's information are persisted in the file system.
-     * </p>
-     */
     public synchronized void writeData() {
         try (PrintWriter pr = new PrintWriter(new FileWriter(this.getUserID() + ".txt"))) {
             pr.println(this.userID + ";" + this.password);
@@ -337,12 +249,6 @@ public class User implements UserInterface {
         }
     }
 
-    /**
-     * Adds a new follower by their ID and updates data storage.
-     *
-     * @param followerID the ID of the follower to be added
-     * @return {@code true} if the follower was successfully added, {@code false} otherwise
-     */
     public synchronized boolean addFollower(String followerID) {
         if (findUser(followerID)) {
             for (int i = 0; i < followerList.size(); i++) {
@@ -359,21 +265,10 @@ public class User implements UserInterface {
         return true;
     }
 
-    /**
-     * Retrieves the list of IDs that the user is following.
-     *
-     * @return an {@code ArrayList} of following IDs
-     */
     public ArrayList<String> getFollowingList() {
         return followingList;
     }
 
-    /**
-     * Adds a new following user by their ID and updates data storage.
-     *
-     * @param followingID the ID of the user to follow
-     * @return {@code true} if the user was successfully followed, {@code false} otherwise
-     */
     public synchronized boolean addFollowing(String followingID) {
         if (findUser(followingID) && !followingList.contains(followingID) && !blockedList.contains(followingID)) {
             followingList.add(followingID);
@@ -383,12 +278,6 @@ public class User implements UserInterface {
         return false;
     }
 
-    /**
-     * Removes a following user by their ID and updates data storage.
-     *
-     * @param followingID the ID of the user to unfollow
-     * @return {@code true} if the user was successfully removed from following, {@code false} otherwise
-     */
     public synchronized boolean deleteFollowing(String followingID) {
         if (followingList.contains(followingID)) {
             followingList.remove(followingID);
@@ -398,21 +287,10 @@ public class User implements UserInterface {
         return false;
     }
 
-    /**
-     * Retrieves the list of blocked user IDs.
-     *
-     * @return an {@code ArrayList} of blocked user IDs
-     */
     public ArrayList<String> getBlockedList() {
         return blockedList;
     }
 
-    /**
-     * Blocks a user by their ID and updates data storage.
-     *
-     * @param blockedID the ID of the user to block
-     * @return {@code true} if the user was successfully blocked, {@code false} otherwise
-     */
     public synchronized boolean addBlock(String blockedID) {
         if (findUser(blockedID) && !blockedList.contains(blockedID)) {
             blockedList.add(blockedID);
@@ -422,12 +300,6 @@ public class User implements UserInterface {
         return false;
     }
 
-    /**
-     * Unblocks a user by their ID and updates data storage.
-     *
-     * @param blockedID the ID of the user to unblock
-     * @return {@code true} if the user was successfully unblocked, {@code false} otherwise
-     */
     public synchronized boolean deleteBlock(String blockedID) {
         if (blockedList.contains(blockedID)) {
             blockedList.remove(blockedID);
@@ -437,21 +309,10 @@ public class User implements UserInterface {
         return false;
     }
 
-    /**
-     * Retrieves the list of chat IDs associated with the user.
-     *
-     * @return an {@code ArrayList} of chat IDs
-     */
     public ArrayList<String> getChatIDList() {
         return chatIDList;
     }
 
-    /**
-     * Adds a chat by its ID to the user's chat list and updates data storage.
-     *
-     * @param chatID the ID of the chat to add
-     * @return {@code true} if the chat was successfully added, {@code false} otherwise
-     */
     public synchronized boolean addChat(String chatID) {
 
         if (!chatIDList.contains(chatID)) {
@@ -464,73 +325,36 @@ public class User implements UserInterface {
 
     }
 
-    /**
-     * Creates a new chat with the specified recipient IDs and updates data storage.
-     *
-     * @param recipientID the list of recipient IDs for the new chat
-     */
     public synchronized void createChat(ArrayList<String> recipientID) {
         Chat newChat = new Chat(recipientID);
         chatIDList.add(newChat.getChatID());
         writeData();
     }
 
-    /**
-     * Deletes a chat by its ID from the user's chat list and updates data storage.
-     *
-     * @param chatID the ID of the chat to delete
-     * @return {@code true} if the chat was successfully deleted, {@code false} otherwise
-     */
     public synchronized boolean deleteChat(String chatID) {
         chatIDList.remove(chatID);
         writeData();
         return false;
     }
 
-    /**
-     * Retrieves the user's account type.
-     *
-     * @return the account type as an integer
-     */
     public synchronized int getAccountType() {
         return this.accountType;
     }
 
-    /**
-     * Sets the user's account type and updates data storage.
-     *
-     * @param accountType the new account type
-     */
     public synchronized void setAccountType(int accountType) {
         this.accountType = accountType;
         writeData();
     }
 
-    /**
-     * Retrieves the user's password.
-     *
-     * @return the password as a {@code String}
-     */
     public synchronized String getPassWord() {
         return password;
     }
 
-    /**
-     * Sets the user's password and updates data storage.
-     *
-     * @param password the new password
-     */
     public synchronized void setPassword(String password) {
         this.password = password;
         writeData();
     }
 
-    /**
-     * Searches for a user by their ID within the application data.
-     *
-     * @param userIDToSearch the ID of the user to find
-     * @return {@code true} if the user is found, {@code false} otherwise
-     */
     public synchronized boolean findUser(String userIDToSearch) {
         try (BufferedReader br = new BufferedReader(new FileReader(USERIDLIST))) {
             String line = br.readLine();
@@ -546,12 +370,6 @@ public class User implements UserInterface {
         return false;
     }
 
-    /**
-     * Searches for a user by their username within the application data.
-     *
-     * @param usernameToSearch the username of the user whose ID will be found
-     * @return The ID of the user with the username in the parameter
-     */
     public static synchronized String findIDFromUsername(String usernameToSearch) {
         try (BufferedReader reader = new BufferedReader(new FileReader(USERIDLIST))) {
             String line = reader.readLine();
@@ -569,12 +387,6 @@ public class User implements UserInterface {
         }
     }
 
-    /**
-     * Searches for a user by their ID within the application data.
-     *
-     * @param idToSearch the ID of the user whose username will be found
-     * @return The username of the user with the ID in the parameter
-     */
     public static synchronized String findUsernameFromID(String idToSearch) {
         try (BufferedReader reader = new BufferedReader(new FileReader(USERIDLIST))) {
             String line = reader.readLine();
@@ -592,18 +404,6 @@ public class User implements UserInterface {
         }
     }
 
-    /**
-     * Sends a message in a specified chat.
-     *
-     * @param chatID   the ID of the chat to send the message to
-     * @param message  the message content
-     * @param type     the message type (0 for text)
-     * @param senderID the ID of the user sending the message
-     * @param username the username of the user sending the message
-     * @param userType the type of the user sending the message
-     * @return {@code true} if the message was successfully sent, {@code false} otherwise
-     * @throws NoChatFoundException if the specified chat ID is not found
-     */
     public boolean sendText(String chatID, String message, int type, String senderID, String username, int userType)
             throws NoChatFoundException {
         if (chatIDList.contains(chatID)) {
@@ -619,14 +419,6 @@ public class User implements UserInterface {
         }
         throw new NoChatFoundException("No chat found");
     }
-
-    /**
-     * Verifies if the provided username and password match any user entry in the system.
-     *
-     * @param username        the username to verify
-     * @param passwordToCheck the password to verify
-     * @return {@code true} if the username and password match an existing user, {@code false} otherwise
-     */
 
     public static synchronized boolean hasLogin(String username, String passwordToCheck) {
         try (BufferedReader br = new BufferedReader(new FileReader(USERIDLIST))) {
@@ -644,16 +436,6 @@ public class User implements UserInterface {
         return false;
     }
 
-    /**
-     * Checks if two users are able to form a chat together. If the target user has a public
-     * account, they can be chatted with, but if they have a private account, the user wishing
-     * to initiate the chat must be following them. If either user has the other blocked, they
-     * cannot be chatted with.
-     *
-     * @param userToChatWith The targeted User to chat with.
-     * @return Whether the user calling the method is able to chat with the target, or if they
-     * are trying to chat with themselves.
-     */
     public synchronized String checkChatAbility(User userToChatWith) {
         if (this.getBlockedList().contains(userToChatWith.getUserID()) ||
                 userToChatWith.getBlockedList().contains(this.userID)) {
@@ -669,12 +451,6 @@ public class User implements UserInterface {
         }
     }
 
-    /**
-     * Checks if the specified username is available for a new user.
-     *
-     * @param username the username to validate
-     * @return {@code true} if the username is unique and available, {@code false} if it is already taken
-     */
     public static synchronized boolean userNameValidation(String username) {
         try (BufferedReader br = new BufferedReader(new FileReader(USERIDLIST))) {
             String userIterator = "";
@@ -690,13 +466,6 @@ public class User implements UserInterface {
         return true;
     }
 
-    /**
-     * Creates a new user entry by saving their username, password, and user ID to the user ID list.
-     *
-     * @param username        the username of the new user
-     * @param newUserPassword the password of the new user
-     * @param userIDparameter the user ID for the new user
-     */
     public synchronized void createNewUser(String username, String newUserPassword, String userIDparameter) {
         try (PrintWriter pw = new PrintWriter(new FileWriter(USERIDLIST, true))) {
             pw.println(username + ";" + newUserPassword + ";" + userIDparameter);

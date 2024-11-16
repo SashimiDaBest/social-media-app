@@ -466,7 +466,7 @@ public class SimpleServer {
                 System.out.println(input);
                 if (input.equals("1")) {
                     if (user.getFollowingList().contains(otherUser.getUsername())) {
-                        //remove following
+                        user.deleteFollowing(otherUser.getUsername());
                         bw.write("unfollowed " + otherUser.getUsername());
                     } else {
                         user.addFollowing(otherUser.getUserID());
@@ -476,7 +476,7 @@ public class SimpleServer {
                     bw.flush();
                 } else if (input.equals("2")) {
                     if (user.getBlockedList().contains(otherUser.getUsername())) {
-                        //remove blocked
+                        user.deleteBlock(otherUser.getUsername());
                         bw.write("unblocked " + otherUser.getUsername());
                     } else {
                         user.addBlock(otherUser.getUserID());

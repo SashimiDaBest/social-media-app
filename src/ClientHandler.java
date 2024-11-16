@@ -351,7 +351,7 @@ public class ClientHandler implements Runnable {
 
     /**
      * Send other username over to server
-     * 1st and 2nd input - add or remove other from following/blocked list - incomplete
+     * 1st and 2nd input - add or remove other from following/blocked list
      * note: only when the private other user follow user will both be able to chat
      * 3rd and 4th input - figure out if user have permission to view; display list; give option to navigate to another user profile
      * 5th input redirect to feed page
