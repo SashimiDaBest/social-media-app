@@ -61,7 +61,8 @@ public final class UserPageClient {
                     "2 - View Follower\n" +
                     "3 - View Following\n" +
                     "4 - View Blocked\n" +
-                    "5 - Go Back to Feed View");
+                    "5 - Go Back to Feed View\n" + 
+                    "6 - Quit");
             String input = scanner.nextLine();
 
             if (input.equals("1")) {
@@ -145,6 +146,8 @@ public final class UserPageClient {
             } else if (input.equals("5")) {
                 write("5", bw);
                 FeedPageClient.feedPage(scanner, br, bw);
+                break;
+            } else if (input.equals("6")) {
                 break;
             } else {
                 System.out.println("Invalid input. Please try again.");
