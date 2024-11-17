@@ -46,8 +46,7 @@ public class UserPageClient {
                     "2 - View Follower\n" +
                     "3 - View Following\n" +
                     "4 - View Blocked\n" +
-                    "5 - Go Back to Feed View\n" +
-                    "Input: ");
+                    "5 - Go Back to Feed View\n");
             String input = scanner.nextLine();
             if (input.equals("1")) {
                 write("1", bw);
@@ -116,15 +115,16 @@ public class UserPageClient {
     }
 
     public static boolean readAndPrint(BufferedReader br) {
-        System.out.println("readAndPrint()");
         try {
             String line = br.readLine();
             System.out.println(line);
             while (line != null && !line.equals("END")) {
                 line = br.readLine();
+                if (line.equals("END")) {
+                    break;
+                }
                 System.out.println(line);
             }
-            br.close();
             return true;
         } catch (Exception e) {
             System.out.println("readAndPrint() ERROR");

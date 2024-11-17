@@ -606,8 +606,26 @@ public class SimpleServer {
                     }
                 } else if (input.equals("3")) {
                     write(user.getFollowingList());
+                    try {
+                        String line = br.readLine();
+                        if (line != null && line.equals("VIEW")) {
+                            otherPageOperation();
+                            break;
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 } else if (input.equals("4")) {
                     write(user.getBlockedList());
+                    try {
+                        String line = br.readLine();
+                        if (line != null && line.equals("VIEW")) {
+                            otherPageOperation();
+                            break;
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 } else if (input.equals("5")) {
                     feedPageOperation();
                     break;
