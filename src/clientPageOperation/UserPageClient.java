@@ -67,6 +67,13 @@ public class UserPageClient {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                } else {
+                    try {
+                        bw.newLine();
+                        bw.flush();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             } else if (input.equals("3")) {
                 write("3", bw);
@@ -85,6 +92,13 @@ public class UserPageClient {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                } else {
+                    try {
+                        bw.newLine();
+                        bw.flush();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             } else if (input.equals("4")) {
                 write("4", bw);
@@ -102,6 +116,13 @@ public class UserPageClient {
                         break;
                     } catch (IOException e) {
                         e.printStackTrace();
+                    }
+                } else {
+                    try {
+                        bw.newLine();
+                        bw.flush();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
                     }
                 }
             } else if (input.equals("5")) {
