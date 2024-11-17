@@ -401,7 +401,41 @@ public class SimpleServer {
                 } else if (clientChosenOperation.equals("3")) {
                     userPageOperation();
                 } else if (clientChosenOperation.equals("4")) {
-                    otherPageOperation();
+                    // Write list of available users to view to the client
+                    String listOfAvailableUsers = "";
+                    for (int i = 0; i < users.size(); i++) {
+                        if (!users.get(i).getUserID().equals(user.getUserID())) {   // <- Do not include the logged-in user
+                            listOfAvailableUsers += users.get(i).getUsername();
+
+                            // Separate list of users with semicolons
+                            if (i != users.size() - 1) {
+                                listOfAvailableUsers += ";";
+                            }
+                        }
+                    }
+
+                    // Write list of available users to client
+                    bw.write(listOfAvailableUsers);
+                    bw.newLine();
+                    bw.flush();
+
+                    // Ensure that the user selected by the client exists.
+                    boolean validUser = false;
+                    String userSelection = br.readLine();
+                    for (User u : users) {
+                        if (u.getUsername().equals(userSelection)) {
+                            validUser = true;
+                        }
+                    }
+                    bw.write(String.valueOf(validUser));
+                    bw.newLine();
+                    bw.flush();
+
+                    if (validUser) {
+                        otherPageOperation();
+                    }
+                } else if (clientChosenOperation.equals("5")) {
+                    continueFeed = false;
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);

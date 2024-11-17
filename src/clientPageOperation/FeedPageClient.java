@@ -17,7 +17,8 @@ public class FeedPageClient {
                                 "1 - Create a new chat with selected users\n" +
                                 "2 - Open an existing chat\n" +
                                 "3 - View your profile\n" +
-                                "4 - View another user's profile\n");
+                                "4 - View another user's profile\n" +
+                                "5 - Exit\n");
                 String input = scanner.nextLine();
                 if (input.equals("1")) {
                     UserPageClient.write("1", bw);
@@ -148,8 +149,31 @@ public class FeedPageClient {
                 } else if (input.equals("3")) {
                     UserPageClient.write("3", bw);
                     UserPageClient.userPage(scanner, br, bw);
-                    break;
                 } else if (input.equals("4")) {
+                    UserPageClient.write("4", bw);
+
+                    // Display list of users from the server
+                    System.out.println("List of users to view:");
+                    String receivedUserList = br.readLine();
+                    String[] userList = receivedUserList.split(";");
+                    for (String username : userList) {
+                        System.out.println(username);
+                    }
+
+                    // Obtain user selection and validate it through server
+                    String userSelection = scanner.nextLine();
+                    UserPageClient.write(userSelection, bw);
+
+                    // Obtain server validation response
+                    String validUser = br.readLine();
+                    if (Boolean.parseBoolean(validUser)) {
+                        OtherPageClient.otherPage(scanner, userSelection, br, bw);
+                    }
+                } else if (input.equals("5")) {
+                    UserPageClient.write("5", bw);
+                    br.close();
+                    bw.close();
+                    continueFeed = false;
                 } else {
                     System.out.println("Invalid input");
                 }
