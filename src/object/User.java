@@ -54,7 +54,7 @@ public class User implements UserInterface {
     /** The user's password. */
     private String password;
     /** The user's profile picture, stored as an image. */
-    private Image image;
+    private BufferedImage image;
     /** The folder pathway to all the user's and chat's information. */
     private final String SAMPLE_FOLDER = "Sample Test Folder/";
 
@@ -724,8 +724,26 @@ public class User implements UserInterface {
         }
         // Save the image to the specified output path
         this.image = ImageIO.read(new File(userPathway));
-//        setProfilePic(outputPath);
-//        ImageIO.write(image, new File(outputPath));
-//        System.out.println("Image saved successfully at: " + outputPath);
+        File outputFile = new File(createPhotoID() + ".png");
+        ImageIO.write(this.image, "png", outputFile);
+        setProfilePic(createPhotoID() + ".png");
     }
+
+    /**
+     * Accesses the user's userID, and sets the photoID to the same number 
+     *
+     * @return The newly created Photo ID
+     */
+    public String createPhotoID() {
+        String id = "P_";
+        String userID = getUserID();
+        String[] splitter = userID.split("");
+
+        for(int i = 2; i < splitter.length; i++){
+            id += splitter[i];
+        }
+        return id;
+    }
+
+
 }
