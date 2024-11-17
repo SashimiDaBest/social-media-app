@@ -592,7 +592,6 @@ public class SimpleServer {
     public boolean write(ArrayList<String> people) {
         try {
             for (int i = 0; i < people.size(); i++) {
-                System.out.println("people: " + username);
                 bw.write(User.findUsernameFromID(people.get(i)));
                 bw.newLine();
                 bw.flush();

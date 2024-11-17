@@ -131,6 +131,7 @@ public class OtherPageClient {
                     }
                 }
             } else if (input.equals("5")) {
+                UserPageClient.write("5", bw);
                 FeedPageClient.feedPage(scanner, br, bw);
                 break;
             } else {
