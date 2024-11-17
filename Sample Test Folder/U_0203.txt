@@ -1,8 +1,0 @@
-U_0203;starryNights123
-JamesMcCoy
-test/path/pic0203.jpeg
-0
-U_0200;U_0202;U_0204
-U_0200;U_0201
-
-C_0200;C_0202

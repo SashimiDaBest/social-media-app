@@ -552,36 +552,6 @@ public class User implements UserInterface {
     }
 
     /**
-     * Sends a message in a specified chat.
-     *
-     * @param chatID   the ID of the chat to send the message to
-     * @param message  the message content
-     * @param type     the message type (0 for text)
-     * @param senderID the ID of the user sending the message
-     * @param username the username of the user sending the message
-     * @param userType the type of the user sending the message
-     * @return {@code true} if the message was successfully sent, {@code false} otherwise
-     * @throws NoChatFoundException if the specified chat ID is not found
-     */
-    public boolean sendText(String chatID, String message, int type, String senderID, String username, int userType)
-            throws NoChatFoundException {
-        synchronized (LOCK) {
-            if (chatIDList.contains(chatID)) {
-                Chat existingChat = null;
-                try {
-                    existingChat = new Chat(chatID);
-                } catch (InvalidFileFormatException e) {
-                    e.printStackTrace();
-                }
-                Message intendedMessage = new Message(senderID, type, message);
-                existingChat.addMessage(intendedMessage);
-                return true;
-            }
-            throw new NoChatFoundException("No chat found");
-        }
-    }
-
-    /**
      * Verifies if the provided username and password match any user entry in the system.
      *
      * @param username        the username to verify

@@ -216,21 +216,6 @@ public interface UserInterface {
     public boolean findUser(String userID);
 
     /**
-     * Sends a message in a chat.
-     *
-     * @param chatID the ID of the chat to send the message to
-     * @param message the message content
-     * @param type the message type (0 for text)
-     * @param userID the ID of the user sending the message
-     * @param username the username of the user sending the message
-     * @param userType the type of the user sending the message
-     * @return {@code true} if the message was successfully sent, {@code false} otherwise
-     * @throws NoChatFoundException if the specified chat ID is not found
-     */
-    public boolean sendText(String chatID, String message, int type,
-                            String userID, String username, int userType) throws NoChatFoundException;
-
-    /**
      * Verifies if the provided username and password match the user's credentials.
      *
      * @param username the username to verify

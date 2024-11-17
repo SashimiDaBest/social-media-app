@@ -186,7 +186,8 @@ public final class FeedPageClient {
                     UserPageClient.write("4", bw);
 
                     // Display list of users from the server
-                    System.out.println("List of users to view:");
+                    System.out.println("Type the username of the user to view! If there are none, type anything to" +
+                            " refresh the Feed.");
                     String receivedUserList = br.readLine();
                     String[] userList = receivedUserList.split(";");
                     for (String username : userList) {

@@ -1,5 +1,0 @@
-C_0201
-U_0201;U_0202;U_0204
-U_0201;0hello there!
-U_0202;0hey, how's it going?
-U_0204;0good to see you both!
