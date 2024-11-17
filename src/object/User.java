@@ -2,12 +2,8 @@ package object;
 
 import exception.*;
 
-import java.io.BufferedReader;
-import java.io.PrintWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.File;
+import java.io.*;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.swing.*;
@@ -44,7 +40,7 @@ public class User implements UserInterface {
     /** File pathway to the user data file. */
     private final String userIDinfo = this.userID + ".txt";
     /** The file pathway to the user's profile picture. */
-    private String photoPathway;
+    private String serverPhotoPathway;
     /** List of follower IDs. */
     private ArrayList<String> followerList;
     /** List of IDs that the user is following. */
@@ -75,7 +71,7 @@ public class User implements UserInterface {
                 this.userID = line1.split(";")[0];
                 this.password = line1.split(";")[1];
                 this.userName = br.readLine();
-                this.photoPathway = br.readLine();
+                this.serverPhotoPathway = br.readLine();
                 this.accountType = Integer.parseInt(br.readLine());
                 this.followerList = new ArrayList<>();
                 this.followingList = new ArrayList<>();
@@ -136,7 +132,7 @@ public class User implements UserInterface {
         this.password = password;
         this.userID = createUserID();
         this.accountType = 0;
-        this.photoPathway = null;
+        this.serverPhotoPathway = null;
         followerList = new ArrayList<String>();
         followingList = new ArrayList<String>();
         blockedList = new ArrayList<String>();
@@ -145,7 +141,7 @@ public class User implements UserInterface {
         try (PrintWriter pw = new PrintWriter(new FileWriter(SAMPLE_FOLDER + this.userID + ".txt"))) {
             pw.println(this.userID + ";" + this.password);
             pw.println(this.userName);
-            pw.println(this.photoPathway);
+            pw.println(this.serverPhotoPathway);
             pw.println(this.accountType);
             pw.println("");
             pw.println("");
@@ -224,10 +220,10 @@ public class User implements UserInterface {
     /**
      * Sets the file pathway to the user's profile picture and updates data storage.
      *
-     * @param newPhotoPathway the file pathway to the profile picture
+     * @param serverPhotoPathway the file pathway to the profile picture
      */
-    public synchronized void setProfilePic(String newPhotoPathway) {
-        this.photoPathway = newPhotoPathway;
+    public synchronized void setProfilePic(String serverPhotoPathway) {
+        this.serverPhotoPathway = serverPhotoPathway;
         writeData();
     }
 
@@ -237,7 +233,7 @@ public class User implements UserInterface {
      * @return the profile picture pathway as a {@code String}
      */
     public synchronized String getProfilePic() {
-        return this.photoPathway;
+        return this.serverPhotoPathway;
     }
 
     /**
@@ -254,7 +250,7 @@ public class User implements UserInterface {
         try (PrintWriter pr = new PrintWriter(new FileWriter(SAMPLE_FOLDER + this.getUserID() + ".txt"))) {
             pr.println(this.userID + ";" + this.password);
             pr.println(this.userName);
-            pr.println(this.photoPathway);
+            pr.println(this.serverPhotoPathway);
             pr.println(this.accountType);
             if (!followerList.isEmpty() && !followerList.get(0).isEmpty()) {
                 for (int i = 0; i < followerList.size(); i++) {
@@ -729,5 +725,72 @@ public class User implements UserInterface {
         } catch (IOException e) {
             image = null;
         }
+    }
+
+    /**
+     * Sends an image file over a socket connection to a server.
+     * <p>
+     * This method reads an image from the specified file path and sends it through
+     * the socket's OutputStream in chunks of 4 KB. It ensures that the image is
+     * efficiently transmitted over the network.
+     * </p>
+     *
+     * @param userPhotoPathway The file path to the image that needs to be sent.
+     * @param socket           The socket through which the image will be transmitted.
+     * @throws IOException If there is an error reading the file or sending data through the socket.
+     */
+    public void sendImage(String userPhotoPathway, Socket socket) throws IOException {
+        // Path to the image file you want to upload
+         FileInputStream fileInputStream = new FileInputStream(new File(userPhotoPathway));
+         OutputStream outputStream = socket.getOutputStream();
+
+        byte[] buffer = new byte[4096]; // Buffer size of 4 KB
+        int bytesRead;
+        while ((bytesRead = fileInputStream.read(buffer)) != -1) {
+            outputStream.write(buffer, 0, bytesRead);
+        }
+        System.out.println("Image uploaded successfully!");
+    }
+
+    /**
+     * Receives an image from an InputStream and saves it as a file.
+     *
+     * @param socket      Socket
+     * @throws IOException
+     */
+    public void getImage(Socket socket) throws IOException {
+        InputStream inputStream = new BufferedInputStream(socket.getInputStream());
+        BufferedImage image = ImageIO.read(inputStream);
+        if (image != null) {
+            String outputPath = ""; //TODO: revise
+            // Create a File object for the output path
+            File outputFile = new File(outputPath);
+
+            // Extract the file extension to determine the image format (e.g., "jpg", "png")
+            String fileExtension = getFileExtension(outputPath);
+
+            // Write the BufferedImage to the output file
+            ImageIO.write(image, fileExtension, outputFile);
+
+            setProfilePic(outputPath);
+            System.out.println("Image saved successfully at: " + outputPath);
+        } else {
+            System.out.println("Failed to read the image from the InputStream.");
+        }
+        socket.close();
+    }
+
+    /**
+     * Helper method to extract the file extension from the file path.
+     *
+     * @param filePath The file path
+     * @return The file extension (e.g., "jpg", "png")
+     */
+    public String getFileExtension(String filePath) {
+        int dotIndex = filePath.lastIndexOf('.');
+        if (dotIndex > 0 && dotIndex < filePath.length() - 1) {
+            return filePath.substring(dotIndex + 1).toLowerCase();
+        }
+        return "png"; // Default to "png" if no extension is found
     }
 }

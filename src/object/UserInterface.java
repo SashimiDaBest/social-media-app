@@ -2,6 +2,8 @@ package object;
 
 import exception.NoChatFoundException;
 
+import java.io.IOException;
+import java.net.Socket;
 import java.util.ArrayList;
 
 /**
@@ -293,4 +295,34 @@ public interface UserInterface {
      * @param inputPath the path of the image
      */
     public void loadImage(String inputPath);
+
+    /**
+     * Sends an image file over a socket connection to a server.
+     * <p>
+     * This method reads an image from the specified file path and sends it through
+     * the socket's OutputStream in chunks of 4 KB. It ensures that the image is
+     * efficiently transmitted over the network.
+     * </p>
+     *
+     * @param userPhotoPathway The file path to the image that needs to be sent.
+     * @param socket           The socket through which the image will be transmitted.
+     * @throws IOException If there is an error reading the file or sending data through the socket.
+     */
+    public void sendImage(String userPhotoPathway, Socket socket) throws IOException;
+
+    /**
+     * Receives an image from an InputStream and saves it as a file.
+     *
+     * @param socket      Socket
+     * @throws IOException
+     */
+    public void getImage(Socket socket) throws IOException;
+
+    /**
+     * Helper method to extract the file extension from the file path.
+     *
+     * @param filePath The file path
+     * @return The file extension (e.g., "jpg", "png")
+     */
+    public String getFileExtension(String filePath);
 }
