@@ -79,7 +79,7 @@ public final class WelcomePageClient {
                         } else if (messageFromServer.equals("Sign-in was unsuccessful")) {
 
                             while(true) {
-                                System.out.println("1 - Retry signing in\n2 - Create account");
+                                System.out.println("1 - Retry signing in\n2 - Create account\n3 - Quit\n");
 
                                 signUpDecision = scanner.nextLine();
                                 UserPageClient.write(signUpDecision, bw);
@@ -122,7 +122,10 @@ public final class WelcomePageClient {
                         }
                     }
 
-                } else {
+                } else if(mainChoice.equals("3")) {
+                    break;
+                }
+                else {
                     System.out.println("Invalid main input, please try again");
                     continue;
                 }
