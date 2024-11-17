@@ -131,7 +131,6 @@ public class UserPageClient {
     }
 
     public static boolean write(String outMessage, BufferedWriter bw) {
-        System.out.println("write()");
         try {
             bw.write(outMessage);
             bw.newLine();
