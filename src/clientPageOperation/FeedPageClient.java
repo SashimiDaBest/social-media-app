@@ -146,6 +146,7 @@ public class FeedPageClient {
                         } while (viewChat);
                     }
                 } else if (input.equals("3")) {
+                    UserPageClient.write("3", bw);
                     UserPageClient.userPage(scanner, br, bw);
                     break;
                 } else if (input.equals("4")) {
