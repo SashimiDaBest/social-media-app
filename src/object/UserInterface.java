@@ -3,7 +3,6 @@ package object;
 import exception.NoChatFoundException;
 
 import java.io.IOException;
-import java.net.Socket;
 import java.util.ArrayList;
 
 /**
@@ -290,5 +289,4 @@ public interface UserInterface {
     public static String findUsernameFromID(String idToSearch) { return null; }
 
     public void saveImage(String userPathway) throws IOException;
-
 }

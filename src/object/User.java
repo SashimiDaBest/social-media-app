@@ -724,7 +724,7 @@ public class User implements UserInterface {
         }
         // Save the image to the specified output path
         this.image = ImageIO.read(new File(userPathway));
-//        this.serverPhotoPathway = outputPath;
+//        setProfilePic(outputPath);
 //        ImageIO.write(image, new File(outputPath));
 //        System.out.println("Image saved successfully at: " + outputPath);
     }
