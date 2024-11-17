@@ -597,7 +597,7 @@ public class SimpleServer {
                     write(user.getFollowerList());
                     try {
                         String line = br.readLine();
-                        if (line.equals("VIEW")) {
+                        if (line != null && line.equals("VIEW")) {
                             otherPageOperation();
                             break;
                         }
