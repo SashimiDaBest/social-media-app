@@ -20,14 +20,10 @@ import java.util.Scanner;
  * </ul>
  *
  * @version 1.0
-<<<<<<< HEAD
  * @author Derek McTume
-=======
- * @author
->>>>>>> ba6c52d (edit)
  */
 
-public class WelcomePageClient {
+public final class WelcomePageClient {
 
     /**
      * Displays the welcome page and handles user input for signing in or signing up.

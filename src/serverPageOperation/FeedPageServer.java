@@ -1,8 +1,6 @@
 package serverPageOperation;
 
-import objects.Chat;
-import objects.Message;
-import objects.User;
+import objects.*;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -34,7 +32,7 @@ import java.util.Arrays;
  * @version 1.0
  * @since 11/16/2024
  */
-public class FeedPageServer {
+public final class FeedPageServer {
 
     /**
      * Main method for handling feed page operations. Users can create chats,

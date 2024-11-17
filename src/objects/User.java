@@ -1,14 +1,14 @@
 package objects;
 
-
 import exception.*;
 
 import java.io.BufferedReader;
+import java.io.PrintWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.io.*;
 
 /**
  * User Class
@@ -26,68 +26,40 @@ import java.io.*;
  * @since 1.0
  */
 public class User implements UserInterface {
-    /**
-     * Pathway to the file listing all user IDs.
-     */
+    /** Pathway to the file listing all user IDs. */
     private static final String USERIDLIST = "UserIDList.txt";
-    /**
-     * A lock object used for synchronizing access to critical sections of the code.
-     */
+    /** A lock object used for synchronizing access to critical sections of the code. */
     private static final Object LOCK = new Object();
-    /**
-     * Counter for generating unique user IDs.
-     */
+    /** Counter for generating unique user IDs. */
     private static AtomicInteger counter = new AtomicInteger(0);
-    /**
-     * The username of the user.
-     */
+    /** The username of the user. */
     private String userName;
-    /**
-     * The unique user ID.
-     */
+    /** The unique user ID. */
     private String userID;
-    /**
-     * File pathway to the user data file.
-     */
+    /** File pathway to the user data file. */
     private final String userIDinfo = this.userID + ".txt";
-    /**
-     * The file pathway to the user's profile picture.
-     */
+    /** The file pathway to the user's profile picture. */
     private String photoPathway;
-    /**
-     * List of follower IDs.
-     */
+    /** List of follower IDs. */
     private ArrayList<String> followerList;
-    /**
-     * List of IDs that the user is following.
-     */
+    /** List of IDs that the user is following. */
     private ArrayList<String> followingList;
-    /**
-     * List of blocked user IDs.
-     */
+    /** List of blocked user IDs. */
     private ArrayList<String> blockedList;
-    /**
-     * List of chat IDs associated with the user.
-     */
+    /** List of chat IDs associated with the user. */
     private ArrayList<String> chatIDList;
-    /**
-     * The type of account (e.g., user type or permissions level).
-     *
-     */
+    /** The type of account (e.g., user type or permissions level). */
     private int accountType;
-    /**
-     * The user's password.
-     */
+    /** The user's password. */
     private String password;
+    /** The folder pathway to all the user's and chat's information. */
+    private final String SAMPLE_FOLDER = "Sample Test Folder/";
 
     /**
      * Constructs a User by reading user data from a file.
      *
      * @param userIdinfo the file pathway containing user data
      */
-
-    private final String SAMPLE_FOLDER = "Sample Test Folder/";
-
     public User(String userIdinfo) {
         synchronized (LOCK) {
             try (BufferedReader br = new BufferedReader(new FileReader(userIdinfo))) {
@@ -179,6 +151,14 @@ public class User implements UserInterface {
         counter.set(0);
     }
 
+    /**
+     * Sets the username of the user.
+     *
+     * @param username the new username
+     */
+    public void setUsername(String username) {
+        this.userName = username;
+    }
 
     /**
      * Retrieves the username of the user.
@@ -190,12 +170,12 @@ public class User implements UserInterface {
     }
 
     /**
-     * Sets the username of the user.
+     * Sets the user ID for the user.
      *
-     * @param username the new username
+     * @param id the new user ID to be set
      */
-    public void setUsername(String username) {
-        this.userName = username;
+    public synchronized void setUserID(String id) {
+        this.userID = id;
     }
 
     /**
@@ -205,15 +185,6 @@ public class User implements UserInterface {
      */
     public String getUserID() {
         return this.userID;
-    }
-
-    /**
-     * Sets the user ID for the user.
-     *
-     * @param id the new user ID to be set
-     */
-    public synchronized void setUserID(String id) {
-        this.userID = id;
     }
 
     /**
@@ -244,15 +215,6 @@ public class User implements UserInterface {
     }
 
     /**
-     * Retrieves the profile picture pathway.
-     *
-     * @return the profile picture pathway as a {@code String}
-     */
-    public synchronized String getProfilePic() {
-        return this.photoPathway;
-    }
-
-    /**
      * Sets the file pathway to the user's profile picture and updates data storage.
      *
      * @param newPhotoPathway the file pathway to the profile picture
@@ -263,32 +225,12 @@ public class User implements UserInterface {
     }
 
     /**
-     * Retrieves the list of follower IDs.
+     * Retrieves the profile picture pathway.
      *
-     * @return an {@code ArrayList} of follower IDs
+     * @return the profile picture pathway as a {@code String}
      */
-    public ArrayList<String> getFollowerList() {
-        return followerList;
-    }
-
-    /**
-     * Removes a follower by their ID and updates data storage.
-     *
-     * @param followerID the ID of the follower to be removed
-     * @return {@code true} if the follower was successfully removed, {@code false} otherwise
-     */
-    public synchronized boolean deleteFollower(String followerID) {
-        if (findUser(followerID)) {
-            for (int i = 0; i < followerList.size(); i++) {
-                if (followerList.get(i).equals(followerID)) {
-                    followerList.remove(i);
-                    writeData();
-                    return true;
-
-                }
-            }
-        }
-        return false;
+    public synchronized String getProfilePic() {
+        return this.photoPathway;
     }
 
     /**
@@ -341,6 +283,35 @@ public class User implements UserInterface {
     }
 
     /**
+     * Retrieves the list of follower IDs.
+     *
+     * @return an {@code ArrayList} of follower IDs
+     */
+    public ArrayList<String> getFollowerList() {
+        return followerList;
+    }
+
+    /**
+     * Removes a follower by their ID and updates data storage.
+     *
+     * @param followerID the ID of the follower to be removed
+     * @return {@code true} if the follower was successfully removed, {@code false} otherwise
+     */
+    public synchronized boolean deleteFollower(String followerID) {
+        if (findUser(followerID)) {
+            for (int i = 0; i < followerList.size(); i++) {
+                if (followerList.get(i).equals(followerID)) {
+                    followerList.remove(i);
+                    writeData();
+                    return true;
+
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Adds a new follower by their ID and updates data storage.
      *
      * @param followerID the ID of the follower to be added
@@ -372,21 +343,6 @@ public class User implements UserInterface {
     }
 
     /**
-     * Adds a new following user by their ID and updates data storage.
-     *
-     * @param followingID the ID of the user to follow
-     * @return {@code true} if the user was successfully followed, {@code false} otherwise
-     */
-    public synchronized boolean addFollowing(String followingID) {
-        if (findUser(followingID) && !followingList.contains(followingID) && !blockedList.contains(followingID)) {
-            followingList.add(followingID);
-            writeData();
-            return true;
-        }
-        return false;
-    }
-
-    /**
      * Removes a following user by their ID and updates data storage.
      *
      * @param followingID the ID of the user to unfollow
@@ -395,6 +351,21 @@ public class User implements UserInterface {
     public synchronized boolean deleteFollowing(String followingID) {
         if (followingList.contains(followingID)) {
             followingList.remove(followingID);
+            writeData();
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Adds a new following user by their ID and updates data storage.
+     *
+     * @param followingID the ID of the user to follow
+     * @return {@code true} if the user was successfully followed, {@code false} otherwise
+     */
+    public synchronized boolean addFollowing(String followingID) {
+        if (findUser(followingID) && !followingList.contains(followingID) && !blockedList.contains(followingID)) {
+            followingList.add(followingID);
             writeData();
             return true;
         }
@@ -411,21 +382,6 @@ public class User implements UserInterface {
     }
 
     /**
-     * Blocks a user by their ID and updates data storage.
-     *
-     * @param blockedID the ID of the user to block
-     * @return {@code true} if the user was successfully blocked, {@code false} otherwise
-     */
-    public synchronized boolean addBlock(String blockedID) {
-        if (findUser(blockedID) && !blockedList.contains(blockedID)) {
-            blockedList.add(blockedID);
-            writeData();
-            return true;
-        }
-        return false;
-    }
-
-    /**
      * Unblocks a user by their ID and updates data storage.
      *
      * @param blockedID the ID of the user to unblock
@@ -434,6 +390,21 @@ public class User implements UserInterface {
     public synchronized boolean deleteBlock(String blockedID) {
         if (blockedList.contains(blockedID)) {
             blockedList.remove(blockedID);
+            writeData();
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Blocks a user by their ID and updates data storage.
+     *
+     * @param blockedID the ID of the user to block
+     * @return {@code true} if the user was successfully blocked, {@code false} otherwise
+     */
+    public synchronized boolean addBlock(String blockedID) {
+        if (findUser(blockedID) && !blockedList.contains(blockedID)) {
+            blockedList.add(blockedID);
             writeData();
             return true;
         }
@@ -550,6 +521,118 @@ public class User implements UserInterface {
     }
 
     /**
+     * Sends a message in a specified chat.
+     *
+     * @param chatID   the ID of the chat to send the message to
+     * @param message  the message content
+     * @param type     the message type (0 for text)
+     * @param senderID the ID of the user sending the message
+     * @param username the username of the user sending the message
+     * @param userType the type of the user sending the message
+     * @return {@code true} if the message was successfully sent, {@code false} otherwise
+     * @throws NoChatFoundException if the specified chat ID is not found
+     */
+    public boolean sendText(String chatID, String message, int type, String senderID, String username, int userType)
+            throws NoChatFoundException {
+        if (chatIDList.contains(chatID)) {
+            Chat existingChat = null;
+            try {
+                existingChat = new Chat(chatID);
+            } catch (InvalidFileFormatException e) {
+                e.printStackTrace();
+            }
+            Message intendedMessage = new Message(senderID, type, message);
+            existingChat.addMessage(intendedMessage);
+            return true;
+        }
+        throw new NoChatFoundException("No chat found");
+    }
+
+    /**
+     * Verifies if the provided username and password match any user entry in the system.
+     *
+     * @param username        the username to verify
+     * @param passwordToCheck the password to verify
+     * @return {@code true} if the username and password match an existing user, {@code false} otherwise
+     */
+    public static synchronized boolean hasLogin(String username, String passwordToCheck) {
+        try (BufferedReader br = new BufferedReader(new FileReader(USERIDLIST))) {
+            String userIterator = "";
+            while ((userIterator = br.readLine()) != null) {
+                String userN = userIterator.split(";")[0];
+                String passW = userIterator.split(";")[1];
+                if (username.equals(userN) && passwordToCheck.equals(passW)) {
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * Checks if two users are able to form a chat together. If the target user has a public
+     * account, they can be chatted with, but if they have a private account, the user wishing
+     * to initiate the chat must be following them. If either user has the other blocked, they
+     * cannot be chatted with.
+     *
+     * @param userToChatWith The targeted User to chat with.
+     * @return Whether the user calling the method is able to chat with the target, or if they
+     * are trying to chat with themselves.
+     */
+    public synchronized String checkChatAbility(User userToChatWith) {
+        if (this.getBlockedList().contains(userToChatWith.getUserID()) ||
+                userToChatWith.getBlockedList().contains(this.userID)) {
+            return "false";
+        }
+        if (this.userID.equals(userToChatWith.userID)) {
+            return "self";
+        }
+        if (userToChatWith.getAccountType() == 0) {
+            return "true";
+        } else {
+            return String.valueOf(userToChatWith.getFollowerList().contains(this.userID));
+        }
+    }
+
+    /**
+     * Creates a new user entry by saving their username, password, and user ID to the user ID list.
+     *
+     * @param username        the username of the new user
+     * @param newUserPassword the password of the new user
+     * @param userIDparameter the user ID for the new user
+     */
+    public synchronized void createNewUser(String username, String newUserPassword, String userIDparameter) {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(USERIDLIST, true))) {
+            pw.println(username + ";" + newUserPassword + ";" + userIDparameter);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Checks if the specified username is available for a new user.
+     *
+     * @param username the username to validate
+     * @return {@code true} if the username is unique and available, {@code false} if it is already taken
+     */
+    public static synchronized boolean userNameValidation(String username) {
+        try (BufferedReader br = new BufferedReader(new FileReader(USERIDLIST))) {
+            String userIterator = "";
+            while ((userIterator = br.readLine()) != null) {
+                String userN = userIterator.split(";")[0];
+                if (userN.equals(username)) {
+                    return false;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+    /**
      * Searches for a user by their username within the application data.
      *
      * @param usernameToSearch the username of the user whose ID will be found
@@ -601,116 +684,4 @@ public class User implements UserInterface {
         }
     }
 
-    /**
-     * Sends a message in a specified chat.
-     *
-     * @param chatID   the ID of the chat to send the message to
-     * @param message  the message content
-     * @param type     the message type (0 for text)
-     * @param senderID the ID of the user sending the message
-     * @param username the username of the user sending the message
-     * @param userType the type of the user sending the message
-     * @return {@code true} if the message was successfully sent, {@code false} otherwise
-     * @throws NoChatFoundException if the specified chat ID is not found
-     */
-    public boolean sendText(String chatID, String message, int type, String senderID, String username, int userType)
-            throws NoChatFoundException {
-        if (chatIDList.contains(chatID)) {
-            Chat existingChat = null;
-            try {
-                existingChat = new Chat(chatID);
-            } catch (InvalidFileFormatException e) {
-                e.printStackTrace();
-            }
-            Message intendedMessage = new Message(senderID, type, message);
-            existingChat.addMessage(intendedMessage);
-            return true;
-        }
-        throw new NoChatFoundException("No chat found");
-    }
-
-    /**
-     * Verifies if the provided username and password match any user entry in the system.
-     *
-     * @param username        the username to verify
-     * @param passwordToCheck the password to verify
-     * @return {@code true} if the username and password match an existing user, {@code false} otherwise
-     */
-
-    public static synchronized boolean hasLogin(String username, String passwordToCheck) {
-        try (BufferedReader br = new BufferedReader(new FileReader(USERIDLIST))) {
-            String userIterator = "";
-            while ((userIterator = br.readLine()) != null) {
-                String userN = userIterator.split(";")[0];
-                String passW = userIterator.split(";")[1];
-                if (username.equals(userN) && passwordToCheck.equals(passW)) {
-                    return true;
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    /**
-     * Checks if two users are able to form a chat together. If the target user has a public
-     * account, they can be chatted with, but if they have a private account, the user wishing
-     * to initiate the chat must be following them. If either user has the other blocked, they
-     * cannot be chatted with.
-     *
-     * @param userToChatWith The targeted User to chat with.
-     * @return Whether the user calling the method is able to chat with the target, or if they
-     * are trying to chat with themselves.
-     */
-    public synchronized String checkChatAbility(User userToChatWith) {
-        if (this.getBlockedList().contains(userToChatWith.getUserID()) ||
-                userToChatWith.getBlockedList().contains(this.userID)) {
-            return "false";
-        }
-        if (this.userID.equals(userToChatWith.userID)) {
-            return "self";
-        }
-        if (userToChatWith.getAccountType() == 0) {
-            return "true";
-        } else {
-            return String.valueOf(userToChatWith.getFollowerList().contains(this.userID));
-        }
-    }
-
-    /**
-     * Checks if the specified username is available for a new user.
-     *
-     * @param username the username to validate
-     * @return {@code true} if the username is unique and available, {@code false} if it is already taken
-     */
-    public static synchronized boolean userNameValidation(String username) {
-        try (BufferedReader br = new BufferedReader(new FileReader(USERIDLIST))) {
-            String userIterator = "";
-            while ((userIterator = br.readLine()) != null) {
-                String userN = userIterator.split(";")[0];
-                if (userN.equals(username)) {
-                    return false;
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return true;
-    }
-
-    /**
-     * Creates a new user entry by saving their username, password, and user ID to the user ID list.
-     *
-     * @param username        the username of the new user
-     * @param newUserPassword the password of the new user
-     * @param userIDparameter the user ID for the new user
-     */
-    public synchronized void createNewUser(String username, String newUserPassword, String userIDparameter) {
-        try (PrintWriter pw = new PrintWriter(new FileWriter(USERIDLIST, true))) {
-            pw.println(username + ";" + newUserPassword + ";" + userIDparameter);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }

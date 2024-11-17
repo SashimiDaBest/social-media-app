@@ -14,17 +14,11 @@ package objects;
  * @since 1.0
  */
 public class Message {
-    /**
-     * The ID of the message's author.
-     */
+    /** The ID of the message's author. */
     private String authorID;
-    /**
-     * The type of message (0 for text, other values for image pathways).
-     */
+    /** The type of message (0 for text, other values for image pathways). */
     private int messageType;
-    /**
-     * The content of the message, which may be text or an image pathway.
-     */
+    /** The content of the message, which may be text or an image pathway. */
     private String message;
 
     /**

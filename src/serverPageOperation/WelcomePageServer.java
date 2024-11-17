@@ -32,7 +32,7 @@ import java.util.ArrayList;
  * @version 1.0
  * @since 11/16/2024
  */
-public class WelcomePageServer {
+public final class WelcomePageServer {
 
     /**
      * Manages the welcome page operations, including sign-in and sign-up,

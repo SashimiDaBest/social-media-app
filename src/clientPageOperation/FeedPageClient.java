@@ -30,7 +30,7 @@ import java.util.Scanner;
  * @version 1.0
  * @since 11/16/2024
  */
-public class FeedPageClient {
+public final class FeedPageClient {
 
     /**
      * Manages the feed page, handling user interactions such as chat creation,

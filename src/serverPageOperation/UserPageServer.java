@@ -32,7 +32,7 @@ import java.util.ArrayList;
  * @version 1.0
  * @since 11/16/2024
  */
-public class UserPageServer {
+public final class UserPageServer {
 
     /**
      * Manages user page operations, such as displaying user details, handling

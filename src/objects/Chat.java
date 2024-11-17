@@ -1,10 +1,11 @@
 package objects;
 
-import exception.*;
-import java.util.ArrayList;
+import exception.InvalidFileFormatException;
+
 import java.io.*;
-import java.util.*;
-import java.util.concurrent.atomic.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Chat Class
@@ -20,25 +21,15 @@ import java.util.concurrent.atomic.*;
  * @since 1.0
  */
 public class Chat implements ChatInterface {
-    /**
-     * The unique identifier for the chat.
-     */
+    /** The unique identifier for the chat. */
     private String chatID;
-    /**
-     * The list of member IDs participating in this chat.
-     */
+    /** The list of member IDs participating in this chat. */
     private ArrayList<String> memberList;
-    /**
-     * The list of messages in this chat.
-     */
+    /** The list of messages in this chat. */
     private ArrayList<Message> messageList;
-    /**
-     * Counter to generate unique chat IDs.
-     */
+    /** Counter to generate unique chat IDs. */
     private static AtomicInteger counter = new AtomicInteger(0);
-    /**
-     * File to store a list of all chat IDs.
-     */
+    /** File to store a list of all chat IDs. */
     private static String chatIDListDoc = "chatIDList.txt";
 
     private final String SAMPLE_FOLDER = "Sample Test Folder/";

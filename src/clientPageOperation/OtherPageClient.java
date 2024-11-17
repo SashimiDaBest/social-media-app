@@ -25,7 +25,7 @@ import java.util.Scanner;
  * @author Soleil Pham
  * @version 1.0
  */
-public class OtherPageClient {
+public final class OtherPageClient {
 
     /**
      * Handles the other user's page operations.

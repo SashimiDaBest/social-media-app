@@ -30,7 +30,7 @@ import java.util.ArrayList;
  * @version 1.0
  * @since 11/16/2024
  */
-public class OtherPageServer {
+public final class OtherPageServer {
 
     /**
      * Manages interactions on the other user's profile page. Handles actions such as
