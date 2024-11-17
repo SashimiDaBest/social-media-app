@@ -1,15 +1,8 @@
-import exception.InvalidCreateAccountException;
-import exception.InvalidFileFormatException;
-import objects.Chat;
-import objects.Message;
-import objects.User;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import exception.*;
+import objects.*;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -555,7 +548,7 @@ public class SimpleServer {
                             bw.write("message");
                             write(new ArrayList<>());
                         } else {
-                            bw.write("no message");
+                            bw.write("");
                             write(otherUser.getFollowerList());
                         }
                         if (br.readLine().equals("CHANGE")){
@@ -591,7 +584,7 @@ public class SimpleServer {
                 }
             } while (input != null);
         } catch (Exception e) {
-            System.err.println("Server error: " + e.getMessage());
+            System.err.println("ERROR: server");
             e.printStackTrace();
         }
     }
@@ -599,10 +592,8 @@ public class SimpleServer {
     public boolean write(ArrayList<String> people) {
         try {
             for (int i = 0; i < people.size(); i++) {
-                String userID = people.get(i);
-                String username = User.findUsernameFromID(userID);
                 System.out.println("people: " + username);
-                bw.write(people.get(i));
+                bw.write(User.findUsernameFromID(people.get(i)));
                 bw.newLine();
                 bw.flush();
             }

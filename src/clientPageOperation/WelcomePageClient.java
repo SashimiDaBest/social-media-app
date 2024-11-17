@@ -16,7 +16,6 @@ public class WelcomePageClient {
             String signUpDecision = "";
             String mainChoice = "";
 
-
             while (true) {
 
                 // move on once finally signed in
@@ -36,8 +35,6 @@ public class WelcomePageClient {
                     mainChoice = scanner.nextLine();
                     UserPageClient.write(mainChoice, bw);
                 }
-
-
 
                 // for Sigining In
                 if (mainChoice.equals("1")) {
@@ -71,14 +68,12 @@ public class WelcomePageClient {
 
                                 if (signUpDecision.equals("1") || signUpDecision.equals("2")) {
                                     break;
-
                                 } else {
                                     System.out.println("Invalid response, please try again");
                                     continue;
                                 }
                             }
                             break;
-
                         }
                     }
 
@@ -113,12 +108,9 @@ public class WelcomePageClient {
                     continue;
                 }
             }
-
         } catch (IOException e) {
             System.out.println("Could not read information from server; this error should not occur");
             throw new RuntimeException(e);
         }
-
     }
-
 }
