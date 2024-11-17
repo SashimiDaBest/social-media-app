@@ -64,9 +64,11 @@ public final class OtherPageServer {
                 if (input.equals("1")) {
                     if (user.getFollowingList().contains(otherUser.getUserID())) {
                         user.deleteFollowing(otherUser.getUserID());
+                        otherUser.deleteFollower(user.getUserID());
                         bw.write("unfollowed " + otherUser.getUsername());
                     } else {
                         user.addFollowing(otherUser.getUserID());
+                        otherUser.addFollower(user.getUserID());
                         bw.write("followed " + otherUser.getUsername());
                     }
                     bw.newLine();
@@ -104,7 +106,7 @@ public final class OtherPageServer {
                             UserPageServer.write(new ArrayList<>(), bw);
                         } else {
                             bw.write("no message");
-                            UserPageServer.write(otherUser.getFollowerList(), bw);
+                            UserPageServer.write(otherUser.getFollowingList(), bw);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();

@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.swing.*;
@@ -255,33 +256,55 @@ public class User implements UserInterface {
             pr.println(this.userName);
             pr.println(this.photoPathway);
             pr.println(this.accountType);
-            for (int i = 0; i < followerList.size(); i++) {
-                if (i != followerList.size() - 1) {
-                    pr.print(followerList.get(i) + ";");
-                } else {
-                    pr.println(followerList.get(i));
+            if (!followerList.isEmpty() && !followerList.get(0).isEmpty()) {
+                for (int i = 0; i < followerList.size(); i++) {
+                    if (!followerList.get(i).isEmpty()) {
+                        if (i != followerList.size() - 1) {
+                            pr.print(followerList.get(i) + ";");
+                        } else {
+                            pr.println(followerList.get(i));
+                        }
+                    }
                 }
+            } else {
+                pr.println();
             }
-            for (int i = 0; i < followingList.size(); i++) {
-                if (i != followingList.size() - 1) {
-                    pr.print(followingList.get(i) + ";");
-                } else {
-                    pr.println(followingList.get(i));
+            if (!followingList.isEmpty() && !followingList.get(0).isEmpty()) {
+                for (int i = 0; i < followingList.size(); i++) {
+                    if (!followingList.get(i).isEmpty()) {
+                        if (i != followingList.size() - 1) {
+                            pr.print(followingList.get(i) + ";");
+                        } else {
+                            pr.println(followingList.get(i));
+                        }
+                    }
                 }
+            } else {
+                pr.println();
             }
-            for (int i = 0; i < blockedList.size(); i++) {
-                if (i != blockedList.size() - 1) {
-                    pr.print(blockedList.get(i) + ";");
-                } else {
-                    pr.println(blockedList.get(i));
+            if (!blockedList.isEmpty() && !blockedList.get(0).isEmpty()) {
+                for (int i = 0; i < blockedList.size(); i++) {
+                    if (!blockedList.get(i).isEmpty()) {
+                        if (i != blockedList.size() - 1) {
+                            pr.print(blockedList.get(i) + ";");
+                        } else {
+                            pr.println(blockedList.get(i));
+                        }
+                    }
                 }
+            } else {
+                pr.println();
             }
-            for (int i = 0; i < chatIDList.size(); i++) {
-                if (i != chatIDList.size() - 1) {
-                    pr.print(chatIDList.get(i) + ";");
-                } else {
-                    pr.println(chatIDList.get(i));
+            if (!chatIDList.isEmpty()) {
+                for (int i = 0; i < chatIDList.size(); i++) {
+                    if (i != chatIDList.size() - 1) {
+                        pr.print(chatIDList.get(i) + ";");
+                    } else {
+                        pr.println(chatIDList.get(i));
+                    }
                 }
+            } else {
+                pr.println();
             }
         } catch (IOException e) {
             e.printStackTrace();

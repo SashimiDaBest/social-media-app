@@ -18,8 +18,8 @@ import java.util.Scanner;
  *     <li>Navigate back to the main feed view</li>
  * </ul>
  *
- * @version 1.0
  * @author Soleil Pham
+ * @version 1.0
  */
 public final class UserPageClient {
     /**
@@ -65,78 +65,114 @@ public final class UserPageClient {
                 // TODO: Implement profile change functionality (e.g., image storage)
             } else if (input.equals("2")) {
                 write("2", bw);
-                readAndPrint(br);
-                System.out.print("Do you want to view Other (Y/N): ");
-                String input2 = scanner.nextLine();
-                if (input2.equals("Y")) {
-                    try {
-                        bw.write("VIEW");
-                        bw.newLine();
-                        bw.flush();
-                        System.out.print("Other Username: ");
-                        String otherUsername = scanner.nextLine();
-                        OtherPageClient.otherPage(scanner, otherUsername, br, bw);
-                        break;
-                    } catch (IOException e) {
-                        e.printStackTrace();
+
+                String followerValidity;
+                try {
+                    followerValidity = br.readLine();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                if (!followerValidity.equals("[EMPTY]")) {
+                    readAndPrint(br);
+                    System.out.print("Do you want to view Other (Y/N): ");
+                    String input2 = scanner.nextLine();
+                    if (input2.equals("Y")) {
+                        try {
+                            bw.write("VIEW");
+                            bw.newLine();
+                            bw.flush();
+                            System.out.print("Other Username: ");
+                            String otherUsername = scanner.nextLine();
+                            OtherPageClient.otherPage(scanner, otherUsername, br, bw);
+                            break;
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        try {
+                            bw.newLine();
+                            bw.flush();
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 } else {
-                    try {
-                        bw.newLine();
-                        bw.flush();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+                    System.out.println("You have no followers!");
                 }
             } else if (input.equals("3")) {
                 write("3", bw);
-                readAndPrint(br);
-                System.out.print("Do you want to view Other (Y/N): ");
-                String input2 = scanner.nextLine();
-                if (input2.equals("Y")) {
-                    try {
-                        bw.write("VIEW");
-                        bw.newLine();
-                        bw.flush();
-                        System.out.print("Other Username: ");
-                        String otherUsername = scanner.nextLine();
-                        OtherPageClient.otherPage(scanner, otherUsername, br, bw);
-                        break;
-                    } catch (IOException e) {
-                        e.printStackTrace();
+
+                String followingValidity;
+                try {
+                    followingValidity = br.readLine();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                if (!followingValidity.equals("[EMPTY]")) {
+                    readAndPrint(br);
+                    System.out.print("Do you want to view Other (Y/N): ");
+                    String input2 = scanner.nextLine();
+                    if (input2.equals("Y")) {
+                        try {
+                            bw.write("VIEW");
+                            bw.newLine();
+                            bw.flush();
+                            System.out.print("Other Username: ");
+                            String otherUsername = scanner.nextLine();
+                            OtherPageClient.otherPage(scanner, otherUsername, br, bw);
+                            break;
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        try {
+                            bw.newLine();
+                            bw.flush();
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 } else {
-                    try {
-                        bw.newLine();
-                        bw.flush();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+                    System.out.println("You are not following anyone!");
                 }
             } else if (input.equals("4")) {
                 write("4", bw);
-                readAndPrint(br);
-                System.out.print("Do you want to view Other (Y/N): ");
-                String input2 = scanner.nextLine();
-                if (input2.equals("Y")) {
-                    try {
-                        bw.write("VIEW");
-                        bw.newLine();
-                        bw.flush();
-                        System.out.print("Other Username: ");
-                        String otherUsername = scanner.nextLine();
-                        OtherPageClient.otherPage(scanner, otherUsername, br, bw);
-                        break;
-                    } catch (IOException e) {
-                        e.printStackTrace();
+
+                String blockedValidity;
+                try {
+                    blockedValidity = br.readLine();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                if (!blockedValidity.equals("[EMPTY]")) {
+                    readAndPrint(br);
+                    System.out.print("Do you want to view Other (Y/N): ");
+                    String input2 = scanner.nextLine();
+                    if (input2.equals("Y")) {
+                        try {
+                            bw.write("VIEW");
+                            bw.newLine();
+                            bw.flush();
+                            System.out.print("Other Username: ");
+                            String otherUsername = scanner.nextLine();
+                            OtherPageClient.otherPage(scanner, otherUsername, br, bw);
+                            break;
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        try {
+                            bw.newLine();
+                            bw.flush();
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 } else {
-                    try {
-                        bw.newLine();
-                        bw.flush();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+                    System.out.println("You have not blocked anyone!");
                 }
             } else if (input.equals("5")) {
                 write("5", bw);
