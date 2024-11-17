@@ -3,6 +3,7 @@ package clientPageOperation;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.net.Socket;
 import java.util.Scanner;
 
 /**
@@ -33,7 +34,7 @@ public final class WelcomePageClient {
      * @param br      BufferedReader for reading responses from the server
      * @param bw      BufferedWriter for sending data to the server
      */
-    public static void welcomePage(Scanner scanner, BufferedReader br, BufferedWriter bw) {
+    public static void welcomePage(Scanner scanner, BufferedReader br, BufferedWriter bw, Socket socket) {
         try {
             boolean isSignedIn = false;
             String signUpDecision = "";
@@ -42,7 +43,7 @@ public final class WelcomePageClient {
             while (true) {
                 // Redirect to the feed page if signed in
                 if (isSignedIn) {
-                    FeedPageClient.feedPage(scanner, br, bw);
+                    FeedPageClient.feedPage(scanner, br, bw, socket);
                     break;
                 }
 
@@ -123,6 +124,20 @@ public final class WelcomePageClient {
                     }
 
                 } else if(mainChoice.equals("3")) {
+                    UserPageClient.write(mainChoice, bw);
+                    try {
+                        if (bw != null) {
+                            bw.close(); // Close BufferedWriter
+                        }
+                        if (br != null) {
+                            br.close(); // Close BufferedReader
+                        }
+                        if (socket != null && !socket.isClosed()) {
+                            socket.close(); // Close the socket
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     break;
                 }
                 else {

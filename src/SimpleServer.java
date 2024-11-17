@@ -102,7 +102,11 @@ public class SimpleServer {
             e.printStackTrace();
         } finally {
             // Ensure resources are closed when the server stops
-            stop();
+            try {
+                stop();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

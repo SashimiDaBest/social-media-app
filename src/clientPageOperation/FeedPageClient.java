@@ -3,6 +3,7 @@ package clientPageOperation;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -40,7 +41,7 @@ public final class FeedPageClient {
      * @param br      BufferedReader for receiving messages from the server
      * @param bw      BufferedWriter for sending messages to the server
      */
-    public static void feedPage(Scanner scanner, BufferedReader br, BufferedWriter bw) {
+    public static void feedPage(Scanner scanner, BufferedReader br, BufferedWriter bw, Socket socket) {
         boolean continueFeed = true;
         try {
             while (continueFeed) {
@@ -178,7 +179,7 @@ public final class FeedPageClient {
                     }
                 } else if (input.equals("3")) {
                     UserPageClient.write("3", bw);
-                    UserPageClient.userPage(scanner, br, bw);
+                    UserPageClient.userPage(scanner, br, bw, socket);
                     break;
                 } else if (input.equals("4")) {
                     UserPageClient.write("4", bw);
@@ -198,15 +199,26 @@ public final class FeedPageClient {
                     // Obtain server validation response
                     String validUser = br.readLine();
                     if (Boolean.parseBoolean(validUser)) {
-                        OtherPageClient.otherPage(scanner, userSelection, br, bw);
+                        OtherPageClient.otherPage(scanner, userSelection, br, bw, socket);
                         break;
                     } else {
                         System.out.println("Invalid user selection!");
                     }
                 } else if (input.equals("5")) {
                     UserPageClient.write("5", bw);
-                    br.close();
-                    bw.close();
+                    try {
+                        if (bw != null) {
+                            bw.close(); // Close BufferedWriter
+                        }
+                        if (br != null) {
+                            br.close(); // Close BufferedReader
+                        }
+                        if (socket != null && !socket.isClosed()) {
+                            socket.close(); // Close the socket
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     continueFeed = false;
                 } else {
                     System.out.println("Invalid input");

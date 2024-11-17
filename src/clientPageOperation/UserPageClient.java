@@ -30,7 +30,7 @@ public final class UserPageClient {
      * @param br      BufferedReader for reading server responses
      * @param bw      BufferedWriter for sending messages to the server
      */
-    public static void userPage(Scanner scanner, BufferedReader br, BufferedWriter bw) {
+    public static void userPage(Scanner scanner, BufferedReader br, BufferedWriter bw, Socket socket) {
         String username = "";
         String accountType = "";
 
@@ -43,7 +43,7 @@ public final class UserPageClient {
                 line = br.readLine();
                 accountType = "1".equals(line) ? "private" : "public";
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -84,7 +84,7 @@ public final class UserPageClient {
                             bw.flush();
                             System.out.print("Other Username: ");
                             String otherUsername = scanner.nextLine();
-                            OtherPageClient.otherPage(scanner, otherUsername, br, bw);
+                            OtherPageClient.otherPage(scanner, otherUsername, br, bw, socket);
                             break;
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -121,7 +121,7 @@ public final class UserPageClient {
                             bw.flush();
                             System.out.print("Other Username: ");
                             String otherUsername = scanner.nextLine();
-                            OtherPageClient.otherPage(scanner, otherUsername, br, bw);
+                            OtherPageClient.otherPage(scanner, otherUsername, br, bw, socket);
                             break;
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -158,7 +158,7 @@ public final class UserPageClient {
                             bw.flush();
                             System.out.print("Other Username: ");
                             String otherUsername = scanner.nextLine();
-                            OtherPageClient.otherPage(scanner, otherUsername, br, bw);
+                            OtherPageClient.otherPage(scanner, otherUsername, br, bw, socket);
                             break;
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -176,9 +176,23 @@ public final class UserPageClient {
                 }
             } else if (input.equals("5")) {
                 write("5", bw);
-                FeedPageClient.feedPage(scanner, br, bw);
+                FeedPageClient.feedPage(scanner, br, bw, socket);
                 break;
             } else if (input.equals("6")) {
+                write("6", bw);
+                try {
+                    if (bw != null) {
+                        bw.close(); // Close BufferedWriter
+                    }
+                    if (br != null) {
+                        br.close(); // Close BufferedReader
+                    }
+                    if (socket != null && !socket.isClosed()) {
+                        socket.close(); // Close the socket
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 break;
             } else {
                 System.out.println("Invalid input. Please try again.");
@@ -200,7 +214,7 @@ public final class UserPageClient {
                 line = br.readLine();
             }
             return true;
-        } catch (Exception e) {
+        } catch (IOException e) {
             System.out.println("readAndPrint() ERROR");
             e.printStackTrace();
             return false;
