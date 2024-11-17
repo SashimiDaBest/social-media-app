@@ -149,6 +149,7 @@ public class FeedPageClient {
                 } else if (input.equals("3")) {
                     UserPageClient.write("3", bw);
                     UserPageClient.userPage(scanner, br, bw);
+                    break;
                 } else if (input.equals("4")) {
                     UserPageClient.write("4", bw);
 
@@ -168,6 +169,7 @@ public class FeedPageClient {
                     String validUser = br.readLine();
                     if (Boolean.parseBoolean(validUser)) {
                         OtherPageClient.otherPage(scanner, userSelection, br, bw);
+                        break;
                     }
                 } else if (input.equals("5")) {
                     UserPageClient.write("5", bw);
