@@ -42,7 +42,6 @@ public final class OtherPageClient {
      * @param bw            BufferedWriter for sending messages to the server
      */
     public static void otherPage(Scanner scanner, String otherUsername, BufferedReader br, BufferedWriter bw) {
-
         try {
             // Send the other username to the server
             System.out.println("OTHER USERNAME: " + otherUsername);

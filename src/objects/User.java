@@ -156,7 +156,7 @@ public class User implements UserInterface {
      *
      * @param username the new username
      */
-    public void setUsername(String username) {
+    public synchronized void setUsername(String username) {
         this.userName = username;
     }
 
@@ -534,18 +534,20 @@ public class User implements UserInterface {
      */
     public boolean sendText(String chatID, String message, int type, String senderID, String username, int userType)
             throws NoChatFoundException {
-        if (chatIDList.contains(chatID)) {
-            Chat existingChat = null;
-            try {
-                existingChat = new Chat(chatID);
-            } catch (InvalidFileFormatException e) {
-                e.printStackTrace();
+        synchronized (LOCK) {
+            if (chatIDList.contains(chatID)) {
+                Chat existingChat = null;
+                try {
+                    existingChat = new Chat(chatID);
+                } catch (InvalidFileFormatException e) {
+                    e.printStackTrace();
+                }
+                Message intendedMessage = new Message(senderID, type, message);
+                existingChat.addMessage(intendedMessage);
+                return true;
             }
-            Message intendedMessage = new Message(senderID, type, message);
-            existingChat.addMessage(intendedMessage);
-            return true;
+            throw new NoChatFoundException("No chat found");
         }
-        throw new NoChatFoundException("No chat found");
     }
 
     /**
