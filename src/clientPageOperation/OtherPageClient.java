@@ -5,22 +5,46 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
+/**
+ * The OtherPageClient class handles operations related to viewing and interacting
+ * with other users' pages. It allows the user to follow/unfollow, block/unblock,
+ * view the followers and following list of another user, and navigate back to the
+ * feed view.
+ *
+ * This class communicates with the server using BufferedReader and BufferedWriter
+ * to send and receive data.
+ *
+ * <p>Available operations:</p>
+ * <ul>
+ * <li>Follow/Unfollow another user</li>
+ * <li>Block/Unblock another user</li>
+ * <li>View the follower and following lists</li>
+ * <li>Navigate back to the feed page</li>
+ * </ul>
+ *
+ * @author Soleil Pham
+ * @version 1.0
+ */
 public class OtherPageClient {
 
     /**
-     * Send other username over to server
-     * 1st and 2nd input - add or remove other from following/blocked list - incomplete
-     * note: only when the private other user follow user will both be able to chat
-     * 3rd and 4th input - figure out if user have permission to view; display list; give option to navigate to another user profile
-     * 5th input redirect to feed page
-     * @param scanner
-     * @param otherUsername
-     * @param br
-     * @param bw
+     * Handles the other user's page operations.
+     * Sends the other username to the server and provides options for the user to:
+     * 1. Follow/Unfollow the other user
+     * 2. Block/Unblock the other user
+     * 3. View the other user's followers
+     * 4. View the other user's following list
+     * 5. Return to the feed view
+     *
+     * @param scanner       The Scanner object for user input
+     * @param otherUsername The username of the other user
+     * @param br            BufferedReader for reading server responses
+     * @param bw            BufferedWriter for sending messages to the server
      */
-
     public static void otherPage(Scanner scanner, String otherUsername, BufferedReader br, BufferedWriter bw) {
+
         try {
+            // Send the other username to the server
             System.out.println("OTHER USERNAME: " + otherUsername);
             bw.write(otherUsername);
             bw.newLine();
@@ -28,7 +52,10 @@ public class OtherPageClient {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        // Main loop for handling user options
         while (true) {
+            // Display menu options
             System.out.println("Welcome to the Other Page\n" +
                     "OTHER USERNAME: " + otherUsername + "\n" +
                     "1 - Follow/Unfollow Other\n" +
@@ -38,6 +65,7 @@ public class OtherPageClient {
                     "5 - Go Back to Feed View\n" +
                     "Input: ");
             String input = scanner.nextLine();
+
             if (input.equals("1")) {
                 UserPageClient.write("1", bw);
                 try {
@@ -65,14 +93,17 @@ public class OtherPageClient {
                 }
                 UserPageClient.readAndPrint(br);
                 if (canView) {
-                    System.out.print("Do you want to view Other (Y/N): ");
+                    System.out.print("Do you want to view another user? (Y/N): ");
                     String input2 = scanner.nextLine();
                     if (input2.equals("Y")) {
+                        UserPageClient.write("CHANGE", bw);
                         System.out.print("Other Username: ");
                         String other = scanner.nextLine();
                         otherPage(scanner, other, br, bw);
                         break;
                     }
+                } else {
+                    UserPageClient.write("", bw);
                 }
             } else if (input.equals("4")) {
                 UserPageClient.write("4", bw);
@@ -87,20 +118,23 @@ public class OtherPageClient {
                 }
                 UserPageClient.readAndPrint(br);
                 if (canView) {
-                    System.out.print("Do you want to view Other (Y/N): ");
+                    System.out.print("Do you want to view another user? (Y/N): ");
                     String input2 = scanner.nextLine();
                     if (input2.equals("Y")) {
+                        UserPageClient.write("CHANGE", bw);
                         System.out.print("Other Username: ");
                         String other = scanner.nextLine();
                         otherPage(scanner, other, br, bw);
                         break;
+                    } else {
+                        UserPageClient.write("", bw);
                     }
                 }
             } else if (input.equals("5")) {
                 FeedPageClient.feedPage(scanner, br, bw);
                 break;
             } else {
-                System.out.println("Invalid input");
+                System.out.println("Invalid input. Please try again.");
             }
         }
     }

@@ -558,6 +558,10 @@ public class SimpleServer {
                             bw.write("no message");
                             write(otherUser.getFollowerList());
                         }
+                        if (br.readLine().equals("CHANGE")){
+                            otherPageOperation();
+                            break;
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
