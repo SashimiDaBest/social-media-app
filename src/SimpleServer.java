@@ -71,6 +71,16 @@ public class SimpleServer implements ServerInterface {
         }
     }
 
+    // Accessors for testing:
+    public ArrayList<User> getUsers() {
+        return users;
+    }
+
+    public ArrayList<Chat> getChats() {
+        return chats;
+    }
+    //////
+
     /**
      * Starts the server, listens for client connections, and handles them using the WelcomePageServer.
      *
