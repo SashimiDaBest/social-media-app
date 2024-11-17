@@ -113,14 +113,14 @@ public class RunUserTests {
 
         // Delete the user files used for testing.
         for (int i = 0; i < 10; i++) {
-            File f = new File("U_000" + i + ".txt");
+            File f = new File("Sample Test Folder/U_000" + i + ".txt");
             if (f.exists())
                 f.delete();
         }
 
         // Delete the chat files used for testing.
         for (int i = 0; i < 2; i++) {
-            File f = new File("C_000" + i + ".txt");
+            File f = new File("Sample Test Folder/C_000" + i + ".txt");
             if (f.exists())
                 f.delete();
         }

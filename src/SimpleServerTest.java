@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 
 import object.*;
+import org.junit.Test;
+
 import java.util.ArrayList;
 
 /**
@@ -22,6 +24,7 @@ public class SimpleServerTest {
 
 
     // this simulaneously checks accessors to make sure they reutnr the correct lists
+    @Test
     public void testServerConstructor() {
         
         // Test 1: check if every file gets converted into a user object or chat object
@@ -72,13 +75,5 @@ public class SimpleServerTest {
             System.out.println("testServerConstructor should never thrown an error; failing test...");
             throw new RuntimeException(e);
         }
-    }
-    
-
-
-    public static void main(String[] args) {
-
-        SimpleServerTest tests = new SimpleServerTest();
-        tests.testServerConstructor();
     }
 }

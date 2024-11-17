@@ -1,25 +1,83 @@
 
 # Social Media App
-
 CS 180 Team Project
 
-## Compiling Instructions
+## Table of Contents
+- [Compilation and Execution Instructions](#compilation-and-execution-instructions)
+- [Submission Record](#Submission Record)
+- [Simplified Project Layout](#Simplified Project Layout)
+- [Documentation](#Documentation)
+- [Testing Guide](#Testing Guide)
 
-To compile and run the project, use the following command:
-`javac Main.java && java Main` 
+## Compilation and Execution Instructions
 
-To test instantiation and methods, create instances of User, Chat, and Message object in any public static void main(String[] args) by using the provided constructors and methods.
+1. **Starting the Server:**
+    - Open your terminal and navigate to the directory containing `SimpleServer.java`.
+    - Compile and run the server using the following commands:
+      ```bash
+      javac SimpleServer.java && java SimpleServer
+      ```
 
+2. **Starting the Client:**
+    - Open a separate terminal and navigate to the directory containing `ClientHandler.java`.
+    - Compile and run the client using the following commands:
+      ```bash
+      javac ClientHandler.java && java ClientHandler
+      ```
+      
 ## Submission Record
-
 A list of who submitted which parts of the assignment on Brightspace and Vocareum
-
 - Connor Pugliese - Submitted Vocareum workspace v1 for Phase 1
 - Derek McTume - Submitted Vocareum workspace v2 for Phase 1
 - Soleil Pham - Submitted Vocareum workspace v3 for Phase 1
 
-## Documentation
+## Simplified Project Layout
+```bash
+src/ 
+│
+├── clientPageOperation/           # Client-side operations and functionalities
+│   ├── FeedPageClient.java        # Handles operations related to the user's feed page
+│   ├── OtherPageClient.java       # Manages interactions with other users' profile pages
+│   ├── UserPageClient.java        # Manages operations for the user's own profile page
+│   └── WelcomePageClient.java     # Handles the welcome page operations
+│
+├── exception/                     # Custom exceptions for handling errors
+│   ├── InvalidCreateAccountException.java # Thrown when account creation fails due to invalid fields
+│   ├── InvalidFileFormatException.java    # Thrown when a file format is invalid or corrupted
+│   └── NoChatFoundException.java          # Thrown when a specified chat is not found
+│
+├── object/                        # Object classes and interfaces
+│   ├── Chat.java                  # Chat class for managing chat-related operations
+│   ├── ChatInterface.java         # Interface for chat operations
+│   ├── Message.java               # Message class for managing individual messages
+│   ├── MessageInterface.java      # Interface for message operations
+│   ├── User.java                  # User class for managing user-related operations
+│   └── UserInterface.java         # Interface for user operations
+│
+├── serverPageOperation/           # Server-side operations and functionality
+│   ├── FeedPageServer.java        # Handles feed page operations on the server
+│   ├── OtherPageServer.java       # Handles other user page operations on the server
+│   ├── UserPageServer.java        # Handles user profile operations on the server
+│   └── WelcomePageServer.java     # Handles welcome page operations on the server
+│
+├── uiPage/                        # User interface and UI-related classes
+│   ├── CreateUserPage.java        # Page for user creation
+│   ├── FeedViewPage.java          # Page for displaying the user's feed
+│   ├── OtherProfilePage.java      # Page for viewing other users' profiles
+│   ├── UserProfilePage.java       # Page for viewing the user's own profile
+│   └── WelcomePage.java           # Welcome page for the application
+│
+├── ClientHandler.java             # Main client handler class
+├── MessageTest.java               # Test class for message functionality
+├── RunChatTests.java              # Test runner for chat-related tests
+├── RunUserTests.java              # Test runner for user-related tests
+├── ServerInterface.java           # Interface for server operations
+├── SimpleServer.java              # Main server class
+├── SimpleServerTest.java          # Test class for the SimpleServer
+└── UserTest.java                  # Test class for the User object
+```
 
+## Documentation
 A comprehensive overview of each class, covering its functionality, the testing conducted to ensure it operates correctly, and its interactions with other classes within the project.
 
 ### 1. **Chat Class**
@@ -97,4 +155,4 @@ A comprehensive overview of each class, covering its functionality, the testing 
 - **Testing**: Provides basic unit tests for `User`, confirming core functionality and file persistence.
 - **Relationships**: Directly tests `User`, ensuring proper data handling and interactions.
 
-## **Testing IO For Phase 2**
+## Testing Guide
