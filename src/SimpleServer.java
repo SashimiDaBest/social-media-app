@@ -1,15 +1,17 @@
+import exception.InvalidCreateAccountException;
+import exception.InvalidFileFormatException;
+import objects.Chat;
+import objects.Message;
+import objects.User;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.io.*;
-import java.sql.Array;
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Scanner;
 
 /**
  * Simple Server
@@ -592,7 +594,8 @@ public class SimpleServer {
                 } else if (input.equals("2")) {
                     write(user.getFollowerList());
                     try {
-                        if (br.readLine().equals("VIEW")) {
+                        String line = br.readLine();
+                        if (line.equals("VIEW")) {
                             otherPageOperation();
                             break;
                         }

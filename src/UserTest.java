@@ -1,5 +1,7 @@
+import exception.NoChatFoundException;
+import objects.Chat;
+import objects.User;
 import org.junit.Test;
-import org.junit.Ignore;
 
 
 import static org.junit.Assert.assertThrows;

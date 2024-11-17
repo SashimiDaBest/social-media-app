@@ -1,3 +1,7 @@
+package objects;
+
+import exception.NoChatFoundException;
+
 import java.util.ArrayList;
 /**
  * User Interface
