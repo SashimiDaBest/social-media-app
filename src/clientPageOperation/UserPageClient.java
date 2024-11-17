@@ -190,26 +190,4 @@ public final class UserPageClient {
             return false;
         }
     }
-/*
-    public void uploadPhoto(String path, BufferedWriter bw, Socket socket) throws IOException {
-
-     Socket socket
-
-        try {
-            FileInputStream fileInputStream = new FileInputStream(new File("path/to/your/image.jpg"));
-            OutputStream outputStream = socket.getOutputStream();
-
-            byte[] buffer = new byte[4096]; // Buffer size of 4 KB
-            int bytesRead;
-            while ((bytesRead = fileInputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, bytesRead);
-            }
-
-            System.out.println("Image uploaded successfully!");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
- */
 }
