@@ -98,14 +98,17 @@ public final class WelcomePageClient {
                         }
                     }
 
-                    // for creating a new account
+                // for creating a new account
                 } else if (mainChoice.equals("2")) {
 
                     while(true) {
+                        System.out.println("New usernames cannot contain semicolons!");
                         System.out.print("New Username: ");
                         String username = scanner.nextLine();
                         UserPageClient.write(username, bw);
 
+                        System.out.println("New passwords must contain a letter and a number, " +
+                            "be at least 10 characters, and cannot contain semicolons!");
                         System.out.print("Password: ");
                         String password = scanner.nextLine();
                         UserPageClient.write(password, bw);

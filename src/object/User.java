@@ -112,8 +112,13 @@ public class User implements UserInterface {
      */
     public User(String userName, String password) throws InvalidCreateAccountException {
 
-        this.userName = userName;
+        
+        // Username validation
+        if (userName.contains(";")) {
+            throw new InvalidCreateAccountException("Invalid username");
+        }
 
+        // Password validation
         boolean haveLetter = false;
         boolean haveNumber = false;
         for (int i = 0; i < password.length(); i++) {
@@ -125,10 +130,11 @@ public class User implements UserInterface {
             }
         }
 
-        if (password == null || password.length() < 10 || (!haveLetter && !haveNumber)) {
+        if (password == null || password.length() < 10 || !(haveLetter && haveNumber) || password.contains(";")) {
             throw new InvalidCreateAccountException("Invalid password");
         }
 
+        this.userName = userName;
         this.password = password;
         this.userID = createUserID();
         this.accountType = 0;
