@@ -3,7 +3,7 @@
 CS 180 Team Project
 
 ## Table of Contents
-- [Compilation and Execution Instructions](#Compilation and Execution Instructions)
+- [Compilation and Execution Instructions](#compilation-and-execution-instructions)
 - [Submission Record](#Submission Record)
 - [Simplified Project Layout](#Simplified Project Layout)
 - [Documentation](#Documentation)
