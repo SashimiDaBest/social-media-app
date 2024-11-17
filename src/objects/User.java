@@ -164,7 +164,7 @@ public class User implements UserInterface {
         chatIDList = new ArrayList<String>();
 
         try (PrintWriter pw = new PrintWriter(new FileWriter(SAMPLE_FOLDER + this.userID + ".txt"))) {
-            pw.println(this.userID + ";" + this.userName);
+            pw.println(this.userID + ";" + this.password);
             pw.println(this.userName);
             pw.println(this.photoPathway);
             pw.println(this.accountType);
@@ -302,7 +302,7 @@ public class User implements UserInterface {
      * </p>
      */
     public synchronized void writeData() {
-        try (PrintWriter pr = new PrintWriter(new FileWriter(this.getUserID() + ".txt"))) {
+        try (PrintWriter pr = new PrintWriter(new FileWriter(SAMPLE_FOLDER + this.getUserID() + ".txt"))) {
             pr.println(this.userID + ";" + this.password);
             pr.println(this.userName);
             pr.println(this.photoPathway);

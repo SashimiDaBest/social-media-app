@@ -41,6 +41,8 @@ public class Chat implements ChatInterface {
      */
     private static String chatIDListDoc = "chatIDList.txt";
 
+    private final String SAMPLE_FOLDER = "Sample Test Folder/";
+
     /**
      * Constructs a Chat object by reading data from an existing chat file.
      * <p>
@@ -144,7 +146,7 @@ public class Chat implements ChatInterface {
      * </p>
      */
     public synchronized void writeData() {
-        File chatData = new File(this.chatID + ".txt");
+        File chatData = new File(SAMPLE_FOLDER + this.chatID + ".txt");
         try (PrintWriter writer = new PrintWriter(new FileOutputStream(chatData, false))) {
 
             writer.println(this.chatID);
