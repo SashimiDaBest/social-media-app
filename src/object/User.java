@@ -54,7 +54,7 @@ public class User implements UserInterface {
     /** The user's password. */
     private String password;
     /** The user's profile picture, stored as an image. */
-    private BufferedImage image;
+    private Image image;
     /** The folder pathway to all the user's and chat's information. */
     private final String SAMPLE_FOLDER = "Sample Test Folder/";
 
@@ -717,86 +717,15 @@ public class User implements UserInterface {
         }
     }
 
-    /**
-     * Creates a BufferedImage object and saves the path of the image to the object, to be stored in memory and used later.
-     *
-     * @param inputPath the path of the image
-     */
-    public void loadImage(String inputPath) {
-        try {
-            image = ImageIO.read(new File(inputPath));
-            if (image == null) {
-                throw new IOException("The file could not be read as an image.");
-            }
-        } catch (IOException e) {
-            image = null;
+    public void saveImage(String userPathway) throws IOException {
+        // Determine the image format from the file extension
+        if (userPathway.isEmpty() || userPathway == null) {
+            throw new IOException("Image pathway input is empty");
         }
-    }
-
-    /**
-     * Sends an image file over a socket connection to a server.
-     * <p>
-     * This method reads an image from the specified file path and sends it through
-     * the socket's OutputStream in chunks of 4 KB. It ensures that the image is
-     * efficiently transmitted over the network.
-     * </p>
-     *
-     * @param userPhotoPathway The file path to the image that needs to be sent.
-     * @param socket           The socket through which the image will be transmitted.
-     * @throws IOException If there is an error reading the file or sending data through the socket.
-     */
-    public void sendImage(String userPhotoPathway, Socket socket) throws IOException {
-        // Path to the image file you want to upload
-         FileInputStream fileInputStream = new FileInputStream(new File(userPhotoPathway));
-         OutputStream outputStream = socket.getOutputStream();
-
-        byte[] buffer = new byte[4096]; // Buffer size of 4 KB
-        int bytesRead;
-        while ((bytesRead = fileInputStream.read(buffer)) != -1) {
-            outputStream.write(buffer, 0, bytesRead);
-        }
-        System.out.println("Image uploaded successfully!");
-    }
-
-    /**
-     * Receives an image from an InputStream and saves it as a file.
-     *
-     * @param socket      Socket
-     * @throws IOException
-     */
-    public void getImage(Socket socket) throws IOException {
-        InputStream inputStream = new BufferedInputStream(socket.getInputStream());
-        BufferedImage image = ImageIO.read(inputStream);
-        if (image != null) {
-            String outputPath = ""; //TODO: revise
-            // Create a File object for the output path
-            File outputFile = new File(outputPath);
-
-            // Extract the file extension to determine the image format (e.g., "jpg", "png")
-            String fileExtension = getFileExtension(outputPath);
-
-            // Write the BufferedImage to the output file
-            ImageIO.write(image, fileExtension, outputFile);
-
-            setProfilePic(outputPath);
-            System.out.println("Image saved successfully at: " + outputPath);
-        } else {
-            System.out.println("Failed to read the image from the InputStream.");
-        }
-        socket.close();
-    }
-
-    /**
-     * Helper method to extract the file extension from the file path.
-     *
-     * @param filePath The file path
-     * @return The file extension (e.g., "jpg", "png")
-     */
-    public String getFileExtension(String filePath) {
-        int dotIndex = filePath.lastIndexOf('.');
-        if (dotIndex > 0 && dotIndex < filePath.length() - 1) {
-            return filePath.substring(dotIndex + 1).toLowerCase();
-        }
-        return "png"; // Default to "png" if no extension is found
+        // Save the image to the specified output path
+        this.image = ImageIO.read(new File(userPathway));
+//        this.serverPhotoPathway = outputPath;
+//        ImageIO.write(image, new File(outputPath));
+//        System.out.println("Image saved successfully at: " + outputPath);
     }
 }

@@ -63,7 +63,18 @@ public final class UserPageClient {
 
             if (input.equals("1")) {
                 write("1", bw);
-                // TODO: Implement profile change functionality (e.g., image storage)
+                System.out.print("What is your image file path: ");
+                String path = scanner.nextLine();
+                write(path, bw);
+                try {
+                    if (br.readLine().equals("SAVE")) {
+                        System.out.println("Set image successfully");
+                    } else {
+                        System.out.println("Set image failed");
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             } else if (input.equals("2")) {
                 write("2", bw);
 

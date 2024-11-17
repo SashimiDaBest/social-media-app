@@ -64,6 +64,18 @@ public final class UserPageServer {
                 System.out.println("Client input: " + input);
                 if (input.equals("1")) {
                     System.out.println("Image Storing...");
+                    String userImagePath = br.readLine();
+                    try {
+                        user.saveImage(userImagePath);
+                        bw.write("SAVE");
+                        bw.newLine();
+                        bw.flush();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        bw.write("");
+                        bw.newLine();
+                        bw.flush();
+                    }
                 } else if (input.equals("2")) {
 
                     if (!user.getFollowerList().isEmpty() && !user.getFollowerList().get(0).isEmpty()) {
