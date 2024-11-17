@@ -40,23 +40,30 @@ public class SimpleServerTest {
             
             ArrayList<User> users = testServer.getUsers();
             ArrayList<Chat> chats = testServer.getChats();
-            
+
             for (File file: sampleFiles) {
-                String id = file.getName().split(".")[0];
+                String id = file.getName().split(".txt")[0];
 
                 // check if id shows up in users
+                boolean foundOne = false;
                 for (User user: users) {
                     if (user.getUserID().equals(id)) {
                         currentCount++;
-                        continue;
+                        foundOne = true;
+                        break;
                     }
+                }
+                
+                // Don't look for a matching chat if a user is already found
+                if (foundOne) {
+                    continue;
                 }
 
                 // if not a userId, rummage through chats
                 for (Chat chat: chats) {
                     if (chat.getChatID().equals(id)) {
                         currentCount++;
-                        continue;
+                        break;
                     }
                 }
             }
@@ -75,5 +82,6 @@ public class SimpleServerTest {
     public static void main(String[] args) {
 
         SimpleServerTest tests = new SimpleServerTest();
+        tests.testServerConstructor();
     }
 }

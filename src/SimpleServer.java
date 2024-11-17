@@ -58,7 +58,7 @@ public class SimpleServer {
             users.add(newUser);
         }
 
-        File[] chatFiles = dataDirectory.listFiles((ignored, name) -> name.startsWith("C_02"));
+        File[] chatFiles = dataDirectory.listFiles((ignored, name) -> name.startsWith("C_"));
         for (File chatFile : chatFiles) {
             try {
                 chats.add(new Chat(chatFile.getAbsolutePath().substring(0, chatFile.getAbsolutePath().lastIndexOf("."))));
