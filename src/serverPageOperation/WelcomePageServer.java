@@ -1,8 +1,8 @@
 package serverPageOperation;
 
 import exception.InvalidCreateAccountException;
-import objects.Chat;
-import objects.User;
+import object.Chat;
+import object.User;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

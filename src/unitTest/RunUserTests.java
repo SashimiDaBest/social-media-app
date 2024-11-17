@@ -1,6 +1,7 @@
+package unitTest;
 
-import objects.Chat;
-import objects.User;
+import object.Chat;
+import object.User;
 import org.junit.Test;
 
 import java.io.File;

@@ -1,6 +1,8 @@
+package unitTest;
+
 import exception.InvalidFileFormatException;
-import objects.Chat;
-import objects.Message;
+import object.Chat;
+import object.Message;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

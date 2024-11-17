@@ -1,5 +1,5 @@
 import exception.*;
-import objects.*;
+import object.*;
 import serverPageOperation.WelcomePageServer;
 
 import java.io.*;

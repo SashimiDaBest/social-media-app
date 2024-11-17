@@ -1,6 +1,6 @@
 package serverPageOperation;
 
-import objects.*;
+import object.*;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

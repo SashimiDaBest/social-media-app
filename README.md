@@ -8,7 +8,7 @@ CS 180 Team Project
 To compile and run the project, use the following command:
 `javac Main.java && java Main` 
 
-To test instantiation and methods, create instances of User, Chat, and Message objects in any public static void main(String[] args) by using the provided constructors and methods.
+To test instantiation and methods, create instances of User, Chat, and Message object in any public static void main(String[] args) by using the provided constructors and methods.
 
 ## Submission Record
 

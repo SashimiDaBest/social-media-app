@@ -1,4 +1,6 @@
-import objects.Message;
+package unitTest;
+
+import object.Message;
 
 import static org.junit.Assert.assertEquals;
 

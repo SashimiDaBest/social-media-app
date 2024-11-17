@@ -1,12 +1,11 @@
-import org.junit.Test;
-import org.junit.Ignore;
+package unitTest;
 
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
 
-import objects.*;
+import object.*;
 import java.util.ArrayList;
 
 /**

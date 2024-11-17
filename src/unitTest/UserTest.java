@@ -1,6 +1,8 @@
+package unitTest;
+
 import exception.NoChatFoundException;
-import objects.Chat;
-import objects.User;
+import object.Chat;
+import object.User;
 import org.junit.Test;
 
 
