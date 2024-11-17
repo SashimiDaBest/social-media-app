@@ -576,12 +576,12 @@ public class SimpleServer {
         System.out.println("This is user page");
         ArrayList<String> people;
         System.out.println("Username: " + user.getUsername());
-        System.out.println("Account type: " + user.getAccountType());
+        System.out.println("Account type: " + Integer.toString(user.getAccountType()));
         try {
             System.out.println("sending account information...");
             bw.write(user.getUsername());
             bw.newLine();
-            bw.write(user.getAccountType());
+            bw.write(Integer.toString(user.getAccountType()));
             bw.newLine();
             bw.flush();
         } catch (IOException e) {

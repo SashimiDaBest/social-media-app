@@ -27,6 +27,8 @@ public class UserPageClient {
             String line = br.readLine();
             username = line;
             if (line != null) {
+                line = br.readLine();
+                System.out.println("Line: " + line);
                 if (line.equals("1")) {
                     accountType = "private";
                 } else {
@@ -104,6 +106,7 @@ public class UserPageClient {
                     }
                 }
             } else if (input.equals("5")) {
+                write("5", bw);
                 FeedPageClient.feedPage(scanner, br, bw);
                 break;
             } else {
