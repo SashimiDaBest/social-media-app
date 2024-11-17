@@ -6,8 +6,6 @@ package objects;
  * Defines the essential behaviors for a message within a social media application.
  * Provides methods for accessing and modifying message properties such as the author ID,
  * message type, and content.
- * <p>
- * Status: Complete
  * </p>
  *
  * @author Soleil Pham
