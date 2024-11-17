@@ -101,8 +101,7 @@ public class SimpleServer {
 
                 // Stop once either options 1 or 2 are successful
                 if (isSignedIn) {
-                    // feedPageOperation();
-                    userPageOperation();
+                    feedPageOperation();
                     break;
                 }
 
@@ -205,8 +204,8 @@ public class SimpleServer {
                     String listOfAvailableUsers = "";
                     for (int i = 0; i < users.size(); i++) {
                         if (!users.get(i).getUserID().equals(user.getUserID())) {   // <- Do not include the logged-in user
-                            listOfAvailableUsers += users.get(i).getUsername();     // in the list of available users to
-                            // chat with
+                            listOfAvailableUsers += users.get(i).getUsername();
+
                             // Separate list of users with semicolons
                             if (i != users.size() - 1) {
                                 listOfAvailableUsers += ";";
@@ -271,6 +270,7 @@ public class SimpleServer {
                         }
                     }
 
+                    // 2 - View Existing Chat
                 } else if (clientChosenOperation.equals("2")) {
                     // Write the logged-in user's chats to the client.
                     // FORMAT:
@@ -398,8 +398,10 @@ public class SimpleServer {
                             }
                         } while (viewChat);
                     }
-                } else if (clientChosenOperation.equals("5")) {
-                    continueFeed = false;
+                } else if (clientChosenOperation.equals("3")) {
+                    userPageOperation();
+                } else if (clientChosenOperation.equals("4")) {
+                    otherPageOperation();
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -681,7 +683,7 @@ public class SimpleServer {
                     }
                     write(user.getFollowingList());
                 } else if (input.equals("5")) {
-                    feedPageOperation();
+                    //feedPageOperation();
                     break;
                 } else {
                     System.out.println("ERROR: " + input);
