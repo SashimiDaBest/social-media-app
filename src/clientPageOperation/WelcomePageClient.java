@@ -20,7 +20,7 @@ import java.util.Scanner;
  * </ul>
  *
  * @version 1.0
- * @author
+ * @author Derek McTume
  */
 
 public class WelcomePageClient {

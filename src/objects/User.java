@@ -16,8 +16,6 @@ import java.io.*;
  * Represents a user within the social media application. Stores user information such as username,
  * user ID, profile picture, followers, following, blocked users, and associated chats.
  * Provides methods for managing user data, such as adding followers, creating chats, and updating profile info.
- * <p>
- * Status: Complete
  * </p>
  *
  * @author Soleil Pham

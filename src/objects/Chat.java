@@ -12,8 +12,6 @@ import java.util.concurrent.atomic.*;
  * Represents a chat within a social media application, managing members, messages, and
  * file-based persistence. Provides methods for creating a new chat, reading from a file,
  * adding, editing, and deleting messages, and generating a unique chat ID.
- * <p>
- * Status: Complete
  * </p>
  *
  * @author Connor Pugliese

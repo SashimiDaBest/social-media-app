@@ -5,8 +5,6 @@ package exception;
  * <p>
  * A custom exception that is thrown when a file format does not match the expected format.
  * This exception is used to signal format errors in files used by the social media application.
- * <p>
- * Status: Complete
  * </p>
  *
  * @author Connor Pugliese

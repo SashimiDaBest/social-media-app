@@ -6,8 +6,6 @@ package objects;
  * Represents a message within a chat, with information about the author, type, and content.
  * Supports both text messages and image pathways, with accessors and mutators to manage
  * message details. Allows editing of messages if the message type is text.
- * <p>
- * Status: Complete
  * </p>
  *
  * @author Connor Pugliese

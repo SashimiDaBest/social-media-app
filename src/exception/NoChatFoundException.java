@@ -6,8 +6,6 @@ package exception;
  * A custom exception that is thrown when a specified chat ID cannot be found.
  * This exception is used to signal the absence of a chat in cases where one is expected,
  * enabling better error handling within the social media application.
- * <p>
- * Status: Complete
  * </p>
  *
  * @author Soleil Pham

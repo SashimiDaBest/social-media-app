@@ -9,9 +9,8 @@ import java.util.ArrayList;
  * Defines the essential behaviors for a user within a social media application, including methods for managing
  * user attributes such as username, profile picture, followers, following, blocked users, chats, and authentication.
  * This interface provides a foundation for user-related functionality in the application.
- * <p>
- * Status: Complete
  * </p>
+ *
  * @author Soleil Pham
  * @author Connor Pugliese
  * @version 11/01/2024

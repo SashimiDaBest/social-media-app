@@ -8,8 +8,6 @@ import java.util.*;
  * Defines the essential behaviors for a chat within a social media application, including methods
  * for managing chat data, members, and messages. Implementing classes should provide mechanisms for
  * data persistence and unique chat ID generation.
- * <p>
- * Status: Complete
  * </p>
  *
  * @author Soleil Pham
