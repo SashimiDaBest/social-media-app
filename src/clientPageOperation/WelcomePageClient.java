@@ -5,29 +5,50 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
+/**
+ * The WelcomePageClient class handles the user interface for the initial sign-in
+ * and sign-up process of the application. It communicates with the server to validate
+ * login credentials and create new user accounts, and it redirects users to the
+ * main feed page upon successful login or account creation.
+ *
+ * <p>Features and Functionality:</p>
+ * <ul>
+ *     <li>Sign In: Prompts the user for their username and password and validates them with the server.</li>
+ *     <li>Sign Up: Collects a new username and password for account creation and validates them with the server.</li>
+ *     <li>Retry or Create Account: Offers options to retry signing in or create a new account if the sign-in fails.</li>
+ *     <li>Redirect: Navigates to the feed page upon successful sign-in or account creation.</li>
+ * </ul>
+ *
+ * @version 1.0
+ * @author
+ */
+
 public class WelcomePageClient {
 
+    /**
+     * Displays the welcome page and handles user input for signing in or signing up.
+     * Redirects to the feed page upon successful sign-in or account creation.
+     *
+     * @param scanner Scanner object for reading user input
+     * @param br      BufferedReader for reading responses from the server
+     * @param bw      BufferedWriter for sending data to the server
+     */
     public static void welcomePage(Scanner scanner, BufferedReader br, BufferedWriter bw) {
-
         try {
             boolean isSignedIn = false;
-
-            // for redirecting after option 1 fails
             String signUpDecision = "";
             String mainChoice = "";
 
             while (true) {
-
-                // move on once finally signed in
+                // Redirect to the feed page if signed in
                 if (isSignedIn) {
                     FeedPageClient.feedPage(scanner, br, bw);
                     break;
                 }
 
-                // skip first screen if sign in has already been attempted
-                if (!signUpDecision.equals("")) {
+                // Display welcome options unless redirected from a failed sign-in
+                if (!signUpDecision.isEmpty()) {
                     mainChoice = signUpDecision;
-
                 } else {
                     System.out.print("Welcome to the Welcome Page\n" +
                             "1 - Sign in\n" +
@@ -36,9 +57,7 @@ public class WelcomePageClient {
                     UserPageClient.write(mainChoice, bw);
                 }
 
-                // for Sigining In
                 if (mainChoice.equals("1")) {
-
                     while (true) {
                         System.out.print("Username: ");
                         String username = scanner.nextLine();

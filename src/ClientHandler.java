@@ -1,22 +1,22 @@
 import clientPageOperation.WelcomePageClient;
 import uiPage.*;
 
-import java.net.*;
+import java.net.Socket;
 import java.io.*;
-import java.awt.*;
-import java.util.ArrayList;
 import java.util.Scanner;
 import javax.swing.*;
+import java.awt.*;
 
 /**
- * Client Handler
+ * ClientHandler
  * <p>
- * Handles individual client connections for a social media application, managing input and output streams
- * to facilitate communication between the server and the client.
+ * Manages individual client connections for a social media application. This class
+ * facilitates communication between the client and the server, handling input and
+ * output streams and user interface management.
  * <p>
- * Status: Incomplete
+ *
  * <p>
- * This class implements {@link Runnable} to allow handling client connections in separate threads,
+ * Implements {@link Runnable} to allow handling client connections in separate threads,
  * supporting concurrent communication with multiple clients.
  * </p>
  *
@@ -24,24 +24,33 @@ import javax.swing.*;
  * @version 11/01/2024
  * @since 1.0
  */
+
 public class ClientHandler implements Runnable {
     private String hostname;
     private int port;
-
     private Socket socket;
+    private BufferedWriter bw;
+    private BufferedReader br;
+
+    // GUI components
     private JFrame frame;
     private CardLayout cardLayout;
     private JPanel cardPanel;
 
+    // UI pages
     private WelcomePage welcomePage;
     private CreateUserPage createUserPage;
     private FeedViewPage feedViewPage;
     private UserProfilePage userProfilePage;
     private OtherProfilePage otherProfilePage;
 
-    private BufferedWriter bw;
-    private BufferedReader br;
-
+    /**
+     * Constructs a ClientHandler object to manage the client-server connection.
+     *
+     * @param hostname The hostname of the server
+     * @param port     The port number for the server
+     * @throws IOException If an I/O error occurs while creating the socket
+     */
     public ClientHandler(String hostname, int port) throws IOException {
         this.hostname = hostname;
         this.port = port;
@@ -50,6 +59,11 @@ public class ClientHandler implements Runnable {
         this.br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
     }
 
+    /**
+     * Main method to start the client handler.
+     *
+     * @param args Command-line arguments (not used)
+     */
     public static void main(String[] args) {
         String hostname = "localhost"; // Server hostname
         int port = 12;              // Port number
@@ -63,6 +77,10 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    /**
+     * The run method for the ClientHandler. It initializes the user interface
+     * and manages communication with the server using a Scanner for user input.
+     */
     @Override
     public void run() {
         Scanner scanner = new Scanner(System.in);

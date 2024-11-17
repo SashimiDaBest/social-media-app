@@ -14,7 +14,7 @@ import java.util.Scanner;
  * This class communicates with the server using BufferedReader and BufferedWriter
  * to send and receive data.
  *
- * <p>Available operations:</p>
+ * <p>Features and Functionality:</p>
  * <ul>
  * <li>Follow/Unfollow another user</li>
  * <li>Block/Unblock another user</li>
