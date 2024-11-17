@@ -23,10 +23,6 @@ import java.util.Scanner;
  * @author Soleil Pham
  */
 public final class UserPageClient {
-
-    // TODO: Implement image storage handling and add login/logout features.
-    // TODO: Ensure BufferedReader and BufferedWriter close properly when exiting.
-
     /**
      * Main method for user page operations. It reads the user's details and
      * provides options for interacting with their profile.
