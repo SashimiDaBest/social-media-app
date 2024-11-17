@@ -40,6 +40,7 @@ public final class FeedPageClient {
      * @param scanner Scanner for reading user input
      * @param br      BufferedReader for receiving messages from the server
      * @param bw      BufferedWriter for sending messages to the server
+     * @param socket  Socket
      */
     public static void feedPage(Scanner scanner, BufferedReader br, BufferedWriter bw, Socket socket) {
         boolean continueFeed = true;

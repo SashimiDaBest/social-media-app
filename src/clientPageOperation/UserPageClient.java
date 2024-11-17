@@ -29,6 +29,7 @@ public final class UserPageClient {
      * @param scanner Scanner for user input
      * @param br      BufferedReader for reading server responses
      * @param bw      BufferedWriter for sending messages to the server
+     * @param socket  Socket
      */
     public static void userPage(Scanner scanner, BufferedReader br, BufferedWriter bw, Socket socket) {
         String username = "";

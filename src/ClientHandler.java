@@ -84,7 +84,7 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         Scanner scanner = new Scanner(System.in);
-        WelcomePageClient.welcomePage(scanner, br, bw);
+        WelcomePageClient.welcomePage(scanner, br, bw, socket);
         /*
             frame = new JFrame("Boiler Gram");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

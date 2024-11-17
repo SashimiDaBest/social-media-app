@@ -33,6 +33,7 @@ public final class WelcomePageClient {
      * @param scanner Scanner object for reading user input
      * @param br      BufferedReader for reading responses from the server
      * @param bw      BufferedWriter for sending data to the server
+     * @param socket  Socket
      */
     public static void welcomePage(Scanner scanner, BufferedReader br, BufferedWriter bw, Socket socket) {
         try {

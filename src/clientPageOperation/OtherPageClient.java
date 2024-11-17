@@ -41,6 +41,7 @@ public final class OtherPageClient {
      * @param otherUsername The username of the other user
      * @param br            BufferedReader for reading server responses
      * @param bw            BufferedWriter for sending messages to the server
+     * @param socket        Socket
      */
     public static void otherPage(Scanner scanner, String otherUsername, BufferedReader br, BufferedWriter bw, Socket socket) {
         try {
