@@ -24,12 +24,9 @@ import java.util.ArrayList;
  * @version 11/01/2024
  * @since 1.0
  */
-
-public class SimpleServer implements ServerInterface {
-    // Default port number for the server
-    private static final int PORT = 12;
-
-    // Server and client connection objects
+//TODO: remember to close br and bw later on
+public class SimpleServer {
+    private static int PORT = 12;
     private ServerSocket serverSocket;
     private Socket socket;
 
