@@ -46,7 +46,7 @@ public class UserPageClient {
                     "2 - View Follower\n" +
                     "3 - View Following\n" +
                     "4 - View Blocked\n" +
-                    "5 - Go Back to Feed View\n");
+                    "5 - Go Back to Feed View");
             String input = scanner.nextLine();
             if (input.equals("1")) {
                 write("1", bw);

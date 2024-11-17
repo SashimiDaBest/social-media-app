@@ -719,10 +719,11 @@ public class SimpleServer {
     }
 
     public boolean write(ArrayList<String> people) {
-        System.out.println("write()");
         try {
             for (int i = 0; i < people.size(); i++) {
-                System.out.println("people: " + User.findUsernameFromID(people.get(i)));
+                String userID = people.get(i);
+                String username = User.findUsernameFromID(userID);
+                System.out.println("people: " + username);
                 bw.write(people.get(i));
                 bw.newLine();
                 bw.flush();
