@@ -286,4 +286,11 @@ public interface UserInterface {
      * @return The username of the user with the ID in the parameter
      */
     public static String findUsernameFromID(String idToSearch) { return null; }
+
+    /**
+     * Creates a BufferedImage object and saves the path of the image to the object, to be stored in memory and used later.
+     *
+     * @param inputPath the path of the image
+     */
+    public void loadImage(String inputPath);
 }
