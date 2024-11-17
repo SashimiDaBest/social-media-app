@@ -1,3 +1,5 @@
+package exception;
+
 /**
  * Social Media App - NoChatFoundException
  * <p>

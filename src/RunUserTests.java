@@ -1,4 +1,6 @@
 
+import objects.Chat;
+import objects.User;
 import org.junit.Test;
 
 import java.io.File;

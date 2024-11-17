@@ -1,3 +1,8 @@
+package objects;
+
+
+import exception.*;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -82,6 +87,9 @@ public class User implements UserInterface {
      *
      * @param userIdinfo the file pathway containing user data
      */
+
+    private final String SAMPLE_FOLDER = "Sample Test Folder/";
+
     public User(String userIdinfo) {
         synchronized (LOCK) {
             try (BufferedReader br = new BufferedReader(new FileReader(userIdinfo))) {
@@ -157,7 +165,7 @@ public class User implements UserInterface {
         blockedList = new ArrayList<String>();
         chatIDList = new ArrayList<String>();
 
-        try (PrintWriter pw = new PrintWriter(new FileWriter(this.userID + ".txt"))) {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(SAMPLE_FOLDER + this.userID + ".txt"))) {
             pw.println(this.userID + ";" + this.userName);
             pw.println(this.userName);
             pw.println(this.photoPathway);
@@ -552,14 +560,17 @@ public class User implements UserInterface {
     public static synchronized String findIDFromUsername(String usernameToSearch) {
         try (BufferedReader reader = new BufferedReader(new FileReader(USERIDLIST))) {
             String line = reader.readLine();
+            if (line.split(";")[0].equals(usernameToSearch)) {
+                System.out.println(line);
+                return line.split(";")[2];
+            }
             while (line != null) {
-                if (line.split(";")[0].equals(usernameToSearch)) {
+                line = reader.readLine();
+                if (line != null && line.split(";")[0].equals(usernameToSearch)) {
+                    System.out.println(line);
                     return line.split(";")[2];
                 }
-
-                line = reader.readLine();
             }
-
             return null;
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -575,14 +586,17 @@ public class User implements UserInterface {
     public static synchronized String findUsernameFromID(String idToSearch) {
         try (BufferedReader reader = new BufferedReader(new FileReader(USERIDLIST))) {
             String line = reader.readLine();
+            if (line.split(";")[2].equals(idToSearch)) {
+                System.out.println(line);
+                return line.split(";")[0];
+            }
             while (line != null) {
-                if (line.split(";")[2].equals(idToSearch)) {
+                line = reader.readLine();
+                if (line != null && line.split(";")[2].equals(idToSearch)) {
+                    System.out.println(line);
                     return line.split(";")[0];
                 }
-
-                line = reader.readLine();
             }
-
             return null;
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -648,17 +662,21 @@ public class User implements UserInterface {
      * cannot be chatted with.
      *
      * @param userToChatWith The targeted User to chat with.
-     * @return Whether the user calling the method is able to chat with the target.
+     * @return Whether the user calling the method is able to chat with the target, or if they
+     * are trying to chat with themselves.
      */
-    public synchronized boolean checkChatAbility(User userToChatWith) {
+    public synchronized String checkChatAbility(User userToChatWith) {
         if (this.getBlockedList().contains(userToChatWith.getUserID()) ||
                 userToChatWith.getBlockedList().contains(this.userID)) {
-            return false;
+            return "false";
+        }
+        if (this.userID.equals(userToChatWith.userID)) {
+            return "self";
         }
         if (userToChatWith.getAccountType() == 0) {
-            return true;
+            return "true";
         } else {
-            return userToChatWith.getFollowerList().contains(this.userID);
+            return String.valueOf(userToChatWith.getFollowerList().contains(this.userID));
         }
     }
 

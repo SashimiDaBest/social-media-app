@@ -1,3 +1,5 @@
+package objects;
+
 /**
  * Message Class
  * <p>
