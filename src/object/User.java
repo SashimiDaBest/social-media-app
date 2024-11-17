@@ -9,6 +9,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
 
 /**
  * User Class
@@ -52,6 +56,8 @@ public class User implements UserInterface {
     private int accountType;
     /** The user's password. */
     private String password;
+    /** The user's profile picture, stored as an image. */
+    private BufferedImage image;
     /** The folder pathway to all the user's and chat's information. */
     private final String SAMPLE_FOLDER = "Sample Test Folder/";
 
@@ -686,4 +692,19 @@ public class User implements UserInterface {
         }
     }
 
+    /**
+     * Creates a BufferedImage object and saves the path of the image to the object, to be stored in memory and used later.
+     *
+     * @param inputPath the path of the image
+     */
+    public void loadImage(String inputPath) {
+        try {
+            image = ImageIO.read(new File(inputPath));
+            if (image == null) {
+                throw new IOException("The file could not be read as an image.");
+            }
+        } catch (IOException e) {
+            image = null;
+        }
+    }
 }
