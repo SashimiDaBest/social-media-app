@@ -1,7 +1,13 @@
 
 # Social Media App
-
 CS 180 Team Project
+
+## Table of Contents
+- [Compilation and Execution Instructions](#Compilation and Execution Instructions)
+- [Submission Record](#Submission Record)
+- [Simplified Project Layout](#Simplified Project Layout)
+- [Documentation](#Documentation)
+- [Testing Guide](#Testing Guide)
 
 ## Compilation and Execution Instructions
 
@@ -20,9 +26,7 @@ CS 180 Team Project
       ```
       
 ## Submission Record
-
 A list of who submitted which parts of the assignment on Brightspace and Vocareum
-
 - Connor Pugliese - Submitted Vocareum workspace v1 for Phase 1
 - Derek McTume - Submitted Vocareum workspace v2 for Phase 1
 - Soleil Pham - Submitted Vocareum workspace v3 for Phase 1
@@ -50,8 +54,6 @@ src/
 │   ├── User.java                  # User class for managing user-related operations
 │   └── UserInterface.java         # Interface for user operations
 │
-├── Sample Test Folder/            # Folder for sample test data
-│
 ├── serverPageOperation/           # Server-side operations and functionality
 │   ├── FeedPageServer.java        # Handles feed page operations on the server
 │   ├── OtherPageServer.java       # Handles other user page operations on the server
@@ -75,11 +77,7 @@ src/
 └── UserTest.java                  # Test class for the User object
 ```
 
-
-
-
 ## Documentation
-
 A comprehensive overview of each class, covering its functionality, the testing conducted to ensure it operates correctly, and its interactions with other classes within the project.
 
 ### 1. **Chat Class**
@@ -157,4 +155,4 @@ A comprehensive overview of each class, covering its functionality, the testing 
 - **Testing**: Provides basic unit tests for `User`, confirming core functionality and file persistence.
 - **Relationships**: Directly tests `User`, ensuring proper data handling and interactions.
 
-## **Testing IO For Phase 2**
+## Testing Guide
