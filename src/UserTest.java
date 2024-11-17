@@ -1,10 +1,7 @@
-package unitTest;
-
 import exception.NoChatFoundException;
 import object.Chat;
 import object.User;
 import org.junit.Test;
-
 
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertEquals;

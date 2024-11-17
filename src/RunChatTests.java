@@ -1,5 +1,3 @@
-package unitTest;
-
 import exception.InvalidFileFormatException;
 import object.Chat;
 import object.Message;

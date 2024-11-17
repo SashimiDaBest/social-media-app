@@ -1,5 +1,3 @@
-package unitTest;
-
 import object.Chat;
 import object.User;
 import org.junit.Test;

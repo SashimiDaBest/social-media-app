@@ -1,5 +1,3 @@
-package unitTest;
-
 import object.Message;
 
 import static org.junit.Assert.assertEquals;
