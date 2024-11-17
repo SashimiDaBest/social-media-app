@@ -693,8 +693,8 @@ public class SimpleServer {
             do {
                 System.out.println("client input: " + input);
                 if (input.equals("1")) {
-                    if (user.getFollowingList().contains(otherUser.getUsername())) {
-                        user.deleteFollowing(otherUser.getUsername());
+                    if (user.getFollowingList().contains(otherUser.getUserID())) {
+                        user.deleteFollowing(otherUser.getUserID());
                         bw.write("unfollowed " + otherUser.getUsername());
                     } else {
                         user.addFollowing(otherUser.getUserID());
@@ -703,8 +703,8 @@ public class SimpleServer {
                     bw.newLine();
                     bw.flush();
                 } else if (input.equals("2")) {
-                    if (user.getBlockedList().contains(otherUser.getUsername())) {
-                        user.deleteBlock(otherUser.getUsername());
+                    if (user.getBlockedList().contains(otherUser.getUserID())) {
+                        user.deleteBlock(otherUser.getUserID());
                         bw.write("unblocked " + otherUser.getUsername());
                     } else {
                         user.addBlock(otherUser.getUserID());
@@ -714,28 +714,31 @@ public class SimpleServer {
                     bw.flush();
                 } else if (input.equals("3")) {
                     try {
-                        if (otherUser.getAccountType() == 1 && user.getFollowerList().contains(otherUser.getUsername())) {
+                        if (otherUser.getAccountType() == 1 && user.getFollowerList().contains(otherUser.getUserID())) {
                             bw.write("message");
+                            write(new ArrayList<>());
                         } else {
                             bw.write("no message");
+                            write(otherUser.getFollowerList());
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    write(user.getFollowerList());
                 } else if (input.equals("4")) {
                     try {
-                        if (otherUser.getAccountType() == 1 && user.getFollowingList().contains(otherUser.getUsername())) {
+                        if (otherUser.getAccountType() == 1 && user.getFollowingList().contains(otherUser.getUserID())) {
                             bw.write("message");
+                            write(new ArrayList<>());
                         } else {
                             bw.write("no message");
+                            write(otherUser.getFollowerList());
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                     write(user.getFollowingList());
                 } else if (input.equals("5")) {
-                    //feedPageOperation();
+                    feedPageOperation();
                     break;
                 } else {
                     System.out.println("ERROR: " + input);
