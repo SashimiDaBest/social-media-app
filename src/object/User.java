@@ -715,5 +715,14 @@ public class User implements UserInterface {
         return id;
     }
 
+    /**
+     * Returns the profile pic image
+     *
+     * @return The profile picture
+     */
+    public BufferedImage getImage(){
+        return this.image;
+    }
+
 
 }
