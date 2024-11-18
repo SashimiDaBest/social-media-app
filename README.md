@@ -86,6 +86,20 @@ A list of who submitted which parts of the assignment on Brightspace and Vocareu
 ## Documentation
 A comprehensive overview of each class, covering its functionality, the testing conducted to ensure it operates correctly, and its interactions with other classes within the project.
 1. **ClientHandler.java**
+- **Functionality**:
+   The ClientHandler class manages individual client connections for a social media application. It handles communication between the client and the server, using input and output streams to exchange messages. Additionally, it sets up and manages the user interface (UI) using Swing components. The class implements Runnable, enabling each client connection to run on a separate thread, which supports concurrent communication with multiple clients. The user interface includes pages such as the welcome screen, user profile, and feed view, allowing seamless navigation and interaction within the application.
+- **Testing**:
+  - Verified the successful establishment of client-server connections and the proper initialization of input/output streams.
+  - Checked that GUI components are correctly created, displayed, and responsive to user interactions.
+  - Ensured that user input is appropriately processed and that messages are accurately sent and received from the server.
+  - Tested edge cases, such as handling invalid usernames and passwords, to ensure robust error handling with proper feedback.
+  - Conducted multi-threaded testing to confirm the correct management of concurrent client connections, ensuring no race conditions or deadlocks occur.
+- **Relationships**:
+  - Implements Runnable to support multi-threaded client handling, allowing the server to communicate with multiple clients simultaneously.
+  - Uses BufferedReader and BufferedWriter to facilitate message exchange between the client and server.
+  - Integrates with WelcomePageClient to manage welcome page functionality and connects with other UI components for a seamless user experience.
+  - Employs Swing (JFrame, JPanel, CardLayout) from the javax.swing and java.awt packages to construct and manage the graphical user interface.
+  - Collaborates with various UI pages (WelcomePage, CreateUserPage, FeedViewPage, UserProfilePage, and OtherProfilePage) to enable user navigation and interactions within the application.
 
 2. **MessageTest.java**
 - **Functionality**:
@@ -135,13 +149,41 @@ A comprehensive overview of each class, covering its functionality, the testing 
     - Uses file operations to ensure user and chat data are correctly written and retrieved.
 
 5. **ServerInterface.java**
-
+- **Functionality**: The ServerInterface defines the essential operations that a simple server must implement. It provides a contract for starting and stopping the server, as well as retrieving lists of users and chats managed by the server. By defining these methods, the interface ensures that any class implementing it will provide consistent and structured behavior for server operations. The interface is useful for promoting code reusability and standardizing how servers are managed within the application.
+- **Relationships**:
+  - Any class implementing ServerInterface must provide concrete implementations for all declared methods.
+  - The interface ensures that implementing classes have mechanisms for managing User and Chat objects, facilitating seamless user and chat handling.
+  - It interacts with the User and Chat classes, which represent user entities and chat sessions respectively, providing a standardized way to access these objects within server implementations.
 
 6. **SimpleServer.java**
-
+- **Functionality**: The SimpleServer class provides a basic server implementation that listens for client connections on a specified port and delegates request handling to the WelcomePageServer. It uses input and output streams for communication with clients and supports loading user and chat data from files. The server is designed to handle multiple client connections concurrently by leveraging the Runnable interface, allowing each connection to run on a separate thread. The class also includes mechanisms for managing resources and ensuring proper closure of sockets and streams.
+- **Testing**:
+  - Verified that the server correctly initializes by loading User and Chat objects from data files in the designated directory.
+  - Ensured that client connections are accepted and handled correctly, with requests being processed by the WelcomePageServer.
+  - Checked for proper error handling and resource management, especially for closing sockets and streams to avoid memory leaks.
+  - Conducted stress testing to ensure the server can manage multiple concurrent connections without performance degradation.
+  - Validated that invalid or corrupt chat files are handled gracefully, using appropriate exception handling mechanisms.
+- **Relationships**:
+  - Implements Runnable to support multi-threaded client handling, allowing the server to communicate with multiple clients simultaneously.
+  - Utilizes the WelcomePageServer class to manage initial client interactions, such as user sign-in and sign-up.
+  - Interacts with the User and Chat classes to load and manage data from files, converting them into objects for in-memory storage.
+  - Uses Java networking (ServerSocket and Socket) and I/O classes (BufferedReader, BufferedWriter) to establish connections and facilitate communication.
+  - Relies on exception handling classes like InvalidFileFormatException to manage errors when loading data.
 
 7. **SimpleServerTest.java**
-
+- **Functionality**: The SimpleServerTest class provides unit tests for the SimpleServer class. Its main purpose is to validate that the SimpleServer constructor correctly processes files from the data directory and converts them into User and Chat objects. The test checks that every file in the data directory corresponds to an appropriate User or Chat object in the server’s internal data structures. The class ensures data integrity and verifies that no files are overlooked during the object creation process.
+- **Testing**:
+  - testServerConstructor(): This unit test:
+  - Checks that each file in the data directory is successfully converted into a User or Chat object.
+  - Compares the total number of files in the directory with the number of objects created and stored in the SimpleServer.
+  - Iterates through each file, extracts the file name, and verifies that it matches an ID of a User or Chat object.
+  - Uses assertEquals to ensure the total number of objects matches the number of files, confirming that all data has been processed correctly.
+  - The test is designed to handle potential issues with file I/O gracefully, throwing a RuntimeException if an IOException occurs.
+- **Relationships**:
+  - Uses SimpleServer to test the constructor's ability to populate the user and chat lists from files.
+  - Relies on the User and Chat classes to verify that data from files is appropriately converted into objects.
+  - Integrates with JUnit for testing, using assertions to validate the correctness of the server's initialization process.
+  - The main method allows for manual testing, providing a way to run the test independently of the JUnit framework.
 
 8. **UserTest.java**
 - **Functionality**:
