@@ -258,7 +258,7 @@ public class User implements UserInterface {
             pr.println(this.userName);
             pr.println(this.serverPhotoPathway);
             pr.println(this.accountType);
-            if (!followerList.isEmpty() && !followerList.get(0).isEmpty()) {
+            if (!followerList.isEmpty() && !(followerList.get(0).isEmpty() && followerList.size() == 1)) {
                 for (int i = 0; i < followerList.size(); i++) {
                     if (!followerList.get(i).isEmpty()) {
                         if (i != followerList.size() - 1) {
@@ -271,7 +271,7 @@ public class User implements UserInterface {
             } else {
                 pr.println();
             }
-            if (!followingList.isEmpty() && !followingList.get(0).isEmpty()) {
+            if (!followingList.isEmpty() && !(followingList.get(0).isEmpty() && followingList.size() == 1)) {
                 for (int i = 0; i < followingList.size(); i++) {
                     if (!followingList.get(i).isEmpty()) {
                         if (i != followingList.size() - 1) {
@@ -284,7 +284,7 @@ public class User implements UserInterface {
             } else {
                 pr.println();
             }
-            if (!blockedList.isEmpty() && !blockedList.get(0).isEmpty()) {
+            if (!blockedList.isEmpty() && !(blockedList.get(0).isEmpty() && blockedList.size() == 1)) {
                 for (int i = 0; i < blockedList.size(); i++) {
                     if (!blockedList.get(i).isEmpty()) {
                         if (i != blockedList.size() - 1) {
