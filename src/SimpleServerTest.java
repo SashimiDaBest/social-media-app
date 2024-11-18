@@ -36,7 +36,7 @@ public class SimpleServerTest {
 
         try {
 
-            SimpleServer testServer = new SimpleServer(1234);
+            SimpleServer testServer = new SimpleServer(null);
             
             ArrayList<User> users = testServer.getUsers();
             ArrayList<Chat> chats = testServer.getChats();
@@ -75,5 +75,10 @@ public class SimpleServerTest {
             System.out.println("testServerConstructor should never thrown an error; failing test...");
             throw new RuntimeException(e);
         }
+    }
+
+    public static void main(String[] args) {
+        SimpleServerTest test = new SimpleServerTest();
+        test.testServerConstructor();
     }
 }
