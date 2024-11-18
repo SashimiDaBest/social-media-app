@@ -71,14 +71,14 @@ public final class OtherPageClient {
             if (input.equals("1")) {
                 UserPageClient.write("1", bw);
                 try {
-                    System.out.print(br.readLine());
+                    System.out.println(br.readLine());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             } else if (input.equals("2")) {
                 UserPageClient.write("2", bw);
                 try {
-                    System.out.print(br.readLine());
+                    System.out.println(br.readLine());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
