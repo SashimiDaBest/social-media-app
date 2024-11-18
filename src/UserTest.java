@@ -3,12 +3,11 @@ import object.Chat;
 import object.User;
 import org.junit.Test;
 
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertEquals;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.io.*;
+
+import static org.junit.Assert.*;
 
 /**
  * User Tests
@@ -530,7 +529,82 @@ public class UserTest {
 
         assertEquals("testFindUsernameFromID: Improper username returned",
                 testUsername, result);
+
+        // Clear list of users
+        try (PrintWriter pWriter = new PrintWriter(new FileOutputStream(new File("UserIDList.txt")))) {
+            pWriter.write("");
+        } catch (IOException e) {
+            System.out.println("Clearing UserIdFile should not fail");
+        }
     }
 
+    @Test
+    public void testFindIDFromUsername() {
+        // Create User object
+        String testID = "U_5678";
+        String testUsername = "AnotherUser";
+        User testUser = new User(testUsername, "securePassword12");
+        testUser.setUserID(testID);
+        testUser.createNewUser(testUsername, "securePassword12", testID); // Save user
+
+        // Ensure ID is correctly found
+        String result = testUser.findIDFromUsername(testUsername);
+
+        File testFile = new File("Sample Test Folder/" + testUser.getUserID() + ".txt");
+        testFile.delete(); // Clean up
+
+        // Clear list of users
+        try (PrintWriter pWriter = new PrintWriter(new FileOutputStream(new File("UserIDList.txt")))) {
+            pWriter.write("");
+        } catch (IOException e) {
+            System.out.println("Clearing UserIdFile should not fail");
+        }
+
+        assertEquals("testFindIDFromUsername: The userID for the given username was not found correctly",
+                testID, result);
+    }
+
+    @Test
+    public void testCheckChatAbility() {
+        // Setup: Create two User objects and a Chat object (assuming chat exists)
+        String testUserID = "U_1122";
+        String testChatID = "C_3344";
+        User testUser1 = new User("TestUser1", "password123");
+        User testUser2 = new User("TestUser2", "password456");
+        testUser2.setUserID("some user ID");
+
+        // Assume the users are added to the chat
+        testUser1.addChat(testChatID);  // User 1 has access to the chat
+        testUser2.addChat(testChatID);  // User 2 also has access to the chat
+
+        // Test: Check if the first user has the ability to chat in the specified chat
+        boolean result1 = Boolean.parseBoolean(testUser1.checkChatAbility(testUser2));  // Check if User 1 can chat with User 2 in the chat
+        boolean result2 = Boolean.parseBoolean(testUser2.checkChatAbility(testUser1));  // Check if User 2 can chat with User 1 in the chat
+
+        File testFile = new File("Sample Test Folder/" + testUser1.getUserID() + ".txt");
+        File testFile2 = new File("Sample Test Folder/" + testUser2.getUserID() + ".txt");
+        testFile.delete();
+        testFile2.delete();
+
+        // Clear UserIDList.txt
+        try (PrintWriter pWriter = new PrintWriter(new FileOutputStream(new File("UserIDList.txt")))) {
+            pWriter.write("");
+        } catch (IOException e) {
+            System.out.println("Clearing UserIdFile should not fail");
+        }
+
+        // Clear ChatIDList.txt
+        try (PrintWriter pWriter = new PrintWriter(new FileOutputStream(new File("ChatIDList.txt")))) {
+            pWriter.write("");
+        } catch (IOException e) {
+            System.out.println("Clearing ChatIdFile should not fail");
+        }
+
+        // Both users should have chat ability with each other
+        assertTrue("testCheckChatAbility: User 1 should be able to chat with User 2",
+                result1);
+        assertTrue("testCheckChatAbility: User 2 should be able to chat with User 1",
+                result2);
+    }
 }
 
