@@ -72,7 +72,7 @@ public final class WelcomePageClient {
                         // Wait for validation from the server
                         String messageFromServer = br.readLine();
 
-                        // successfully signing in
+                        // Successfully signing in
                         if (messageFromServer.equals("Successful sign-in")) {
                             System.out.println("You have entered the user feed!");
                             isSignedIn = true;
