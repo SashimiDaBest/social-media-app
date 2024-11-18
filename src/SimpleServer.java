@@ -138,6 +138,7 @@ public class SimpleServer {
             server.start();
         } catch (Exception e) {
             System.err.println("Server exception: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }
