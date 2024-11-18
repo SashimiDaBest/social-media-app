@@ -24,6 +24,17 @@ public class RunUserTests {
 
     @Test
     public void testUserMethods() {
+
+        // Clear the UserIDList and ChatIDList files
+        File f = new File("UserIDList.txt");
+        File g = new File("chatIDList.txt");
+
+        try (FileWriter fWriter = new FileWriter(f, false);
+             FileWriter gWriter = new FileWriter(g, false)) {
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
         User[] testUsers = new User[10];
 
         // Test constructor that does not read from file by making 10 example users.
@@ -113,16 +124,16 @@ public class RunUserTests {
 
         // Delete the user files used for testing.
         for (int i = 0; i < 10; i++) {
-            File f = new File("Sample Test Folder/U_000" + i + ".txt");
-            if (f.exists())
-                f.delete();
+            File h = new File("Sample Test Folder/U_000" + i + ".txt");
+            if (h.exists())
+                h.delete();
         }
 
         // Delete the chat files used for testing.
         for (int i = 0; i < 2; i++) {
-            File f = new File("Sample Test Folder/C_000" + i + ".txt");
-            if (f.exists())
-                f.delete();
+            File h = new File("Sample Test Folder/C_000" + i + ".txt");
+            if (h.exists())
+                h.delete();
         }
 
         assertTrue("findUser() returns false on a user that exists.", testUsers[8].findUser(testUsers[9].getUserID()));
@@ -135,8 +146,6 @@ public class RunUserTests {
                 " false on a taken username.", testUsers[8].userNameValidation("userNumber0"));
 
         // Clear the UserIDList and ChatIDList files
-        File f = new File("UserIDList.txt");
-        File g = new File("chatIDList.txt");
 
         try (FileWriter fWriter = new FileWriter(f, false);
              FileWriter gWriter = new FileWriter(g, false)) {
