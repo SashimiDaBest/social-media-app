@@ -87,7 +87,8 @@ public final class WelcomePageClient {
                                 UserPageClient.write(signUpDecision, bw);
                                 // System.out.println("signUpDecision: " + signUpDecision);
 
-                                if (signUpDecision.equals("1") || signUpDecision.equals("2")) {
+                                if (signUpDecision.equals("1") || signUpDecision.equals("2") ||
+                                        signUpDecision.equals("3")) {
                                     break;
                                 } else {
                                     System.out.println("Invalid response, please try again");

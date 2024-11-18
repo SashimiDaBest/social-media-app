@@ -53,6 +53,9 @@ public final class FeedPageServer {
             try {
                 String clientChosenOperation = br.readLine();
 
+                if (clientChosenOperation == null)
+                    break;
+
                 // 1 - Chat Creation
                 if (clientChosenOperation.equals("1")) {
 

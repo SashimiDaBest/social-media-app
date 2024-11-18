@@ -142,6 +142,8 @@ public final class UserPageServer {
                 } else if (input.equals("5")) {
                     FeedPageServer.feedPageOperation(br, bw, user, users, chats);
                     break;
+                } else if (input.equals("6")) {
+                    break;
                 } else {
                     System.out.println("ERROR: input " + input + " doesn't match expected!");
                 }
