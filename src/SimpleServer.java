@@ -1,8 +1,9 @@
 import exception.*;
-import objects.*;
+import object.*;
 import serverPageOperation.WelcomePageServer;
 
 import java.io.*;
+import java.util.concurrent.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -24,13 +25,9 @@ import java.util.ArrayList;
  * @version 11/01/2024
  * @since 1.0
  */
-
-public class SimpleServer implements ServerInterface {
-    // Default port number for the server
-    private static final int PORT = 12;
-
-    // Server and client connection objects
-    private ServerSocket serverSocket;
+//TODO: remember to close br and bw later on
+public class SimpleServer implements Runnable{
+    private static int PORT = 12;
     private Socket socket;
 
     // List of all users and chats in the system
@@ -48,11 +45,10 @@ public class SimpleServer implements ServerInterface {
      * @param port The port number on which the server will listen for client connections
      * @throws IOException If an I/O error occurs while setting up the server socket
      */
-    public SimpleServer(int port) throws IOException {
-        serverSocket = new ServerSocket(port);
+    public SimpleServer(Socket socket) throws IOException{
+        this.socket = socket;
         users = new ArrayList<>();
         chats = new ArrayList<>();
-
         // Load user and chat data from files
         File dataDirectory = new File("Sample Test Folder");
         File[] userFiles = dataDirectory.listFiles((ignored, name) -> name.startsWith("U_"));
@@ -61,7 +57,7 @@ public class SimpleServer implements ServerInterface {
             users.add(newUser);
         }
 
-        File[] chatFiles = dataDirectory.listFiles((ignored, name) -> name.startsWith("C_02"));
+        File[] chatFiles = dataDirectory.listFiles((ignored, name) -> name.startsWith("C_"));
         for (File chatFile : chatFiles) {
             try {
                 chats.add(new Chat(chatFile.getAbsolutePath().substring(0, chatFile.getAbsolutePath().lastIndexOf("."))));
@@ -71,31 +67,43 @@ public class SimpleServer implements ServerInterface {
         }
     }
 
+    // Accessors for testing:
+    public ArrayList<User> getUsers() {
+        return users;
+    }
+
+    public ArrayList<Chat> getChats() {
+        return chats;
+    }
+    //////
+
     /**
      * Starts the server, listens for client connections, and handles them using the WelcomePageServer.
      *
      * @throws IOException If an I/O error occurs during communication
      */
-    public void start() throws IOException {
+    @Override
+    public void run(){
         System.out.println("Server is listening on port " + PORT);
         try {
-            while (true) {
-                socket = serverSocket.accept();
-                System.out.println("New client connected");
 
-                // Set up input and output streams
-                bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-                br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            // Set up input and output streams
+            bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-                // Delegate the client request handling to WelcomePageServer
-                WelcomePageServer.welcomePageOperation(br, bw, user, users, chats);
-            }
+            // Delegate the client request handling to WelcomePageServer
+            WelcomePageServer.welcomePageOperation(br, bw, user, users, chats);
+            
         } catch (Exception e) {
             System.out.println("Error accepting connection" + e.getMessage());
             e.printStackTrace();
         } finally {
             // Ensure resources are closed when the server stops
-            stop();
+            try {
+                stop();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -105,8 +113,8 @@ public class SimpleServer implements ServerInterface {
      * @throws IOException If an I/O error occurs while closing the server socket
      */
     public void stop() throws IOException {
-        if (serverSocket != null && !serverSocket.isClosed()) {
-            serverSocket.close();
+        if (socket != null && !socket.isClosed()) {
+            socket.close();
         }
         if (bw != null) {
             bw.close();
@@ -122,11 +130,24 @@ public class SimpleServer implements ServerInterface {
      * @param args Command-line arguments (not used)
      */
     public static void main(String[] args) {
+        ServerSocket serverSocket = null;
         try {
-            SimpleServer server = new SimpleServer(PORT);
-            server.start();
+            
+            serverSocket = new ServerSocket(PORT);
+
+            while (true) {
+                Socket socket = serverSocket.accept();
+                SimpleServer server = new SimpleServer(socket);
+                new Thread(server).start();
+            }
+            
         } catch (Exception e) {
             System.err.println("Server exception: " + e.getMessage());
+            try {
+                serverSocket.close();
+            } catch (IOException error) {
+                error.printStackTrace();
+            }
         }
     }
 }

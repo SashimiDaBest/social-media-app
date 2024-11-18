@@ -3,6 +3,7 @@ package clientPageOperation;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -30,7 +31,7 @@ import java.util.Scanner;
  * @version 1.0
  * @since 11/16/2024
  */
-public class FeedPageClient {
+public final class FeedPageClient {
 
     /**
      * Manages the feed page, handling user interactions such as chat creation,
@@ -39,8 +40,9 @@ public class FeedPageClient {
      * @param scanner Scanner for reading user input
      * @param br      BufferedReader for receiving messages from the server
      * @param bw      BufferedWriter for sending messages to the server
+     * @param socket  Socket
      */
-    public static void feedPage(Scanner scanner, BufferedReader br, BufferedWriter bw) {
+    public static void feedPage(Scanner scanner, BufferedReader br, BufferedWriter bw, Socket socket) {
         boolean continueFeed = true;
         try {
             while (continueFeed) {
@@ -106,81 +108,86 @@ public class FeedPageClient {
                 } else if (input.equals("2")) {
                     UserPageClient.write("2", bw);
 
-                    // Obtain and display all chats this user is a member of from the client.
-                    System.out.println("Enter the number (ex. 0001) of the chat you'd like to open!");
-
+                    // Obtain and display all chats this user is a member of from the server.
                     String userChats = br.readLine();
-                    String[] chatList = userChats.split(";");
-                    for (String chat : chatList) {
-                        System.out.println(chat);
-                    }
 
-                    // Write the selected chat to the server.
-                    String chatNumber = scanner.nextLine();
-                    UserPageClient.write(chatNumber, bw);
+                    if (!userChats.isEmpty()) {
+                        System.out.println("Enter the number (ex. 0001) of the chat you'd like to open!");
+                        String[] chatList = userChats.split(";");
+                        for (String chat : chatList) {
+                            System.out.println(chat);
+                        }
 
-                    // Obtain the server's response -- either the chat is invalid or the selected
-                    // chat will be displayed.
-                    String serverChatResponse = br.readLine();
-                    if (serverChatResponse.equals("Invalid Chat")) {
-                        System.out.println("Invalid chat selection!");
+                        // Write the selected chat to the server.
+                        String chatNumber = scanner.nextLine();
+                        UserPageClient.write(chatNumber, bw);
+
+                        // Obtain the server's response -- either the chat is invalid or the selected
+                        // chat will be displayed.
+                        String serverChatResponse = br.readLine();
+                        if (serverChatResponse.equals("Invalid Chat")) {
+                            System.out.println("Invalid chat selection!");
+                        } else {
+                            // Read the chat menu from the server, looping through the menu
+                            // until the client requests to stop.
+                            boolean viewChat = true;
+                            do {
+                                String[] chatMenuLines = serverChatResponse.split(";");
+                                for (String line : chatMenuLines) {
+                                    System.out.println(line);
+                                }
+
+                                // Collect and write the client's decision.
+                                switch (scanner.nextLine()) {
+                                    case "1":
+                                        UserPageClient.write("1", bw);
+
+                                        // Compose Message
+                                        System.out.println("Enter message to compose:");
+                                        String message = scanner.nextLine();
+                                        UserPageClient.write(message, bw);
+
+                                        serverChatResponse = br.readLine();
+                                        break;
+                                    case "2":
+                                        UserPageClient.write("2", bw);
+
+                                        // Delete Previous Message
+                                        System.out.println("Message deleted!");
+
+                                        serverChatResponse = br.readLine();
+                                        break;
+                                    case "3":
+                                        UserPageClient.write("3", bw);
+
+                                        // Edit Previous Message
+                                        System.out.println("Enter replacement message:");
+                                        String replacement = scanner.nextLine();
+                                        UserPageClient.write(replacement, bw);
+
+                                        serverChatResponse = br.readLine();
+                                        break;
+                                    case "4":
+                                        UserPageClient.write("4", bw);
+
+                                        // End chat loop
+                                        viewChat = false;
+                                }
+                            } while (viewChat);
+                        }
                     } else {
-                        // Read the chat menu from the server, looping through the menu
-                        // until the client requests to stop.
-                        boolean viewChat = true;
-                        do {
-                            String[] chatMenuLines = serverChatResponse.split(";");
-                            for (String line : chatMenuLines) {
-                                System.out.println(line);
-                            }
-
-                            // Collect and write the client's decision.
-                            switch (scanner.nextLine()) {
-                                case "1":
-                                    UserPageClient.write("1", bw);
-
-                                    // Compose Message
-                                    System.out.println("Enter message to compose:");
-                                    String message = scanner.nextLine();
-                                    UserPageClient.write(message, bw);
-
-                                    serverChatResponse = br.readLine();
-                                    break;
-                                case "2":
-                                    UserPageClient.write("2", bw);
-
-                                    // Delete Previous Message
-                                    System.out.println("Message deleted!");
-
-                                    serverChatResponse = br.readLine();
-                                    break;
-                                case "3":
-                                    UserPageClient.write("3", bw);
-
-                                    // Edit Previous Message
-                                    System.out.println("Enter replacement message:");
-                                    String replacement = scanner.nextLine();
-                                    UserPageClient.write(replacement, bw);
-
-                                    serverChatResponse = br.readLine();
-                                    break;
-                                case "4":
-                                    UserPageClient.write("4", bw);
-
-                                    // End chat loop
-                                    viewChat = false;
-                            }
-                        } while (viewChat);
+                        System.out.println("You have no chats!");
                     }
                 } else if (input.equals("3")) {
                     UserPageClient.write("3", bw);
-                    UserPageClient.userPage(scanner, br, bw);
+                    UserPageClient.userPage(scanner, br, bw, socket);
                     break;
                 } else if (input.equals("4")) {
                     UserPageClient.write("4", bw);
 
                     // Display list of users from the server
-                    System.out.println("List of users to view:");
+                    System.out.println("Type the username of the user to view! If there are none, type anything to" +
+                            " refresh the Feed.");
                     String receivedUserList = br.readLine();
                     String[] userList = receivedUserList.split(";");
                     for (String username : userList) {
@@ -194,13 +201,26 @@ public class FeedPageClient {
                     // Obtain server validation response
                     String validUser = br.readLine();
                     if (Boolean.parseBoolean(validUser)) {
-                        OtherPageClient.otherPage(scanner, userSelection, br, bw);
+                        OtherPageClient.otherPage(scanner, userSelection, br, bw, socket);
                         break;
+                    } else {
+                        System.out.println("Invalid user selection!");
                     }
                 } else if (input.equals("5")) {
                     UserPageClient.write("5", bw);
-                    br.close();
-                    bw.close();
+                    try {
+                        if (bw != null) {
+                            bw.close(); // Close BufferedWriter
+                        }
+                        if (br != null) {
+                            br.close(); // Close BufferedReader
+                        }
+                        if (socket != null && !socket.isClosed()) {
+                            socket.close(); // Close the socket
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     continueFeed = false;
                 } else {
                     System.out.println("Invalid input");

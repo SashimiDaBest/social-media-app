@@ -1,7 +1,7 @@
 package serverPageOperation;
 
-import objects.Chat;
-import objects.User;
+import object.Chat;
+import object.User;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -30,7 +30,7 @@ import java.util.ArrayList;
  * @version 1.0
  * @since 11/16/2024
  */
-public class OtherPageServer {
+public final class OtherPageServer {
 
     /**
      * Manages interactions on the other user's profile page. Handles actions such as
@@ -64,9 +64,11 @@ public class OtherPageServer {
                 if (input.equals("1")) {
                     if (user.getFollowingList().contains(otherUser.getUserID())) {
                         user.deleteFollowing(otherUser.getUserID());
+                        otherUser.deleteFollower(user.getUserID());
                         bw.write("unfollowed " + otherUser.getUsername());
                     } else {
                         user.addFollowing(otherUser.getUserID());
+                        otherUser.addFollower(user.getUserID());
                         bw.write("followed " + otherUser.getUsername());
                     }
                     bw.newLine();
@@ -104,7 +106,7 @@ public class OtherPageServer {
                             UserPageServer.write(new ArrayList<>(), bw);
                         } else {
                             bw.write("no message");
-                            UserPageServer.write(otherUser.getFollowerList(), bw);
+                            UserPageServer.write(otherUser.getFollowingList(), bw);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();

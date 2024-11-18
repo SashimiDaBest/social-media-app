@@ -1,8 +1,8 @@
 package serverPageOperation;
 
 import exception.InvalidCreateAccountException;
-import objects.Chat;
-import objects.User;
+import object.Chat;
+import object.User;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -32,7 +32,7 @@ import java.util.ArrayList;
  * @version 1.0
  * @since 11/16/2024
  */
-public class WelcomePageServer {
+public final class WelcomePageServer {
 
     /**
      * Manages the welcome page operations, including sign-in and sign-up,
@@ -93,6 +93,9 @@ public class WelcomePageServer {
                         // If new username/password is valid
                         try {
                             User newUser = new User(newUsername, newPassword);
+                            if (!User.userNameValidation(newUsername)) {
+                                throw new InvalidCreateAccountException("Username is taken!");
+                            }
                             newUser.createNewUser(newUsername, newPassword, newUser.getUserID());
                             users.add(newUser);
                             user = newUser;

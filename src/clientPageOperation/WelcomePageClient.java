@@ -3,6 +3,7 @@ package clientPageOperation;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.net.Socket;
 import java.util.Scanner;
 
 /**
@@ -23,7 +24,7 @@ import java.util.Scanner;
  * @author Derek McTume
  */
 
-public class WelcomePageClient {
+public final class WelcomePageClient {
 
     /**
      * Displays the welcome page and handles user input for signing in or signing up.
@@ -32,8 +33,9 @@ public class WelcomePageClient {
      * @param scanner Scanner object for reading user input
      * @param br      BufferedReader for reading responses from the server
      * @param bw      BufferedWriter for sending data to the server
+     * @param socket  Socket
      */
-    public static void welcomePage(Scanner scanner, BufferedReader br, BufferedWriter bw) {
+    public static void welcomePage(Scanner scanner, BufferedReader br, BufferedWriter bw, Socket socket) {
         try {
             boolean isSignedIn = false;
             String signUpDecision = "";
@@ -42,7 +44,7 @@ public class WelcomePageClient {
             while (true) {
                 // Redirect to the feed page if signed in
                 if (isSignedIn) {
-                    FeedPageClient.feedPage(scanner, br, bw);
+                    FeedPageClient.feedPage(scanner, br, bw, socket);
                     break;
                 }
 
@@ -70,7 +72,7 @@ public class WelcomePageClient {
                         // Wait for validation from the server
                         String messageFromServer = br.readLine();
 
-                        // successfully signing in
+                        // Successfully signing in
                         if (messageFromServer.equals("Successful sign-in")) {
                             System.out.println("You have entered the user feed!");
                             isSignedIn = true;
@@ -79,7 +81,7 @@ public class WelcomePageClient {
                         } else if (messageFromServer.equals("Sign-in was unsuccessful")) {
 
                             while(true) {
-                                System.out.println("1 - Retry signing in\n2 - Create account");
+                                System.out.println("1 - Retry signing in\n2 - Create account\n3 - Quit\n");
 
                                 signUpDecision = scanner.nextLine();
                                 UserPageClient.write(signUpDecision, bw);
@@ -96,14 +98,17 @@ public class WelcomePageClient {
                         }
                     }
 
-                    // for creating a new account
+                // for creating a new account
                 } else if (mainChoice.equals("2")) {
 
                     while(true) {
+                        System.out.println("New usernames cannot contain semicolons!");
                         System.out.print("New Username: ");
                         String username = scanner.nextLine();
                         UserPageClient.write(username, bw);
 
+                        System.out.println("New passwords must contain a letter and a number, " +
+                            "be at least 10 characters, and cannot contain semicolons!");
                         System.out.print("Password: ");
                         String password = scanner.nextLine();
                         UserPageClient.write(password, bw);
@@ -122,7 +127,24 @@ public class WelcomePageClient {
                         }
                     }
 
-                } else {
+                } else if(mainChoice.equals("3")) {
+                    UserPageClient.write(mainChoice, bw);
+                    try {
+                        if (bw != null) {
+                            bw.close(); // Close BufferedWriter
+                        }
+                        if (br != null) {
+                            br.close(); // Close BufferedReader
+                        }
+                        if (socket != null && !socket.isClosed()) {
+                            socket.close(); // Close the socket
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                }
+                else {
                     System.out.println("Invalid main input, please try again");
                     continue;
                 }

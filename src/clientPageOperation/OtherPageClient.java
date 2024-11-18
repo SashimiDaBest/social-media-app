@@ -3,6 +3,7 @@ package clientPageOperation;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.net.Socket;
 import java.util.Scanner;
 
 /**
@@ -25,7 +26,7 @@ import java.util.Scanner;
  * @author Soleil Pham
  * @version 1.0
  */
-public class OtherPageClient {
+public final class OtherPageClient {
 
     /**
      * Handles the other user's page operations.
@@ -40,9 +41,9 @@ public class OtherPageClient {
      * @param otherUsername The username of the other user
      * @param br            BufferedReader for reading server responses
      * @param bw            BufferedWriter for sending messages to the server
+     * @param socket        Socket
      */
-    public static void otherPage(Scanner scanner, String otherUsername, BufferedReader br, BufferedWriter bw) {
-
+    public static void otherPage(Scanner scanner, String otherUsername, BufferedReader br, BufferedWriter bw, Socket socket) {
         try {
             // Send the other username to the server
             System.out.println("OTHER USERNAME: " + otherUsername);
@@ -63,20 +64,21 @@ public class OtherPageClient {
                     "3 - View Follower\n" +
                     "4 - View Following\n" +
                     "5 - Go Back to Feed View\n" +
+                    "6 - Quit\n" +
                     "Input: ");
             String input = scanner.nextLine();
 
             if (input.equals("1")) {
                 UserPageClient.write("1", bw);
                 try {
-                    System.out.print(br.readLine());
+                    System.out.println(br.readLine());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             } else if (input.equals("2")) {
                 UserPageClient.write("2", bw);
                 try {
-                    System.out.print(br.readLine());
+                    System.out.println(br.readLine());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -88,7 +90,7 @@ public class OtherPageClient {
                     if (line.equals("message")) {
                         canView = true;
                     }
-                } catch (Exception e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
                 UserPageClient.readAndPrint(br);
@@ -99,7 +101,7 @@ public class OtherPageClient {
                         UserPageClient.write("CHANGE", bw);
                         System.out.print("Other Username: ");
                         String other = scanner.nextLine();
-                        otherPage(scanner, other, br, bw);
+                        otherPage(scanner, other, br, bw, socket);
                         break;
                     }
                 } else {
@@ -113,7 +115,7 @@ public class OtherPageClient {
                     if (line.equals("message")) {
                         canView = true;
                     }
-                } catch (Exception e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
                 UserPageClient.readAndPrint(br);
@@ -124,7 +126,7 @@ public class OtherPageClient {
                         UserPageClient.write("CHANGE", bw);
                         System.out.print("Other Username: ");
                         String other = scanner.nextLine();
-                        otherPage(scanner, other, br, bw);
+                        otherPage(scanner, other, br, bw, socket);
                         break;
                     } else {
                         UserPageClient.write("", bw);
@@ -132,7 +134,23 @@ public class OtherPageClient {
                 }
             } else if (input.equals("5")) {
                 UserPageClient.write("5", bw);
-                FeedPageClient.feedPage(scanner, br, bw);
+                FeedPageClient.feedPage(scanner, br, bw, socket);
+                break;
+            } else if (input.equals("6")) {
+                UserPageClient.write("6", bw);
+                try {
+                    if (bw != null) {
+                        bw.close(); // Close BufferedWriter
+                    }
+                    if (br != null) {
+                        br.close(); // Close BufferedReader
+                    }
+                    if (socket != null && !socket.isClosed()) {
+                        socket.close(); // Close the socket
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 break;
             } else {
                 System.out.println("Invalid input. Please try again.");

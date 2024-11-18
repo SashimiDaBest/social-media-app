@@ -5,10 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f670f7b9-d625-4a9d-9f5c-5d165161aa9d" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Chat.java" beforeDir="false" afterPath="$PROJECT_DIR$/Chat.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RunUserTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/RunUserTests.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SimpleServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/SimpleServer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SimpleServerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/SimpleServerTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,9 +17,9 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 5
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
   <component name="ProjectId" id="2oXEnLSo6QaPAsx8iRc6j9q8Ixh" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -28,14 +27,26 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Application.SimpleServerTest.executor": "Run",
     "Application.UserTest.executor": "Run",
     "JUnit.RunUserTests.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "changingBranch",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/mctum/OneDrive/Desktop/Project 5 - Main Local Repository/social-media-app"
   }
 }]]></component>
+  <component name="RunManager">
+    <configuration name="SimpleServerTest" type="Application" factoryName="Application" nameIsGenerated="true">
+      <option name="ALTERNATIVE_JRE_PATH" value="11" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+      <option name="MAIN_CLASS_NAME" value="SimpleServerTest" />
+      <module name="social-media-app" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">

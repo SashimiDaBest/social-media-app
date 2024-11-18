@@ -1,4 +1,5 @@
-import objects.Message;
+import object.Message;
+import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
@@ -15,7 +16,7 @@ import static org.junit.Assert.assertEquals;
 
 public class MessageTest {
 
-
+    @Test
     public void testGetMessage() {
 
         // Test 1: returns true if message is the one passed to the constructor
@@ -34,6 +35,7 @@ public class MessageTest {
 
     }
 
+    @Test
     public void testGetAuthorID() {
 
         // Test 1: same as in testGetMessage()
@@ -51,6 +53,7 @@ public class MessageTest {
             "the one in the constructor when they aren't equal",false, result2);
     }
 
+    @Test
     public void testGetMessageType() {
 
         // Test 1: same as everything else
@@ -69,6 +72,7 @@ public class MessageTest {
             "the one in the constructor when they aren't equal",false, result2);
     }
 
+    @Test
     public void testSetMessage() {
 
         // Test 1: if there is no image (type == 0), then
@@ -94,15 +98,5 @@ public class MessageTest {
             "upon unsuccessful mutation",false, funcResult2);
         assertEquals("testSetMessage: the message's content should not " +
             "change upon unsuccessful mutation",true, correctParam2);
-    }
-
-
-    public static void main(String[] args) {
-
-        MessageTest runTests = new MessageTest();
-        runTests.testGetMessage();
-        runTests.testGetAuthorID();
-        runTests.testGetMessageType();
-        runTests.testSetMessage();
     }
 }
