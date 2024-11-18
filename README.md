@@ -163,10 +163,42 @@ A comprehensive overview of each class, covering its functionality, the testing 
     - Implements exception handling using `NoChatFoundException` for scenarios where chats are not found.
 
 ### clientPageOperation
-1. **FeedPageClient.java** 
+1. **FeedPageClient.java**
+- **Functionality**: The `FeedPageClient` class serves as the client-side handler for interacting with the feed page of the application. It facilitates user actions such as browsing through content, selecting specific users for interaction, or navigating to other parts of the application. It manages user input, sends commands to the server, and processes responses to display appropriate content to the user.
+- **Testing**:
+  - Verified that all navigation options (e.g., viewing users, returning to the main menu) correctly communicate with the server and handle the responses as expected.
+  - Ensured edge cases, such as invalid inputs or server errors, are gracefully managed.
+- **Relationships**:
+  - Communicates with `FeedPageServer` to receive and display feed content.
+  - Interacts with `OtherPageClient` and `UserPageClient` for user navigation.
+
 2. **OtherPageClient.java**
+- **Functionality**: The `OtherPageClient` class is responsible for handling the client-side operations of viewing and interacting with another user’s profile. It provides options for actions like following/unfollowing, blocking/unblocking, and viewing the selected user’s follower or following list. The class captures user input, sends requests to the server, and displays the results.
+- **Testing**:
+  - Tested the proper sending of requests (e.g., follow/unfollow) and the correct handling of server responses.
+  - Verified that invalid or unexpected input is managed effectively and does not crash the client application.
+- **Relationships**:
+  - Works with `OtherPageServer` for server-side profile operations.
+  - Interacts with `UserPageClient` for redirecting back to the user’s profile or the feed page.
+
 3. **UserPageClient.java**
+- **Functionality**: The `UserPageClient` class manages the client-side interactions for the user’s own profile page. It allows the user to view their account details, manage their list of followers, following, and blocked users, and navigate to other sections such as the feed or other user profiles. The class processes input from the user, sends appropriate requests to the server, and displays the information received.
+- **Testing**:
+  - Verified that profile data is accurately retrieved from the server and displayed.
+  - Checked edge cases like empty follower or blocked lists to ensure correct behavior.
+  - Ensured navigation between sections (e.g., viewing followers, going back to the feed) works seamlessly.
+- **Relationships**:
+  - Communicates with `UserPageServer` for account and profile management.
+  - Redirects to `FeedPageClient` and `OtherPageClient` based on user choices.
+
 4. **WelcomePageClient.java**
+- **Functionality**: The `WelcomePageClient` class handles the client-side operations of the welcome page, which includes sign-in and sign-up functionalities. It manages user input for login credentials, communicates with the server to validate or create accounts, and redirects the user to the feed page upon successful login or account creation.
+- **Testing**:
+  - Verified sign-in and sign-up flows to ensure proper communication with `WelcomePageServer`.
+  - Tested various scenarios, such as invalid credentials or taken usernames, to confirm appropriate error handling and messaging.
+- **Relationships**:
+  - Works closely with `WelcomePageServer` for authentication and account creation.
+  - Redirects to `FeedPageClient` once the user is authenticated.
 
 ### exception
 1. **InvalidCreateAccountException.java**
@@ -240,15 +272,42 @@ A comprehensive overview of each class, covering its functionality, the testing 
 
 ### serverPageOperation
 1. **FeedPageServer.java**
+- **Functionality**: The FeedPageServer class handles server-side operations for the feed page. It provides features such as listing available users, facilitating user selection for interaction, and managing navigation requests from the client. The class ensures smooth communication between the client and the server for feed-related activities.
+- **Testing**:
+  - Checked that the server correctly lists available users and processes client commands.
+  - Verified that communication errors are caught and managed gracefully.
+- **Relationships**:
+  - Communicates with FeedPageClient to deliver feed content and handle user selections.
+  - Redirects to OtherPageServer and UserPageServer for user profile interactions.
 
 2. **OtherPageServer.java**
+- **Functionality**: The OtherPageServer class manages server-side operations for viewing and interacting with other users’ profiles. It handles actions such as following/unfollowing, blocking/unblocking, and displaying the lists of followers and following users. The class reads and writes user data, ensuring proper updates are made based on client input.
+- **Testing**:
+  - Tested follow/unfollow and block/unblock functionalities to ensure data consistency.
+  - Verified that the correct data is sent to the client, and invalid requests are properly handled.
+- **Relationships**:
+  - Communicates with OtherPageClient to handle profile interactions.
+  - Uses User and Chat objects for managing user relationships and messaging.
 
 3. **UserPageServer.java**
+- **Functionality**: The UserPageServer class handles server-side operations related to the user’s profile page. It manages tasks such as displaying user details, handling interactions with followers, following, and blocked lists, and facilitating navigation to other pages. The class ensures user data is correctly processed and updated based on client commands.
+- **Testing**:
+  - Verified that all user details (e.g., followers, profile picture updates) are accurately transmitted and displayed.
+  - Checked that navigation and data management (e.g., blocking/unblocking users) function as expected.
+- **Relationships**:
+  - Communicates with UserPageClient for displaying and updating user account details.
+  - Works with OtherPageServer for navigating to other user profiles.
 
 4. **WelcomePageServer.java**
-
+- **Functionality**: The WelcomePageServer class manages server-side operations for the welcome page, including user authentication (sign-in) and account creation (sign-up). It validates user credentials, creates new accounts, and communicates back to the client with success or error messages. Upon successful sign-in or sign-up, it redirects the user to the feed page.
+- **Testing**:
+ - Checked the sign-in and sign-up processes, ensuring correct validation and data handling.
+ - Tested error handling for scenarios like duplicate usernames and invalid credentials.
+- **Relationships**:
+  - Interacts with WelcomePageClient for user authentication.
+  - Redirects to FeedPageServer once the user is authenticated or a new account is created.
+  - Uses User and Chat objects to manage user data and interactions.
 
 ### uiPage (Incomplete)
-
 
 ## Testing and Verification Instructions
