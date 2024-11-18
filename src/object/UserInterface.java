@@ -4,6 +4,7 @@ import exception.NoChatFoundException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.awt.image.BufferedImage;
 
 /**
  * User Interface
@@ -273,5 +274,25 @@ public interface UserInterface {
      */
     public static String findUsernameFromID(String idToSearch) { return null; }
 
+    /**
+     * Saves image to the pathway
+     *
+     * @param userPathway pathway of the picture
+     * @return The username of the user with the ID in the parameter
+     */
     public void saveImage(String userPathway) throws IOException;
+
+    /**
+     * Accesses the user's userID, and sets the photoID to the same number 
+     *
+     * @return The newly created Photo ID
+     */
+    public String createPhotoID();
+
+    /**
+     * Returns the profile pic image
+     *
+     * @return The profile picture
+     */
+    public BufferedImage getImage();
 }
