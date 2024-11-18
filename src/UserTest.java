@@ -513,5 +513,24 @@ public class UserTest {
             System.out.println("Clearing UserIdFile should not fail");
         }
     }
+
+    @Test
+    public void testFindUsernameFromID() {
+        // Create User object
+        String testID = "U_1234";
+        String testUsername = "TestUser";
+        User testUser = new User(testUsername, "password123");
+        testUser.setUserID(testID);
+        testUser.createNewUser(testUsername, "password123", testID); // Save user
+
+        // Ensure username is correctly found
+        String result = testUser.findUsernameFromID(testID);
+        File testFile = new File("Sample Test Folder/" + testUser.getUserID() + ".txt");
+        testFile.delete();
+
+        assertEquals("testFindUsernameFromID: Improper username returned",
+                testUsername, result);
+    }
+
 }
 
