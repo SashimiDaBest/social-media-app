@@ -115,6 +115,8 @@ public final class WelcomePageServer {
                         }
                     }
 
+                } else if (mainChoice.equals("3")) {
+                    break;
                 } else { // Invalid response
                     continue;
                 }

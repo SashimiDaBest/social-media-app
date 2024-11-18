@@ -26,7 +26,7 @@ import java.util.ArrayList;
  * @since 1.0
  */
 //TODO: remember to close br and bw later on
-public class SimpleServer implements Runnable{
+public class SimpleServer implements Runnable {
     private static int PORT = 12;
     private Socket socket;
 
