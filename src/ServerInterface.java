@@ -6,7 +6,9 @@ import object.User;
 /**
  * Interface representing the basic operations that a simple server should provide. 
  * This interface defines methods to start and stop the server, as well as retrieve 
- * lists of users and chats handled by the server. Any class implementing this 
+ * lists of users and chats handled by the server. Any class implementing this
+ * @author Derek Mctume
+ * @version 1.0
  * interface must provide concrete implementations of these methods.
  */
 public interface ServerInterface {

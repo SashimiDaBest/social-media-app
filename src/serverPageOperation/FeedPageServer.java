@@ -45,7 +45,8 @@ public final class FeedPageServer {
      * @param users List of all users in the system
      * @param chats List of all chats in the system
      */
-    public static void feedPageOperation(BufferedReader br, BufferedWriter bw, User user, ArrayList<User> users, ArrayList<Chat> chats) {
+    public static void feedPageOperation(BufferedReader br,
+                                         BufferedWriter bw, User user, ArrayList<User> users, ArrayList<Chat> chats) {
         System.out.println("This is feed page");
         boolean continueFeed = true;
 
@@ -61,8 +62,9 @@ public final class FeedPageServer {
 
                     // Write list of available users to chat with to the client
                     String listOfAvailableUsers = "";
-                    for (int i = 0; i < users.size(); i++) {
-                        if (!users.get(i).getUserID().equals(user.getUserID())) {   // <- Do not include the logged-in user
+                    for (int i = 0;
+                         i < users.size(); i++) {
+                        if (!users.get(i).getUserID().equals(user.getUserID())) {
                             listOfAvailableUsers += users.get(i).getUsername() + ";";
                         }
                     }
@@ -210,18 +212,24 @@ public final class FeedPageServer {
                                 if (chats.get(chatIndex).getMessageList().size() < 10)
                                     startingMessageIndex = 0;
                                 else
-                                    startingMessageIndex = chats.get(chatIndex).getMessageList().size() - 10;
+                                    startingMessageIndex =
+                                            chats.get(chatIndex).getMessageList().size() - 10;
 
                                 // Display the 10 recent messages in the chat.
                                 chatContent += ";;[Displaying up to 10 most recent messages]";
-                                for (int i = startingMessageIndex; i < chats.get(chatIndex).getMessageList().size(); i++) {
+                                for (int i = startingMessageIndex;
+                                     i < chats.get(chatIndex).getMessageList().size();
+                                     i++) {
 
-                                    // If the author is the logged-in user, display "You:" as the sender. Otherwise, display
+                                    // If the author is the logged-in user, display
+                                    // "You:" as the sender. Otherwise, display
                                     // the author's username.
-                                    if (chats.get(chatIndex).getMessageList().get(i).getAuthorID().equals(user.getUserID())) {
+                                    if (chats.get(chatIndex).getMessageList().get(i).getAuthorID().
+                                            equals(user.getUserID())) {
                                         chatContent += ";You: ";
                                     } else {
-                                        chatContent += ";" + User.findUsernameFromID(chats.get(chatIndex).getMessageList().
+                                        chatContent += ";" + User.findUsernameFromID(chats.get(chatIndex).
+                                                getMessageList().
                                                 get(i).getAuthorID()) + ": ";
                                     }
 
@@ -245,7 +253,9 @@ public final class FeedPageServer {
                                     case "1":
                                         // Compose message
                                         String messageToCompose = br.readLine();
-                                        chats.get(chatIndex).addMessage(new Message(user.getUserID(), 0, messageToCompose));
+                                        chats.get(chatIndex).addMessage(new Message(user.getUserID(),
+                                                0,
+                                                messageToCompose));
                                         break;
                                     case "2":
                                         // Delete previous message
@@ -270,7 +280,7 @@ public final class FeedPageServer {
                     // Write list of available users to view to the client
                     String listOfAvailableUsers = "";
                     for (int i = 0; i < users.size(); i++) {
-                        if (!users.get(i).getUserID().equals(user.getUserID())) {   // <- Do not include the logged-in user
+                        if (!users.get(i).getUserID().equals(user.getUserID())) {   // <- Do not include the log-in user
                             listOfAvailableUsers += users.get(i).getUsername();
 
                             // Separate list of users with semicolons

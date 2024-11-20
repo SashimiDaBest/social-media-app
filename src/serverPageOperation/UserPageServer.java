@@ -45,7 +45,8 @@ public final class UserPageServer {
      * @param users List of all users in the system
      * @param chats List of all chats in the system
      */
-    public static void userPageOperation(BufferedReader br, BufferedWriter bw, User user, ArrayList<User> users, ArrayList<Chat> chats) {
+    public static void userPageOperation(BufferedReader br, BufferedWriter bw, User user, ArrayList<User> users,
+                                         ArrayList<Chat> chats) {
         System.out.println("This is the user page.");
         System.out.println("Username: " + user.getUsername());
         System.out.println("Account type: " + user.getAccountType());

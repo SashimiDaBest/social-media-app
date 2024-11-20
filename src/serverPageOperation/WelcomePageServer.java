@@ -20,8 +20,10 @@ import java.util.ArrayList;
  * <p>Features:</p>
  * <ul>
  *     <li>Sign-In: Validates the username and password provided by the client and grants access if correct.</li>
- *     <li>Sign-Up: Creates a new user account with a unique username and password if the provided details are valid.</li>
- *     <li>Redirect: Once the user is signed in or a new account is created successfully, the user is redirected to the feed page.</li>
+ *     <li>Sign-Up: Creates a new user account with a unique username and password if the provided details are
+ *     valid.</li>
+ *     <li>Redirect: Once the user is signed in or a new account is created successfully, the user is redirected to the
+ *     feed page.</li>
  * </ul>
  *
  * <p>Usage:</p>
@@ -44,7 +46,8 @@ public final class WelcomePageServer {
      * @param user  The user object to be updated upon successful sign-in or sign-up
      * @param users List of all users in the system
      */
-    public static void welcomePageOperation(BufferedReader br, BufferedWriter bw, User user, ArrayList<User> users, ArrayList<Chat> chats) {
+    public static void welcomePageOperation(BufferedReader br, BufferedWriter bw, User user, ArrayList<User> users,
+                                            ArrayList<Chat> chats) {
         System.out.println("This is welcome page");
         boolean isSignedIn = false;
 
@@ -106,7 +109,7 @@ public final class WelcomePageServer {
                             bw.flush();
                             break;
 
-                        // If new username/password is invalid
+                            // If new username/password is invalid
                         } catch (InvalidCreateAccountException e) {
                             bw.write("Invalid fields");
                             bw.newLine();

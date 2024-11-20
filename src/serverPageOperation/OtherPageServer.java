@@ -92,7 +92,7 @@ public final class OtherPageServer {
                             bw.write("");
                             UserPageServer.write(otherUser.getFollowerList(), bw);
                         }
-                        if (br.readLine().equals("CHANGE")){
+                        if (br.readLine().equals("CHANGE")) {
                             OtherPageServer.otherPageOperation(br, bw, user, users, chats);
                             break;
                         }
