@@ -1,5 +1,4 @@
 package object;
-
 import exception.InvalidFileFormatException;
 
 import java.io.*;
@@ -32,7 +31,7 @@ public class Chat implements ChatInterface {
     /** File to store a list of all chat IDs. */
     private static String chatIDListDoc = "chatIDList.txt";
 
-    private final String SAMPLE_FOLDER = "Sample Test Folder/";
+    private final String sampleFolder = "Sample Test Folder/";
 
     /**
      * Constructs a Chat object by reading data from an existing chat file.
@@ -137,7 +136,7 @@ public class Chat implements ChatInterface {
      * </p>
      */
     public synchronized void writeData() {
-        File chatData = new File(SAMPLE_FOLDER + this.chatID + ".txt");
+        File chatData = new File(sampleFolder + this.chatID + ".txt");
         try (PrintWriter writer = new PrintWriter(new FileOutputStream(chatData, false))) {
 
             writer.println(this.chatID);
