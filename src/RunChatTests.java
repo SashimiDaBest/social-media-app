@@ -170,6 +170,12 @@ public class RunChatTests {
 
     @Test
     public void testAddMessage() {
+        // Clear chat ID list files
+        try {
+            PrintWriter clear = new PrintWriter(new FileOutputStream("chatIDList.txt"));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
 
         Chat testChat;
         ArrayList<String> memberIDs = new ArrayList<>();
@@ -195,7 +201,8 @@ public class RunChatTests {
 
         // Parse chatData
         ArrayList<String> fileData = new ArrayList<>();
-        try (BufferedReader bReader = new BufferedReader(new FileReader("Sample Test Folder/" + testChat.getChatID() + ".txt"))) {
+        try (BufferedReader bReader = new BufferedReader(new FileReader("Sample Test Folder/" + testChat.getChatID() +
+                ".txt"))) {
 
             String line = bReader.readLine();
             while (line != null) {
@@ -235,7 +242,7 @@ public class RunChatTests {
 
         // Delete files used for testing
         File createdFile = new File("Sample Test Folder/C_0000.txt");
-        if(createdFile.exists())
+        if (createdFile.exists())
             createdFile.delete();
 
         // Clear list of chat IDs
@@ -274,7 +281,8 @@ public class RunChatTests {
 
         // Check if writeData() accurately represents the changes
         ArrayList<String> fileData = new ArrayList<>();
-        try (BufferedReader bReader = new BufferedReader(new FileReader("Sample Test Folder/" + testChat1.getChatID() + ".txt"))) {
+        try (BufferedReader bReader = new BufferedReader(new FileReader("Sample Test Folder/" + testChat1.getChatID() +
+                ".txt"))) {
 
             String line = bReader.readLine();
             while (line != null) {
@@ -299,7 +307,7 @@ public class RunChatTests {
 
         // Delete files used for testing
         File createdFile = new File("Sample Test Folder/C_0000.txt");
-        if(createdFile.exists())
+        if (createdFile.exists())
             createdFile.delete();
 
         // Clear list of chat IDs
@@ -312,6 +320,13 @@ public class RunChatTests {
 
     @Test
     public void testEditMessage() {
+        // Clear chat ID list
+        try {
+            PrintWriter clear = new PrintWriter(new FileOutputStream("chatIDList.txt"));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
         // Create a new Chat with placeholder members and messages.
         ArrayList<String> memberIDs = new ArrayList<>();
         memberIDs.add("U_0001");
@@ -330,8 +345,8 @@ public class RunChatTests {
                 "this is a new message", testChat.getMessageList().get(0).getMessage());
 
         // Delete files used for testing
-        File createdFile = new File("C_0000.txt");
-        if(createdFile.exists())
+        File createdFile = new File("Sample Test Folder/" + testChat.getChatID() + ".txt");
+        if (createdFile.exists())
             createdFile.delete();
 
         // Clear list of chat IDs
