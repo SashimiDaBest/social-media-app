@@ -1,5 +1,5 @@
 import clientPageOperation.WelcomePageClient;
-import uiPage.*;
+// import uiPage.*;
 
 import java.net.Socket;
 import java.io.*;
@@ -37,12 +37,12 @@ public class ClientHandler implements Runnable {
     private CardLayout cardLayout;
     private JPanel cardPanel;
 
-    // UI pages
-    private WelcomePage welcomePage;
-    private CreateUserPage createUserPage;
-    private FeedViewPage feedViewPage;
-    private UserProfilePage userProfilePage;
-    private OtherProfilePage otherProfilePage;
+    // // UI pages
+    // private WelcomePage welcomePage;
+    // private CreateUserPage createUserPage;
+    // private FeedViewPage feedViewPage;
+    // private UserProfilePage userProfilePage;
+    // private OtherProfilePage otherProfilePage;
 
     /**
      * Constructs a ClientHandler object to manage the client-server connection.
