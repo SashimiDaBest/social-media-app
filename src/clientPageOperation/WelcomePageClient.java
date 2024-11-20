@@ -16,7 +16,7 @@ import java.util.Scanner;
  * <ul>
  *     <li>Sign In: Prompts the user for their username and password and validates them with the server.</li>
  *     <li>Sign Up: Collects a new username and password for account creation and validates them with the server.</li>
- *     <li>Retry or Create Account: Offers options to retry signing in or create a new account if the sign-in fails.</li>
+ *     <li>Retry or Create Account: Offers option to retry signing in or create a new account if the sign-in fails.</li>
  *     <li>Redirect: Navigates to the feed page upon successful sign-in or account creation.</li>
  * </ul>
  *
@@ -80,7 +80,7 @@ public final class WelcomePageClient {
 
                         } else if (messageFromServer.equals("Sign-in was unsuccessful")) {
 
-                            while(true) {
+                            while (true) {
                                 System.out.println("1 - Retry signing in\n2 - Create account\n3 - Quit\n");
 
                                 signUpDecision = scanner.nextLine();
@@ -102,7 +102,7 @@ public final class WelcomePageClient {
                 // for creating a new account
                 } else if (mainChoice.equals("2")) {
 
-                    while(true) {
+                    while (true) {
                         System.out.println("New usernames cannot contain semicolons!");
                         System.out.print("New Username: ");
                         String username = scanner.nextLine();
@@ -128,7 +128,7 @@ public final class WelcomePageClient {
                         }
                     }
 
-                } else if(mainChoice.equals("3")) {
+                } else if (mainChoice.equals("3")) {
                     UserPageClient.write(mainChoice, bw);
                     try {
                         if (bw != null) {
@@ -144,8 +144,7 @@ public final class WelcomePageClient {
                         e.printStackTrace();
                     }
                     break;
-                }
-                else {
+                } else {
                     System.out.println("Invalid main input, please try again");
                     continue;
                 }
