@@ -85,7 +85,8 @@ public class ClientHandler implements Runnable {
     public void run() {
         Scanner scanner = new Scanner(System.in);
         WelcomePageClient.welcomePage(scanner, br, bw, socket);
-        /*
+
+
             frame = new JFrame("Boiler Gram");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setLocationRelativeTo(null);
@@ -108,54 +109,7 @@ public class ClientHandler implements Runnable {
 
             frame.add(cardPanel);
             frame.setVisible(true);
-//            setupActionListeners();
-            out.write("hello");
-           */
+
+            cardLayout.show(frame.getContentPane(), "welcomePage");
     }
-
-    /*
-    private void setupActionListeners() {
-
-        welcomePage.getSignInButton().addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String username = welcomePage.getUsernameField().getText();
-                char[] password = welcomePage.getPasswordField().getPassword();
-                String passwordString = new String(password);
-
-                if (username == null || password == null) {
-                    JOptionPane.showMessageDialog(null, "ERROR CONDITION", "Error", JOptionPane.ERROR_MESSAGE);
-                } else {
-                    String userID = ""; //replace this with method to find userID based on username
-//                    user = new User(userID);
-                    cardLayout.show(cardPanel, "feedViewPage");
-                }
-            }
-        });
-
-        welcomePage.getNewAccountButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cardLayout.show(cardPanel, "createUserPage");
-            }
-        });
-
-        createUserPage.getSignUpButtonButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String username = welcomePage.getUsernameField().getText();
-                char[] password = welcomePage.getPasswordField().getPassword();
-                String passwordString = new String(password);
-
-                if (username == null || password == null) {
-                    JOptionPane.showMessageDialog(null, "ERROR CONDITION", "Error", JOptionPane.ERROR_MESSAGE);
-                } else {
-                    String userID = ""; // Replace with method to find userID based on username
-//                    user = new User(userID);
-                    cardLayout.show(cardPanel, "feedViewPage");
-                }
-            }
-
-        });
-    }
-     */
 }

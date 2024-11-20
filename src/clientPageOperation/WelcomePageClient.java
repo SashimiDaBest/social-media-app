@@ -1,5 +1,7 @@
 package clientPageOperation;
 
+import java.net.Socket;
+import java.util.Scanner;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -154,4 +156,50 @@ public final class WelcomePageClient {
             throw new RuntimeException(e);
         }
     }
+
+    /*
+    private void setupActionListeners() {
+
+        welcomePage.getSignInButton().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String username = welcomePage.getUsernameField().getText();
+                char[] password = welcomePage.getPasswordField().getPassword();
+                String passwordString = new String(password);
+
+                if (username == null || password == null) {
+                    JOptionPane.showMessageDialog(null, "ERROR CONDITION", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    String userID = ""; //replace this with method to find userID based on username
+//                    user = new User(userID);
+                    cardLayout.show(cardPanel, "feedViewPage");
+                }
+            }
+        });
+
+        welcomePage.getNewAccountButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(cardPanel, "createUserPage");
+            }
+        });
+
+        createUserPage.getSignUpButtonButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String username = welcomePage.getUsernameField().getText();
+                char[] password = welcomePage.getPasswordField().getPassword();
+                String passwordString = new String(password);
+
+                if (username == null || password == null) {
+                    JOptionPane.showMessageDialog(null, "ERROR CONDITION", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    String userID = ""; // Replace with method to find userID based on username
+//                    user = new User(userID);
+                    cardLayout.show(cardPanel, "feedViewPage");
+                }
+            }
+
+        });
+    }
+     */
 }
