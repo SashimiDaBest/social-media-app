@@ -3,7 +3,6 @@ import object.*;
 import serverPageOperation.WelcomePageServer;
 
 import java.io.*;
-import java.util.concurrent.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -22,12 +21,13 @@ import java.util.ArrayList;
  * </p>
  *
  * @author Soleil Pham
+ * @author Connor Pugliese
+ * @author Derek McTume
  * @version 11/01/2024
  * @since 1.0
  */
-//TODO: remember to close br and bw later on
 public class SimpleServer implements Runnable {
-    private static int PORT = 12;
+    private static int port = 12;
     private Socket socket;
 
     // List of all users and chats in the system
@@ -45,7 +45,7 @@ public class SimpleServer implements Runnable {
      * @param port The port number on which the server will listen for client connections
      * @throws IOException If an I/O error occurs while setting up the server socket
      */
-    public SimpleServer(Socket socket) throws IOException{
+    public SimpleServer(Socket socket) throws IOException {
         this.socket = socket;
         users = new ArrayList<>();
         chats = new ArrayList<>();
@@ -60,7 +60,8 @@ public class SimpleServer implements Runnable {
         File[] chatFiles = dataDirectory.listFiles((ignored, name) -> name.startsWith("C_"));
         for (File chatFile : chatFiles) {
             try {
-                chats.add(new Chat(chatFile.getAbsolutePath().substring(0, chatFile.getAbsolutePath().lastIndexOf("."))));
+                chats.add(new Chat(chatFile.getAbsolutePath().substring(0,
+                        chatFile.getAbsolutePath().lastIndexOf("."))));
             } catch (InvalidFileFormatException e) {
                 throw new RuntimeException(e);
             }
@@ -83,8 +84,8 @@ public class SimpleServer implements Runnable {
      * @throws IOException If an I/O error occurs during communication
      */
     @Override
-    public void run(){
-        System.out.println("Server is listening on port " + PORT);
+    public void run() {
+        System.out.println("Server is listening on port " + port);
         try {
 
             // Set up input and output streams
@@ -133,7 +134,7 @@ public class SimpleServer implements Runnable {
         ServerSocket serverSocket = null;
         try {
             
-            serverSocket = new ServerSocket(PORT);
+            serverSocket = new ServerSocket(port);
 
             while (true) {
                 Socket socket = serverSocket.accept();
