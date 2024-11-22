@@ -1,11 +1,17 @@
 package uiPage;
 
+import clientPageOperation.UserPageClient;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
 import javax.swing.border.EmptyBorder;
 
 public class WelcomePage extends JPanel {
-
     private String username;
     private String password;
 
@@ -18,7 +24,17 @@ public class WelcomePage extends JPanel {
     private JLabel newAccount = new JLabel("Don't have an account?", JLabel.CENTER);
     private JButton newAccountButton = new JButton("Sign Up");
 
-    public WelcomePage(CardLayout cardLayout, JPanel cardPanel) {
+    private CardLayout cardLayout;
+    private JPanel cardPanel;
+    private BufferedReader bufferedReader;
+    private BufferedWriter bufferedWriter;
+
+    public WelcomePage(CardLayout cardLayout, JPanel cardPanel, BufferedWriter bufferedWriter, BufferedReader bufferedReader) {
+        this.cardLayout = cardLayout;
+        this.cardPanel = cardPanel;
+        this.bufferedWriter = bufferedWriter;
+        this.bufferedReader = bufferedReader;
+
         setLayout(new BorderLayout());
 
         //1st Panel - Title
@@ -87,8 +103,8 @@ public class WelcomePage extends JPanel {
         ultimatePanel.add(optionsPanel);
 
         add(ultimatePanel, BorderLayout.CENTER);
+        setupActionListeners();
     }
-
 
     public JButton getSignInButton() {
         return signInButton;
@@ -106,4 +122,74 @@ public class WelcomePage extends JPanel {
         return passwordField;
     }
 
+    public JButton getSignUpButton() {
+        return signInButton;
+    }
+
+    private void setupActionListeners() {
+
+        getSignInButton().addActionListener(e -> System.out.println("Clicked"));
+
+        getSignInButton().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String username = getUsernameField().getText();
+                String password = new String(getPasswordField().getPassword());
+                UserPageClient.write(username, bufferedWriter);
+                UserPageClient.write(password, bufferedWriter);
+
+                String messageFromServer = "";
+                try {
+                    messageFromServer = bufferedReader.readLine();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                if (messageFromServer.equals("Successful sign-in")) {
+                    System.out.println("You have entered the user feed!");
+                    cardLayout.show(cardPanel, "feedViewPage");
+                } else if (messageFromServer.equals("Sign-in was unsuccessful")) {
+                    JOptionPane.showMessageDialog(null, "ERROR CONDITION", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+
+            }
+        });
+
+        getNewAccountButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(cardPanel, "createUserPage");
+            }
+        });
+
+        getSignUpButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String username = getUsernameField().getText();
+                String password = new String(getPasswordField().getPassword());
+                UserPageClient.write(username, bufferedWriter);
+                UserPageClient.write(password, bufferedWriter);
+
+                System.out.println("New usernames cannot contain semicolons!");
+                System.out.println("New passwords must contain a letter and a number, " +
+                        "be at least 10 characters, and cannot contain semicolons!");
+
+                String messageFromServer = "";
+                try {
+                    messageFromServer = bufferedReader.readLine();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                if (messageFromServer.equals("User creation successful")) {
+                    System.out.println("Successfuly created new account!");
+                    cardLayout.show(cardPanel, "feedViewPage");
+
+                } else if (messageFromServer.equals("Invalid fields")) {
+                    System.out.println("One of the fields is invalid, please try again");
+                    JOptionPane.showMessageDialog(null, "ERROR CONDITION", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+
+        });
+    }
 }

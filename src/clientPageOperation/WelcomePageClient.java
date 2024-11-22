@@ -49,103 +49,15 @@ public final class WelcomePageClient {
      * Displays the welcome page and handles user input for signing in or signing up.
      * Redirects to the feed page upon successful sign-in or account creation.
      *
-     * @param scanner Scanner object for reading user input
      * @param br      BufferedReader for reading responses from the server
      * @param bw      BufferedWriter for sending data to the server
      * @param socket  Socket
      */
-    public static void welcomePage(Scanner scanner, BufferedReader br, BufferedWriter bw, Socket socket, WelcomePage welcomePageUI, CreateUserPage createUserPageUI, CardLayout cardLayout, JPanel cardPanel) throws IOException {
+    public static void welcomePage(BufferedReader br, BufferedWriter bw, Socket socket, WelcomePage welcomePageUI, CreateUserPage createUserPageUI, CardLayout cardLayout, JPanel cardPanel) throws IOException {
         WelcomePageClient.welcomePageUI = welcomePageUI;
         WelcomePageClient.createUserPageUI = createUserPageUI;
         bufferedReader = br;
         bufferedWriter = bw;
-        setupActionListeners();
-        /*
-                } else if(mainChoice.equals("3")) {
-                    UserPageClient.write(mainChoice, bw);
-                    try {
-                        if (bw != null) {
-                            bw.close(); // Close BufferedWriter
-                        }
-                        if (br != null) {
-                            br.close(); // Close BufferedReader
-                        }
-                        if (socket != null && !socket.isClosed()) {
-                            socket.close(); // Close the socket
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                }
-             */
-        setupActionListeners();
-    }
-
-    private static void setupActionListeners() {
-
-        welcomePageUI.getSignInButton().addActionListener(e -> System.out.println("Clicked"));
-
-        welcomePageUI.getSignInButton().addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String username = welcomePageUI.getUsernameField().getText();
-                String password = new String(welcomePageUI.getPasswordField().getPassword());
-                UserPageClient.write(username, bufferedWriter);
-                UserPageClient.write(password, bufferedWriter);
-
-                String messageFromServer = "";
-                try {
-                    messageFromServer = bufferedReader.readLine();
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
-
-                if (messageFromServer.equals("Successful sign-in")) {
-                    System.out.println("You have entered the user feed!");
-                    cardLayout.show(cardPanel, "feedViewPage");
-                } else if (messageFromServer.equals("Sign-in was unsuccessful")) {
-                    JOptionPane.showMessageDialog(null, "ERROR CONDITION", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-
-            }
-        });
-
-        welcomePageUI.getNewAccountButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cardLayout.show(cardPanel, "createUserPage");
-            }
-        });
-
-        createUserPageUI.getSignUpButtonButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String username = welcomePageUI.getUsernameField().getText();
-                String password = new String(welcomePageUI.getPasswordField().getPassword());
-                UserPageClient.write(username, bufferedWriter);
-                UserPageClient.write(password, bufferedWriter);
-
-                System.out.println("New usernames cannot contain semicolons!");
-                System.out.println("New passwords must contain a letter and a number, " +
-                        "be at least 10 characters, and cannot contain semicolons!");
-
-                String messageFromServer = "";
-                try {
-                    messageFromServer = bufferedReader.readLine();
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
-
-                if (messageFromServer.equals("User creation successful")) {
-                    System.out.println("Successfuly created new account!");
-                    cardLayout.show(cardPanel, "feedViewPage");
-
-                } else if (messageFromServer.equals("Invalid fields")) {
-                    System.out.println("One of the fields is invalid, please try again");
-                    JOptionPane.showMessageDialog(null, "ERROR CONDITION", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-
-        });
+//        setupActionListeners();
     }
 }

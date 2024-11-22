@@ -83,37 +83,44 @@ public class ClientHandler implements Runnable {
      */
     @Override
     public void run() {
-        Scanner scanner = new Scanner(System.in);
-
-            frame = new JFrame("Boiler Gram");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setLocationRelativeTo(null);
-            frame.setSize(600, 400);
-
-            cardLayout = new CardLayout();
-            cardPanel = new JPanel(cardLayout);
-
-            welcomePage = new WelcomePage(cardLayout, cardPanel);
-            createUserPage = new CreateUserPage(cardLayout, cardPanel);
-            feedViewPage = new FeedViewPage(cardLayout, cardPanel);
-            userProfilePage = new UserProfilePage(cardLayout, cardPanel);
-            otherProfilePage = new OtherProfilePage(cardLayout, cardPanel);
-
-            cardPanel.add(welcomePage, "welcomePage");
-            cardPanel.add(createUserPage, "createUserPage");
-            cardPanel.add(feedViewPage, "feedViewPage");
-            cardPanel.add(userProfilePage, "userProfilePage");
-            cardPanel.add(otherProfilePage, "otherProfilePage");
-
-            frame.add(cardPanel);
-            frame.setVisible(true);
-
-//            cardLayout.show(frame.getContentPane(), "welcomePage");
-
         try {
-            WelcomePageClient.welcomePage(scanner, br, bw, socket, welcomePage, createUserPage, cardLayout, cardPanel);
+            SwingUtilities.invokeLater(() -> {
+                frame = new JFrame("Boiler Gram");
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.setLocationRelativeTo(null);
+                frame.setSize(600, 400);
+
+                cardLayout = new CardLayout();
+                cardPanel = new JPanel(cardLayout);
+
+                welcomePage = new WelcomePage(cardLayout, cardPanel, bw, br);
+                createUserPage = new CreateUserPage(cardLayout, cardPanel);
+                feedViewPage = new FeedViewPage(cardLayout, cardPanel);
+                userProfilePage = new UserProfilePage(cardLayout, cardPanel);
+                otherProfilePage = new OtherProfilePage(cardLayout, cardPanel);
+
+                cardPanel.add(welcomePage, "welcomePage");
+                cardPanel.add(createUserPage, "createUserPage");
+                cardPanel.add(feedViewPage, "feedViewPage");
+                cardPanel.add(userProfilePage, "userProfilePage");
+                cardPanel.add(otherProfilePage, "otherProfilePage");
+
+                frame.add(cardPanel);
+                frame.setVisible(true);
+                cardLayout.show(cardPanel, "welcomePage");
+            });
+
+            WelcomePageClient.welcomePage(br, bw, socket, welcomePage, createUserPage, cardLayout, cardPanel);
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (br != null) br.close();
+                if (bw != null) bw.close();
+                if (socket != null) socket.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 }
