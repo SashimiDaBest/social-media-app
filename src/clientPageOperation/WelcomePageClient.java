@@ -1,5 +1,7 @@
 package clientPageOperation;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.net.Socket;
 import java.util.Scanner;
 import java.io.BufferedReader;
@@ -7,6 +9,13 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Scanner;
+
+import uiPage.*;
+import java.io.*;
+import javax.swing.*;
+import java.awt.*;
+
+import uiPage.WelcomePage;
 
 /**
  * The WelcomePageClient class handles the user interface for the initial sign-in
@@ -18,7 +27,7 @@ import java.util.Scanner;
  * <ul>
  *     <li>Sign In: Prompts the user for their username and password and validates them with the server.</li>
  *     <li>Sign Up: Collects a new username and password for account creation and validates them with the server.</li>
- *     <li>Retry or Create Account: Offers option to retry signing in or create a new account if the sign-in fails.</li>
+ *     <li>Retry or Create Account: Offers options to retry signing in or create a new account if the sign-in fails.</li>
  *     <li>Redirect: Navigates to the feed page upon successful sign-in or account creation.</li>
  * </ul>
  *
@@ -28,6 +37,10 @@ import java.util.Scanner;
 
 public final class WelcomePageClient {
 
+    private static WelcomePage welcomePageUI;
+    private static CardLayout cardLayout;
+    private static JFrame cardPanel;
+    private static CreateUserPage createUserPageUI;
     /**
      * Displays the welcome page and handles user input for signing in or signing up.
      * Redirects to the feed page upon successful sign-in or account creation.
@@ -37,8 +50,9 @@ public final class WelcomePageClient {
      * @param bw      BufferedWriter for sending data to the server
      * @param socket  Socket
      */
-    public static void welcomePage(Scanner scanner, BufferedReader br, BufferedWriter bw, Socket socket) {
+    public static void welcomePage(Scanner scanner, BufferedReader br, BufferedWriter bw, Socket socket, WelcomePage welcomePageUI, CreateUserPage createUserPageUI, CardLayout cardLayout, JPanel cardPanel) throws IOException {
         try {
+            welcomePageUI = welcomePageUI;
             boolean isSignedIn = false;
             String signUpDecision = "";
             String mainChoice = "";
@@ -82,7 +96,7 @@ public final class WelcomePageClient {
 
                         } else if (messageFromServer.equals("Sign-in was unsuccessful")) {
 
-                            while (true) {
+                            while(true) {
                                 System.out.println("1 - Retry signing in\n2 - Create account\n3 - Quit\n");
 
                                 signUpDecision = scanner.nextLine();
@@ -104,7 +118,7 @@ public final class WelcomePageClient {
                 // for creating a new account
                 } else if (mainChoice.equals("2")) {
 
-                    while (true) {
+                    while(true) {
                         System.out.println("New usernames cannot contain semicolons!");
                         System.out.print("New Username: ");
                         String username = scanner.nextLine();
@@ -130,7 +144,7 @@ public final class WelcomePageClient {
                         }
                     }
 
-                } else if (mainChoice.equals("3")) {
+                } else if(mainChoice.equals("3")) {
                     UserPageClient.write(mainChoice, bw);
                     try {
                         if (bw != null) {
@@ -146,7 +160,8 @@ public final class WelcomePageClient {
                         e.printStackTrace();
                     }
                     break;
-                } else {
+                }
+                else {
                     System.out.println("Invalid main input, please try again");
                     continue;
                 }
@@ -157,13 +172,12 @@ public final class WelcomePageClient {
         }
     }
 
-    /*
     private void setupActionListeners() {
 
-        welcomePage.getSignInButton().addActionListener(new ActionListener() {
+        welcomePageUI.getSignInButton().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String username = welcomePage.getUsernameField().getText();
-                char[] password = welcomePage.getPasswordField().getPassword();
+                String username = welcomePageUI.getUsernameField().getText();
+                char[] password = welcomePageUI.getPasswordField().getPassword();
                 String passwordString = new String(password);
 
                 if (username == null || password == null) {
@@ -176,18 +190,18 @@ public final class WelcomePageClient {
             }
         });
 
-        welcomePage.getNewAccountButton().addActionListener(new ActionListener() {
+        welcomePageUI.getNewAccountButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 cardLayout.show(cardPanel, "createUserPage");
             }
         });
 
-        createUserPage.getSignUpButtonButton().addActionListener(new ActionListener() {
+        createUserPageUI.getSignUpButtonButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String username = welcomePage.getUsernameField().getText();
-                char[] password = welcomePage.getPasswordField().getPassword();
+                String username = welcomePageUI.getUsernameField().getText();
+                char[] password = welcomePageUI.getPasswordField().getPassword();
                 String passwordString = new String(password);
 
                 if (username == null || password == null) {
@@ -201,5 +215,4 @@ public final class WelcomePageClient {
 
         });
     }
-     */
 }
