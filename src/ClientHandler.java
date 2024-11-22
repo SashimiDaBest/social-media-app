@@ -1,5 +1,5 @@
 import clientPageOperation.WelcomePageClient;
-// import uiPage.*;
+import uiPage.*;
 
 import java.net.Socket;
 import java.io.*;
@@ -37,12 +37,12 @@ public class ClientHandler implements Runnable {
     private CardLayout cardLayout;
     private JPanel cardPanel;
 
-    // // UI pages
-    // private WelcomePage welcomePage;
-    // private CreateUserPage createUserPage;
-    // private FeedViewPage feedViewPage;
-    // private UserProfilePage userProfilePage;
-    // private OtherProfilePage otherProfilePage;
+     // UI pages
+     private WelcomePage welcomePage;
+     private CreateUserPage createUserPage;
+     private FeedViewPage feedViewPage;
+     private UserProfilePage userProfilePage;
+     private OtherProfilePage otherProfilePage;
 
     /**
      * Constructs a ClientHandler object to manage the client-server connection.
@@ -84,8 +84,6 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         Scanner scanner = new Scanner(System.in);
-        WelcomePageClient.welcomePage(scanner, br, bw, socket);
-
 
             frame = new JFrame("Boiler Gram");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -110,6 +108,12 @@ public class ClientHandler implements Runnable {
             frame.add(cardPanel);
             frame.setVisible(true);
 
-            cardLayout.show(frame.getContentPane(), "welcomePage");
+//            cardLayout.show(frame.getContentPane(), "welcomePage");
+
+        try {
+            WelcomePageClient.welcomePage(scanner, br, bw, socket, welcomePage, createUserPage, cardLayout, cardPanel);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
