@@ -123,7 +123,7 @@ public class WelcomePage extends JPanel {
     }
 
     public JButton getSignUpButton() {
-        return signInButton;
+        return newAccountButton;
     }
 
     private void setupActionListeners() {
@@ -140,8 +140,13 @@ public class WelcomePage extends JPanel {
                 String messageFromServer = "";
                 try {
                     messageFromServer = bufferedReader.readLine();
+                    if (messageFromServer == null) {
+                        throw new IOException("Server closed the connection");
+                    }
+                    // Process the message
                 } catch (IOException ex) {
-                    throw new RuntimeException(ex);
+                    ex.printStackTrace(); // Log for debugging
+                    JOptionPane.showMessageDialog(null, "Communication error with the server. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
 
                 if (messageFromServer.equals("Successful sign-in")) {
@@ -166,6 +171,16 @@ public class WelcomePage extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 String username = getUsernameField().getText();
                 String password = new String(getPasswordField().getPassword());
+
+                if (username.contains(";") || username.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Invalid username", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                if (password.length() < 10 || !password.matches(".*[a-zA-Z].*") || !password.matches(".*[0-9].*")) {
+                    JOptionPane.showMessageDialog(null, "Password must be at least 10 characters long, contain a letter and a number", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
                 UserPageClient.write(username, bufferedWriter);
                 UserPageClient.write(password, bufferedWriter);
 
@@ -176,8 +191,13 @@ public class WelcomePage extends JPanel {
                 String messageFromServer = "";
                 try {
                     messageFromServer = bufferedReader.readLine();
+                    if (messageFromServer == null) {
+                        throw new IOException("Server closed the connection");
+                    }
+                    // Process the message
                 } catch (IOException ex) {
-                    throw new RuntimeException(ex);
+                    ex.printStackTrace(); // Log for debugging
+                    JOptionPane.showMessageDialog(null, "Communication error with the server. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
 
                 if (messageFromServer.equals("User creation successful")) {

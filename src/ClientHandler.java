@@ -1,9 +1,7 @@
-import clientPageOperation.WelcomePageClient;
 import uiPage.*;
 
 import java.net.Socket;
 import java.io.*;
-import java.util.Scanner;
 import javax.swing.*;
 import java.awt.*;
 
@@ -110,8 +108,7 @@ public class ClientHandler implements Runnable {
                 cardLayout.show(cardPanel, "welcomePage");
             });
 
-            WelcomePageClient.welcomePage(br, bw, socket, welcomePage, createUserPage, cardLayout, cardPanel);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
             try {
