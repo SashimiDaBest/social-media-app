@@ -1,6 +1,5 @@
 package uiPage;
 
-import clientPageOperation.FeedPageClient;
 import clientPageOperation.OtherPageClient;
 import clientPageOperation.UserPageClient;
 
