@@ -125,6 +125,8 @@ public class WelcomePage extends JPanel {
     private void setupActionListeners() {
 
         getSignInButton().addActionListener(new ActionListener() {
+
+            @Override
             public void actionPerformed(ActionEvent e) {
                 JOptionPane.showMessageDialog(null, "sign in button clicked", "INFO", JOptionPane.INFORMATION_MESSAGE);
                 UserPageClient.write("1", bufferedWriter);

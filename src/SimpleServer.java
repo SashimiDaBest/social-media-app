@@ -94,6 +94,7 @@ public class SimpleServer implements Runnable {
 
             // Delegate the client request handling to WelcomePageServer
             WelcomePageServer.welcomePageOperation(br, bw, user, users, chats);
+            // if (socket.)
             
         } catch (Exception e) {
             System.out.println("Error accepting connection" + e.getMessage());

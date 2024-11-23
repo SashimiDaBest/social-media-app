@@ -92,7 +92,7 @@ public class ClientHandler implements Runnable {
                 cardPanel = new JPanel(cardLayout);
 
                 welcomePage = new WelcomePage(cardLayout, cardPanel, bw, br);
-                createUserPage = new CreateUserPage(cardLayout, cardPanel);
+                createUserPage = new CreateUserPage(cardLayout, cardPanel, br, bw);
                 feedViewPage = new FeedViewPage(cardLayout, cardPanel);
                 userProfilePage = new UserProfilePage(cardLayout, cardPanel);
                 otherProfilePage = new OtherProfilePage(cardLayout, cardPanel);
@@ -110,14 +110,15 @@ public class ClientHandler implements Runnable {
 
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            try {
-                if (br != null) br.close();
-                if (bw != null) bw.close();
-                if (socket != null) socket.close();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
+        // } finally {
+        //     try {
+        //         if (br != null) br.close();
+        //         if (bw != null) bw.close();
+        //         if (socket != null) socket.close();
+        //     } catch (IOException ex) {
+        //         ex.printStackTrace();
+        //     }
+        // }
         }
     }
 }

@@ -61,7 +61,12 @@ public final class WelcomePageServer {
 
                 // Wait for the client to choose an option (1 - Sign in, 2 - Sign up)
                 String mainChoice = br.readLine();
-
+                while (mainChoice == null) {
+                    mainChoice = br.readLine();
+                    
+                }
+                System.out.println("Received the message!");
+                
                 if (mainChoice.equals("1")) { // Sign in
                     while (true) {
                         String username = br.readLine();
