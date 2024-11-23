@@ -1,5 +1,6 @@
 package serverPageOperation;
 
+import exception.InvalidFileFormatException;
 import object.*;
 
 import java.io.BufferedReader;
@@ -33,6 +34,8 @@ import java.util.Arrays;
  * @since 11/16/2024
  */
 public final class FeedPageServer {
+
+    private static final Object LOCK = new Object();
 
     /**
      * Main method for handling feed page operations. Users can create chats,
@@ -249,28 +252,33 @@ public final class FeedPageServer {
 
                                 // Collect the client's decision and process accordingly.
                                 String chatDecision = br.readLine();
-                                switch (chatDecision) {
-                                    case "1":
-                                        // Compose message
-                                        String messageToCompose = br.readLine();
-                                        chats.get(chatIndex).addMessage(new Message(user.getUserID(),
-                                                0,
-                                                messageToCompose));
-                                        break;
-                                    case "2":
-                                        // Delete previous message
-                                        chats.get(chatIndex).deleteMessage(user.getUserID());
-                                        break;
-                                    case "3":
-                                        // Edit previous message
-                                        String replacementMessage = br.readLine();
-                                        chats.get(chatIndex).editMessage(replacementMessage, user.getUserID());
-                                        break;
-                                    case "4":
-                                        // End chat loop
-                                        viewChat = false;
-                                        break;
-                                }
+
+                                    switch (chatDecision) {
+                                        case "1":
+                                            // Compose message
+                                            chats.set(chatIndex, new Chat("Sample Test Folder/" + chats.get(chatIndex).getChatID()));
+                                            String messageToCompose = br.readLine();
+                                            chats.get(chatIndex).addMessage(new Message(user.getUserID(),
+                                                    0,
+                                                    messageToCompose));
+                                            break;
+                                        case "2":
+                                            // Delete previous message
+                                            chats.set(chatIndex, new Chat("Sample Test Folder/" + chats.get(chatIndex).getChatID()));
+                                            chats.get(chatIndex).deleteMessage(user.getUserID());
+                                            break;
+                                        case "3":
+                                            // Edit previous message
+                                            chats.set(chatIndex, new Chat("Sample Test Folder/" + chats.get(chatIndex).getChatID()));
+                                            String replacementMessage = br.readLine();
+                                            chats.get(chatIndex).editMessage(replacementMessage, user.getUserID());
+                                            break;
+                                        case "4":
+                                            // End chat loop
+                                            viewChat = false;
+                                            break;
+                                    }
+
                             } while (viewChat);
                         }
                     }
@@ -313,7 +321,7 @@ public final class FeedPageServer {
                 } else if (clientChosenOperation.equals("5")) {
                     continueFeed = false;
                 }
-            } catch (IOException e) {
+            } catch (IOException | InvalidFileFormatException e) {
                 throw new RuntimeException(e);
             }
         } while (continueFeed);

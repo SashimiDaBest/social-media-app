@@ -57,7 +57,7 @@ public final class UserPageClient {
                     "2 - View Follower\n" +
                     "3 - View Following\n" +
                     "4 - View Blocked\n" +
-                    "5 - Go Back to Feed View\n" + 
+                    "5 - Go Back to Feed View\n" +
                     "6 - Quit");
             String input = scanner.nextLine();
 
@@ -222,8 +222,10 @@ public final class UserPageClient {
         try {
             String line = br.readLine();
             while (line != null && !line.equals("END")) {
-                System.out.println(line);
-                line = br.readLine();
+                if (!line.equals("[EMPTY]")) {
+                    System.out.println(line);
+                }
+                    line = br.readLine();
             }
             return true;
         } catch (IOException e) {

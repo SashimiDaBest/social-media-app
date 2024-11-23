@@ -158,12 +158,19 @@ public final class UserPageServer {
 
     public static boolean write(ArrayList<String> people, BufferedWriter bw) {
         try {
-            for (String person : people) {
-                System.out.println("people: " + User.findUsernameFromID(person));
-                bw.write(User.findUsernameFromID(person));
+            if (!people.isEmpty() && !people.getFirst().isEmpty()) {
+                for (String person : people) {
+                    System.out.println("people: " + User.findUsernameFromID(person));
+                    bw.write(User.findUsernameFromID(person));
+                    bw.newLine();
+                    bw.flush();
+                }
+            } else {
+                bw.write("[EMPTY]");
                 bw.newLine();
                 bw.flush();
             }
+
             bw.write("END");
             bw.newLine();
             bw.flush();
