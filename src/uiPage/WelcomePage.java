@@ -122,16 +122,12 @@ public class WelcomePage extends JPanel {
         return passwordField;
     }
 
-    public JButton getSignUpButton() {
-        return newAccountButton;
-    }
-
     private void setupActionListeners() {
-
-        getSignInButton().addActionListener(e -> System.out.println("Clicked"));
 
         getSignInButton().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(null, "sign in button clicked", "INFO", JOptionPane.INFORMATION_MESSAGE);
+                UserPageClient.write("1", bufferedWriter);
                 String username = getUsernameField().getText();
                 String password = new String(getPasswordField().getPassword());
                 UserPageClient.write(username, bufferedWriter);
@@ -162,54 +158,9 @@ public class WelcomePage extends JPanel {
         getNewAccountButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(null, "create button clicked", "INFO", JOptionPane.INFORMATION_MESSAGE);
                 cardLayout.show(cardPanel, "createUserPage");
             }
-        });
-
-        getSignUpButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String username = getUsernameField().getText();
-                String password = new String(getPasswordField().getPassword());
-
-                if (username.contains(";") || username.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Invalid username", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-                if (password.length() < 10 || !password.matches(".*[a-zA-Z].*") || !password.matches(".*[0-9].*")) {
-                    JOptionPane.showMessageDialog(null, "Password must be at least 10 characters long, contain a letter and a number", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-
-                UserPageClient.write(username, bufferedWriter);
-                UserPageClient.write(password, bufferedWriter);
-
-                System.out.println("New usernames cannot contain semicolons!");
-                System.out.println("New passwords must contain a letter and a number, " +
-                        "be at least 10 characters, and cannot contain semicolons!");
-
-                String messageFromServer = "";
-                try {
-                    messageFromServer = bufferedReader.readLine();
-                    if (messageFromServer == null) {
-                        throw new IOException("Server closed the connection");
-                    }
-                    // Process the message
-                } catch (IOException ex) {
-                    ex.printStackTrace(); // Log for debugging
-                    JOptionPane.showMessageDialog(null, "Communication error with the server. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-
-                if (messageFromServer.equals("User creation successful")) {
-                    System.out.println("Successfuly created new account!");
-                    cardLayout.show(cardPanel, "feedViewPage");
-
-                } else if (messageFromServer.equals("Invalid fields")) {
-                    System.out.println("One of the fields is invalid, please try again");
-                    JOptionPane.showMessageDialog(null, "ERROR CONDITION", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-
         });
     }
 }

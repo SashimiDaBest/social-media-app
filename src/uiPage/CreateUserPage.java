@@ -1,7 +1,14 @@
 package uiPage;
 
+import clientPageOperation.UserPageClient;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
 import javax.swing.border.EmptyBorder;
 
 public class CreateUserPage extends JComponent {
@@ -14,7 +21,17 @@ public class CreateUserPage extends JComponent {
     private JPasswordField passwordField = new JPasswordField(15);
     private JButton signUpButton = new JButton("Sign Up");
 
-    public CreateUserPage(CardLayout cardLayout, JPanel cardPanel) {
+    private BufferedReader bufferedReader;
+    private BufferedWriter bufferedWriter;
+    private CardLayout cardLayout;
+    private JPanel cardPanel;
+
+    public CreateUserPage(CardLayout cardLayout, JPanel cardPanel, BufferedReader bufferedReader, BufferedWriter bufferedWriter) {
+        this.bufferedReader = bufferedReader;
+        this.bufferedWriter = bufferedWriter;
+        this.cardLayout = cardLayout;
+        this.cardPanel = cardPanel;
+
         setLayout(new BorderLayout());
 
         //1st Panel - Title
@@ -80,6 +97,7 @@ public class CreateUserPage extends JComponent {
         ultimatePanel.add(optionsPanel);
 
         add(ultimatePanel, BorderLayout.CENTER);
+        setupActionListeners();
     }
 
     public JButton getSignUpButtonButton() {
@@ -92,5 +110,54 @@ public class CreateUserPage extends JComponent {
 
     public JPasswordField getPasswordField() {
         return passwordField;
+    }
+
+    private void setupActionListeners() {
+        getSignUpButtonButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(null, "sign up button clicked", "INFO", JOptionPane.INFORMATION_MESSAGE);
+                UserPageClient.write("2", bufferedWriter);
+                String username = getUsernameField().getText();
+                String password = new String(getPasswordField().getPassword());
+
+                if (username.contains(";") || username.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Invalid username", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                if (password.length() < 10 || !password.matches(".*[a-zA-Z].*") || !password.matches(".*[0-9].*")) {
+                    JOptionPane.showMessageDialog(null, "Password must be at least 10 characters long, contain a letter and a number", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                UserPageClient.write(username, bufferedWriter);
+                UserPageClient.write(password, bufferedWriter);
+
+                System.out.println("New usernames cannot contain semicolons!");
+                System.out.println("New passwords must contain a letter and a number, " +
+                        "be at least 10 characters, and cannot contain semicolons!");
+
+                String messageFromServer = "";
+                try {
+                    messageFromServer = bufferedReader.readLine();
+                    if (messageFromServer == null) {
+                        throw new IOException("Server closed the connection");
+                    }
+                    // Process the message
+                } catch (IOException ex) {
+                    ex.printStackTrace(); // Log for debugging
+                    JOptionPane.showMessageDialog(null, "Communication error with the server. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+
+                if (messageFromServer.equals("User creation successful")) {
+                    System.out.println("Successfuly created new account!");
+                    cardLayout.show(cardPanel, "feedViewPage");
+
+                } else if (messageFromServer.equals("Invalid fields")) {
+                    System.out.println("One of the fields is invalid, please try again");
+                    JOptionPane.showMessageDialog(null, "ERROR CONDITION", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
     }
 }
