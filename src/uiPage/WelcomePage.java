@@ -24,6 +24,9 @@ public class WelcomePage extends JPanel {
     private JLabel newAccount = new JLabel("Don't have an account?", JLabel.CENTER);
     private JButton newAccountButton = new JButton("Sign Up");
 
+    private CreateUserPage createUserPage;
+    private FeedViewPage feedViewPage;
+
     private CardLayout cardLayout;
     private JPanel cardPanel;
     private BufferedReader bufferedReader;
@@ -149,6 +152,8 @@ public class WelcomePage extends JPanel {
 
                 if (messageFromServer.equals("Successful sign-in")) {
                     System.out.println("You have entered the user feed!");
+                    feedViewPage = new FeedViewPage(cardLayout, cardPanel, bufferedWriter, bufferedReader);
+                    cardPanel.add(feedViewPage, "feedViewPage");
                     cardLayout.show(cardPanel, "feedViewPage");
                 } else if (messageFromServer.equals("Sign-in was unsuccessful")) {
                     JOptionPane.showMessageDialog(null, "ERROR CONDITION", "Error", JOptionPane.ERROR_MESSAGE);
@@ -161,6 +166,8 @@ public class WelcomePage extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JOptionPane.showMessageDialog(null, "create button clicked", "INFO", JOptionPane.INFORMATION_MESSAGE);
+                createUserPage = new CreateUserPage(cardLayout, cardPanel, bufferedWriter, bufferedReader);
+                cardPanel.add(createUserPage, "createUserPage");
                 cardLayout.show(cardPanel, "createUserPage");
             }
         });

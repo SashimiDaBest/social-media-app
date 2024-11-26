@@ -2,6 +2,7 @@ package clientPageOperation;
 
 import java.net.*;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
@@ -29,18 +30,20 @@ public final class UserPageClient {
      * @param br BufferedReader for reading server responses
      * @return true if successful, false otherwise
      */
-    public static boolean readAndPrint(BufferedReader br) {
+    public static ArrayList<String> readAndPrint(BufferedReader br) {
         try {
+            ArrayList<String> list = new ArrayList<>();
             String line = br.readLine();
             while (line != null && !line.equals("END")) {
                 System.out.println(line);
+                list.add(line);
                 line = br.readLine();
             }
-            return true;
+            return list;
         } catch (IOException e) {
             System.out.println("readAndPrint() ERROR");
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
 

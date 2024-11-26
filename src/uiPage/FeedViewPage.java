@@ -5,9 +5,20 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 
 public class FeedViewPage extends JPanel {
-    public FeedViewPage(CardLayout cardLayout, JPanel cardPanel) {
+
+    private CardLayout cardLayout;
+    private JPanel cardPanel;
+    private BufferedReader bufferedReader;
+    private BufferedWriter bufferedWriter;
+
+    private UserProfilePage userProfilePage;
+
+    public FeedViewPage(CardLayout cardLayout, JPanel cardPanel, BufferedWriter bufferedWriter, BufferedReader bufferedReader) {
+
         setLayout(new BorderLayout());
 
         JPanel headerPanel = new JPanel();
@@ -16,6 +27,8 @@ public class FeedViewPage extends JPanel {
         JButton profileIconButton = new JButton("Profile icon");
         profileIconButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                userProfilePage = new UserProfilePage(cardLayout, cardPanel, bufferedWriter, bufferedReader);
+                cardPanel.add(userProfilePage, "userProfilePage");
                 cardLayout.show(cardPanel, "userProfilePage");
             }
         });

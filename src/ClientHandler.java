@@ -37,10 +37,10 @@ public class ClientHandler implements Runnable {
 
      // UI pages
      private WelcomePage welcomePage;
-     private CreateUserPage createUserPage;
-     private FeedViewPage feedViewPage;
-     private UserProfilePage userProfilePage;
-     private OtherProfilePage otherProfilePage;
+//     private CreateUserPage createUserPage;
+//     private FeedViewPage feedViewPage;
+//     private UserProfilePage userProfilePage;
+//     private OtherProfilePage otherProfilePage;
 
     /**
      * Constructs a ClientHandler object to manage the client-server connection.
@@ -92,16 +92,16 @@ public class ClientHandler implements Runnable {
                 cardPanel = new JPanel(cardLayout);
 
                 welcomePage = new WelcomePage(cardLayout, cardPanel, bw, br);
-                createUserPage = new CreateUserPage(cardLayout, cardPanel, br, bw);
-                feedViewPage = new FeedViewPage(cardLayout, cardPanel);
-                userProfilePage = new UserProfilePage(cardLayout, cardPanel);
-                otherProfilePage = new OtherProfilePage(cardLayout, cardPanel);
+//                createUserPage = new CreateUserPage(cardLayout, cardPanel, bw, br);
+//                feedViewPage = new FeedViewPage(cardLayout, cardPanel);
+//                userProfilePage = new UserProfilePage(cardLayout, cardPanel, bw, br);
+//                otherProfilePage = new OtherProfilePage(cardLayout, cardPanel);
 
                 cardPanel.add(welcomePage, "welcomePage");
-                cardPanel.add(createUserPage, "createUserPage");
-                cardPanel.add(feedViewPage, "feedViewPage");
-                cardPanel.add(userProfilePage, "userProfilePage");
-                cardPanel.add(otherProfilePage, "otherProfilePage");
+//                cardPanel.add(createUserPage, "createUserPage");
+//                cardPanel.add(feedViewPage, "feedViewPage");
+//                cardPanel.add(userProfilePage, "userProfilePage");
+//                cardPanel.add(otherProfilePage, "otherProfilePage");
 
                 frame.add(cardPanel);
                 frame.setVisible(true);

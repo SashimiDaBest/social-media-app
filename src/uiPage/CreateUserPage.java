@@ -26,7 +26,7 @@ public class CreateUserPage extends JComponent {
     private CardLayout cardLayout;
     private JPanel cardPanel;
 
-    public CreateUserPage(CardLayout cardLayout, JPanel cardPanel, BufferedReader bufferedReader, BufferedWriter bufferedWriter) {
+    public CreateUserPage(CardLayout cardLayout, JPanel cardPanel, BufferedWriter bufferedWriter, BufferedReader bufferedReader) {
         this.bufferedReader = bufferedReader;
         this.bufferedWriter = bufferedWriter;
         this.cardLayout = cardLayout;

@@ -42,7 +42,6 @@ public class SimpleServer implements Runnable {
     /**
      * Constructs a SimpleServer that listens on the given port and initializes user and chat data.
      *
-     * @param port The port number on which the server will listen for client connections
      * @throws IOException If an I/O error occurs while setting up the server socket
      */
     public SimpleServer(Socket socket) throws IOException {
