@@ -6,6 +6,7 @@ import object.User;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * OtherPageServer
@@ -66,10 +67,12 @@ public final class OtherPageServer {
                         user.deleteFollowing(otherUser.getUserID());
                         otherUser.deleteFollower(user.getUserID());
                         bw.write("unfollowed " + otherUser.getUsername());
+                        users = FeedPageServer.updateUsers(users);
                     } else {
                         user.addFollowing(otherUser.getUserID());
                         otherUser.addFollower(user.getUserID());
                         bw.write("followed " + otherUser.getUsername());
+                        users = FeedPageServer.updateUsers(users);
                     }
                     bw.newLine();
                     bw.flush();
@@ -77,9 +80,11 @@ public final class OtherPageServer {
                     if (user.getBlockedList().contains(otherUser.getUserID())) {
                         user.deleteBlock(otherUser.getUserID());
                         bw.write("unblocked " + otherUser.getUsername());
+                        users = FeedPageServer.updateUsers(users);
                     } else {
                         user.addBlock(otherUser.getUserID());
                         bw.write("blocked " + otherUser.getUsername());
+                        users = FeedPageServer.updateUsers(users);
                     }
                     bw.newLine();
                     bw.flush();

@@ -3,9 +3,7 @@ package serverPageOperation;
 import exception.InvalidFileFormatException;
 import object.*;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -62,8 +60,8 @@ public final class FeedPageServer {
 
                 // 1 - Chat Creation
                 if (clientChosenOperation.equals("1")) {
-
                     // Write list of available users to chat with to the client
+                    users = updateUsers(users);
                     String listOfAvailableUsers = "";
                     for (int i = 0;
                          i < users.size(); i++) {
@@ -137,6 +135,8 @@ public final class FeedPageServer {
 
                     // 2 - View Existing Chat
                 } else if (clientChosenOperation.equals("2")) {
+                    chats = updateChats(chats);
+                    users = updateUsers(users);
                     // Write the logged-in user's chats to the client.
                     // FORMAT:
                     // Chat #0000 (With username, username, ...etc);Chat #0001 (With username, username);...etc
@@ -256,7 +256,7 @@ public final class FeedPageServer {
                                     switch (chatDecision) {
                                         case "1":
                                             // Compose message
-                                            chats.set(chatIndex, new Chat("Sample Test Folder/" + chats.get(chatIndex).getChatID()));
+                                            chats = updateChats(chats);
                                             String messageToCompose = br.readLine();
                                             chats.get(chatIndex).addMessage(new Message(user.getUserID(),
                                                     0,
@@ -264,12 +264,12 @@ public final class FeedPageServer {
                                             break;
                                         case "2":
                                             // Delete previous message
-                                            chats.set(chatIndex, new Chat("Sample Test Folder/" + chats.get(chatIndex).getChatID()));
+                                            chats = updateChats(chats);
                                             chats.get(chatIndex).deleteMessage(user.getUserID());
                                             break;
                                         case "3":
                                             // Edit previous message
-                                            chats.set(chatIndex, new Chat("Sample Test Folder/" + chats.get(chatIndex).getChatID()));
+                                            chats = updateChats(chats);
                                             String replacementMessage = br.readLine();
                                             chats.get(chatIndex).editMessage(replacementMessage, user.getUserID());
                                             break;
@@ -283,9 +283,11 @@ public final class FeedPageServer {
                         }
                     }
                 } else if (clientChosenOperation.equals("3")) {
+                    users = updateUsers(users);
                     UserPageServer.userPageOperation(br, bw, user, users, chats);
                 } else if (clientChosenOperation.equals("4")) {
                     // Write list of available users to view to the client
+                    users = updateUsers(users);
                     String listOfAvailableUsers = "";
                     for (int i = 0; i < users.size(); i++) {
                         if (!users.get(i).getUserID().equals(user.getUserID())) {   // <- Do not include the log-in user
@@ -325,5 +327,28 @@ public final class FeedPageServer {
                 throw new RuntimeException(e);
             }
         } while (continueFeed);
+    }
+
+    public static ArrayList<User> updateUsers(ArrayList<User> users) {
+        File dataDirectory = new File("Sample Test Folder");
+        File[] userFiles = dataDirectory.listFiles((ignored, name) -> name.startsWith("U_"));
+        users = new ArrayList<>();
+        for (File userFile : userFiles) {
+            User newUser = new User(userFile.getAbsolutePath());
+            users.add(newUser);
+        }
+        return users;
+    }
+
+    public static ArrayList<Chat> updateChats(ArrayList<Chat> chats) throws InvalidFileFormatException {
+        File dataDirectory = new File("Sample Test Folder");
+        File[] userFiles = dataDirectory.listFiles((ignored, name) -> name.startsWith("C_"));
+        chats = new ArrayList<>();
+        for (File chatFile : userFiles) {
+            Chat newChat = new Chat(chatFile.getAbsolutePath().substring(0,
+                    chatFile.getAbsolutePath().lastIndexOf(".")));
+            chats.add(newChat);
+        }
+        return chats;
     }
 }
