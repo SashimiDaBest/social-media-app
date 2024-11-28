@@ -11,7 +11,7 @@ import java.util.Scanner;
  * with other users' pages. It allows the user to follow/unfollow, block/unblock,
  * view the followers and following list of another user, and navigate back to the
  * feed view.
- *
+ * <p>
  * This class communicates with the server using BufferedReader and BufferedWriter
  * to send and receive data.
  *
@@ -88,33 +88,10 @@ public final class OtherPageClient {
                 boolean canView = false;
                 try {
                     String line = br.readLine();
-                    if (line.equals("message")) {
+                    if (line.equals("")) {
                         canView = true;
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                UserPageClient.readAndPrint(br);
-                if (canView) {
-                    System.out.print("Do you want to view another user? (Y/N): ");
-                    String input2 = scanner.nextLine();
-                    if (input2.equals("Y")) {
-                        UserPageClient.write("CHANGE", bw);
-                        System.out.print("Other Username: ");
-                        String other = scanner.nextLine();
-                        otherPage(scanner, other, br, bw, socket);
-                        break;
-                    }
-                } else {
-                    UserPageClient.write("", bw);
-                }
-            } else if (input.equals("4")) {
-                UserPageClient.write("4", bw);
-                boolean canView = false;
-                try {
-                    String line = br.readLine();
-                    if (line.equals("message")) {
-                        canView = true;
+                    } else if (line.equals("[EMPTY]")) {
+                        System.out.println("User has no followers!");
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -133,10 +110,38 @@ public final class OtherPageClient {
                         UserPageClient.write("", bw);
                     }
                 }
+            } else if (input.equals("4")) {
+                UserPageClient.write("4", bw);
+                boolean canView = false;
+                try {
+                    String line = br.readLine();
+                    if (line.equals("")) {
+                        canView = true;
+                    } else if (line.equals("[EMPTY]")) {
+                        System.out.println("User has no following!");
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                UserPageClient.readAndPrint(br);
+                if (canView) {
+                    System.out.print("Do you want to view another user? (Y/N): ");
+                    String input2 = scanner.nextLine();
+                    if (input2.equals("Y")) {
+                        UserPageClient.write("CHANGE", bw);
+                        System.out.print("Other Username: ");
+                        String other = scanner.nextLine();
+                        otherPage(scanner, other, br, bw, socket);
+                        break;
+                    } else {
+                        //UserPageClient.write("", bw);
+                    }
+                }
             } else if (input.equals("5")) {
                 UserPageClient.write("5", bw);
-                FeedPageClient.feedPage(scanner, br, bw, socket);
-                break;
+//                TODO: IMPLEMENT
+//                FeedPageClient.feedPage(scanner, br, bw, socket);
+//                break;
             } else if (input.equals("6")) {
                 UserPageClient.write("6", bw);
                 try {

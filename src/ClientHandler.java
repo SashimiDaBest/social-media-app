@@ -1,30 +1,24 @@
-import clientPageOperation.WelcomePageClient;
-// import uiPage.*;
+import uiPage.*;
 
 import java.net.Socket;
 import java.io.*;
-import java.util.Scanner;
 import javax.swing.*;
 import java.awt.*;
 
 /**
  * ClientHandler
- * <p>
+ *
  * Manages individual client connections for a social media application. This class
  * facilitates communication between the client and the server, handling input and
  * output streams and user interface management.
- * <p>
  *
- * <p>
  * Implements {@link Runnable} to allow handling client connections in separate threads,
  * supporting concurrent communication with multiple clients.
- * </p>
  *
  * @author Soleil Pham
  * @version 11/01/2024
  * @since 1.0
  */
-
 public class ClientHandler implements Runnable {
     private String hostname;
     private int port;
@@ -37,12 +31,10 @@ public class ClientHandler implements Runnable {
     private CardLayout cardLayout;
     private JPanel cardPanel;
 
-    // // UI pages
-    // private WelcomePage welcomePage;
-    // private CreateUserPage createUserPage;
-    // private FeedViewPage feedViewPage;
-    // private UserProfilePage userProfilePage;
-    // private OtherProfilePage otherProfilePage;
+    // UI pages
+    private WelcomePage welcomePage;
+    private CreateUserPage createUserPage;
+    private FeedViewPage feedViewPage;
 
     /**
      * Constructs a ClientHandler object to manage the client-server connection.
@@ -62,100 +54,86 @@ public class ClientHandler implements Runnable {
     /**
      * Main method to start the client handler.
      *
-     * @param args Command-line arguments (not used)
+     * @param args Command-line arguments
      */
     public static void main(String[] args) {
-        String hostname = "localhost"; // Server hostname
-        int port = 12;              // Port number
+
+        String hostname = args.length > 0 ? args[0] : "localhost"; // Allow hostname via arguments
+        int port = args.length > 1 ? Integer.parseInt(args[1]) : 12; // Default port is 12
 
         try {
             ClientHandler client = new ClientHandler(hostname, port);
             Thread clientThread = new Thread(client);
             clientThread.start();
         } catch (IOException e) {
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Unable to connect to server: " + e.getMessage(), "Connection Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     /**
      * The run method for the ClientHandler. It initializes the user interface
-     * and manages communication with the server using a Scanner for user input.
+     * and manages communication with the server.
      */
     @Override
     public void run() {
-        Scanner scanner = new Scanner(System.in);
-        WelcomePageClient.welcomePage(scanner, br, bw, socket);
-        /*
-            frame = new JFrame("Boiler Gram");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setLocationRelativeTo(null);
-            frame.setSize(600, 400);
-
-            cardLayout = new CardLayout();
-            cardPanel = new JPanel(cardLayout);
-
-            welcomePage = new WelcomePage(cardLayout, cardPanel);
-            createUserPage = new CreateUserPage(cardLayout, cardPanel);
-            feedViewPage = new FeedViewPage(cardLayout, cardPanel);
-            userProfilePage = new UserProfilePage(cardLayout, cardPanel);
-            otherProfilePage = new OtherProfilePage(cardLayout, cardPanel);
-
-            cardPanel.add(welcomePage, "welcomePage");
-            cardPanel.add(createUserPage, "createUserPage");
-            cardPanel.add(feedViewPage, "feedViewPage");
-            cardPanel.add(userProfilePage, "userProfilePage");
-            cardPanel.add(otherProfilePage, "otherProfilePage");
-
-            frame.add(cardPanel);
-            frame.setVisible(true);
-//            setupActionListeners();
-            out.write("hello");
-           */
+        try {
+            SwingUtilities.invokeLater(this::initializeUI);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Unexpected error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } finally {
+//            TODO: look at how to close resources properly without enabling connection errors
+//            closeResources();
+        }
     }
 
-    /*
-    private void setupActionListeners() {
-
-        welcomePage.getSignInButton().addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String username = welcomePage.getUsernameField().getText();
-                char[] password = welcomePage.getPasswordField().getPassword();
-                String passwordString = new String(password);
-
-                if (username == null || password == null) {
-                    JOptionPane.showMessageDialog(null, "ERROR CONDITION", "Error", JOptionPane.ERROR_MESSAGE);
-                } else {
-                    String userID = ""; //replace this with method to find userID based on username
-//                    user = new User(userID);
-                    cardLayout.show(cardPanel, "feedViewPage");
-                }
-            }
-        });
-
-        welcomePage.getNewAccountButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cardLayout.show(cardPanel, "createUserPage");
-            }
-        });
-
-        createUserPage.getSignUpButtonButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String username = welcomePage.getUsernameField().getText();
-                char[] password = welcomePage.getPasswordField().getPassword();
-                String passwordString = new String(password);
-
-                if (username == null || password == null) {
-                    JOptionPane.showMessageDialog(null, "ERROR CONDITION", "Error", JOptionPane.ERROR_MESSAGE);
-                } else {
-                    String userID = ""; // Replace with method to find userID based on username
-//                    user = new User(userID);
-                    cardLayout.show(cardPanel, "feedViewPage");
-                }
-            }
-
-        });
-    }
+    /**
+     * Initializes the user interface components.
      */
+    private void initializeUI() {
+        frame = new JFrame("Boiler Gram");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLocationRelativeTo(null);
+        frame.setSize(600, 400);
+
+        PageManager pageManager = new PageManager();
+
+        pageManager.addPage("welcome", new WelcomePage(pageManager, bw, br));
+        pageManager.addPage("signup", new CreateUserPage(pageManager, bw, br));
+
+        frame.setContentPane(pageManager.getCardPanel());
+        frame.setVisible(true);
+
+        pageManager.showPage("welcome");
+
+//        cardLayout = new CardLayout();
+//        cardPanel = new JPanel(cardLayout);
+//
+//        // Initialize and add pages
+//        welcomePage = new WelcomePage(cardLayout, cardPanel, bw, br);
+//        createUserPage = new CreateUserPage(cardLayout, cardPanel, bw, br);
+//        feedViewPage = new FeedViewPage(cardLayout, cardPanel, bw, br);
+//
+//        cardPanel.add(welcomePage, "welcomePage");
+//        cardPanel.add(createUserPage, "createUserPage");
+//        cardPanel.add(feedViewPage, "feedViewPage");
+//
+//        frame.add(cardPanel);
+//        frame.setVisible(true);
+//
+//        // Show the welcome page
+//        cardLayout.show(cardPanel, "welcomePage");
+    }
+
+    /**
+     * Closes the socket and streams to release resources.
+     */
+    private void closeResources() {
+        try {
+            if (br != null) br.close();
+            if (bw != null) bw.close();
+            if (socket != null) socket.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
 }

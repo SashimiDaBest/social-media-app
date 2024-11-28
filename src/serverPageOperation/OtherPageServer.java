@@ -6,6 +6,7 @@ import object.User;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * OtherPageServer
@@ -66,10 +67,12 @@ public final class OtherPageServer {
                         user.deleteFollowing(otherUser.getUserID());
                         otherUser.deleteFollower(user.getUserID());
                         bw.write("unfollowed " + otherUser.getUsername());
+                        users = FeedPageServer.updateUsers(users);
                     } else {
                         user.addFollowing(otherUser.getUserID());
                         otherUser.addFollower(user.getUserID());
                         bw.write("followed " + otherUser.getUsername());
+                        users = FeedPageServer.updateUsers(users);
                     }
                     bw.newLine();
                     bw.flush();
@@ -77,9 +80,11 @@ public final class OtherPageServer {
                     if (user.getBlockedList().contains(otherUser.getUserID())) {
                         user.deleteBlock(otherUser.getUserID());
                         bw.write("unblocked " + otherUser.getUsername());
+                        users = FeedPageServer.updateUsers(users);
                     } else {
                         user.addBlock(otherUser.getUserID());
                         bw.write("blocked " + otherUser.getUsername());
+                        users = FeedPageServer.updateUsers(users);
                     }
                     bw.newLine();
                     bw.flush();
@@ -87,14 +92,23 @@ public final class OtherPageServer {
                     try {
                         if (otherUser.getAccountType() == 1 && user.getFollowerList().contains(otherUser.getUserID())) {
                             bw.write("message");
+                            bw.newLine();
+                            bw.flush();
                             UserPageServer.write(new ArrayList<>(), bw);
-                        } else {
+                        } else if (!otherUser.getFollowerList().get(0).isEmpty()) {
                             bw.write("");
+                            bw.newLine();
+                            bw.flush();
                             UserPageServer.write(otherUser.getFollowerList(), bw);
-                        }
-                        if (br.readLine().equals("CHANGE")) {
-                            OtherPageServer.otherPageOperation(br, bw, user, users, chats);
-                            break;
+                            if (br.readLine().equals("CHANGE")) {
+                                OtherPageServer.otherPageOperation(br, bw, user, users, chats);
+                                break;
+                            }
+                        } else {
+                            bw.write("[EMPTY]");
+                            bw.newLine();
+                            bw.flush();
+                            UserPageServer.write(otherUser.getFollowerList(), bw);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -103,15 +117,23 @@ public final class OtherPageServer {
                     try {
                         if (otherUser.getAccountType() == 1 && user.getFollowingList().contains(otherUser.getUserID())) {
                             bw.write("message");
+                            bw.newLine();
+                            bw.flush();
                             UserPageServer.write(new ArrayList<>(), bw);
+                        } else if (!otherUser.getFollowingList().get(0).isEmpty()) {
+                            bw.write("");
+                            bw.newLine();
+                            bw.flush();
+                            UserPageServer.write(otherUser.getFollowingList(), bw);
                         } else {
-                            bw.write("no message");
+                            bw.write("[EMPTY]");
+                            bw.newLine();
+                            bw.flush();
                             UserPageServer.write(otherUser.getFollowingList(), bw);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    UserPageServer.write(user.getFollowingList(), bw);
                 } else if (input.equals("5")) {
                     FeedPageServer.feedPageOperation(br, bw, user, users, chats);
                     break;
