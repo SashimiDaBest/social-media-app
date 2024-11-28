@@ -1,6 +1,7 @@
 package uiPage;
 
 import clientPageOperation.UserPageClient;
+import object.User;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,16 +25,14 @@ public class UserProfilePage extends JPanel {
     private JButton logoutButton;
     private JPanel mainView;
 
-//    private ArrayList<JButton> followerButtons = new ArrayList<>();
-//    private ArrayList<JButton> followingButtons = new ArrayList<>();
-//    private ArrayList<JButton> blockedButtons = new ArrayList<>();
+    private ArrayList<JButton> followerButtons = new ArrayList<>();
+    private ArrayList<JButton> followingButtons = new ArrayList<>();
+    private ArrayList<JButton> blockedButtons = new ArrayList<>();
 
     public UserProfilePage(PageManager pageManager, BufferedWriter bufferedWriter, BufferedReader bufferedReader) {
         this.pageManager = pageManager;
         this.bufferedReader = bufferedReader;
         this.bufferedWriter = bufferedWriter;
-
-        UserPageClient.write("USER_START", bufferedWriter);
 
         setLayout(new BorderLayout());
         JLabel title = new JLabel("User Profile Page", JLabel.CENTER);
@@ -60,6 +59,9 @@ public class UserProfilePage extends JPanel {
         settingButton = new JButton("Settings");
         JTextPane username = new JTextPane();
         JTextPane accountType = new JTextPane();
+
+//        UserPageClient.write("HELLO", bufferedWriter);
+
 
 //        try {
 //            String line = bufferedReader.readLine();
@@ -99,29 +101,26 @@ public class UserProfilePage extends JPanel {
         followerList.add(followerStatus);
 
         ArrayList<String> list = new ArrayList<>();
-/*
         String followerValidity;
-        try {
-            followerValidity = bufferedReader.readLine();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            followerValidity = bufferedReader.readLine();
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//        if (!followerValidity.equals("EMPTY")) {
+//            list = UserPageClient.readAndPrint(bufferedReader);
+//        } else {
+//            followerStatus.setText("You have no followers!");
+//        }
+//
+//        for (int i = 0; i < list.size(); i++) {
+//            followerButtons.add(new JButton(list.get(i)));
+//            followerList.add(followerButtons.get(i));
+//        }
+//
+//        list.clear();
 
-        if (!followerValidity.equals("EMPTY")) {
-            list = UserPageClient.readAndPrint(bufferedReader);
-        } else {
-            followerStatus.setText("You have no followers!");
-        }
-
-        for (int i = 0; i < list.size(); i++) {
-            followerButtons.add(new JButton(list.get(i)));
-            followerList.add(followerButtons.get(i));
-        }
-
-        list.clear();
-
-
- */
         // create box 3 - following view
         box3.setLayout(new BoxLayout(box3, BoxLayout.X_AXIS));
         JTextPane boxLabel2 = new JTextPane();
@@ -135,29 +134,26 @@ public class UserProfilePage extends JPanel {
         JTextPane followingStatus = new JTextPane();
         followingList.add(followingStatus);
 
-        /*
         String followingValidity;
-        try {
-            followingValidity = bufferedReader.readLine();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            followingValidity = bufferedReader.readLine();
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//        if (!followingValidity.equals("EMPTY")) {
+//            list = UserPageClient.readAndPrint(bufferedReader);
+//        } else {
+//            followingStatus.setText("You have no following!");
+//        }
+//
+//        for (int i = 0; i < list.size(); i++) {
+//            followingButtons.add(new JButton(list.get(i)));
+//            followingList.add(followingButtons.get(i));
+//        }
+//
+//        list.clear();
 
-        if (!followingValidity.equals("EMPTY")) {
-            list = UserPageClient.readAndPrint(bufferedReader);
-        } else {
-            followingStatus.setText("You have no following!");
-        }
-
-        for (int i = 0; i < list.size(); i++) {
-            followingButtons.add(new JButton(list.get(i)));
-            followingList.add(followingButtons.get(i));
-        }
-
-        list.clear();
-
-
-         */
         // create box 4 - blocked view
         box4.setLayout(new BoxLayout(box4, BoxLayout.X_AXIS));
         JTextPane boxLabel3 = new JTextPane();
@@ -170,29 +166,27 @@ public class UserProfilePage extends JPanel {
 
         JTextPane blockedStatus = new JTextPane();
         blockedList.add(blockedStatus);
-/*
+
         String blockedValidity;
-        try {
-            blockedValidity = bufferedReader.readLine();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            blockedValidity = bufferedReader.readLine();
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//        if (!blockedValidity.equals("EMPTY")) {
+//            list = UserPageClient.readAndPrint(bufferedReader);
+//        } else {
+//            System.out.println("You have not blocked anyone!");
+//        }
+//
+//        for (int i = 0; i < list.size(); i++) {
+//            blockedButtons.add(new JButton(list.get(i)));
+//            blockedList.add(blockedButtons.get(i));
+//        }
+//
+//        list.clear();
 
-        if (!blockedValidity.equals("EMPTY")) {
-            list = UserPageClient.readAndPrint(bufferedReader);
-        } else {
-            System.out.println("You have not blocked anyone!");
-        }
-
-        for (int i = 0; i < list.size(); i++) {
-            blockedButtons.add(new JButton(list.get(i)));
-            blockedList.add(blockedButtons.get(i));
-        }
-
-        list.clear();
-
-
- */
         // add header and footer for navigation
         JPanel navigationPanel = new JPanel(new BorderLayout());
         backButton = new JButton("Back");
@@ -212,48 +206,27 @@ public class UserProfilePage extends JPanel {
         setupActionListeners();
     }
 
-    public JButton getProfileButton() {
-        return profileButton;
-    }
-
-    public JButton getSettingButton() {
-        return settingButton;
-    }
-
-    public JButton getBackButton() {
-        return backButton;
-    }
-
-    public JButton getNextButton() {
-        return nextButton;
-    }
-
-    public JButton getLogoutButton() {
-        return logoutButton;
-    }
-
-
     private void setupActionListeners() {
-        getProfileButton().addActionListener(new ActionListener() {
+        profileButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-//                UserPageClient.write("1", bufferedWriter);
-//                System.out.print("What is your image file path: ");
-//                String path = "scanner.nextLine()"; //TODO: get path
-//                UserPageClient.write(path, bufferedWriter);
-//                try {
-//                    if (bufferedReader.readLine().equals("SAVE")) {
-//                        System.out.println("Set image successfully");
-//                    } else {
-//                        System.out.println("Set image failed");
-//                    }
-//                } catch (IOException ex) {
-//                    ex.printStackTrace();
-//                }
+                UserPageClient.write("1", bufferedWriter);
+                System.out.print("What is your image file path: ");
+                String path = "scanner.nextLine()"; //TODO: get path
+                UserPageClient.write(path, bufferedWriter);
+                try {
+                    if (bufferedReader.readLine().equals("SAVE")) {
+                        System.out.println("Set image successfully");
+                    } else {
+                        System.out.println("Set image failed");
+                    }
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
             }
         });
 
-        getSettingButton().addActionListener(new ActionListener() {
+        settingButton.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -261,7 +234,7 @@ public class UserProfilePage extends JPanel {
             }
         });
 
-        getBackButton().addActionListener(new ActionListener() {
+        backButton.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -271,7 +244,7 @@ public class UserProfilePage extends JPanel {
             }
         });
 
-        getNextButton().addActionListener(new ActionListener() {
+        nextButton.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -279,7 +252,7 @@ public class UserProfilePage extends JPanel {
             }
         });
 
-        getLogoutButton().addActionListener(new ActionListener() {
+        logoutButton.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -287,117 +260,188 @@ public class UserProfilePage extends JPanel {
             }
         });
     }
+
     /*
+    public static void userPage(Scanner scanner, BufferedReader br, BufferedWriter bw, Socket socket) {
+        String username = "";
+        String accountType = "";
 
-        public static void userPage(Scanner scanner, BufferedReader br, BufferedWriter bw, Socket socket) {
-            // Display menu and handle user input
-            while (true) {
-                System.out.println("Welcome to the User Page\n" +
-                        "USERNAME: " + username + "\n" +
-                        "ACCOUNT_TYPE: " + accountType + "\n" +
-                        "1 - Change User Profile\n" +
-                        "2 - View Follower\n" +
-                        "3 - View Following\n" +
-                        "4 - View Blocked\n" +
-                        "5 - Go Back to Feed View\n" +
-                        "6 - Quit");
-                String input = scanner.nextLine();
+        // Read username and account type from the server
+        try {
+            String line = br.readLine();
+            username = line;
+            if (line != null) {
+                username = line;
+                line = br.readLine();
+                accountType = "1".equals(line) ? "private" : "public";
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-                if (input.equals("1")) {
+        // Display menu and handle user input
+        while (true) {
+            System.out.println("Welcome to the User Page\n" +
+                    "USERNAME: " + username + "\n" +
+                    "ACCOUNT_TYPE: " + accountType + "\n" +
+                    "1 - Change User Profile\n" +
+                    "2 - View Follower\n" +
+                    "3 - View Following\n" +
+                    "4 - View Blocked\n" +
+                    "5 - Go Back to Feed View\n" +
+                    "6 - Quit");
+            String input = scanner.nextLine();
 
-                } else if (input.equals("2")) {
-                    UserPageClient.write("2", bufferedWriter);
-                    System.out.print("Do you want to view Other (Y/N): ");
-                    String input2 = scanner.nextLine();
-                    if (input2.equals("Y")) {
-                        try {
-                            bufferedWriter.write("VIEW");
-                            bufferedWriter.newLine();
-                            bufferedWriter.flush();
-                            System.out.print("Other Username: ");
-                            String otherUsername = scanner.nextLine();
-                            OtherPageClient.otherPage(otherUsername, br, bw, socket);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+            if (input.equals("1")) {
+                write("1", bw);
+                System.out.print("What is your image file path: ");
+                String path = scanner.nextLine();
+                write(path, bw);
+                try {
+                    if (br.readLine().equals("SAVE")) {
+                        System.out.println("Set image successfully");
                     } else {
-                        try {
-                            bufferedWriter.newLine();
-                            bufferedWriter.flush();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }``
-                } else if (input.equals("3")) {
-                    write("3", bw);
-                    System.out.print("Do you want to view Other (Y/N): ");
-                    String input2 = scanner.nextLine();
-                    if (input2.equals("Y")) {
-                        try {
-                            bw.write("VIEW");
-                            bw.newLine();
-                            bw.flush();
-                            System.out.print("Other Username: ");
-                            String otherUsername = scanner.nextLine();
-                            OtherPageClient.otherPage(scanner, otherUsername, br, bw, socket);
-                            break;
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        try {
-                            bw.newLine();
-                            bw.flush();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
+                        System.out.println("Set image failed");
                     }
-
-                } else if (input.equals("4")) {
-                    write("4", bw);
-                    System.out.print("Do you want to view Other (Y/N): ");
-                    String input2 = scanner.nextLine();
-                    if (input2.equals("Y")) {
-                        try {
-                            bw.write("VIEW");
-                            bw.newLine();
-                            bw.flush();
-                            System.out.print("Other Username: ");
-                            String otherUsername = scanner.nextLine();
-                            OtherPageClient.otherPage(scanner, otherUsername, br, bw, socket);
-                            break;
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        try {
-                            bw.newLine();
-                            bw.flush();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                } else if (input.equals("6")) {
-                    write("6", bw);
-                    try {
-                        if (bw != null) {
-                            bw.close(); // Close BufferedWriter
-                        }
-                        if (br != null) {
-                            br.close(); // Close BufferedReader
-                        }
-                        if (socket != null && !socket.isClosed()) {
-                            socket.close(); // Close the socket
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                } else {
-                    System.out.println("Invalid input. Please try again.");
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
+            } else if (input.equals("2")) {
+                write("2", bw);
+
+                String followerValidity;
+                try {
+                    followerValidity = br.readLine();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                if (!followerValidity.equals("[EMPTY]")) {
+                    readAndPrint(br);
+                    System.out.print("Do you want to view Other (Y/N): ");
+                    String input2 = scanner.nextLine();
+                    if (input2.equals("Y")) {
+                        try {
+                            bw.write("VIEW");
+                            bw.newLine();
+                            bw.flush();
+                            System.out.print("Other Username: ");
+                            String otherUsername = scanner.nextLine();
+                            OtherPageClient.otherPage(scanner, otherUsername, br, bw, socket);
+                            break;
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        try {
+                            bw.newLine();
+                            bw.flush();
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                } else {
+                    System.out.println("You have no followers!");
+                }
+            } else if (input.equals("3")) {
+                write("3", bw);
+
+                String followingValidity;
+                try {
+                    followingValidity = br.readLine();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                if (!followingValidity.equals("[EMPTY]")) {
+                    readAndPrint(br);
+                    System.out.print("Do you want to view Other (Y/N): ");
+                    String input2 = scanner.nextLine();
+                    if (input2.equals("Y")) {
+                        try {
+                            bw.write("VIEW");
+                            bw.newLine();
+                            bw.flush();
+                            System.out.print("Other Username: ");
+                            String otherUsername = scanner.nextLine();
+                            OtherPageClient.otherPage(scanner, otherUsername, br, bw, socket);
+                            break;
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        try {
+                            bw.newLine();
+                            bw.flush();
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                } else {
+                    System.out.println("You are not following anyone!");
+                }
+            } else if (input.equals("4")) {
+                write("4", bw);
+
+                String blockedValidity;
+                try {
+                    blockedValidity = br.readLine();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                if (!blockedValidity.equals("[EMPTY]")) {
+                    readAndPrint(br);
+                    System.out.print("Do you want to view Other (Y/N): ");
+                    String input2 = scanner.nextLine();
+                    if (input2.equals("Y")) {
+                        try {
+                            bw.write("VIEW");
+                            bw.newLine();
+                            bw.flush();
+                            System.out.print("Other Username: ");
+                            String otherUsername = scanner.nextLine();
+                            OtherPageClient.otherPage(scanner, otherUsername, br, bw, socket);
+                            break;
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        try {
+                            bw.newLine();
+                            bw.flush();
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                } else {
+                    System.out.println("You have not blocked anyone!");
+                }
+            } else if (input.equals("5")) {
+                write("5", bw);
+                FeedPageClient.feedPage(scanner, br, bw, socket);
+                break;
+            } else if (input.equals("6")) {
+                write("6", bw);
+                try {
+                    if (bw != null) {
+                        bw.close(); // Close BufferedWriter
+                    }
+                    if (br != null) {
+                        br.close(); // Close BufferedReader
+                    }
+                    if (socket != null && !socket.isClosed()) {
+                        socket.close(); // Close the socket
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            } else {
+                System.out.println("Invalid input. Please try again.");
             }
         }
+    }
 
      */
 }

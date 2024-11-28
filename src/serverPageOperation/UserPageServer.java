@@ -41,9 +41,8 @@ public final class UserPageServer {
     private static final String NAVIGATE_TO_FEED_VIEW_COMMAND = "FEED";
     private static final String NAVIGATE_TO_OTHER_VIEW_COMMAND = "OTHER";
     private static final String QUIT_COMMAND = "QUIT";
-
     private static final String EMPTY_LIST_MESSAGE = "EMPTY";
-    private static final String START_COMMAND = "USER_START";
+
     /**
      * Manages user page operations, such as displaying user details, handling
      * interactions with the follower, following, and blocked lists, and redirecting
@@ -58,39 +57,20 @@ public final class UserPageServer {
     public static void userPageOperation(BufferedReader br, BufferedWriter bw, User user, ArrayList<User> users,
                                          ArrayList<Chat> chats) {
         System.out.println("User page operation");
+        System.out.println("This is the user page.");
+        System.out.println("Username: " + user.getUsername());
+        System.out.println("Account type: " + user.getAccountType());
+        System.out.flush();
 
         try {
-            String line = br.readLine();
-            System.out.println(line);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-//        String line = "";
-//        try {
-//            line = br.readLine();
-//            while (!line.equals(START_COMMAND)) {
-//                line = br.readLine();
-//                System.out.println(line);
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
-//        System.out.println("This is the user page.");
-//        System.out.println("Username: " + user.getUsername());
-//        System.out.println("Account type: " + user.getAccountType());
-
-//        try {
-//            System.out.println("sending account information...");
-//            bw.write(user.getUsername());
-//            bw.newLine();
-//            bw.write(Integer.toString(user.getAccountType()));
-//            bw.newLine();
-//            bw.write("STOP");
-//            bw.newLine();
-//            bw.flush();
+            System.out.println("sending account information...");
+            bw.write(user.getUsername());
+            bw.newLine();
+            bw.write(Integer.toString(user.getAccountType()));
+            bw.newLine();
+            bw.write("STOP");
+            bw.newLine();
+            bw.flush();
 //
 //            System.out.println("Sending follower information...");
 //            if (!user.getFollowerList().isEmpty() && !user.getFollowerList().get(0).isEmpty()) {
@@ -189,10 +169,10 @@ public final class UserPageServer {
             }
 
  */
-//        } catch (IOException e) {
-//            System.err.println("ERROR: Server communication error - " + e.getMessage());
-//            e.printStackTrace();
-//        }
+        } catch (IOException e) {
+            System.err.println("ERROR: Server communication error - " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     public static boolean write(ArrayList<String> people, BufferedWriter bw) {

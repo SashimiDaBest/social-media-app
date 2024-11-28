@@ -1,5 +1,7 @@
 package uiPage;
 
+import clientPageOperation.UserPageClient;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -29,6 +31,7 @@ public class FeedViewPage extends JPanel {
         JButton profileIconButton = new JButton("Profile icon");
         profileIconButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                UserPageClient.write("3", bufferedWriter);
                 pageManager.lazyLoadPage("user", () -> new UserProfilePage(pageManager, bufferedWriter, bufferedReader));
                 pageManager.removePage("feed");
             }
