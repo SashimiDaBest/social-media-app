@@ -9,6 +9,7 @@ public class PageManager {
     private CardLayout cardLayout;
     private JPanel cardPanel;
     private Map<String, JPanel> pages;
+    private String currentPage;
 
     public PageManager() {
         cardLayout = new CardLayout();
@@ -35,9 +36,14 @@ public class PageManager {
     public void showPage(String name) {
         if (pages.containsKey(name)) {
             cardLayout.show(cardPanel, name);
+            currentPage = name; // Update the current page
         } else {
             throw new IllegalArgumentException("Page not found: " + name);
         }
+    }
+
+    public String getCurrentPage() {
+        return currentPage; // Return the last shown page
     }
 
     /**
@@ -52,6 +58,7 @@ public class PageManager {
             addPage(name, page);
         }
         showPage(name);
+        currentPage = name; // Update the current page
     }
 
     /**

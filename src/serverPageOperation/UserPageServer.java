@@ -58,41 +58,50 @@ public final class UserPageServer {
     public static void userPageOperation(BufferedReader br, BufferedWriter bw, User user, ArrayList<User> users,
                                          ArrayList<Chat> chats) {
         System.out.println("User page operation");
-        String line = "";
+
         try {
-            line = br.readLine();
-            while (!line.equals(START_COMMAND)) {
-                line = br.readLine();
-                System.out.println(line);
-            }
+            String line = br.readLine();
+            System.out.println(line);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        System.out.println("This is the user page.");
-        System.out.println("Username: " + user.getUsername());
-        System.out.println("Account type: " + user.getAccountType());
 
-        try {
-            System.out.println("sending account information...");
-            bw.write(user.getUsername());
-            bw.newLine();
-            bw.write(Integer.toString(user.getAccountType()));
-            bw.newLine();
-            bw.write("STOP");
-            bw.newLine();
-            bw.flush();
+//        String line = "";
+//        try {
+//            line = br.readLine();
+//            while (!line.equals(START_COMMAND)) {
+//                line = br.readLine();
+//                System.out.println(line);
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
-            System.out.println("Sending follower information...");
-            if (!user.getFollowerList().isEmpty() && !user.getFollowerList().get(0).isEmpty()) {
-                bw.newLine();
-                bw.flush();
-                write(user.getFollowerList(), bw);
-            } else {
-                bw.write(EMPTY_LIST_MESSAGE);
-                bw.newLine();
-                bw.flush();
-            }
+//        System.out.println("This is the user page.");
+//        System.out.println("Username: " + user.getUsername());
+//        System.out.println("Account type: " + user.getAccountType());
+
+//        try {
+//            System.out.println("sending account information...");
+//            bw.write(user.getUsername());
+//            bw.newLine();
+//            bw.write(Integer.toString(user.getAccountType()));
+//            bw.newLine();
+//            bw.write("STOP");
+//            bw.newLine();
+//            bw.flush();
+//
+//            System.out.println("Sending follower information...");
+//            if (!user.getFollowerList().isEmpty() && !user.getFollowerList().get(0).isEmpty()) {
+//                bw.newLine();
+//                bw.flush();
+//                write(user.getFollowerList(), bw);
+//            } else {
+//                bw.write(EMPTY_LIST_MESSAGE);
+//                bw.newLine();
+//                bw.flush();
+//            }
 /*
             System.out.println("Sending following information...");
             if (!user.getFollowingList().isEmpty() && !user.getFollowingList().get(0).isEmpty()) {
@@ -180,10 +189,10 @@ public final class UserPageServer {
             }
 
  */
-        } catch (IOException e) {
-            System.err.println("ERROR: Server communication error - " + e.getMessage());
-            e.printStackTrace();
-        }
+//        } catch (IOException e) {
+//            System.err.println("ERROR: Server communication error - " + e.getMessage());
+//            e.printStackTrace();
+//        }
     }
 
     public static boolean write(ArrayList<String> people, BufferedWriter bw) {

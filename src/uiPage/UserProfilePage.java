@@ -1,6 +1,5 @@
 package uiPage;
 
-import clientPageOperation.OtherPageClient;
 import clientPageOperation.UserPageClient;
 
 import javax.swing.*;
@@ -10,9 +9,8 @@ import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Scanner;
+
 
 public class UserProfilePage extends JPanel {
     private PageManager pageManager;
@@ -24,16 +22,16 @@ public class UserProfilePage extends JPanel {
     private JButton backButton;
     private JButton nextButton;
     private JButton logoutButton;
+    private JPanel mainView;
 
-    private ArrayList<JButton> followerButtons = new ArrayList<>();
-    private ArrayList<JButton> followingButtons = new ArrayList<>();
-    private ArrayList<JButton> blockedButtons = new ArrayList<>();
+//    private ArrayList<JButton> followerButtons = new ArrayList<>();
+//    private ArrayList<JButton> followingButtons = new ArrayList<>();
+//    private ArrayList<JButton> blockedButtons = new ArrayList<>();
 
     public UserProfilePage(PageManager pageManager, BufferedWriter bufferedWriter, BufferedReader bufferedReader) {
-        System.out.println("USER FEED");
         this.pageManager = pageManager;
-        this.bufferedWriter = bufferedWriter;
         this.bufferedReader = bufferedReader;
+        this.bufferedWriter = bufferedWriter;
 
         UserPageClient.write("USER_START", bufferedWriter);
 
@@ -268,8 +266,8 @@ public class UserProfilePage extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 UserPageClient.write("5", bufferedWriter);
-                pageManager.addPage("feed", new FeedViewPage(pageManager, bufferedWriter, bufferedReader));
-                pageManager.showPage("feed");
+                pageManager.lazyLoadPage("feed", () -> new FeedViewPage(pageManager, bufferedWriter, bufferedReader));
+                pageManager.removePage("user");
             }
         });
 
@@ -403,6 +401,3 @@ public class UserProfilePage extends JPanel {
 
      */
 }
-
-
-

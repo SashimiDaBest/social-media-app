@@ -23,7 +23,7 @@ public class CreateUserPage extends JPanel {
     private JTextField usernameField = new JTextField(15);
     private JPasswordField passwordField = new JPasswordField(15);
     private JButton signUpButton = new JButton("Sign Up");
-
+    private JButton backButton = new JButton("Cancel");
     private PageManager pageManager;
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
@@ -81,13 +81,14 @@ public class CreateUserPage extends JPanel {
 
         //3rd Panel - Button
         JPanel optionsPanel = new JPanel();
-        optionsPanel.setLayout(new BoxLayout(optionsPanel, BoxLayout.Y_AXIS));
+        optionsPanel.setLayout(new BoxLayout(optionsPanel, BoxLayout.X_AXIS));
         optionsPanel.setBorder(new EmptyBorder(10, 0, 10, 0));
 
+        backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         signUpButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         optionsPanel.add(signUpButton);
-        optionsPanel.add(Box.createVerticalStrut(10));
+        optionsPanel.add(backButton);
 
         //4th Panel - Group All Components
         JPanel ultimatePanel = new JPanel();
@@ -105,6 +106,7 @@ public class CreateUserPage extends JPanel {
         signUpButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                System.out.println("CREATE SIGN UP CLICKED");
                 String username = usernameField.getText();
                 char[] passwordChars = passwordField.getPassword();
 
@@ -154,6 +156,14 @@ public class CreateUserPage extends JPanel {
                     JOptionPane.showMessageDialog(null, "Communication error with the server. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
                     ex.printStackTrace(); // Log error for debugging
                 }
+            }
+        });
+
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("CREATE BACK CLICKED");
+                pageManager.showPage("welcome");
             }
         });
     }

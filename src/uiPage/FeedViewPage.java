@@ -29,8 +29,7 @@ public class FeedViewPage extends JPanel {
         JButton profileIconButton = new JButton("Profile icon");
         profileIconButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                pageManager.addPage("user", new UserProfilePage(pageManager, bufferedWriter, bufferedReader));
-                pageManager.showPage("user");
+                pageManager.lazyLoadPage("user", () -> new UserProfilePage(pageManager, bufferedWriter, bufferedReader));
                 pageManager.removePage("feed");
             }
         });

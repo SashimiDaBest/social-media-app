@@ -36,6 +36,9 @@ import java.util.ArrayList;
  */
 public final class WelcomePageServer {
 
+    private static final String SUCCESSFUL_SIGN_IN = "Successful sign-in";
+    private static final String UNSUCCESSFUL_SIGN_IN = "Sign-in was unsuccessful";
+
     /**
      * Manages the welcome page operations, including sign-in and sign-up,
      * and communicates with the client to validate user credentials or create
@@ -53,6 +56,7 @@ public final class WelcomePageServer {
 
         try {
             while (true) {
+                System.out.println("loop");
                 // Proceed to the feed page once the user is signed in
                 if (isSignedIn) {
                     FeedPageServer.feedPageOperation(br, bw, user, users, chats);
@@ -73,7 +77,7 @@ public final class WelcomePageServer {
                         String password = br.readLine();
 
                         if (User.hasLogin(username, password)) {
-                            bw.write("Successful sign-in");
+                            bw.write(SUCCESSFUL_SIGN_IN);
                             bw.newLine();
                             bw.flush();
                             isSignedIn = true;
@@ -86,7 +90,7 @@ public final class WelcomePageServer {
                             break;
 
                         } else {
-                            bw.write("Sign-in was unsuccessful");
+                            bw.write(UNSUCCESSFUL_SIGN_IN);
                             bw.newLine();
                             bw.flush();
                             break;
@@ -107,14 +111,13 @@ public final class WelcomePageServer {
                             newUser.createNewUser(newUsername, newPassword, newUser.getUserID());
                             users.add(newUser);
                             user = newUser;
-                            isSignedIn = true;
 
                             bw.write("User creation successful");
                             bw.newLine();
                             bw.flush();
                             break;
 
-                            // If new username/password is invalid
+                        // If new username/password is invalid
                         } catch (InvalidCreateAccountException e) {
                             bw.write("Invalid fields");
                             bw.newLine();
@@ -122,9 +125,6 @@ public final class WelcomePageServer {
                             continue;
                         }
                     }
-
-                } else if (mainChoice.equals("3")) {
-                    break;
                 } else { // Invalid response
                     continue;
                 }

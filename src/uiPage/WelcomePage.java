@@ -17,8 +17,8 @@ public class WelcomePage extends JPanel {
     private String password;
 
     private JLabel title = new JLabel("Welcome to Boiler Gram!", JLabel.CENTER);
-    private JLabel usernameLabel = new JLabel("Username: ");
-    private JLabel passwordLabel = new JLabel("Password: ");
+    private JLabel usernameLabel = new JLabel("Username");
+    private JLabel passwordLabel = new JLabel("Password");
     private JTextField usernameField = new JTextField(15);
     private JPasswordField passwordField = new JPasswordField(15);
     private JButton signInButton = new JButton("Sign In");
@@ -113,6 +113,7 @@ public class WelcomePage extends JPanel {
         signInButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(WelcomePage.this, "WELCOME SIGN IN CLICKED!");
                 String username = usernameField.getText();
                 char[] passwordChars = passwordField.getPassword();
 
@@ -146,6 +147,7 @@ public class WelcomePage extends JPanel {
         newAccountButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(WelcomePage.this, "WELCOME SIGN UP CLICKED!");
                 pageManager.lazyLoadPage("signup", () -> new CreateUserPage(pageManager, bufferedWriter, bufferedReader));
             }
         });
