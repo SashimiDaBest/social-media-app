@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import javax.swing.border.EmptyBorder;
 
 public class WelcomePage extends JPanel {
@@ -24,30 +25,29 @@ public class WelcomePage extends JPanel {
     private JLabel newAccount = new JLabel("Don't have an account?", JLabel.CENTER);
     private JButton newAccountButton = new JButton("Sign Up");
 
-    private CreateUserPage createUserPage;
-    private FeedViewPage feedViewPage;
-
-    private CardLayout cardLayout;
-    private JPanel cardPanel;
+    private PageManager pageManager;
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
 
-    public WelcomePage(CardLayout cardLayout, JPanel cardPanel, BufferedWriter bufferedWriter, BufferedReader bufferedReader) {
-        this.cardLayout = cardLayout;
-        this.cardPanel = cardPanel;
+    private static final String SUCCESSFUL_SIGN_IN = "Successful sign-in";
+    private static final String UNSUCCESSFUL_SIGN_IN = "Sign-in was unsuccessful";
+
+    public WelcomePage(PageManager pageManager, BufferedWriter bufferedWriter, BufferedReader bufferedReader) {
+        this.pageManager = pageManager;
         this.bufferedWriter = bufferedWriter;
         this.bufferedReader = bufferedReader;
 
         setLayout(new BorderLayout());
 
-        //1st Panel - Title
+
+        //1st Panel - Title Panel
         JPanel titlePanel = new JPanel();
         titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.Y_AXIS));
         titlePanel.setBorder(new EmptyBorder(10, 0, 10, 0));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
         titlePanel.add(title);
 
-        //2nd Panel - Text Input
+        //2nd Panel - Text Input Panel
         JPanel inputPanel = new JPanel();
         inputPanel.setLayout(new GridBagLayout());
         inputPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
@@ -82,7 +82,7 @@ public class WelcomePage extends JPanel {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         inputPanel.add(passwordField, gbc);
 
-        //3rd Panel - Button
+        //3rd Panel - Options Panel
         JPanel optionsPanel = new JPanel();
         optionsPanel.setLayout(new BoxLayout(optionsPanel, BoxLayout.Y_AXIS));
         optionsPanel.setBorder(new EmptyBorder(10, 0, 10, 0));
@@ -97,7 +97,7 @@ public class WelcomePage extends JPanel {
         optionsPanel.add(Box.createVerticalStrut(5));
         optionsPanel.add(newAccountButton);
 
-        //4th Panel - Group All Components
+        //4th Panel - Combine Panels
         JPanel ultimatePanel = new JPanel();
         ultimatePanel.setLayout(new BoxLayout(ultimatePanel, BoxLayout.Y_AXIS));
         ultimatePanel.setBorder(new EmptyBorder(20, 20, 20, 20));
@@ -109,66 +109,44 @@ public class WelcomePage extends JPanel {
         setupActionListeners();
     }
 
-    public JButton getSignInButton() {
-        return signInButton;
-    }
-
-    public JButton getNewAccountButton() {
-        return newAccountButton;
-    }
-
-    public JTextField getUsernameField() {
-        return usernameField;
-    }
-
-    public JPasswordField getPasswordField() {
-        return passwordField;
-    }
-
     private void setupActionListeners() {
-
-        getSignInButton().addActionListener(new ActionListener() {
-
+        signInButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null, "sign in button clicked", "INFO", JOptionPane.INFORMATION_MESSAGE);
-                UserPageClient.write("1", bufferedWriter);
-                String username = getUsernameField().getText();
-                String password = new String(getPasswordField().getPassword());
-                UserPageClient.write(username, bufferedWriter);
-                UserPageClient.write(password, bufferedWriter);
+                String username = usernameField.getText();
+                char[] passwordChars = passwordField.getPassword();
 
-                String messageFromServer = "";
+                if (username.isEmpty() || passwordChars.length == 0) {
+                    JOptionPane.showMessageDialog(null, "Username or password cannot be empty.", "Input Error", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
                 try {
-                    messageFromServer = bufferedReader.readLine();
-                    if (messageFromServer == null) {
-                        throw new IOException("Server closed the connection");
+                    UserPageClient.write("1", bufferedWriter); // "1" for sign-in operation
+                    UserPageClient.write(username, bufferedWriter);
+                    UserPageClient.write(new String(passwordChars), bufferedWriter);
+
+                    Arrays.fill(passwordChars, '\0'); // Clear password from memory
+
+                    String messageFromServer = bufferedReader.readLine();
+                    if (messageFromServer == null) throw new IOException("Server closed the connection");
+
+                    if (SUCCESSFUL_SIGN_IN.equals(messageFromServer)) {
+                        pageManager.lazyLoadPage("feed", () -> new FeedViewPage(pageManager, bufferedWriter, bufferedReader));
+                    } else if (UNSUCCESSFUL_SIGN_IN.equals(messageFromServer)) {
+                        JOptionPane.showMessageDialog(null, "Invalid credentials. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
                     }
-                    // Process the message
                 } catch (IOException ex) {
-                    ex.printStackTrace(); // Log for debugging
+                    ex.printStackTrace();
                     JOptionPane.showMessageDialog(null, "Communication error with the server. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
-
-                if (messageFromServer.equals("Successful sign-in")) {
-                    System.out.println("You have entered the user feed!");
-                    feedViewPage = new FeedViewPage(cardLayout, cardPanel, bufferedWriter, bufferedReader);
-                    cardPanel.add(feedViewPage, "feedViewPage");
-                    cardLayout.show(cardPanel, "feedViewPage");
-                } else if (messageFromServer.equals("Sign-in was unsuccessful")) {
-                    JOptionPane.showMessageDialog(null, "ERROR CONDITION", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-
             }
         });
 
-        getNewAccountButton().addActionListener(new ActionListener() {
+        newAccountButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null, "create button clicked", "INFO", JOptionPane.INFORMATION_MESSAGE);
-                createUserPage = new CreateUserPage(cardLayout, cardPanel, bufferedWriter, bufferedReader);
-                cardPanel.add(createUserPage, "createUserPage");
-                cardLayout.show(cardPanel, "createUserPage");
+                pageManager.lazyLoadPage("signup", () -> new CreateUserPage(pageManager, bufferedWriter, bufferedReader));
             }
         });
     }

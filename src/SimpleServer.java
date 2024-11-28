@@ -6,19 +6,19 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * SimpleServer
- * <p>
- * A basic server implementation that listens on a specified port and handles client connections.
- * When a client connects, it establishes input and output streams and delegates the handling
- * of client requests to the WelcomePageServer.
- * <p>
  *
- * <p>
+ * A basic server implementation that listens on a specified port and handles client connections.
+ * Supports multiple clients using a thread pool for efficient resource management.
+ * Delegates client-specific operations to WelcomePageServer.
+ *
  * This implementation can be extended to support multiple clients concurrently by using
  * an {@code ExecutorService} for thread management.
- * </p>
+ *
  *
  * @author Soleil Pham
  * @author Connor Pugliese
@@ -28,127 +28,106 @@ import java.util.ArrayList;
  */
 public class SimpleServer implements Runnable {
     private static int port = 12;
+    private static final int THREAD_POOL_SIZE = 10; // Limit the number of concurrent threads
+    private static ExecutorService threadPool = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
+
     private Socket socket;
+    private ArrayList<User> users;
+    private ArrayList<Chat> chats;
 
-    // List of all users and chats in the system
-    private static ArrayList<User> users;
-    private static ArrayList<Chat> chats;
-    private User user;
-
-    // Input and output streams for client communication
     private BufferedWriter bw;
     private BufferedReader br;
 
+
     /**
-     * Constructs a SimpleServer that listens on the given port and initializes user and chat data.
+     * Constructs a SimpleServer for handling a client connection.
      *
-     * @throws IOException If an I/O error occurs while setting up the server socket
+     * @param socket The client socket
+     * @param users  The list of users in the system
+     * @param chats  The list of chats in the system
      */
-    public SimpleServer(Socket socket) throws IOException {
+    public SimpleServer(Socket socket, ArrayList<User> users, ArrayList<Chat> chats) {
         this.socket = socket;
-        users = new ArrayList<>();
-        chats = new ArrayList<>();
-        // Load user and chat data from files
-        File dataDirectory = new File("Sample Test Folder");
-        File[] userFiles = dataDirectory.listFiles((ignored, name) -> name.startsWith("U_"));
-        for (File userFile : userFiles) {
-            User newUser = new User(userFile.getAbsolutePath());
-            users.add(newUser);
-        }
-
-        File[] chatFiles = dataDirectory.listFiles((ignored, name) -> name.startsWith("C_"));
-        for (File chatFile : chatFiles) {
-            try {
-                chats.add(new Chat(chatFile.getAbsolutePath().substring(0,
-                        chatFile.getAbsolutePath().lastIndexOf("."))));
-            } catch (InvalidFileFormatException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        this.users = users;
+        this.chats = chats;
     }
 
-    // Accessors for testing:
-    public ArrayList<User> getUsers() {
-        return users;
-    }
-
-    public ArrayList<Chat> getChats() {
-        return chats;
-    }
-    //////
-
-    /**
-     * Starts the server, listens for client connections, and handles them using the WelcomePageServer.
-     *
-     * @throws IOException If an I/O error occurs during communication
-     */
     @Override
     public void run() {
-        System.out.println("Server is listening on port " + port);
         try {
+            System.out.println("Client connected: " + socket.getInetAddress());
 
             // Set up input and output streams
             bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-            // Delegate the client request handling to WelcomePageServer
-            WelcomePageServer.welcomePageOperation(br, bw, user, users, chats);
-            // if (socket.)
-            
+            // Delegate to WelcomePageServer
+            WelcomePageServer.welcomePageOperation(br, bw, null, users, chats);
         } catch (Exception e) {
-            System.out.println("Error accepting connection" + e.getMessage());
+            System.err.println("Error handling client: " + e.getMessage());
             e.printStackTrace();
         } finally {
-            // Ensure resources are closed when the server stops
-            try {
-                stop();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            closeResources();
         }
     }
 
-    /**
-     * Stops the server by closing the server socket.
-     *
-     * @throws IOException If an I/O error occurs while closing the server socket
-     */
-    public void stop() throws IOException {
-        if (socket != null && !socket.isClosed()) {
-            socket.close();
-        }
-        if (bw != null) {
-            bw.close();
-        }
-        if (br != null) {
-            br.close();
-        }
-    }
-
-    /**
-     * Main method to start the SimpleServer.
-     *
-     * @param args Command-line arguments (not used)
-     */
-    public static void main(String[] args) {
-        ServerSocket serverSocket = null;
+    private void closeResources() {
         try {
-            
-            serverSocket = new ServerSocket(port);
+            if (bw != null) bw.close();
+            if (br != null) br.close();
+            if (socket != null && !socket.isClosed()) socket.close();
+        } catch (IOException e) {
+            System.err.println("Error closing resources: " + e.getMessage());
+        }
+    }
+
+    public static void main(String[] args) {
+        ArrayList<User> users = new ArrayList<>();
+        ArrayList<Chat> chats = new ArrayList<>();
+
+        // Load user and chat data
+        try {
+            File dataDirectory = new File("Sample Test Folder");
+            if (!dataDirectory.exists() || !dataDirectory.isDirectory()) {
+                throw new FileNotFoundException("Data directory does not exist: " + dataDirectory.getAbsolutePath());
+            }
+
+            File[] userFiles = dataDirectory.listFiles((dir, name) -> name.startsWith("U_"));
+            if (userFiles != null) {
+                for (File userFile : userFiles) {
+                    users.add(new User(userFile.getAbsolutePath()));
+                }
+            }
+
+            File[] chatFiles = dataDirectory.listFiles((dir, name) -> name.startsWith("C_"));
+            if (chatFiles != null) {
+                for (File chatFile : chatFiles) {
+                    try {
+                        chats.add(new Chat(chatFile.getAbsolutePath().substring(0,
+                                chatFile.getAbsolutePath().lastIndexOf("."))));
+                    } catch (InvalidFileFormatException e) {
+                        System.err.println("Invalid chat file: " + chatFile.getName());
+                    }
+                }
+            }
+
+        } catch (IOException e) {
+            System.err.println("Error loading data: " + e.getMessage());
+            return;
+        }
+
+        // Start the server
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
+            System.out.println("Server is listening on port " + port);
 
             while (true) {
-                Socket socket = serverSocket.accept();
-                SimpleServer server = new SimpleServer(socket);
-                new Thread(server).start();
+                Socket clientSocket = serverSocket.accept();
+                threadPool.execute(new SimpleServer(clientSocket, users, chats));
             }
-            
-        } catch (Exception e) {
+        } catch (IOException e) {
             System.err.println("Server exception: " + e.getMessage());
-            try {
-                serverSocket.close();
-            } catch (IOException error) {
-                error.printStackTrace();
-            }
+        } finally {
+            threadPool.shutdown();
         }
     }
 }

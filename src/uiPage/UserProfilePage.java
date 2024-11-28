@@ -15,9 +15,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class UserProfilePage extends JPanel {
-
-    private CardLayout cardLayout;
-    private JPanel cardPanel;
+    private PageManager pageManager;
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
 
@@ -31,10 +29,9 @@ public class UserProfilePage extends JPanel {
     private ArrayList<JButton> followingButtons = new ArrayList<>();
     private ArrayList<JButton> blockedButtons = new ArrayList<>();
 
-    public UserProfilePage(CardLayout cardLayout, JPanel cardPanel, BufferedWriter bufferedWriter, BufferedReader bufferedReader) {
+    public UserProfilePage(PageManager pageManager, BufferedWriter bufferedWriter, BufferedReader bufferedReader) {
         System.out.println("USER FEED");
-        this.cardLayout = cardLayout;
-        this.cardPanel = cardPanel;
+        this.pageManager = pageManager;
         this.bufferedWriter = bufferedWriter;
         this.bufferedReader = bufferedReader;
 
@@ -66,20 +63,20 @@ public class UserProfilePage extends JPanel {
         JTextPane username = new JTextPane();
         JTextPane accountType = new JTextPane();
 
-        try {
-            String line = bufferedReader.readLine();
-            System.out.println("Received line: " + line); // Debugging output
-            if (line != null && !line.equals("STOP")) {
-                username.setText(line);
-
-                line = bufferedReader.readLine();
-                System.out.println("Account type line: " + line); // Debugging output
-                String account = "1".equals(line) ? "private" : "public";
-                accountType.setText(account);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            String line = bufferedReader.readLine();
+//            System.out.println("Received line: " + line); // Debugging output
+//            if (line != null && !line.equals("STOP")) {
+//                username.setText(line);
+//
+//                line = bufferedReader.readLine();
+//                System.out.println("Account type line: " + line); // Debugging output
+//                String account = "1".equals(line) ? "private" : "public";
+//                accountType.setText(account);
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
 
 
@@ -271,7 +268,8 @@ public class UserProfilePage extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 UserPageClient.write("5", bufferedWriter);
-                cardLayout.show(cardPanel, "feedViewPage");
+                pageManager.addPage("feed", new FeedViewPage(pageManager, bufferedWriter, bufferedReader));
+                pageManager.showPage("feed");
             }
         });
 

@@ -10,14 +10,16 @@ import java.io.BufferedWriter;
 
 public class FeedViewPage extends JPanel {
 
-    private CardLayout cardLayout;
-    private JPanel cardPanel;
+    private PageManager pageManager;
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
 
     private UserProfilePage userProfilePage;
 
-    public FeedViewPage(CardLayout cardLayout, JPanel cardPanel, BufferedWriter bufferedWriter, BufferedReader bufferedReader) {
+    public FeedViewPage(PageManager pageManager, BufferedWriter bufferedWriter, BufferedReader bufferedReader) {
+        this.pageManager = pageManager;
+        this.bufferedReader = bufferedReader;
+        this.bufferedWriter = bufferedWriter;
 
         setLayout(new BorderLayout());
 
@@ -27,9 +29,9 @@ public class FeedViewPage extends JPanel {
         JButton profileIconButton = new JButton("Profile icon");
         profileIconButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                userProfilePage = new UserProfilePage(cardLayout, cardPanel, bufferedWriter, bufferedReader);
-                cardPanel.add(userProfilePage, "userProfilePage");
-                cardLayout.show(cardPanel, "userProfilePage");
+                pageManager.addPage("user", new UserProfilePage(pageManager, bufferedWriter, bufferedReader));
+                pageManager.showPage("user");
+                pageManager.removePage("feed");
             }
         });
         headerPanel.add(profileIconButton);

@@ -9,9 +9,12 @@ import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import javax.swing.border.EmptyBorder;
 
-public class CreateUserPage extends JComponent {
+public class CreateUserPage extends JPanel {
+    private static final String USER_CREATION_SUCCESSFUL = "User creation successful";
+    private static final String INVALID_FIELDS = "Invalid fields";
 
     private JLabel title = new JLabel("Boiler Gram!", JLabel.CENTER);
     private JLabel slogan = new JLabel("Sign up to text all your boilermakers!", JLabel.CENTER);
@@ -21,16 +24,14 @@ public class CreateUserPage extends JComponent {
     private JPasswordField passwordField = new JPasswordField(15);
     private JButton signUpButton = new JButton("Sign Up");
 
+    private PageManager pageManager;
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
-    private CardLayout cardLayout;
-    private JPanel cardPanel;
 
-    public CreateUserPage(CardLayout cardLayout, JPanel cardPanel, BufferedWriter bufferedWriter, BufferedReader bufferedReader) {
+    public CreateUserPage(PageManager pageManager, BufferedWriter bufferedWriter, BufferedReader bufferedReader) {
         this.bufferedReader = bufferedReader;
         this.bufferedWriter = bufferedWriter;
-        this.cardLayout = cardLayout;
-        this.cardPanel = cardPanel;
+        this.pageManager = pageManager;
 
         setLayout(new BorderLayout());
 
@@ -100,64 +101,78 @@ public class CreateUserPage extends JComponent {
         setupActionListeners();
     }
 
-    public JButton getSignUpButtonButton() {
-        return signUpButton;
-    }
-
-    public JTextField getUsernameField() {
-        return usernameField;
-    }
-
-    public JPasswordField getPasswordField() {
-        return passwordField;
-    }
-
     private void setupActionListeners() {
-        getSignUpButtonButton().addActionListener(new ActionListener() {
+        signUpButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null, "sign up button clicked", "INFO", JOptionPane.INFORMATION_MESSAGE);
-                UserPageClient.write("2", bufferedWriter);
-                String username = getUsernameField().getText();
-                String password = new String(getPasswordField().getPassword());
+                String username = usernameField.getText();
+                char[] passwordChars = passwordField.getPassword();
 
-                if (username.contains(";") || username.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Invalid username", "Error", JOptionPane.ERROR_MESSAGE);
+                // Input validation
+                if (username.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Invalid username. Please type in a username.", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                if (password.length() < 10 || !password.matches(".*[a-zA-Z].*") || !password.matches(".*[0-9].*")) {
-                    JOptionPane.showMessageDialog(null, "Password must be at least 10 characters long, contain a letter and a number", "Error", JOptionPane.ERROR_MESSAGE);
+                if (username.isEmpty() || username.contains(";")) {
+                    JOptionPane.showMessageDialog(null, "Invalid username. Please avoid special characters like ';'.", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
-                UserPageClient.write(username, bufferedWriter);
-                UserPageClient.write(password, bufferedWriter);
+                if (passwordChars.length < 10) {
+                    JOptionPane.showMessageDialog(null, "Password must be at least 10 characters long.", "Error", JOptionPane.ERROR_MESSAGE);
+                    Arrays.fill(passwordChars, '\0'); // Clear password for security
+                    return;
+                }
+                if (!containsLetterAndDigit(passwordChars)) {
+                    JOptionPane.showMessageDialog(null, "Password must contain letters and numbers.", "Error", JOptionPane.ERROR_MESSAGE);
+                    Arrays.fill(passwordChars, '\0'); // Clear password for security
+                    return;
+                }
+                if (containsSemicolon(passwordChars)) {
+                    JOptionPane.showMessageDialog(null, "Password must not include semicolons.", "Error", JOptionPane.ERROR_MESSAGE);
+                    Arrays.fill(passwordChars, '\0'); // Clear password for security
+                    return;
+                }
 
-                System.out.println("New usernames cannot contain semicolons!");
-                System.out.println("New passwords must contain a letter and a number, " +
-                        "be at least 10 characters, and cannot contain semicolons!");
-
-                String messageFromServer = "";
                 try {
-                    messageFromServer = bufferedReader.readLine();
-                    if (messageFromServer == null) {
-                        throw new IOException("Server closed the connection");
+                    UserPageClient.write("2", bufferedWriter); // "2" for sign-up operation
+                    UserPageClient.write(username, bufferedWriter);
+                    UserPageClient.write(new String(passwordChars), bufferedWriter);
+
+                    Arrays.fill(passwordChars, '\0'); // Clear password after use
+
+                    String messageFromServer = bufferedReader.readLine();
+                    if (messageFromServer == null) throw new IOException("Server closed the connection");
+
+                    if (USER_CREATION_SUCCESSFUL.equals(messageFromServer)) {
+                        JOptionPane.showMessageDialog(null, "Account created successfully! Redirecting to login page.", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        pageManager.showPage("welcome"); // Assuming "welcomePage" is the login page
+                    } else if (INVALID_FIELDS.equals(messageFromServer)) {
+                        JOptionPane.showMessageDialog(null, "Invalid fields. Please check your input and try again.", "Error", JOptionPane.ERROR_MESSAGE);
                     }
-                    // Process the message
                 } catch (IOException ex) {
-                    ex.printStackTrace(); // Log for debugging
                     JOptionPane.showMessageDialog(null, "Communication error with the server. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-
-                if (messageFromServer.equals("User creation successful")) {
-                    System.out.println("Successfuly created new account!");
-                    cardLayout.show(cardPanel, "feedViewPage");
-
-                } else if (messageFromServer.equals("Invalid fields")) {
-                    System.out.println("One of the fields is invalid, please try again");
-                    JOptionPane.showMessageDialog(null, "ERROR CONDITION", "Error", JOptionPane.ERROR_MESSAGE);
+                    ex.printStackTrace(); // Log error for debugging
                 }
             }
         });
+    }
+
+    private boolean containsLetterAndDigit(char[] password) {
+        boolean hasLetter = false;
+        boolean hasDigit = false;
+        for (char ch : password) {
+            if (Character.isLetter(ch)) hasLetter = true;
+            if (Character.isDigit(ch)) hasDigit = true;
+            if (hasLetter && hasDigit) return true;
+        }
+        return false;
+    }
+
+    private boolean containsSemicolon(char[] password) {
+        for (char ch : password) {
+            if (ch == ';') return true;
+        }
+        return false;
     }
 }
