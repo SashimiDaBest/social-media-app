@@ -33,7 +33,24 @@ public class UserProfilePage extends JPanel {
 
         setLayout(new BorderLayout());
 
-        // Account Info Panel
+        JPanel accountPanel = setAccountInfo();
+        // TODO: IMPLEMENT 3 PANELS: FOLLOWER, FOLLOWING, BLOCKED
+        JPanel followerPanel = setFollower();
+
+        JPanel mainPanel = new JPanel(new GridLayout(0, 1, 0, 10));
+        mainPanel.add(accountPanel);
+        mainPanel.add(followerPanel);
+        add(mainPanel, BorderLayout.CENTER);
+
+        // Footer Navigation Buttons
+        JPanel footer = setFooter();
+        add(footer, BorderLayout.SOUTH);
+
+        // Setup Action Listeners
+        setupActionListeners();
+    }
+
+    private JPanel setAccountInfo() {
         JPanel accountInfoPanel = new JPanel(new GridBagLayout());
         accountInfoPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
@@ -110,12 +127,90 @@ public class UserProfilePage extends JPanel {
         gbcAccount.gridx = 1;
         gbcAccount.weightx = 0; // Fix width
         accountPanel.add(accountInfoPanel, gbcAccount);
+        return accountPanel;
+    }
 
-        JPanel mainPanel = new JPanel(new GridLayout(0, 1, 0, 10));
-        mainPanel.add(accountPanel);
-        add(mainPanel, BorderLayout.CENTER);
+    private JPanel setFollower() {
+        JPanel followerPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbcFollower = new GridBagConstraints();
+        gbcFollower.insets = new Insets(10, 10, 10, 10);
+        gbcFollower.fill = GridBagConstraints.BOTH;
 
-        // Footer Navigation Buttons
+        // Add Follower Label on the left
+        JTextPane followerTextPane = new JTextPane();
+        followerTextPane.setEditable(false);
+        followerTextPane.setText("Followers");
+        gbcFollower.gridx = 0;
+        gbcFollower.gridy = 0;
+        gbcFollower.weightx = 1; // Allow resizing
+        followerPanel.add(followerTextPane, gbcFollower);
+
+        String followerValidity;
+        try {
+            followerValidity = bufferedReader.readLine();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        JTextPane followerStatus = new JTextPane();
+        followerStatus.setEditable(false);
+
+        JPanel FollowerButtonPanel = new JPanel(new GridLayout(0, 1, 0, 10));
+
+        if (!followerValidity.equals("[EMPTY]")) {
+            followerStatus.setText("You have followers!");
+
+            // Add Buttons Panel on the right
+            gbcFollower.gridx = 1;
+            gbcFollower.weightx = 0; // Fix width
+            followerPanel.add(followerStatus, gbcFollower);
+//            followerButtons = UserPageClient.readAndPrint(bufferedReader);
+//            if (followerButtons != null && !followerButtons.isEmpty()) {
+//                for (JButton followerButton : followerButtons) {
+//                    FollowerButtonPanel.add(followerButton);
+//                }
+//                // Add Buttons Panel on the right
+//                gbcFollower.gridx = 1;
+//                gbcFollower.weightx = 0; // Fix width
+//                followerPanel.add(FollowerButtonPanel, gbcFollower);
+//            }
+            /*
+            System.out.print("Do you want to view Other (Y/N): ");
+            String input2 = scanner.nextLine();
+            if (input2.equals("Y")) {
+                try {
+                    bw.write("VIEW");
+                    bw.newLine();
+                    bw.flush();
+                    System.out.print("Other Username: ");
+                    String otherUsername = scanner.nextLine();
+                    OtherPageClient.otherPage(scanner, otherUsername, br, bw, socket);
+                    break;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                try {
+                    bw.newLine();
+                    bw.flush();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+             */
+        } else {
+            followerStatus.setText("You have no followers!");
+
+            // Add Buttons Panel on the right
+            gbcFollower.gridx = 1;
+            gbcFollower.weightx = 0; // Fix width
+            followerPanel.add(followerStatus, gbcFollower);
+        }
+
+        return followerPanel;
+    }
+
+    private JPanel setFooter() {
         JPanel navigationPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         backButton = new JButton("Back");
         logoutButton = new JButton("Logout");
@@ -124,16 +219,51 @@ public class UserProfilePage extends JPanel {
         navigationPanel.add(backButton);
         navigationPanel.add(logoutButton);
         navigationPanel.add(nextButton);
-
-        add(navigationPanel, BorderLayout.SOUTH);
-
-        // Setup Action Listeners
-        setupActionListeners();
+        return navigationPanel;
     }
 
     private void setupActionListeners() {
 
+        profileButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //TODO: IMPLEMENT FEATURES LATER
+            }
+        });
+
+        settingButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //TODO: IMPLEMENT FEATURES LATER
+            }
+        });
+
+        logoutButton.addActionListener(new ActionListener() {
+           @Override
+           public void actionPerformed(ActionEvent e) {
+               UserPageClient.write("6", bufferedWriter);
+               pageManager.showPage("welcome");
+               pageManager.removePage("user");
+           }
+        });
+
+        backButton.addActionListener(new ActionListener() {
+           @Override
+           public void actionPerformed(ActionEvent e) {
+               UserPageClient.write("5", bufferedWriter);
+               pageManager.lazyLoadPage("feed", () -> new FeedViewPage(pageManager, bufferedWriter, bufferedReader));
+               pageManager.removePage("user");
+           }
+        });
+
+        nextButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //TODO: IMPLEMENT FEATURES LATER
+            }
+        });
     }
+
     /*
         // Display menu and handle user input
         while (true) {
