@@ -1,5 +1,6 @@
 package clientPageOperation;
 
+import javax.swing.*;
 import java.net.*;
 import java.io.*;
 import java.util.ArrayList;
@@ -30,20 +31,21 @@ public final class UserPageClient {
      * @param br BufferedReader for reading server responses
      * @return true if successful, false otherwise
      */
-    public static boolean readAndPrint(BufferedReader br) {
+    public static ArrayList<String> readAndPrint(BufferedReader br) {
+        ArrayList<String> buttonNames = new ArrayList<>();
         try {
             String line = br.readLine();
             while (line != null && !line.equals("END")) {
                 if (!line.equals("[EMPTY]")) {
-                    System.out.println(line);
+                    buttonNames.add(line);
                 }
                 line = br.readLine();
             }
-            return true;
+            return buttonNames;
         } catch (IOException e) {
             System.out.println("readAndPrint() ERROR");
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
 

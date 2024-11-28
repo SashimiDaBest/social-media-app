@@ -33,7 +33,27 @@ public class UserProfilePage extends JPanel {
 
         setLayout(new BorderLayout());
 
-        // Account Info Panel
+        JPanel accountPanel = setAccountInfo();
+        JPanel followerPanel = setPeople(1);
+//        JPanel followingPanel = setPeople(2);
+//        JPanel blockedPanel = setPeople(3);
+
+        JPanel mainPanel = new JPanel(new GridLayout(0, 1, 0, 10));
+        mainPanel.add(accountPanel);
+        mainPanel.add(followerPanel);
+//        mainPanel.add(followingPanel);
+//        mainPanel.add(blockedPanel);
+        add(mainPanel, BorderLayout.CENTER);
+
+        // Footer Navigation Buttons
+        JPanel footer = setFooter();
+        add(footer, BorderLayout.SOUTH);
+
+        // Setup Action Listeners
+        setupActionListeners();
+    }
+
+    private JPanel setAccountInfo() {
         JPanel accountInfoPanel = new JPanel(new GridBagLayout());
         accountInfoPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
@@ -110,12 +130,78 @@ public class UserProfilePage extends JPanel {
         gbcAccount.gridx = 1;
         gbcAccount.weightx = 0; // Fix width
         accountPanel.add(accountInfoPanel, gbcAccount);
+        return accountPanel;
+    }
 
-        JPanel mainPanel = new JPanel(new GridLayout(0, 1, 0, 10));
-        mainPanel.add(accountPanel);
-        add(mainPanel, BorderLayout.CENTER);
+    private JPanel setPeople(int category) {
+        JPanel peoplePanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.BOTH;
 
-        // Footer Navigation Buttons
+        // Add Follower Label on the left
+        JTextPane peopleTextPane = new JTextPane();
+        peopleTextPane.setEditable(false);
+        if (category == 1) {
+            peopleTextPane.setText("Followers");
+        } else if (category == 2) {
+            peopleTextPane.setText("Following");
+        } else if (category == 3) {
+            peopleTextPane.setText("Blocked");
+        }
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1; // Allow resizing
+        peoplePanel.add(peopleTextPane, gbc);
+
+        JTextPane peopleStatus = new JTextPane();
+        peopleStatus.setEditable(false);
+        JPanel peopleButtonPanel = new JPanel(new GridLayout(0, 1, 0, 10));
+
+        SwingUtilities.invokeLater(() -> {
+            try {
+                String peopleValidity = bufferedReader.readLine();
+                if (!peopleValidity.equals("[EMPTY]")) {
+                    if (category == 1) {
+                        peopleStatus.setText("You have followers!");
+                    } else if (category == 2) {
+                        peopleStatus.setText("You have following!");
+                    } else if (category == 3) {
+                        peopleStatus.setText("You have blocked!");
+                    }
+                    peopleButtonPanel.add(peopleStatus);
+
+                    ArrayList<String> buttonNames = UserPageClient.readAndPrint(bufferedReader);
+                    for (String buttonName : buttonNames) {
+                        JButton button = new JButton(buttonName);
+                        if (category == 1) {
+                            followerButtons.add(button);
+                        } else if (category == 2) {
+                            followingButtons.add(button);
+                        } else if (category == 3) {
+                            blockedButtons.add(button);
+                        }
+                        peopleButtonPanel.add(button);
+                    }
+                } else {
+                    peopleStatus.setText("You have no followers!");
+                    peopleButtonPanel.add(peopleStatus);
+                }
+                peopleButtonPanel.revalidate();
+                peopleButtonPanel.repaint();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+        gbc.gridx = 1;
+        gbc.weightx = 0; // Fix width
+        peoplePanel.add(peopleButtonPanel, gbc);
+
+        return peoplePanel;
+    }
+
+    private JPanel setFooter() {
         JPanel navigationPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         backButton = new JButton("Back");
         logoutButton = new JButton("Logout");
@@ -124,16 +210,51 @@ public class UserProfilePage extends JPanel {
         navigationPanel.add(backButton);
         navigationPanel.add(logoutButton);
         navigationPanel.add(nextButton);
-
-        add(navigationPanel, BorderLayout.SOUTH);
-
-        // Setup Action Listeners
-        setupActionListeners();
+        return navigationPanel;
     }
 
     private void setupActionListeners() {
 
+        profileButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //TODO: IMPLEMENT FEATURES LATER
+            }
+        });
+
+        settingButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //TODO: IMPLEMENT FEATURES LATER
+            }
+        });
+
+        logoutButton.addActionListener(new ActionListener() {
+           @Override
+           public void actionPerformed(ActionEvent e) {
+               UserPageClient.write("6", bufferedWriter);
+               pageManager.showPage("welcome");
+               pageManager.removePage("user");
+           }
+        });
+
+        backButton.addActionListener(new ActionListener() {
+           @Override
+           public void actionPerformed(ActionEvent e) {
+               UserPageClient.write("5", bufferedWriter);
+               pageManager.lazyLoadPage("feed", () -> new FeedViewPage(pageManager, bufferedWriter, bufferedReader));
+               pageManager.removePage("user");
+           }
+        });
+
+        nextButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //TODO: IMPLEMENT FEATURES LATER
+            }
+        });
     }
+
     /*
         // Display menu and handle user input
         while (true) {
