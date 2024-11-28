@@ -1,17 +1,15 @@
 package uiPage;
 
 import clientPageOperation.UserPageClient;
-import object.User;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class UserProfilePage extends JPanel {
     private PageManager pageManager;
@@ -23,7 +21,6 @@ public class UserProfilePage extends JPanel {
     private JButton backButton;
     private JButton nextButton;
     private JButton logoutButton;
-    private JPanel mainView;
 
     private ArrayList<JButton> followerButtons = new ArrayList<>();
     private ArrayList<JButton> followingButtons = new ArrayList<>();
@@ -35,250 +32,109 @@ public class UserProfilePage extends JPanel {
         this.bufferedWriter = bufferedWriter;
 
         setLayout(new BorderLayout());
-        JLabel title = new JLabel("User Profile Page", JLabel.CENTER);
 
-        // set mainView layout so it orders item top to bottom
-        JPanel mainView = new JPanel();
-        mainView.setLayout(new BoxLayout(mainView, BoxLayout.PAGE_AXIS));
+        // Account Info Panel
+        JPanel accountInfoPanel = new JPanel(new GridBagLayout());
+        accountInfoPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        JPanel box1 = new JPanel();
-        JPanel box2 = new JPanel();
-        JPanel box3 = new JPanel();
-        JPanel box4 = new JPanel();
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        mainView.add(box1);
-        mainView.add(box2);
-        mainView.add(box3);
-        mainView.add(box4);
+        // User Information
+        JLabel usernameLabel = new JLabel("Username:");
+        JTextField usernameField = new JTextField(15);
+        usernameField.setEditable(false);
 
-        // create box 1 - profile view
-        box1.setLayout(new BoxLayout(box1, BoxLayout.X_AXIS));
-        profileButton = new JButton("Profile");
-        JPanel accountInfo = new JPanel();
-        accountInfo.setLayout(new BoxLayout(accountInfo, BoxLayout.Y_AXIS));
-        settingButton = new JButton("Settings");
-        JTextPane username = new JTextPane();
-        JTextPane accountType = new JTextPane();
+        JLabel accountTypeLabel = new JLabel("Account Type:");
+        JTextField accountTypeField = new JTextField(15);
+        accountTypeField.setEditable(false);
 
-//        UserPageClient.write("HELLO", bufferedWriter);
-
-
-//        try {
-//            String line = bufferedReader.readLine();
-//            System.out.println("Received line: " + line); // Debugging output
-//            if (line != null && !line.equals("STOP")) {
-//                username.setText(line);
-//
-//                line = bufferedReader.readLine();
-//                System.out.println("Account type line: " + line); // Debugging output
-//                String account = "1".equals(line) ? "private" : "public";
-//                accountType.setText(account);
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
-
-
-        accountType.add(settingButton);
-        accountType.add(username);
-        accountInfo.add(accountType);
-
-        box1.add(profileButton);
-        box1.add(accountType);
-
-        // create box 2 - follower view
-        box2.setLayout(new BoxLayout(box2, BoxLayout.X_AXIS));
-        JTextPane boxLabel1 = new JTextPane();
-        boxLabel1.setText("Follower");
-        box2.add(boxLabel1);
-
-        JPanel followerList = new JPanel();
-        followerList.setLayout(new BoxLayout(followerList, BoxLayout.Y_AXIS));
-        box2.add(followerList);
-
-        JTextPane followerStatus = new JTextPane();
-        followerList.add(followerStatus);
-
-        ArrayList<String> list = new ArrayList<>();
-        String followerValidity;
-//        try {
-//            followerValidity = bufferedReader.readLine();
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//
-//        if (!followerValidity.equals("EMPTY")) {
-//            list = UserPageClient.readAndPrint(bufferedReader);
-//        } else {
-//            followerStatus.setText("You have no followers!");
-//        }
-//
-//        for (int i = 0; i < list.size(); i++) {
-//            followerButtons.add(new JButton(list.get(i)));
-//            followerList.add(followerButtons.get(i));
-//        }
-//
-//        list.clear();
-
-        // create box 3 - following view
-        box3.setLayout(new BoxLayout(box3, BoxLayout.X_AXIS));
-        JTextPane boxLabel2 = new JTextPane();
-        boxLabel1.setText("Following");
-        box3.add(boxLabel2);
-
-        JPanel followingList = new JPanel();
-        followingList.setLayout(new BoxLayout(followingList, BoxLayout.Y_AXIS));
-        box2.add(followingList);
-
-        JTextPane followingStatus = new JTextPane();
-        followingList.add(followingStatus);
-
-        String followingValidity;
-//        try {
-//            followingValidity = bufferedReader.readLine();
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//
-//        if (!followingValidity.equals("EMPTY")) {
-//            list = UserPageClient.readAndPrint(bufferedReader);
-//        } else {
-//            followingStatus.setText("You have no following!");
-//        }
-//
-//        for (int i = 0; i < list.size(); i++) {
-//            followingButtons.add(new JButton(list.get(i)));
-//            followingList.add(followingButtons.get(i));
-//        }
-//
-//        list.clear();
-
-        // create box 4 - blocked view
-        box4.setLayout(new BoxLayout(box4, BoxLayout.X_AXIS));
-        JTextPane boxLabel3 = new JTextPane();
-        boxLabel1.setContentType("Blocked");
-        box4.add(boxLabel3);
-
-        JPanel blockedList = new JPanel();
-        blockedList.setLayout(new BoxLayout(blockedList, BoxLayout.Y_AXIS));
-        box2.add(blockedList);
-
-        JTextPane blockedStatus = new JTextPane();
-        blockedList.add(blockedStatus);
-
-        String blockedValidity;
-//        try {
-//            blockedValidity = bufferedReader.readLine();
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//
-//        if (!blockedValidity.equals("EMPTY")) {
-//            list = UserPageClient.readAndPrint(bufferedReader);
-//        } else {
-//            System.out.println("You have not blocked anyone!");
-//        }
-//
-//        for (int i = 0; i < list.size(); i++) {
-//            blockedButtons.add(new JButton(list.get(i)));
-//            blockedList.add(blockedButtons.get(i));
-//        }
-//
-//        list.clear();
-
-        // add header and footer for navigation
-        JPanel navigationPanel = new JPanel(new BorderLayout());
-        backButton = new JButton("Back");
-        logoutButton = new JButton("Logout");
-        nextButton = new JButton("Next");
-
-        navigationPanel.add(backButton, BorderLayout.WEST);
-        navigationPanel.add(logoutButton, BorderLayout.CENTER);
-        navigationPanel.add(nextButton, BorderLayout.EAST);
-
-        add(title, BorderLayout.NORTH);
-        add(mainView, BorderLayout.CENTER);
-        add(navigationPanel, BorderLayout.SOUTH);
-
-
-
-        setupActionListeners();
-    }
-
-    private void setupActionListeners() {
-        profileButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                UserPageClient.write("1", bufferedWriter);
-                System.out.print("What is your image file path: ");
-                String path = "scanner.nextLine()"; //TODO: get path
-                UserPageClient.write(path, bufferedWriter);
-                try {
-                    if (bufferedReader.readLine().equals("SAVE")) {
-                        System.out.println("Set image successfully");
-                    } else {
-                        System.out.println("Set image failed");
-                    }
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            }
-        });
-
-        settingButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-            }
-        });
-
-        backButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                UserPageClient.write("5", bufferedWriter);
-                pageManager.lazyLoadPage("feed", () -> new FeedViewPage(pageManager, bufferedWriter, bufferedReader));
-                pageManager.removePage("user");
-            }
-        });
-
-        nextButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-            }
-        });
-
-        logoutButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-            }
-        });
-    }
-
-    /*
-    public static void userPage(Scanner scanner, BufferedReader br, BufferedWriter bw, Socket socket) {
-        String username = "";
-        String accountType = "";
-
-        // Read username and account type from the server
+        // Retrieve and Display User Information
         try {
-            String line = br.readLine();
-            username = line;
+            String line = bufferedReader.readLine();
+            usernameField.setText(line);
             if (line != null) {
-                username = line;
-                line = br.readLine();
-                accountType = "1".equals(line) ? "private" : "public";
+                line = bufferedReader.readLine();
+                String accountType = "1".equals(line) ? "private" : "public";
+                accountTypeField.setText(accountType);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+        // Add User Info to Account Info Panel
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        accountInfoPanel.add(usernameLabel, gbc);
+
+        gbc.gridx = 1;
+        accountInfoPanel.add(usernameField, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        accountInfoPanel.add(accountTypeLabel, gbc);
+
+        gbc.gridx = 1;
+        accountInfoPanel.add(accountTypeField, gbc);
+
+        // Profile Actions Section
+        profileButton = new JButton("Edit Profile");
+        settingButton = new JButton("Settings");
+
+        JPanel buttonPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbcButton = new GridBagConstraints();
+        gbc.insets = new Insets(5, 0, 5, 0); // Add spacing between buttons
+        gbc.fill = GridBagConstraints.NONE; // Prevent stretching
+        gbc.anchor = GridBagConstraints.CENTER; // Center the buttons
+
+        gbc.gridy = 0;
+        buttonPanel.add(profileButton, gbc);
+
+        gbc.gridy = 1;
+        buttonPanel.add(settingButton, gbc);
+
+        // Combine Info Panel and Button Panel (Side by Side)
+        JPanel accountPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbcAccount = new GridBagConstraints();
+        gbcAccount.insets = new Insets(10, 10, 10, 10);
+        gbcAccount.fill = GridBagConstraints.BOTH;
+
+        // Add Account Info Panel on the left
+        gbcAccount.gridx = 0;
+        gbcAccount.gridy = 0;
+        gbcAccount.weightx = 1; // Allow resizing
+        accountPanel.add(buttonPanel, gbcAccount);
+
+        // Add Button Panel on the right
+        gbcAccount.gridx = 1;
+        gbcAccount.weightx = 0; // Fix width
+        accountPanel.add(accountInfoPanel, gbcAccount);
+
+        JPanel mainPanel = new JPanel(new GridLayout(0, 1, 0, 10));
+        mainPanel.add(accountPanel);
+        add(mainPanel, BorderLayout.CENTER);
+
+        // Footer Navigation Buttons
+        JPanel navigationPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        backButton = new JButton("Back");
+        logoutButton = new JButton("Logout");
+        nextButton = new JButton("Next");
+
+        navigationPanel.add(backButton);
+        navigationPanel.add(logoutButton);
+        navigationPanel.add(nextButton);
+
+        add(navigationPanel, BorderLayout.SOUTH);
+
+        // Setup Action Listeners
+        setupActionListeners();
+    }
+
+    private void setupActionListeners() {
+
+    }
+    /*
         // Display menu and handle user input
         while (true) {
             System.out.println("Welcome to the User Page\n" +
@@ -441,7 +297,5 @@ public class UserProfilePage extends JPanel {
                 System.out.println("Invalid input. Please try again.");
             }
         }
-    }
-
      */
 }

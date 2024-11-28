@@ -30,20 +30,20 @@ public final class UserPageClient {
      * @param br BufferedReader for reading server responses
      * @return true if successful, false otherwise
      */
-    public static ArrayList<String> readAndPrint(BufferedReader br) {
+    public static boolean readAndPrint(BufferedReader br) {
         try {
-            ArrayList<String> list = new ArrayList<>();
             String line = br.readLine();
             while (line != null && !line.equals("END")) {
-                System.out.println(line);
-                list.add(line);
+                if (!line.equals("[EMPTY]")) {
+                    System.out.println(line);
+                }
                 line = br.readLine();
             }
-            return list;
+            return true;
         } catch (IOException e) {
             System.out.println("readAndPrint() ERROR");
             e.printStackTrace();
-            return null;
+            return false;
         }
     }
 

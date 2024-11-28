@@ -253,31 +253,31 @@ public final class FeedPageServer {
                                 // Collect the client's decision and process accordingly.
                                 String chatDecision = br.readLine();
 
-                                    switch (chatDecision) {
-                                        case "1":
-                                            // Compose message
-                                            chats = updateChats(chats);
-                                            String messageToCompose = br.readLine();
-                                            chats.get(chatIndex).addMessage(new Message(user.getUserID(),
-                                                    0,
-                                                    messageToCompose));
-                                            break;
-                                        case "2":
-                                            // Delete previous message
-                                            chats = updateChats(chats);
-                                            chats.get(chatIndex).deleteMessage(user.getUserID());
-                                            break;
-                                        case "3":
-                                            // Edit previous message
-                                            chats = updateChats(chats);
-                                            String replacementMessage = br.readLine();
-                                            chats.get(chatIndex).editMessage(replacementMessage, user.getUserID());
-                                            break;
-                                        case "4":
-                                            // End chat loop
-                                            viewChat = false;
-                                            break;
-                                    }
+                                switch (chatDecision) {
+                                    case "1":
+                                        // Compose message
+                                        chats = updateChats(chats);
+                                        String messageToCompose = br.readLine();
+                                        chats.get(chatIndex).addMessage(new Message(user.getUserID(),
+                                                0,
+                                                messageToCompose));
+                                        break;
+                                    case "2":
+                                        // Delete previous message
+                                        chats = updateChats(chats);
+                                        chats.get(chatIndex).deleteMessage(user.getUserID());
+                                        break;
+                                    case "3":
+                                        // Edit previous message
+                                        chats = updateChats(chats);
+                                        String replacementMessage = br.readLine();
+                                        chats.get(chatIndex).editMessage(replacementMessage, user.getUserID());
+                                        break;
+                                    case "4":
+                                        // End chat loop
+                                        viewChat = false;
+                                        break;
+                                }
 
                             } while (viewChat);
                         }

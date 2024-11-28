@@ -56,11 +56,9 @@ public final class UserPageServer {
      */
     public static void userPageOperation(BufferedReader br, BufferedWriter bw, User user, ArrayList<User> users,
                                          ArrayList<Chat> chats) {
-        System.out.println("User page operation");
         System.out.println("This is the user page.");
         System.out.println("Username: " + user.getUsername());
         System.out.println("Account type: " + user.getAccountType());
-        System.out.flush();
 
         try {
             System.out.println("sending account information...");
@@ -68,9 +66,22 @@ public final class UserPageServer {
             bw.newLine();
             bw.write(Integer.toString(user.getAccountType()));
             bw.newLine();
-            bw.write("STOP");
-            bw.newLine();
             bw.flush();
+//        System.out.println("User page operation");
+//        System.out.println("This is the user page.");
+//        System.out.println("Username: " + user.getUsername());
+//        System.out.println("Account type: " + user.getAccountType());
+//        System.out.flush();
+//
+//        try {
+//            System.out.println("sending account information...");
+//            bw.write(user.getUsername());
+//            bw.newLine();
+//            bw.write(Integer.toString(user.getAccountType()));
+//            bw.newLine();
+//            bw.write("STOP");
+//            bw.newLine();
+//            bw.flush();
 //
 //            System.out.println("Sending follower information...");
 //            if (!user.getFollowerList().isEmpty() && !user.getFollowerList().get(0).isEmpty()) {
@@ -108,67 +119,96 @@ public final class UserPageServer {
 
  */
             // Handle client input
-/*
-            String input = br.readLine();
-            while (input != null) {
-                System.out.println("Client input: " + input);
-                if (input.equals("1")) {
-                    System.out.println("Image Storing...");
-                    String userImagePath = br.readLine();
-                    try {
-                        user.saveImage(userImagePath);
-                        bw.write("SAVE");
-                        bw.newLine();
-                        bw.flush();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        bw.write("");
-                        bw.newLine();
-                        bw.flush();
-                    }
-                } else if (input.equals("2")) {
-                    try {
-                        String line = br.readLine();
-                        if (line != null && line.equals("VIEW")) {
-                            OtherPageServer.otherPageOperation(br, bw, user, users, chats);
-                            break;
+                String input = br.readLine();
+                while (input != null) {
+                    System.out.println("Client input: " + input);
+                    if (input.equals("1")) {
+                        System.out.println("Image Storing...");
+                        String userImagePath = br.readLine();
+                        try {
+                            user.saveImage(userImagePath);
+                            bw.write("SAVE");
+                            bw.newLine();
+                            bw.flush();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            bw.write("");
+                            bw.newLine();
+                            bw.flush();
                         }
+                    } else if (input.equals("2")) {
 
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } else if (input.equals("3")) {
-                    try {
-                        String line = br.readLine();
-                        if (line != null && line.equals("VIEW")) {
-                            OtherPageServer.otherPageOperation(br, bw, user, users, chats);
-                            break;
+                        if (!user.getFollowerList().isEmpty() && !user.getFollowerList().get(0).isEmpty()) {
+                            bw.newLine();
+                            bw.flush();
+
+                            write(user.getFollowerList(), bw);
+                            try {
+                                String line = br.readLine();
+                                if (line != null && line.equals("VIEW")) {
+                                    OtherPageServer.otherPageOperation(br, bw, user, users, chats);
+                                    break;
+                                }
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            bw.write("[EMPTY]");
+                            bw.newLine();
+                            bw.flush();
                         }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } else if (input.equals("4")) {
-                    try {
-                        String line = br.readLine();
-                        if (line != null && line.equals("VIEW")) {
-                            OtherPageServer.otherPageOperation(br, bw, user, users, chats);
-                            break;
+                    } else if (input.equals("3")) {
+
+                        if (!user.getFollowingList().isEmpty() && !user.getFollowingList().get(0).isEmpty()) {
+                            bw.newLine();
+                            bw.flush();
+
+                            write(user.getFollowingList(), bw);
+                            try {
+                                String line = br.readLine();
+                                if (line != null && line.equals("VIEW")) {
+                                    OtherPageServer.otherPageOperation(br, bw, user, users, chats);
+                                    break;
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            bw.write("[EMPTY]");
+                            bw.newLine();
+                            bw.flush();
                         }
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    } else if (input.equals("4")) {
+                        if (!user.getBlockedList().isEmpty() && !user.getBlockedList().get(0).isEmpty()) {
+                            bw.newLine();
+                            bw.flush();
+
+                            write(user.getBlockedList(), bw);
+                            try {
+                                String line = br.readLine();
+                                if (line != null && line.equals("VIEW")) {
+                                    OtherPageServer.otherPageOperation(br, bw, user, users, chats);
+                                    break;
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            bw.write("[EMPTY]");
+                            bw.newLine();
+                            bw.flush();
+                        }
+                    } else if (input.equals("5")) {
+                        FeedPageServer.feedPageOperation(br, bw, user, users, chats);
+                        break;
+                    } else if (input.equals("6")) {
+                        break;
+                    } else {
+                        System.out.println("ERROR: input " + input + " doesn't match expected!");
                     }
-                } else if (input.equals("5")) {
-                    FeedPageServer.feedPageOperation(br, bw, user, users, chats);
-                    break;
-                } else if (input.equals("6")) {
-                    break;
-                } else {
-                    System.out.println("ERROR: input " + input + " doesn't match expected!");
+                    input = br.readLine();
                 }
-                input = br.readLine();
-            }
-
- */
         } catch (IOException e) {
             System.err.println("ERROR: Server communication error - " + e.getMessage());
             e.printStackTrace();

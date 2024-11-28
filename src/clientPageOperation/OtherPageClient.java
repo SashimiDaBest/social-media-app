@@ -139,8 +139,9 @@ public final class OtherPageClient {
                 }
             } else if (input.equals("5")) {
                 UserPageClient.write("5", bw);
+//                TODO: IMPLEMENT
 //                FeedPageClient.feedPage(scanner, br, bw, socket);
-                break;
+//                break;
             } else if (input.equals("6")) {
                 UserPageClient.write("6", bw);
                 try {
