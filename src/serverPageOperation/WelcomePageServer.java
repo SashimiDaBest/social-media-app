@@ -56,7 +56,6 @@ public final class WelcomePageServer {
 
         try {
             while (true) {
-                System.out.println("loop");
                 // Proceed to the feed page once the user is signed in
                 if (isSignedIn) {
                     FeedPageServer.feedPageOperation(br, bw, user, users, chats);

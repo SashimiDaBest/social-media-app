@@ -95,7 +95,7 @@ public final class OtherPageServer {
                             bw.newLine();
                             bw.flush();
                             UserPageServer.write(new ArrayList<>(), bw);
-                        } else if (!otherUser.getFollowerList().getFirst().isEmpty()) {
+                        } else if (!otherUser.getFollowerList().get(0).isEmpty()) {
                             bw.write("");
                             bw.newLine();
                             bw.flush();
@@ -120,7 +120,7 @@ public final class OtherPageServer {
                             bw.newLine();
                             bw.flush();
                             UserPageServer.write(new ArrayList<>(), bw);
-                        } else if (!otherUser.getFollowingList().getFirst().isEmpty()) {
+                        } else if (!otherUser.getFollowingList().get(0).isEmpty()) {
                             bw.write("");
                             bw.newLine();
                             bw.flush();
