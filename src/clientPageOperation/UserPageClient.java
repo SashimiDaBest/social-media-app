@@ -31,17 +31,17 @@ public final class UserPageClient {
      * @param br BufferedReader for reading server responses
      * @return true if successful, false otherwise
      */
-    public static ArrayList<JButton> readAndPrint(BufferedReader br) {
-        ArrayList<JButton> buttons = new ArrayList<>();
+    public static ArrayList<String> readAndPrint(BufferedReader br) {
+        ArrayList<String> buttonNames = new ArrayList<>();
         try {
             String line = br.readLine();
             while (line != null && !line.equals("END")) {
                 if (!line.equals("[EMPTY]")) {
-                    buttons.add(new JButton(line));
+                    buttonNames.add(line);
                 }
                 line = br.readLine();
             }
-            return buttons;
+            return buttonNames;
         } catch (IOException e) {
             System.out.println("readAndPrint() ERROR");
             e.printStackTrace();

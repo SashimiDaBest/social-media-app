@@ -64,7 +64,7 @@ public final class UserPageServer {
                 bw.newLine();
                 bw.flush();
 
-//                write(user.getFollowerList(), bw);
+                write(user.getFollowerList(), bw);
                         /*
                         try {
                             String line = br.readLine();
@@ -77,6 +77,46 @@ public final class UserPageServer {
                             e.printStackTrace();
                         }
                          */
+            } else {
+                bw.write("[EMPTY]");
+                bw.newLine();
+                bw.flush();
+            }
+
+            if (!user.getFollowingList().isEmpty() && !user.getFollowingList().get(0).isEmpty()) {
+                bw.newLine();
+                bw.flush();
+
+                write(user.getFollowingList(), bw);
+//                try {
+//                    String line = br.readLine();
+//                    if (line != null && line.equals("VIEW")) {
+//                        OtherPageServer.otherPageOperation(br, bw, user, users, chats);
+//                        break;
+//                    }
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+            } else {
+                bw.write("[EMPTY]");
+                bw.newLine();
+                bw.flush();
+            }
+
+            if (!user.getBlockedList().isEmpty() && !user.getBlockedList().get(0).isEmpty()) {
+                bw.newLine();
+                bw.flush();
+
+                write(user.getBlockedList(), bw);
+//                try {
+//                    String line = br.readLine();
+//                    if (line != null && line.equals("VIEW")) {
+//                        OtherPageServer.otherPageOperation(br, bw, user, users, chats);
+//                        break;
+//                    }
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
             } else {
                 bw.write("[EMPTY]");
                 bw.newLine();
@@ -103,46 +143,7 @@ public final class UserPageServer {
                     }
                 } else if (input.equals("2")) {
                 } else if (input.equals("3")) {
-
-                    if (!user.getFollowingList().isEmpty() && !user.getFollowingList().get(0).isEmpty()) {
-                        bw.newLine();
-                        bw.flush();
-
-                        write(user.getFollowingList(), bw);
-                        try {
-                            String line = br.readLine();
-                            if (line != null && line.equals("VIEW")) {
-                                OtherPageServer.otherPageOperation(br, bw, user, users, chats);
-                                break;
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        bw.write("[EMPTY]");
-                        bw.newLine();
-                        bw.flush();
-                    }
                 } else if (input.equals("4")) {
-                    if (!user.getBlockedList().isEmpty() && !user.getBlockedList().get(0).isEmpty()) {
-                        bw.newLine();
-                        bw.flush();
-
-                        write(user.getBlockedList(), bw);
-                        try {
-                            String line = br.readLine();
-                            if (line != null && line.equals("VIEW")) {
-                                OtherPageServer.otherPageOperation(br, bw, user, users, chats);
-                                break;
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        bw.write("[EMPTY]");
-                        bw.newLine();
-                        bw.flush();
-                    }
                 } else if (input.equals("5")) {
                     FeedPageServer.feedPageOperation(br, bw, user, users, chats);
                     break;

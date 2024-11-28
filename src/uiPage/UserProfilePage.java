@@ -34,12 +34,15 @@ public class UserProfilePage extends JPanel {
         setLayout(new BorderLayout());
 
         JPanel accountPanel = setAccountInfo();
-        // TODO: IMPLEMENT 3 PANELS: FOLLOWER, FOLLOWING, BLOCKED
-        JPanel followerPanel = setFollower();
+        JPanel followerPanel = setPeople(1);
+//        JPanel followingPanel = setPeople(2);
+//        JPanel blockedPanel = setPeople(3);
 
         JPanel mainPanel = new JPanel(new GridLayout(0, 1, 0, 10));
         mainPanel.add(accountPanel);
         mainPanel.add(followerPanel);
+//        mainPanel.add(followingPanel);
+//        mainPanel.add(blockedPanel);
         add(mainPanel, BorderLayout.CENTER);
 
         // Footer Navigation Buttons
@@ -130,84 +133,72 @@ public class UserProfilePage extends JPanel {
         return accountPanel;
     }
 
-    private JPanel setFollower() {
-        JPanel followerPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbcFollower = new GridBagConstraints();
-        gbcFollower.insets = new Insets(10, 10, 10, 10);
-        gbcFollower.fill = GridBagConstraints.BOTH;
+    private JPanel setPeople(int category) {
+        JPanel peoplePanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.BOTH;
 
         // Add Follower Label on the left
-        JTextPane followerTextPane = new JTextPane();
-        followerTextPane.setEditable(false);
-        followerTextPane.setText("Followers");
-        gbcFollower.gridx = 0;
-        gbcFollower.gridy = 0;
-        gbcFollower.weightx = 1; // Allow resizing
-        followerPanel.add(followerTextPane, gbcFollower);
-
-        String followerValidity;
-        try {
-            followerValidity = bufferedReader.readLine();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        JTextPane peopleTextPane = new JTextPane();
+        peopleTextPane.setEditable(false);
+        if (category == 1) {
+            peopleTextPane.setText("Followers");
+        } else if (category == 2) {
+            peopleTextPane.setText("Following");
+        } else if (category == 3) {
+            peopleTextPane.setText("Blocked");
         }
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1; // Allow resizing
+        peoplePanel.add(peopleTextPane, gbc);
 
-        JTextPane followerStatus = new JTextPane();
-        followerStatus.setEditable(false);
+        JTextPane peopleStatus = new JTextPane();
+        peopleStatus.setEditable(false);
+        JPanel peopleButtonPanel = new JPanel(new GridLayout(0, 1, 0, 10));
 
-        JPanel FollowerButtonPanel = new JPanel(new GridLayout(0, 1, 0, 10));
+        SwingUtilities.invokeLater(() -> {
+            try {
+                String peopleValidity = bufferedReader.readLine();
+                if (!peopleValidity.equals("[EMPTY]")) {
+                    if (category == 1) {
+                        peopleStatus.setText("You have followers!");
+                    } else if (category == 2) {
+                        peopleStatus.setText("You have following!");
+                    } else if (category == 3) {
+                        peopleStatus.setText("You have blocked!");
+                    }
+                    peopleButtonPanel.add(peopleStatus);
 
-        if (!followerValidity.equals("[EMPTY]")) {
-            followerStatus.setText("You have followers!");
-
-            // Add Buttons Panel on the right
-            gbcFollower.gridx = 1;
-            gbcFollower.weightx = 0; // Fix width
-            followerPanel.add(followerStatus, gbcFollower);
-//            followerButtons = UserPageClient.readAndPrint(bufferedReader);
-//            if (followerButtons != null && !followerButtons.isEmpty()) {
-//                for (JButton followerButton : followerButtons) {
-//                    FollowerButtonPanel.add(followerButton);
-//                }
-//                // Add Buttons Panel on the right
-//                gbcFollower.gridx = 1;
-//                gbcFollower.weightx = 0; // Fix width
-//                followerPanel.add(FollowerButtonPanel, gbcFollower);
-//            }
-            /*
-            System.out.print("Do you want to view Other (Y/N): ");
-            String input2 = scanner.nextLine();
-            if (input2.equals("Y")) {
-                try {
-                    bw.write("VIEW");
-                    bw.newLine();
-                    bw.flush();
-                    System.out.print("Other Username: ");
-                    String otherUsername = scanner.nextLine();
-                    OtherPageClient.otherPage(scanner, otherUsername, br, bw, socket);
-                    break;
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    ArrayList<String> buttonNames = UserPageClient.readAndPrint(bufferedReader);
+                    for (String buttonName : buttonNames) {
+                        JButton button = new JButton(buttonName);
+                        if (category == 1) {
+                            followerButtons.add(button);
+                        } else if (category == 2) {
+                            followingButtons.add(button);
+                        } else if (category == 3) {
+                            blockedButtons.add(button);
+                        }
+                        peopleButtonPanel.add(button);
+                    }
+                } else {
+                    peopleStatus.setText("You have no followers!");
+                    peopleButtonPanel.add(peopleStatus);
                 }
-            } else {
-                try {
-                    bw.newLine();
-                    bw.flush();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+                peopleButtonPanel.revalidate();
+                peopleButtonPanel.repaint();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-             */
-        } else {
-            followerStatus.setText("You have no followers!");
+        });
 
-            // Add Buttons Panel on the right
-            gbcFollower.gridx = 1;
-            gbcFollower.weightx = 0; // Fix width
-            followerPanel.add(followerStatus, gbcFollower);
-        }
+        gbc.gridx = 1;
+        gbc.weightx = 0; // Fix width
+        peoplePanel.add(peopleButtonPanel, gbc);
 
-        return followerPanel;
+        return peoplePanel;
     }
 
     private JPanel setFooter() {
