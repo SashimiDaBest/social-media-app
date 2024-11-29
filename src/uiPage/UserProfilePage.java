@@ -179,7 +179,6 @@ public class UserProfilePage extends JPanel {
                         JButton button = new JButton(buttonName);
 
                         button.addActionListener(e -> {
-                            System.out.println("HELLO");
                             UserPageClient.write("2", bufferedWriter);
                             UserPageClient.write(buttonName, bufferedWriter);
                             pageManager.lazyLoadPage("other", () -> new OtherProfilePage(pageManager, bufferedWriter, bufferedReader, buttonName));

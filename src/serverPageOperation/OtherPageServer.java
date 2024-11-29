@@ -57,19 +57,21 @@ public final class OtherPageServer {
                 bw.write(otherUser.getUsername());
                 bw.newLine();
                 bw.write(otherUser.getAccountType());
+                System.out.println(otherUser.getAccountType());
                 bw.newLine();
+                bw.write("stop");
                 bw.flush();
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
             // Display basic information about the other user
-            System.out.println("User ID: " + otherUser.getUserID());
-            System.out.println("Account Type: " + otherUser.getAccountType());
-            System.out.println("Followers: " + otherUser.getFollowerList());
-            System.out.println("Following: " + otherUser.getFollowingList());
-            System.out.println("Blocked Users: " + otherUser.getBlockedList());
-
+//            System.out.println("User ID: " + otherUser.getUserID());
+//            System.out.println("Account Type: " + otherUser.getAccountType());
+//            System.out.println("Followers: " + otherUser.getFollowerList());
+//            System.out.println("Following: " + otherUser.getFollowingList());
+//            System.out.println("Blocked Users: " + otherUser.getBlockedList());
+/*
             try {
                 if (otherUser.getAccountType() == 1 && user.getFollowerList().contains(otherUser.getUserID())) {
                     bw.write("message");
@@ -96,8 +98,9 @@ public final class OtherPageServer {
             }
 
             try {
-                if (otherUser.getAccountType() == 1 && user.getFollowingList().contains(otherUser.getUserID())) {
-                    bw.write("message");
+                // If other account is private and other user follow user
+                if (otherUser.getAccountType() == 1 && !user.getFollowerList().contains(otherUser.getUserID())) {
+                    bw.write("NO_VIEW");
                     bw.newLine();
                     bw.flush();
                     UserPageServer.write(new ArrayList<>(), bw);
@@ -115,46 +118,46 @@ public final class OtherPageServer {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-            String input = br.readLine();
-            while (input != null) {
-                System.out.println("Client input: " + input);
-                if (input.equals("1")) {
-                    if (user.getFollowingList().contains(otherUser.getUserID())) {
-                        user.deleteFollowing(otherUser.getUserID());
-                        otherUser.deleteFollower(user.getUserID());
-                        bw.write("unfollowed " + otherUser.getUsername());
-                        users = FeedPageServer.updateUsers(users);
-                    } else {
-                        user.addFollowing(otherUser.getUserID());
-                        otherUser.addFollower(user.getUserID());
-                        bw.write("followed " + otherUser.getUsername());
-                        users = FeedPageServer.updateUsers(users);
-                    }
-                    bw.newLine();
-                    bw.flush();
-                } else if (input.equals("2")) {
-                    if (user.getBlockedList().contains(otherUser.getUserID())) {
-                        user.deleteBlock(otherUser.getUserID());
-                        bw.write("unblocked " + otherUser.getUsername());
-                        users = FeedPageServer.updateUsers(users);
-                    } else {
-                        user.addBlock(otherUser.getUserID());
-                        bw.write("blocked " + otherUser.getUsername());
-                        users = FeedPageServer.updateUsers(users);
-                    }
-                    bw.newLine();
-                    bw.flush();
-                } else if (input.equals("3")) {
-                } else if (input.equals("4")) {
-                } else if (input.equals("5")) {
-                    FeedPageServer.feedPageOperation(br, bw, user, users, chats);
-                    break;
-                } else {
-                    System.out.println("ERROR: " + input);
-                }
-                input = br.readLine();
-            }
+ */
+//            String input = br.readLine();
+//            while (input != null) {
+//                System.out.println("Client input: " + input);
+//                if (input.equals("1")) {
+//                    if (user.getFollowingList().contains(otherUser.getUserID())) {
+//                        user.deleteFollowing(otherUser.getUserID());
+//                        otherUser.deleteFollower(user.getUserID());
+//                        bw.write("unfollowed " + otherUser.getUsername());
+//                        users = FeedPageServer.updateUsers(users);
+//                    } else {
+//                        user.addFollowing(otherUser.getUserID());
+//                        otherUser.addFollower(user.getUserID());
+//                        bw.write("followed " + otherUser.getUsername());
+//                        users = FeedPageServer.updateUsers(users);
+//                    }
+//                    bw.newLine();
+//                    bw.flush();
+//                } else if (input.equals("2")) {
+//                    if (user.getBlockedList().contains(otherUser.getUserID())) {
+//                        user.deleteBlock(otherUser.getUserID());
+//                        bw.write("unblocked " + otherUser.getUsername());
+//                        users = FeedPageServer.updateUsers(users);
+//                    } else {
+//                        user.addBlock(otherUser.getUserID());
+//                        bw.write("blocked " + otherUser.getUsername());
+//                        users = FeedPageServer.updateUsers(users);
+//                    }
+//                    bw.newLine();
+//                    bw.flush();
+//                } else if (input.equals("3")) {
+//                } else if (input.equals("4")) {
+//                } else if (input.equals("5")) {
+//                    FeedPageServer.feedPageOperation(br, bw, user, users, chats);
+//                    break;
+//                } else {
+//                    System.out.println("ERROR: " + input);
+//                }
+//                input = br.readLine();
+//            }
         } catch (Exception e) {
             System.err.println("ERROR: server");
             e.printStackTrace();

@@ -113,7 +113,6 @@ public class WelcomePage extends JPanel {
         signInButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(WelcomePage.this, "WELCOME SIGN IN CLICKED!");
                 String username = usernameField.getText();
                 char[] passwordChars = passwordField.getPassword();
 
@@ -147,7 +146,6 @@ public class WelcomePage extends JPanel {
         newAccountButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(WelcomePage.this, "WELCOME SIGN UP CLICKED!");
                 pageManager.lazyLoadPage("signup", () -> new CreateUserPage(pageManager, bufferedWriter, bufferedReader));
             }
         });

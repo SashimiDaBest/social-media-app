@@ -34,16 +34,16 @@ public class OtherProfilePage  extends JPanel{
 
         setLayout(new BorderLayout());
 
-        JPanel accountPanel = setAccountInfo();
-        JPanel relationPanel = new JPanel();
-        JPanel followerPanel = setPeople(1);
-        JPanel followingPanel = setPeople(2);
+//        JPanel accountPanel = setAccountInfo();
+//        JPanel relationPanel = new JPanel();
+//        JPanel followerPanel = setPeople(1);
+//        JPanel followingPanel = setPeople(2);
 
         JPanel mainPanel = new JPanel(new GridLayout(0, 1, 0, 0));
-        mainPanel.add(accountPanel);
-        mainPanel.add(relationPanel);
-        mainPanel.add(followerPanel);
-        mainPanel.add(followingPanel);
+//        mainPanel.add(accountPanel);
+//        mainPanel.add(relationPanel);
+//        mainPanel.add(followerPanel);
+//        mainPanel.add(followingPanel);
         add(mainPanel, BorderLayout.CENTER);
 
         JPanel footer = setFooter();
@@ -52,123 +52,127 @@ public class OtherProfilePage  extends JPanel{
         setupActionListeners();
     }
 
-    private JPanel setAccountInfo() {
-        UserPageClient.write(otherUsername, bufferedWriter);
-
-        JPanel accountInfoPanel = new JPanel(new GridBagLayout());
-        accountInfoPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5); // Reduced gap
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-
-        Dimension fixedSize = new Dimension(150, 25);
-
-        // User Information
-        JLabel usernameLabel = new JLabel("Username:");
-        JTextField usernameField = new JTextField(20);
-        usernameField.setEditable(false);
-        usernameField.setMinimumSize(fixedSize);
-
-        JLabel accountTypeLabel = new JLabel("Account Type:");
-        JTextField accountTypeField = new JTextField(20);
-        accountTypeField.setEditable(false);
-        accountTypeField.setMinimumSize(fixedSize);
-
-        // Retrieve and Display User Information
-        try {
-            String line = bufferedReader.readLine();
-            usernameField.setText(line);
-            if (line != null) {
-                line = bufferedReader.readLine();
-                String accountType = "1".equals(line) ? "private" : "public";
-                accountTypeField.setText(accountType);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        // Add User Info to Account Info Panel
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        accountInfoPanel.add(usernameLabel, gbc);
-
-        gbc.gridx = 1;
-        accountInfoPanel.add(usernameField, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        accountInfoPanel.add(accountTypeLabel, gbc);
-
-        gbc.gridx = 1;
-        accountInfoPanel.add(accountTypeField, gbc);
-
-        // Profile Actions Section
-        profileButton = new JButton("View Profile");
-
-        JPanel buttonPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbcButton = new GridBagConstraints();
-        gbcButton.insets = new Insets(2, 0, 2, 0); // Narrower gap between buttons
-        gbcButton.fill = GridBagConstraints.NONE; // Prevent stretching
-        gbcButton.anchor = GridBagConstraints.CENTER; // Center the buttons
-
-        gbc.gridy = 0;
-        buttonPanel.add(profileButton, gbc);
-
-        // Combine Info Panel and Button Panel (Side by Side)
-        JPanel accountPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbcAccount = new GridBagConstraints();
-        gbcAccount.insets = new Insets(5, 5, 5, 5); // Reduced gap between panels
-        gbcAccount.fill = GridBagConstraints.BOTH;
-
-        // Add Button Panel on the left
-        gbcAccount.gridx = 0;
-        gbcAccount.gridy = 0;
-        gbcAccount.weightx = 0.3; // Allocate less width for button panel
-        accountPanel.add(buttonPanel, gbcAccount);
-
-        // Add Account Info Panel on the right
-        gbcAccount.gridx = 1;
-        gbcAccount.weightx = 0.7; // Allocate more width for account info
-        accountPanel.add(accountInfoPanel, gbcAccount);
-
-        return accountPanel;
-    }
-
-    private JPanel setPeople(int category) {
-        JPanel panel = new JPanel(new GridBagLayout());
-
-        UserPageClient.write("3", bufferedWriter);
-        boolean canView = false;
-        try {
-            String line = bufferedReader.readLine();
-            if (line.equals("")) {
-                canView = true;
-            } else if (line.equals("[EMPTY]")) {
-                System.out.println("User has no followers!");
-            } else if (line.equals("message")) {
-                System.out.println("You have no permission to view!");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        UserPageClient.readAndPrint(bufferedReader);
-//        if (canView) {
-//            System.out.print("Do you want to view another user? (Y/N): ");
-//            String input2 = scanner.nextLine();
-//            if (input2.equals("Y")) {
-//                UserPageClient.write("CHANGE", bw);
-//                System.out.print("Other Username: ");
-//                String other = scanner.nextLine();
-//                otherPage(scanner, other, br, bw, socket);
-//                break;
-//            } else {
-//                UserPageClient.write("", bw);
-//            }
+//    private JPanel setAccountInfo() {
+//        UserPageClient.write(otherUsername, bufferedWriter);
+//
+//        JPanel accountInfoPanel = new JPanel(new GridBagLayout());
+//        accountInfoPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+//
+//        GridBagConstraints gbc = new GridBagConstraints();
+//        gbc.insets = new Insets(5, 5, 5, 5); // Reduced gap
+//        gbc.fill = GridBagConstraints.HORIZONTAL;
+//
+//        Dimension fixedSize = new Dimension(150, 25);
+//
+//        // User Information
+//        JLabel usernameLabel = new JLabel("Username:");
+//        JTextField usernameField = new JTextField(20);
+//        usernameField.setEditable(false);
+//        usernameField.setMinimumSize(fixedSize);
+//
+//        JLabel accountTypeLabel = new JLabel("Account Type:");
+//        JTextField accountTypeField = new JTextField(20);
+//        accountTypeField.setEditable(false);
+//        accountTypeField.setMinimumSize(fixedSize);
+//
+//        // Retrieve and Display User Information
+//        try {
+//            String line = bufferedReader.readLine();
+//            System.out.println(line);
+//            usernameField.setText(line);
+//
+//            line = bufferedReader.readLine();
+//            System.out.println(line);
+//            String accountType = "1".equals(line) ? "private" : "public";
+//            accountTypeField.setText(accountType);
+//
+//            line  = bufferedReader.readLine();
+//            System.out.println(line);
+//        } catch (IOException e) {
+//            e.printStackTrace();
 //        }
+//
+//        // Add User Info to Account Info Panel
+//        gbc.gridx = 0;
+//        gbc.gridy = 0;
+//        accountInfoPanel.add(usernameLabel, gbc);
+//
+//        gbc.gridx = 1;
+//        accountInfoPanel.add(usernameField, gbc);
+//
+//        gbc.gridx = 0;
+//        gbc.gridy = 1;
+//        accountInfoPanel.add(accountTypeLabel, gbc);
+//
+//        gbc.gridx = 1;
+//        accountInfoPanel.add(accountTypeField, gbc);
+//
+//        // Profile Actions Section
+//        profileButton = new JButton("View Profile");
+//
+//        JPanel buttonPanel = new JPanel(new GridBagLayout());
+//        GridBagConstraints gbcButton = new GridBagConstraints();
+//        gbcButton.insets = new Insets(2, 0, 2, 0); // Narrower gap between buttons
+//        gbcButton.fill = GridBagConstraints.NONE; // Prevent stretching
+//        gbcButton.anchor = GridBagConstraints.CENTER; // Center the buttons
+//
+//        gbc.gridy = 0;
+//        buttonPanel.add(profileButton, gbc);
+//
+//        // Combine Info Panel and Button Panel (Side by Side)
+//        JPanel accountPanel = new JPanel(new GridBagLayout());
+//        GridBagConstraints gbcAccount = new GridBagConstraints();
+//        gbcAccount.insets = new Insets(5, 5, 5, 5); // Reduced gap between panels
+//        gbcAccount.fill = GridBagConstraints.BOTH;
+//
+//        // Add Button Panel on the left
+//        gbcAccount.gridx = 0;
+//        gbcAccount.gridy = 0;
+//        gbcAccount.weightx = 0.3; // Allocate less width for button panel
+//        accountPanel.add(buttonPanel, gbcAccount);
+//
+//        // Add Account Info Panel on the right
+//        gbcAccount.gridx = 1;
+//        gbcAccount.weightx = 0.7; // Allocate more width for account info
+//        accountPanel.add(accountInfoPanel, gbcAccount);
+//
+//        return accountPanel;
+//    }
 
-        return panel;
-    }
+//    private JPanel setPeople(int category) {
+//        JPanel panel = new JPanel(new GridBagLayout());
+//
+////        UserPageClient.write("3", bufferedWriter);
+//        boolean canView = false;
+//        try {
+//            String line = bufferedReader.readLine();
+//            if (line.equals("")) {
+//                canView = true;
+//            } else if (line.equals("[EMPTY]")) {
+//                System.out.println("User has no followers!");
+//            } else if (line.equals("message")) {
+//                System.out.println("You have no permission to view!");
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        UserPageClient.readAndPrint(bufferedReader);
+////        if (canView) {
+////            System.out.print("Do you want to view another user? (Y/N): ");
+////            String input2 = scanner.nextLine();
+////            if (input2.equals("Y")) {
+////                UserPageClient.write("CHANGE", bw);
+////                System.out.print("Other Username: ");
+////                String other = scanner.nextLine();
+////                otherPage(scanner, other, br, bw, socket);
+////                break;
+////            } else {
+////                UserPageClient.write("", bw);
+////            }
+////        }
+//
+//        return panel;
+//    }
 
     private JPanel setFooter() {
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
@@ -186,7 +190,7 @@ public class OtherProfilePage  extends JPanel{
             public void actionPerformed(ActionEvent e) {
                 UserPageClient.write("5", bufferedWriter);
                 pageManager.lazyLoadPage("feed", () -> new FeedViewPage(pageManager, bufferedWriter, bufferedReader));
-                pageManager.removePage("user");
+                pageManager.removePage("other");
             }
         });
 
