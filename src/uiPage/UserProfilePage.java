@@ -35,14 +35,14 @@ public class UserProfilePage extends JPanel {
 
         JPanel accountPanel = setAccountInfo();
         JPanel followerPanel = setPeople(1);
-//        JPanel followingPanel = setPeople(2);
-//        JPanel blockedPanel = setPeople(3);
+        JPanel followingPanel = setPeople(2);
+        JPanel blockedPanel = setPeople(3);
 
-        JPanel mainPanel = new JPanel(new GridLayout(0, 1, 0, 10));
+        JPanel mainPanel = new JPanel(new GridLayout(0, 1, 0, 0));
         mainPanel.add(accountPanel);
         mainPanel.add(followerPanel);
-//        mainPanel.add(followingPanel);
-//        mainPanel.add(blockedPanel);
+        mainPanel.add(followingPanel);
+        mainPanel.add(blockedPanel);
         add(mainPanel, BorderLayout.CENTER);
 
         // Footer Navigation Buttons
@@ -151,17 +151,29 @@ public class UserProfilePage extends JPanel {
         }
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.weightx = 1; // Allow resizing
+        gbc.weightx = 0; // Allow resizing
         peoplePanel.add(peopleTextPane, gbc);
 
         JTextPane peopleStatus = new JTextPane();
         peopleStatus.setEditable(false);
-        JPanel peopleButtonPanel = new JPanel(new GridLayout(0, 1, 0, 10));
+//        JTextPane space = new JTextPane();
+//        space.setEditable(false);
+//        space.setText("");
+        JPanel peopleButtonPanel = new JPanel(new GridLayout(0, 1, 0, 0));
 
-        SwingUtilities.invokeLater(() -> {
+        JScrollPane scrollPane = new JScrollPane(peopleButtonPanel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setPreferredSize(new Dimension(400, 300));
+        scrollPane.setMinimumSize(new Dimension(300, 50)); // Width: 300, Height: 200
+
+        // Load data in a separate thread
+        new Thread(() -> {
             try {
+                System.out.println("XIN CHAO");
                 String peopleValidity = bufferedReader.readLine();
-                if (!peopleValidity.equals("[EMPTY]")) {
+                System.out.println("HOLA");
+                if (!"[EMPTY]".equals(peopleValidity)) {
+                    System.out.println("HELLO");
                     if (category == 1) {
                         peopleStatus.setText("You have followers!");
                     } else if (category == 2) {
@@ -169,34 +181,36 @@ public class UserProfilePage extends JPanel {
                     } else if (category == 3) {
                         peopleStatus.setText("You have blocked!");
                     }
-                    peopleButtonPanel.add(peopleStatus);
+                    SwingUtilities.invokeLater(() -> peopleButtonPanel.add(peopleStatus));
 
                     ArrayList<String> buttonNames = UserPageClient.readAndPrint(bufferedReader);
                     for (String buttonName : buttonNames) {
                         JButton button = new JButton(buttonName);
-                        if (category == 1) {
-                            followerButtons.add(button);
-                        } else if (category == 2) {
-                            followingButtons.add(button);
-                        } else if (category == 3) {
-                            blockedButtons.add(button);
-                        }
-                        peopleButtonPanel.add(button);
+                        SwingUtilities.invokeLater(() -> {
+                            peopleButtonPanel.add(button);
+                            peopleButtonPanel.revalidate();
+                            peopleButtonPanel.repaint();
+                        });
                     }
                 } else {
-                    peopleStatus.setText("You have no followers!");
-                    peopleButtonPanel.add(peopleStatus);
+                    System.out.println("HI");
+                    if (category == 1) {
+                        peopleStatus.setText("You have no followers!");
+                    } else if (category == 2) {
+                        peopleStatus.setText("You have no following!");
+                    } else if (category == 3) {
+                        peopleStatus.setText("You have no blocked!");
+                    }
+                    SwingUtilities.invokeLater(() -> peopleButtonPanel.add(peopleStatus));
                 }
-                peopleButtonPanel.revalidate();
-                peopleButtonPanel.repaint();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        });
+        }).start();
 
         gbc.gridx = 1;
         gbc.weightx = 0; // Fix width
-        peoplePanel.add(peopleButtonPanel, gbc);
+        peoplePanel.add(scrollPane, gbc);
 
         return peoplePanel;
     }
