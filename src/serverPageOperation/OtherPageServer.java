@@ -5,6 +5,7 @@ import object.User;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -52,12 +53,68 @@ public final class OtherPageServer {
             User otherUser = new User("Sample Test Folder/" + User.findIDFromUsername(otherUsername) + ".txt");
             System.out.println("Viewing profile of: " + otherUser.getUsername());
 
+            try {
+                bw.write(otherUser.getUsername());
+                bw.newLine();
+                bw.write(otherUser.getAccountType());
+                bw.newLine();
+                bw.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             // Display basic information about the other user
             System.out.println("User ID: " + otherUser.getUserID());
             System.out.println("Account Type: " + otherUser.getAccountType());
             System.out.println("Followers: " + otherUser.getFollowerList());
             System.out.println("Following: " + otherUser.getFollowingList());
             System.out.println("Blocked Users: " + otherUser.getBlockedList());
+
+            try {
+                if (otherUser.getAccountType() == 1 && user.getFollowerList().contains(otherUser.getUserID())) {
+                    bw.write("message");
+                    bw.newLine();
+                    bw.flush();
+                    UserPageServer.write(new ArrayList<>(), bw);
+                } else if (!otherUser.getFollowerList().get(0).isEmpty()) {
+                    bw.write("");
+                    bw.newLine();
+                    bw.flush();
+                    UserPageServer.write(otherUser.getFollowerList(), bw);
+//                    if (br.readLine().equals("CHANGE")) {
+//                        OtherPageServer.otherPageOperation(br, bw, user, users, chats);
+//                        break;
+//                    }
+                } else {
+                    bw.write("[EMPTY]");
+                    bw.newLine();
+                    bw.flush();
+                    UserPageServer.write(otherUser.getFollowerList(), bw);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                if (otherUser.getAccountType() == 1 && user.getFollowingList().contains(otherUser.getUserID())) {
+                    bw.write("message");
+                    bw.newLine();
+                    bw.flush();
+                    UserPageServer.write(new ArrayList<>(), bw);
+                } else if (!otherUser.getFollowingList().get(0).isEmpty()) {
+                    bw.write("");
+                    bw.newLine();
+                    bw.flush();
+                    UserPageServer.write(otherUser.getFollowingList(), bw);
+                } else {
+                    bw.write("[EMPTY]");
+                    bw.newLine();
+                    bw.flush();
+                    UserPageServer.write(otherUser.getFollowingList(), bw);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             String input = br.readLine();
             while (input != null) {
@@ -89,55 +146,9 @@ public final class OtherPageServer {
                     bw.newLine();
                     bw.flush();
                 } else if (input.equals("3")) {
-                    try {
-                        if (otherUser.getAccountType() == 1 && user.getFollowerList().contains(otherUser.getUserID())) {
-                            bw.write("message");
-                            bw.newLine();
-                            bw.flush();
-                            UserPageServer.write(new ArrayList<>(), bw);
-                        } else if (!otherUser.getFollowerList().get(0).isEmpty()) {
-                            bw.write("");
-                            bw.newLine();
-                            bw.flush();
-                            UserPageServer.write(otherUser.getFollowerList(), bw);
-                            if (br.readLine().equals("CHANGE")) {
-                                OtherPageServer.otherPageOperation(br, bw, user, users, chats);
-                                break;
-                            }
-                        } else {
-                            bw.write("[EMPTY]");
-                            bw.newLine();
-                            bw.flush();
-                            UserPageServer.write(otherUser.getFollowerList(), bw);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
                 } else if (input.equals("4")) {
-                    try {
-                        if (otherUser.getAccountType() == 1 && user.getFollowingList().contains(otherUser.getUserID())) {
-                            bw.write("message");
-                            bw.newLine();
-                            bw.flush();
-                            UserPageServer.write(new ArrayList<>(), bw);
-                        } else if (!otherUser.getFollowingList().get(0).isEmpty()) {
-                            bw.write("");
-                            bw.newLine();
-                            bw.flush();
-                            UserPageServer.write(otherUser.getFollowingList(), bw);
-                        } else {
-                            bw.write("[EMPTY]");
-                            bw.newLine();
-                            bw.flush();
-                            UserPageServer.write(otherUser.getFollowingList(), bw);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
                 } else if (input.equals("5")) {
                     FeedPageServer.feedPageOperation(br, bw, user, users, chats);
-                    break;
-                } else if (input.equals("6")) {
                     break;
                 } else {
                     System.out.println("ERROR: " + input);
