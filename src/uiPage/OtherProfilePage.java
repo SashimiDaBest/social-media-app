@@ -18,10 +18,12 @@ public class OtherProfilePage  extends JPanel{
     private JButton followerButton;
     private JButton followingButton;
 
+    private PageManager pageManager;
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
 
-    public OtherProfilePage(CardLayout cardLayout, JPanel cardPanel, BufferedWriter writer, BufferedReader reader) {
+    public OtherProfilePage(PageManager pageManager, BufferedWriter writer, BufferedReader reader, String otherUsername) {
+        this.pageManager = pageManager;
         this.bufferedWriter = writer;
         this.bufferedReader = reader;
         

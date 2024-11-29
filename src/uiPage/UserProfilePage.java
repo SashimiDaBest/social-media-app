@@ -156,9 +156,6 @@ public class UserProfilePage extends JPanel {
 
         JTextPane peopleStatus = new JTextPane();
         peopleStatus.setEditable(false);
-//        JTextPane space = new JTextPane();
-//        space.setEditable(false);
-//        space.setText("");
         JPanel peopleButtonPanel = new JPanel(new GridLayout(0, 1, 0, 0));
 
         JScrollPane scrollPane = new JScrollPane(peopleButtonPanel);
@@ -169,11 +166,8 @@ public class UserProfilePage extends JPanel {
         // Load data in a separate thread
         new Thread(() -> {
             try {
-                System.out.println("XIN CHAO");
                 String peopleValidity = bufferedReader.readLine();
-                System.out.println("HOLA");
                 if (!"[EMPTY]".equals(peopleValidity)) {
-                    System.out.println("HELLO");
                     if (category == 1) {
                         peopleStatus.setText("You have followers!");
                     } else if (category == 2) {
@@ -186,6 +180,15 @@ public class UserProfilePage extends JPanel {
                     ArrayList<String> buttonNames = UserPageClient.readAndPrint(bufferedReader);
                     for (String buttonName : buttonNames) {
                         JButton button = new JButton(buttonName);
+
+                        button.addActionListener(e -> {
+                            System.out.println("HELLO");
+                            UserPageClient.write("2", bufferedWriter);
+                            UserPageClient.write(buttonName, bufferedWriter);
+                            pageManager.lazyLoadPage("other", () -> new OtherProfilePage(pageManager, bufferedWriter, bufferedReader, buttonName));
+                            pageManager.removePage("user");
+                        });
+
                         SwingUtilities.invokeLater(() -> {
                             peopleButtonPanel.add(button);
                             peopleButtonPanel.revalidate();
@@ -193,7 +196,6 @@ public class UserProfilePage extends JPanel {
                         });
                     }
                 } else {
-                    System.out.println("HI");
                     if (category == 1) {
                         peopleStatus.setText("You have no followers!");
                     } else if (category == 2) {

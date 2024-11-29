@@ -65,18 +65,7 @@ public final class UserPageServer {
                 bw.flush();
 
                 write(user.getFollowerList(), bw);
-                        /*
-                        try {
-                            String line = br.readLine();
-                            if (line != null && line.equals("VIEW")) {
-                                OtherPageServer.otherPageOperation(br, bw, user, users, chats);
-                                break;
-                            }
 
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                         */
             } else {
                 bw.write("[EMPTY]");
                 bw.newLine();
@@ -142,8 +131,7 @@ public final class UserPageServer {
                         bw.flush();
                     }
                 } else if (input.equals("2")) {
-                } else if (input.equals("3")) {
-                } else if (input.equals("4")) {
+                    OtherPageServer.otherPageOperation(br, bw, user, users, chats);
                 } else if (input.equals("5")) {
                     FeedPageServer.feedPageOperation(br, bw, user, users, chats);
                     break;
