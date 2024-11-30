@@ -216,11 +216,9 @@ public class UserProfilePage extends JPanel {
     private JPanel setFooter() {
         JPanel navigationPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         backButton = new JButton("Back");
-        logoutButton = new JButton("Logout");
         nextButton = new JButton("Next");
 
         navigationPanel.add(backButton);
-        navigationPanel.add(logoutButton);
         navigationPanel.add(nextButton);
         return navigationPanel;
     }
@@ -237,18 +235,40 @@ public class UserProfilePage extends JPanel {
         settingButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO: IMPLEMENT FEATURES LATER
+                try {
+                    JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+                    JTextField usernameField = new JTextField(15);
+                    JPasswordField passwordField = new JPasswordField(15);
+                    JButton changeAccountTypeButton = new JButton("Change Account Type");
+                    JButton saveButton = new JButton("Save");
+
+                    panel.add(new JLabel("Username:"));
+                    panel.add(usernameField);
+                    panel.add(new JLabel("Password:"));
+                    panel.add(passwordField);
+                    panel.add(changeAccountTypeButton);
+                    panel.add(saveButton);
+
+                    logoutButton = new JButton("Logout");
+
+                    panel.add(logoutButton);
+
+                    JOptionPane.showMessageDialog(null, panel, "Settings", JOptionPane.PLAIN_MESSAGE);
+
+                    logoutButton.addActionListener(evt -> {
+                        UserPageClient.write("6", bufferedWriter);
+                        pageManager.showPage("welcome");
+                        pageManager.removePage("user");
+                    });
+
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
 
-        logoutButton.addActionListener(new ActionListener() {
-           @Override
-           public void actionPerformed(ActionEvent e) {
-               UserPageClient.write("6", bufferedWriter);
-               pageManager.showPage("welcome");
-               pageManager.removePage("user");
-           }
-        });
+
 
         backButton.addActionListener(new ActionListener() {
            @Override

@@ -73,6 +73,9 @@ public final class OtherPageServer {
                     bw.newLine();
                     bw.flush();
                     UserPageServer.write(otherUser.getFollowerList(), bw);
+                    for (String i : otherUser.getFollowerList()) {
+                        System.out.println(i);
+                    }
                 } else {
                     bw.write("[EMPTY]");
                     bw.newLine();
@@ -94,6 +97,9 @@ public final class OtherPageServer {
                     bw.write("");
                     bw.newLine();
                     bw.flush();
+                    for (String i : otherUser.getFollowingList()) {
+                        System.out.println(i);
+                    }
                     UserPageServer.write(otherUser.getFollowingList(), bw);
                 } else {
                     bw.write("[EMPTY]");
@@ -159,6 +165,9 @@ public final class OtherPageServer {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                } else if (input.equals("5")) {
+                    FeedPageServer.feedPageOperation(br, bw, user, users, chats);
+                    break;
                 }
                 else {
                     System.out.println("ERROR: " + input);

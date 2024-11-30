@@ -188,6 +188,8 @@ public class OtherProfilePage  extends JPanel{
                     for (String buttonName : buttonNames) {
                         JButton button = new JButton(buttonName);
 
+                        System.out.println(buttonName);
+
                         button.addActionListener(e -> {
                             UserPageClient.write("3", bufferedWriter);
                             UserPageClient.write(buttonName, bufferedWriter);
