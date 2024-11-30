@@ -106,7 +106,6 @@ public class CreateUserPage extends JPanel {
         signUpButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("CREATE SIGN UP CLICKED");
                 String username = usernameField.getText();
                 char[] passwordChars = passwordField.getPassword();
 
@@ -162,8 +161,8 @@ public class CreateUserPage extends JPanel {
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("CREATE BACK CLICKED");
                 pageManager.showPage("welcome");
+                pageManager.removePage("signup");
             }
         });
     }
