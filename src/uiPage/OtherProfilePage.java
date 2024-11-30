@@ -11,9 +11,11 @@ import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class OtherProfilePage  extends JPanel{
 
+    private int count = 0;
     private JButton followButton;
     private JButton blockButton;
 
@@ -31,6 +33,7 @@ public class OtherProfilePage  extends JPanel{
         this.bufferedWriter = writer;
         this.bufferedReader = reader;
         this.otherUsername = otherUsername;
+        count++;
 
         setLayout(new BorderLayout());
 
@@ -140,23 +143,79 @@ public class OtherProfilePage  extends JPanel{
     }
 
     private JPanel setPeople(int category) {
-        JPanel panel = new JPanel(new GridBagLayout());
+        JPanel peoplePanel = new JPanel(new GridBagLayout());
 
-//        UserPageClient.write("3", bufferedWriter);
-        boolean canView = false;
-        try {
-            String line = bufferedReader.readLine();
-            if (line.equals("")) {
-                canView = true;
-            } else if (line.equals("[EMPTY]")) {
-                System.out.println("User has no followers!");
-            } else if (line.equals("message")) {
-                System.out.println("You have no permission to view!");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.BOTH;
+
+        // Add Follower Label on the left
+        JTextPane peopleTextPane = new JTextPane();
+        peopleTextPane.setEditable(false);
+        if (category == 1) {
+            peopleTextPane.setText("Followers");
+        } else if (category == 2) {
+            peopleTextPane.setText("Following");
         }
-        UserPageClient.readAndPrint(bufferedReader);
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 0; // Allow resizing
+        peoplePanel.add(peopleTextPane, gbc);
+
+        JTextPane peopleStatus = new JTextPane();
+        peopleStatus.setEditable(false);
+        JPanel peopleButtonPanel = new JPanel(new GridLayout(0, 1, 0, 0));
+
+        JScrollPane scrollPane = new JScrollPane(peopleButtonPanel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setPreferredSize(new Dimension(400, 300));
+        scrollPane.setMinimumSize(new Dimension(300, 50)); // Width: 300, Height: 200
+
+        // Load data in a separate thread
+        new Thread(() -> {
+            try {
+                String peopleValidity = bufferedReader.readLine();
+                if (!"[EMPTY]".equals("")) {
+                    if (category == 1) {
+                        peopleStatus.setText("You have followers!");
+                    } else if (category == 2) {
+                        peopleStatus.setText("You have following!");
+                    }
+                    SwingUtilities.invokeLater(() -> peopleButtonPanel.add(peopleStatus));
+
+                    ArrayList<String> buttonNames = UserPageClient.readAndPrint(bufferedReader);
+                    for (String buttonName : buttonNames) {
+                        JButton button = new JButton(buttonName);
+
+                        button.addActionListener(e -> {
+                            UserPageClient.write("3", bufferedWriter);
+                            UserPageClient.write(buttonName, bufferedWriter);
+                            // TODO: do page loading...
+                        });
+
+                        SwingUtilities.invokeLater(() -> {
+                            peopleButtonPanel.add(button);
+                            peopleButtonPanel.revalidate();
+                            peopleButtonPanel.repaint();
+                        });
+                    }
+                } else if (peopleValidity.equals("[EMPTY]")) {
+                    if (category == 1) {
+                        peopleStatus.setText("You have no followers!");
+                    } else if (category == 2) {
+                        peopleStatus.setText("You have no following!");
+                    }
+                } else if (peopleValidity.equals("message")) {
+                    peopleStatus.setText("You have no permission to view!");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
+
+        /*
+//        UserPageClient.write("3", bufferedWriter);
 //        if (canView) {
 //            System.out.print("Do you want to view another user? (Y/N): ");
 //            String input2 = scanner.nextLine();
@@ -170,8 +229,12 @@ public class OtherProfilePage  extends JPanel{
 //                UserPageClient.write("", bw);
 //            }
 //        }
+         */
+        gbc.gridx = 1;
+        gbc.weightx = 0; // Fix width
+        peoplePanel.add(scrollPane, gbc);
 
-        return panel;
+        return peoplePanel;
     }
 
     private JPanel setFooter() {
