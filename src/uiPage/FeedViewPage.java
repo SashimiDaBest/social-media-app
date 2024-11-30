@@ -4,39 +4,45 @@ import clientPageOperation.UserPageClient;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+
+import clientPageOperation.UserPageClient;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import java.io.*;
 
 public class FeedViewPage extends JPanel {
 
+    private JButton profileIconButton;
+    private JButton viewAnotherProfile;
+    private JButton endFeedButton;
+
+    // For navigation panel
+    private JButton backButton;
+    private JButton nextButton;
+
+    private BufferedWriter writer;
+    private BufferedReader reader; 
     private PageManager pageManager;
-    private BufferedReader bufferedReader;
-    private BufferedWriter bufferedWriter;
 
-    private UserProfilePage userProfilePage;
-
-    public FeedViewPage(PageManager pageManager, BufferedWriter bufferedWriter, BufferedReader bufferedReader) {
-        this.pageManager = pageManager;
-        this.bufferedReader = bufferedReader;
-        this.bufferedWriter = bufferedWriter;
-
+    public FeedViewPage(PageManager pageManager, BufferedWriter bw, BufferedReader br) {
         setLayout(new BorderLayout());
 
+        this.writer = bw;
+        this.reader = br;
+        this.pageManager = pageManager;
+
+        // for viewing your own profile 
         JPanel headerPanel = new JPanel();
         headerPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
-        JButton profileIconButton = new JButton("Profile icon");
-        profileIconButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                UserPageClient.write("3", bufferedWriter);
-                pageManager.lazyLoadPage("user", () -> new UserProfilePage(pageManager, bufferedWriter, bufferedReader));
-                pageManager.removePage("feed");
-            }
-        });
+        profileIconButton = new JButton("Profile icon");
         headerPanel.add(profileIconButton);
+
+        // for viewing other users' profiles
+        viewAnotherProfile = new JButton("View another user's profile");
+        headerPanel.add(viewAnotherProfile);
 
         JPanel searchPanel = new JPanel();
         searchPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -61,17 +67,100 @@ public class FeedViewPage extends JPanel {
         chatFeedPanel.add(chatSelectionPanel);
         chatFeedPanel.add(chatViewPanel);
 
-
-
         JPanel navigationPanel = new JPanel(new BorderLayout());
         JButton backButton = new JButton("Back");
         JButton nextButton = new JButton("Next");
+        endFeedButton = new JButton("Exit feed");
+        navigationPanel.add(endFeedButton);
         navigationPanel.add(backButton, BorderLayout.WEST);
         navigationPanel.add(nextButton, BorderLayout.EAST);
 
         add(headerPanel, BorderLayout.NORTH);
         add(chatFeedPanel, BorderLayout.CENTER);
         add(navigationPanel, BorderLayout.SOUTH);
+
+        setupActionListeners();
+    }
+
+    // 
+    private void setupActionListeners() {
+
+        // shows the current user's profile when clicked
+        profileIconButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                try {
+                    UserPageClient.write("3", writer);
+                    // username and accountType needs to be grabbed from to display following
+                    String username = reader.readLine();
+                    String accountType = "1".equals(reader.readLine()) ? "private" : "public";
+                    
+                    // load the user's page
+                    pageManager.lazyLoadPage(username, () -> new UserProfilePage(pageManager, writer, reader));
+                    pageManager.removePage("feed");
+                } catch (IOException error) {
+                    error.printStackTrace();
+                }
+                
+            }
+        });
+
+        // shows another users' profile 
+        viewAnotherProfile.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                try {
+
+                    UserPageClient.write("4", writer);
+                    // display list of users from the server
+                    String[] userList = reader.readLine().split(";");
+                    String selectedUser = (String) JOptionPane.showInputDialog(null, 
+                        "Select a user to view", "USERS FOUND", 
+                        JOptionPane.QUESTION_MESSAGE, null, userList, userList[0]);
+
+                    // choose user, send back for validation
+                    UserPageClient.write(selectedUser, writer);
+
+                    // show other user profile if valid
+                    boolean validation = Boolean.parseBoolean(reader.readLine());
+                    if (validation) {
+                        pageManager.lazyLoadPage(selectedUser, () -> new OtherProfilePage(pageManager, writer, reader, selectedUser));
+                        pageManager.removePage("feed");
+                    }
+
+                } catch (IOException error) {
+                    error.printStackTrace();
+                }
+            }
+            
+        });
+        
+        // discountiue feed when clicked
+        endFeedButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                JOptionPane.showMessageDialog(null,"Logging out...", 
+                    "CLOSING FEED",JOptionPane.INFORMATION_MESSAGE);
+
+                try {
+
+                    if (writer != null) {
+                        writer.close(); // Close BufferedWriter
+                    }
+                    if (reader != null) {
+                        reader.close(); // Close BufferedReader
+                    }
+                     
+                } catch (IOException error) {
+                    error.printStackTrace();
+                }
+                
+                pageManager.removePage("feed");
+            }
+        });
     }
 
     /*
