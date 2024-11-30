@@ -162,6 +162,7 @@ public class CreateUserPage extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 pageManager.showPage("welcome");
+                pageManager.removePage("signup");
             }
         });
     }
