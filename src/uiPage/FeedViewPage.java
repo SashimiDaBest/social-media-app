@@ -193,7 +193,7 @@ public class FeedViewPage extends JPanel {
             }
         });
 
-        // shows another users' profile 
+        // shows another users' profile
         viewAnotherProfile.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
