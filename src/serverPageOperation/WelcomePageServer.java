@@ -103,10 +103,19 @@ public final class WelcomePageServer {
 
                         // If new username/password is valid
                         try {
-                            User newUser = new User(newUsername, newPassword);
+                            User newUser;
+
                             if (!User.userNameValidation(newUsername)) {
                                 throw new InvalidCreateAccountException("Username is taken!");
                             }
+
+                            try {
+                                newUser = new User(newUsername, newPassword);
+
+                            } catch (InvalidCreateAccountException e) {
+                                throw new InvalidCreateAccountException("Username is taken!");
+                            }
+
                             newUser.createNewUser(newUsername, newPassword, newUser.getUserID());
                             users.add(newUser);
                             user = newUser;
