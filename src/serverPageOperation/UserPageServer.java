@@ -48,7 +48,7 @@ public final class UserPageServer {
      */
     public static void userPageOperation(BufferedReader br, BufferedWriter bw, User user, ArrayList<User> users,
                                          ArrayList<Chat> chats) {
-        System.out.println("This is the user page.");
+        System.out.println("User page operations started");
         System.out.println("Username: " + user.getUsername());
         System.out.println("Account type: " + user.getAccountType());
 
@@ -112,12 +112,12 @@ public final class UserPageServer {
                 bw.flush();
             }
 
+            /*
             // Handle client input
             String input = br.readLine();
             while (input != null) {
                 System.out.println("Client input: " + input);
                 if (input.equals("1")) {
-                    System.out.println("Image Storing...");
                     String userImagePath = br.readLine();
                     try {
                         user.saveImage(userImagePath);
@@ -138,11 +138,11 @@ public final class UserPageServer {
                 } else if (input.equals("6")) {
                     WelcomePageServer.welcomePageOperation(br, bw, user, users, chats);
                     break;
-                } else {
-                    System.out.println("ERROR: input " + input + " doesn't match expected!");
                 }
                 input = br.readLine();
             }
+
+             */
         } catch (IOException e) {
             System.err.println("ERROR: Server communication error - " + e.getMessage());
             e.printStackTrace();
@@ -153,7 +153,6 @@ public final class UserPageServer {
         try {
             if (!people.isEmpty() && !people.get(0).isEmpty()) {
                 for (String person : people) {
-                    System.out.println("people: " + User.findUsernameFromID(person));
                     bw.write(User.findUsernameFromID(person));
                     bw.newLine();
                     bw.flush();

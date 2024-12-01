@@ -1,0 +1,84 @@
+private JPanel setPeople(int category) {
+    JPanel peoplePanel = new JPanel(new BorderLayout(10, 10));
+    peoplePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+    // Section Title
+    JLabel sectionTitle = new JLabel();
+    sectionTitle.setFont(new Font("Arial", Font.BOLD, 16));
+    sectionTitle.setHorizontalAlignment(SwingConstants.CENTER);
+    if (category == 1) {
+        sectionTitle.setText("Followers");
+    } else if (category == 2) {
+        sectionTitle.setText("Following");
+    } else if (category == 3) {
+        sectionTitle.setText("Blocked Users");
+    }
+    peoplePanel.add(sectionTitle, BorderLayout.NORTH);
+
+    // Status Area
+    JTextArea statusTextArea = new JTextArea();
+    statusTextArea.setEditable(false);
+    statusTextArea.setLineWrap(true);
+    statusTextArea.setWrapStyleWord(true);
+    statusTextArea.setBackground(peoplePanel.getBackground());
+
+    // Button Panel for People
+    JPanel peopleButtonPanel = new JPanel(new GridLayout(0, 1, 5, 5));
+    JScrollPane scrollPane = new JScrollPane(peopleButtonPanel);
+    scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+    scrollPane.setPreferredSize(new Dimension(400, 300));
+
+    peoplePanel.add(scrollPane, BorderLayout.CENTER);
+
+    // Load data in a separate thread
+    new Thread(() -> {
+        try {
+            String peopleValidity = bufferedReader.readLine();
+            if (!"[EMPTY]".equals(peopleValidity)) {
+                SwingUtilities.invokeLater(() -> statusTextArea.setText(""));
+
+                ArrayList<String> buttonNames = UserPageClient.readAndPrint(bufferedReader);
+                for (String buttonName : buttonNames) {
+                    JButton personButton = new JButton(buttonName);
+                    personButton.setFocusPainted(false);
+
+                    personButton.addActionListener(e -> {
+                        UserPageClient.write("2", bufferedWriter);
+                        UserPageClient.write(buttonName, bufferedWriter);
+                        pageManager.lazyLoadPage("other",
+                            () -> new OtherProfilePage(pageManager, bufferedWriter, bufferedReader, buttonName));
+                        pageManager.removePage("user");
+                    });
+
+                    SwingUtilities.invokeLater(() -> {
+                        peopleButtonPanel.add(personButton);
+                        peopleButtonPanel.revalidate();
+                        peopleButtonPanel.repaint();
+                    });
+                }
+            } else {
+                String message;
+                if (category == 1) {
+                    message = "You have no followers!";
+                } else if (category == 2) {
+                    message = "You have no following!";
+                } else {
+                    message = "You have no blocked users!";
+                }
+
+                SwingUtilities.invokeLater(() -> {
+                    statusTextArea.setText(message);
+                    peopleButtonPanel.add(new JLabel(message, SwingConstants.CENTER));
+                    peopleButtonPanel.revalidate();
+                    peopleButtonPanel.repaint();
+                });
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }).start();
+
+    peoplePanel.add(statusTextArea, BorderLayout.SOUTH);
+
+    return peoplePanel;
+}

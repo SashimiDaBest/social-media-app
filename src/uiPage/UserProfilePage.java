@@ -4,23 +4,19 @@ import clientPageOperation.UserPageClient;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class UserProfilePage extends JPanel {
     private PageManager pageManager;
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
 
-    private JButton profileButton;
-    private JButton settingButton;
-    private JButton backButton;
-    private JButton nextButton;
-    private JButton logoutButton;
+    private JButton profileButton, settingButton, backButton, nextButton, logoutButton;
 
     public UserProfilePage(PageManager pageManager, BufferedWriter bufferedWriter, BufferedReader bufferedReader) {
         this.pageManager = pageManager;
@@ -30,9 +26,9 @@ public class UserProfilePage extends JPanel {
         setLayout(new BorderLayout());
 
         JPanel accountPanel = setAccountInfo();
-        JPanel followerPanel = setPeople(1);
-        JPanel followingPanel = setPeople(2);
-        JPanel blockedPanel = setPeople(3);
+        JPanel followerPanel = setPeople(1, "Follower");
+        JPanel followingPanel = setPeople(2, "Following");
+        JPanel blockedPanel = setPeople(3, "Blocked");
 
         JPanel mainPanel = new JPanel(new GridLayout(0, 1, 0, 0));
         mainPanel.add(accountPanel);
@@ -41,10 +37,9 @@ public class UserProfilePage extends JPanel {
         mainPanel.add(blockedPanel);
         add(mainPanel, BorderLayout.CENTER);
 
-        JPanel footer = setFooter();
-        add(footer, BorderLayout.SOUTH);
+        add(createFooter(), BorderLayout.SOUTH);
 
-        setupActionListeners();
+//        setupActionListeners();
     }
 
     private JPanel setAccountInfo() {
@@ -130,50 +125,31 @@ public class UserProfilePage extends JPanel {
         return accountPanel;
     }
 
-    private JPanel setPeople(int category) {
-        JPanel peoplePanel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
-        gbc.fill = GridBagConstraints.BOTH;
+    private JPanel setPeople(int category, String label) {
+        // Create the main panel with a border title
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBorder(BorderFactory.createTitledBorder(label));
 
-        // Add Follower Label on the left
-        JTextPane peopleTextPane = new JTextPane();
-        peopleTextPane.setEditable(false);
-        if (category == 1) {
-            peopleTextPane.setText("Followers");
-        } else if (category == 2) {
-            peopleTextPane.setText("Following");
-        } else if (category == 3) {
-            peopleTextPane.setText("Blocked");
-        }
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.weightx = 0; // Allow resizing
-        peoplePanel.add(peopleTextPane, gbc);
+        // Create the button panel for the list of people
+        JPanel peopleButtonPanel = new JPanel(new GridLayout(0, 1, 5, 5));
+        JScrollPane scrollPanel = new JScrollPane(peopleButtonPanel);
+        scrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPanel.setPreferredSize(new Dimension(400, 300));
+        scrollPanel.setMinimumSize(new Dimension(300, 50));
 
-        JTextPane peopleStatus = new JTextPane();
-        peopleStatus.setEditable(false);
-        JPanel peopleButtonPanel = new JPanel(new GridLayout(0, 1, 0, 0));
-
-        JScrollPane scrollPane = new JScrollPane(peopleButtonPanel);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scrollPane.setPreferredSize(new Dimension(400, 300));
-        scrollPane.setMinimumSize(new Dimension(300, 50)); // Width: 300, Height: 200
+        // Status area for showing messages
+        JLabel statusLabel = new JLabel("Loading...", SwingConstants.CENTER);
+        panel.add(statusLabel, BorderLayout.NORTH);
+        panel.add(scrollPanel, BorderLayout.CENTER);
 
         // Load data in a separate thread
         new Thread(() -> {
             try {
                 String peopleValidity = bufferedReader.readLine();
                 if (!"[EMPTY]".equals(peopleValidity)) {
-                    if (category == 1) {
-                        peopleStatus.setText("You have followers!");
-                    } else if (category == 2) {
-                        peopleStatus.setText("You have following!");
-                    } else if (category == 3) {
-                        peopleStatus.setText("You have blocked!");
-                    }
-                    SwingUtilities.invokeLater(() -> peopleButtonPanel.add(peopleStatus));
+                    SwingUtilities.invokeLater(() -> statusLabel.setText(""));
 
+                    // Populate the button panel with user buttons
                     ArrayList<String> buttonNames = UserPageClient.readAndPrint(bufferedReader);
                     for (String buttonName : buttonNames) {
                         JButton button = new JButton(buttonName);
@@ -192,35 +168,45 @@ public class UserProfilePage extends JPanel {
                         });
                     }
                 } else {
-                    if (category == 1) {
-                        peopleStatus.setText("You have no followers!");
-                    } else if (category == 2) {
-                        peopleStatus.setText("You have no following!");
-                    } else if (category == 3) {
-                        peopleStatus.setText("You have no blocked!");
+                    // Update the status message based on the category
+                    String noDataMessage = "";
+                    switch (category) {
+                        case 1:
+                            noDataMessage = "You have no followers!";
+                            break;
+                        case 2:
+                            noDataMessage = "You are not following anyone!";
+                            break;
+                        case 3:
+                            noDataMessage = "You have not blocked any users!";
+                            break;
+                        default:
+                            noDataMessage = "No data available.";
+                            break;
                     }
-                    SwingUtilities.invokeLater(() -> peopleButtonPanel.add(peopleStatus));
+
+                    String finalNoDataMessage = noDataMessage;
+                    SwingUtilities.invokeLater(() -> {
+                        statusLabel.setText(finalNoDataMessage);
+                        peopleButtonPanel.revalidate();
+                        peopleButtonPanel.repaint();
+                    });
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }).start();
 
-        gbc.gridx = 1;
-        gbc.weightx = 0; // Fix width
-        peoplePanel.add(scrollPane, gbc);
-
-        return peoplePanel;
+        return panel;
     }
 
-    private JPanel setFooter() {
-        JPanel navigationPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+    private JPanel createFooter() {
+        JPanel footer = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         backButton = new JButton("Back");
         nextButton = new JButton("Next");
-
-        navigationPanel.add(backButton);
-        navigationPanel.add(nextButton);
-        return navigationPanel;
+        footer.add(backButton);
+        footer.add(nextButton);
+        return footer;
     }
 
     private void setupActionListeners() {
@@ -235,48 +221,26 @@ public class UserProfilePage extends JPanel {
         settingButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-                    JTextField usernameField = new JTextField(15);
-                    JPasswordField passwordField = new JPasswordField(15);
-                    JButton changeAccountTypeButton = new JButton("Change Account Type");
-                    JButton saveButton = new JButton("Save");
-
-                    panel.add(new JLabel("Username:"));
-                    panel.add(usernameField);
-                    panel.add(new JLabel("Password:"));
-                    panel.add(passwordField);
-                    panel.add(changeAccountTypeButton);
-                    panel.add(saveButton);
-
-                    logoutButton = new JButton("Logout");
-
-                    panel.add(logoutButton);
-
-                    JOptionPane.showMessageDialog(null, panel, "Settings", JOptionPane.PLAIN_MESSAGE);
-
-                    logoutButton.addActionListener(evt -> {
-                        UserPageClient.write("6", bufferedWriter);
-                        pageManager.showPage("welcome");
-                        pageManager.removePage("user");
-                    });
-
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                }
+                //TODO: IMPLEMENT FEATURES LATER
             }
         });
 
-
+        logoutButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                UserPageClient.write("6", bufferedWriter);
+                pageManager.showPage("welcome");
+                pageManager.removePage("user");
+            }
+        });
 
         backButton.addActionListener(new ActionListener() {
-           @Override
-           public void actionPerformed(ActionEvent e) {
-               UserPageClient.write("5", bufferedWriter);
-               pageManager.lazyLoadPage("feed", () -> new FeedViewPage(pageManager, bufferedWriter, bufferedReader));
-               pageManager.removePage("user");
-           }
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                UserPageClient.write("5", bufferedWriter);
+                pageManager.lazyLoadPage("feed", () -> new FeedViewPage(pageManager, bufferedWriter, bufferedReader));
+                pageManager.removePage("user");
+            }
         });
 
         nextButton.addActionListener(new ActionListener() {

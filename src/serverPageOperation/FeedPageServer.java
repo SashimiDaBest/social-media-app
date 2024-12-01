@@ -48,7 +48,7 @@ public final class FeedPageServer {
      */
     public static void feedPageOperation(BufferedReader br,
                                          BufferedWriter bw, User user, ArrayList<User> users, ArrayList<Chat> chats) {
-        System.out.println("This is feed page");
+        System.out.println("Feed page operations started");
         boolean continueFeed = true;
 
         do {

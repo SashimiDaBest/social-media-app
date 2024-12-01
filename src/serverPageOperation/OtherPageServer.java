@@ -45,7 +45,7 @@ public final class OtherPageServer {
      * @param chats List of all chats in the system
      */
     public static void otherPageOperation(BufferedReader br, BufferedWriter bw, User user, ArrayList<User> users, ArrayList<Chat> chats) {
-
+        System.out.println("Other page operations started");
         try {
             // Load the other user based on the client-provided username
             String otherUsername = br.readLine();

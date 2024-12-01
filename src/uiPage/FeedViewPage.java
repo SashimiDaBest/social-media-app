@@ -185,19 +185,10 @@ public class FeedViewPage extends JPanel {
         profileIconButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                try {
-                    UserPageClient.write("3", writer);
-                    // username and accountType needs to be grabbed from to display following
-                    String username = reader.readLine();
-                    String accountType = "1".equals(reader.readLine()) ? "private" : "public";
-
-                    // load the user's page
-                    pageManager.lazyLoadPage(username, () -> new UserProfilePage(pageManager, writer, reader));
-                    pageManager.removePage("feed");
-                } catch (IOException error) {
-                    error.printStackTrace();
-                }
+                UserPageClient.write("3", writer);
+                // load the user's page
+                pageManager.lazyLoadPage("user", () -> new UserProfilePage(pageManager, writer, reader));
+                pageManager.removePage("feed");
 
             }
         });
