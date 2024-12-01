@@ -112,7 +112,6 @@ public final class UserPageServer {
                 bw.flush();
             }
 
-            /*
             // Handle client input
             String input = br.readLine();
             while (input != null) {
@@ -142,7 +141,6 @@ public final class UserPageServer {
                 input = br.readLine();
             }
 
-             */
         } catch (IOException e) {
             System.err.println("ERROR: Server communication error - " + e.getMessage());
             e.printStackTrace();

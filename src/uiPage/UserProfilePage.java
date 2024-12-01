@@ -39,7 +39,7 @@ public class UserProfilePage extends JPanel {
 
         add(createFooter(), BorderLayout.SOUTH);
 
-//        setupActionListeners();
+        setupActionListeners();
     }
 
     private JPanel setAccountInfo() {
@@ -221,16 +221,88 @@ public class UserProfilePage extends JPanel {
         settingButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO: IMPLEMENT FEATURES LATER
-            }
-        });
+                // Create a modal dialog for account settings
+                JDialog settingsDialog = new JDialog((Frame) null, "Account Settings", true);
+                settingsDialog.setLayout(new BorderLayout(10, 10));
+                settingsDialog.setSize(400, 200);
+                settingsDialog.setLocationRelativeTo(null);
 
-        logoutButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                UserPageClient.write("6", bufferedWriter);
-                pageManager.showPage("welcome");
-                pageManager.removePage("user");
+                // Create a panel to hold the fields and buttons
+                JPanel settingsPanel = new JPanel(new GridLayout(2, 2, 10, 10));
+                settingsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+                // Create components
+                JTextField usernameField = new JTextField(15);
+                JPasswordField passwordField = new JPasswordField(15);
+                JButton saveButton = new JButton("Save");
+                JButton logoutButton = new JButton("Logout");
+
+                // Add components to the panel
+                settingsPanel.add(new JLabel("Username:"));
+                settingsPanel.add(usernameField);
+                settingsPanel.add(new JLabel("Password:"));
+                settingsPanel.add(passwordField);
+
+                // Create a button panel
+                JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
+                buttonPanel.add(saveButton);
+                buttonPanel.add(logoutButton);
+
+                // Add panels to the dialog
+                settingsDialog.add(settingsPanel, BorderLayout.CENTER);
+                settingsDialog.add(buttonPanel, BorderLayout.SOUTH);
+
+                /*
+                // Load current account details
+                try {
+                    UserPageClient.write("getAccountInfo", bufferedWriter);
+                    String currentUsername = bufferedReader.readLine();
+                    usernameField.setText(currentUsername);
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(settingsDialog, "Failed to load account details.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                */
+
+                /*
+                // Save button action listener
+                saveButton.addActionListener(ev -> {
+                    String username = usernameField.getText();
+                    String password = new String(passwordField.getPassword());
+
+                    if (username.isEmpty() || password.isEmpty()) {
+                        JOptionPane.showMessageDialog(settingsDialog, "Username and password cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+                    try {
+                        UserPageClient.write("updateAccount", bufferedWriter);
+                        UserPageClient.write(username, bufferedWriter);
+                        UserPageClient.write(password, bufferedWriter);
+
+                        String response = bufferedReader.readLine();
+                        if ("success".equalsIgnoreCase(response)) {
+                            JOptionPane.showMessageDialog(settingsDialog, "Settings updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                            settingsDialog.dispose();
+                        } else {
+                            JOptionPane.showMessageDialog(settingsDialog, "Failed to update settings. Try again.", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } catch (IOException ex) {
+                        JOptionPane.showMessageDialog(settingsDialog, "Error while updating settings: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                });
+                */
+
+                // Logout button action listener
+                logoutButton.addActionListener(ev -> {
+                    UserPageClient.write("6", bufferedWriter);
+                    pageManager.showPage("welcome");
+                    pageManager.removePage("user");
+                    settingsDialog.dispose();
+                    JOptionPane.showMessageDialog(null, "You have been logged out.", "Logout", JOptionPane.INFORMATION_MESSAGE);
+                });
+
+                // Display the dialog
+                settingsDialog.setVisible(true);
             }
         });
 
