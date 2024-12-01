@@ -204,9 +204,11 @@ public class FeedViewPage extends JPanel {
                     UserPageClient.write("4", writer);
                     // display list of users from the server
                     String[] userList = reader.readLine().split(";");
-                    String selectedUser = (String) JOptionPane.showInputDialog(null,
-                            "Select a user to view", "USERS FOUND",
-                            JOptionPane.QUESTION_MESSAGE, null, userList, userList[0]);
+                    // String selectedUser = (String) JOptionPane.showInputDialog(null,
+                    //         "Select a user to view", "USERS FOUND",
+                    //         JOptionPane.QUESTION_MESSAGE, null, userList, userList[0]);
+                    String selectedUser = JOptionPane.showInputDialog(null, "Enter an existing username: ", "USER SELECTION", 
+                        JOptionPane.QUESTION_MESSAGE);
 
                     // choose user, send back for validation
                     UserPageClient.write(selectedUser, writer);
@@ -216,6 +218,10 @@ public class FeedViewPage extends JPanel {
                     if (validation) {
                         pageManager.lazyLoadPage(selectedUser, () -> new OtherProfilePage(pageManager, writer, reader, selectedUser));
                         pageManager.removePage("feed");
+                    
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Could not find selected user!", 
+                            "ERROR: USER SELECTION", JOptionPane.QUESTION_MESSAGE);
                     }
 
                 } catch (IOException error) {
