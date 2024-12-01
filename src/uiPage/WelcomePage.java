@@ -39,50 +39,55 @@ public class WelcomePage extends JPanel {
 
         setLayout(new BorderLayout());
 
+        JScrollPane scrollablePanel = new JScrollPane(createMainPanel(), JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        add(scrollablePanel, BorderLayout.CENTER);
 
-        //1st Panel - Title Panel
+        setupActionListeners();
+    }
+
+    private JPanel createMainPanel() {
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
+
+        mainPanel.add(createTitlePanel());
+        mainPanel.add(createInputPanel());
+        mainPanel.add(createOptionsPanel());
+
+        return mainPanel;
+    }
+
+    private JPanel createTitlePanel() {
         JPanel titlePanel = new JPanel();
         titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.Y_AXIS));
         titlePanel.setBorder(new EmptyBorder(10, 0, 10, 0));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
         titlePanel.add(title);
 
-        //2nd Panel - Text Input Panel
+        return titlePanel;
+    }
+
+    private JPanel createInputPanel() {
         JPanel inputPanel = new JPanel();
         inputPanel.setLayout(new GridBagLayout());
         inputPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
-        gbc.anchor = GridBagConstraints.WEST;
 
-        //Add Username Label
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.weightx = 0;
-        gbc.fill = GridBagConstraints.NONE;
-        inputPanel.add(usernameLabel, gbc);
+        // Username Label
+        inputPanel.add(usernameLabel, createGridBagConstraints(0, 0, 0, GridBagConstraints.NONE));
+        // Username Field
+        inputPanel.add(usernameField, createGridBagConstraints(1, 0, 1, GridBagConstraints.HORIZONTAL));
+        // Password Label
+        inputPanel.add(passwordLabel, createGridBagConstraints(0, 1, 0, GridBagConstraints.NONE));
+        // Password Field
+        inputPanel.add(passwordField, createGridBagConstraints(1, 1, 1, GridBagConstraints.HORIZONTAL));
 
-        //Add Username Field
-        gbc.gridx = 1;
-        gbc.weightx = 1;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        inputPanel.add(usernameField, gbc);
+        return inputPanel;
+    }
 
-        //Add Password Label
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.weightx = 0;
-        gbc.fill = GridBagConstraints.NONE;
-        inputPanel.add(passwordLabel, gbc);
-
-        //Add Password Field
-        gbc.gridx = 1;
-        gbc.weightx = 1;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        inputPanel.add(passwordField, gbc);
-
-        //3rd Panel - Options Panel
+    private JPanel createOptionsPanel() {
         JPanel optionsPanel = new JPanel();
         optionsPanel.setLayout(new BoxLayout(optionsPanel, BoxLayout.Y_AXIS));
         optionsPanel.setBorder(new EmptyBorder(10, 0, 10, 0));
@@ -97,16 +102,18 @@ public class WelcomePage extends JPanel {
         optionsPanel.add(Box.createVerticalStrut(5));
         optionsPanel.add(newAccountButton);
 
-        //4th Panel - Combine Panels
-        JPanel ultimatePanel = new JPanel();
-        ultimatePanel.setLayout(new BoxLayout(ultimatePanel, BoxLayout.Y_AXIS));
-        ultimatePanel.setBorder(new EmptyBorder(20, 20, 20, 20));
-        ultimatePanel.add(titlePanel);
-        ultimatePanel.add(inputPanel);
-        ultimatePanel.add(optionsPanel);
+        return optionsPanel;
+    }
 
-        add(ultimatePanel, BorderLayout.CENTER);
-        setupActionListeners();
+    private GridBagConstraints createGridBagConstraints(int x, int y, int weightx, int fill) {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = x;
+        gbc.gridy = y;
+        gbc.weightx = weightx;
+        gbc.fill = fill;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(5, 5, 5, 5);
+        return gbc;
     }
 
     private void setupActionListeners() {
@@ -117,7 +124,7 @@ public class WelcomePage extends JPanel {
                 char[] passwordChars = passwordField.getPassword();
 
                 if (username.isEmpty() || passwordChars.length == 0) {
-                    JOptionPane.showMessageDialog(null, "Username or password cannot be empty.", "Input Error", JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Username or password cannot be empty. Please try again.", "Input Error", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
 
@@ -129,7 +136,7 @@ public class WelcomePage extends JPanel {
                     Arrays.fill(passwordChars, '\0'); // Clear password from memory
 
                     String messageFromServer = bufferedReader.readLine();
-                    if (messageFromServer == null) throw new IOException("Server closed the connection");
+                    if (messageFromServer == null) throw new IOException("Server closed the connection.");
 
                     if (SUCCESSFUL_SIGN_IN.equals(messageFromServer)) {
                         pageManager.lazyLoadPage("feed", () -> new FeedViewPage(pageManager, bufferedWriter, bufferedReader));

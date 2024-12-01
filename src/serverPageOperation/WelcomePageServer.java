@@ -51,7 +51,7 @@ public final class WelcomePageServer {
      */
     public static void welcomePageOperation(BufferedReader br, BufferedWriter bw, User user, ArrayList<User> users,
                                             ArrayList<Chat> chats) {
-        System.out.println("This is welcome page");
+        System.out.println("Welcome page operations started");
         boolean isSignedIn = false;
 
         try {
