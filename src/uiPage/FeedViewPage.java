@@ -21,6 +21,7 @@ public class FeedViewPage extends JPanel {
 
     private JLabel chatViewLabel;
     private JLabel chatContent;
+    private JTextField messageContent;
     private JButton composeMessageButton;
     private JButton editMessageButton;
     private JButton deleteMessageButton;
@@ -121,8 +122,15 @@ public class FeedViewPage extends JPanel {
         chatContent.setMinimumSize(new Dimension(400, 100));  // Minimum size, in case chat content is small
         chatViewPanel.add(chatContent, gbc);
 
+        // Add the new JTextField (messageContent) between chatContent and the buttons
+        gbc.gridy = 2;  // Move to the next row after the chat content label
+        messageContent = new JTextField();  // Create the text field
+        messageContent.setEnabled(false);  // Disable it by default
+        messageContent.setPreferredSize(new Dimension(400, 30));  // Set a preferred size for the text field
+        chatViewPanel.add(messageContent, gbc);
+
         // Add the four buttons (compose, edit, delete, exit) at the bottom
-        gbc.gridy = 2;
+        gbc.gridy = 3;
         gbc.gridwidth = 1; // Reset grid width to 1 for each button
         composeMessageButton = new JButton("Compose message");
         composeMessageButton.setEnabled(false);
@@ -134,7 +142,7 @@ public class FeedViewPage extends JPanel {
         chatViewPanel.add(editMessageButton, gbc);
 
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         deleteMessageButton = new JButton("Delete message");
         deleteMessageButton.setEnabled(false);
         chatViewPanel.add(deleteMessageButton, gbc);
@@ -207,8 +215,8 @@ public class FeedViewPage extends JPanel {
                     // String selectedUser = (String) JOptionPane.showInputDialog(null,
                     //         "Select a user to view", "USERS FOUND",
                     //         JOptionPane.QUESTION_MESSAGE, null, userList, userList[0]);
-                    String selectedUser = JOptionPane.showInputDialog(null, "Enter an existing username: ", "USER SELECTION", 
-                        JOptionPane.QUESTION_MESSAGE);
+                    String selectedUser = JOptionPane.showInputDialog(null, "Enter an existing username: ", "USER SELECTION",
+                            JOptionPane.QUESTION_MESSAGE);
 
                     // choose user, send back for validation
                     UserPageClient.write(selectedUser, writer);
@@ -218,10 +226,10 @@ public class FeedViewPage extends JPanel {
                     if (validation) {
                         pageManager.lazyLoadPage(selectedUser, () -> new OtherProfilePage(pageManager, writer, reader, selectedUser));
                         pageManager.removePage("feed");
-                    
+
                     } else {
-                        JOptionPane.showMessageDialog(null, "Could not find selected user!", 
-                            "ERROR: USER SELECTION", JOptionPane.QUESTION_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Could not find selected user!",
+                                "ERROR: USER SELECTION", JOptionPane.QUESTION_MESSAGE);
                     }
 
                 } catch (IOException error) {
@@ -280,6 +288,10 @@ public class FeedViewPage extends JPanel {
                 try {
                     if (activeChatsBox.getSelectedItem() != null) {
                         openChatButton.setEnabled(false);
+                        composeMessageButton.setEnabled(true);
+                        deleteMessageButton.setEnabled(true);
+                        editMessageButton.setEnabled(true);
+                        exitChatButton.setEnabled(true);
                         String selectedChatID = (String) activeChatsBox.getSelectedItem();
                         selectedChatID = selectedChatID.substring(6, 10); // Extract chat ID
                         UserPageClient.write(selectedChatID, writer);
@@ -311,6 +323,62 @@ public class FeedViewPage extends JPanel {
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
+            }
+        });
+
+        composeMessageButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    if (!messageContent.isEnabled()) {
+                        messageContent.setEnabled(true);
+                        editMessageButton.setEnabled(false);
+                        deleteMessageButton.setEnabled(false);
+                        exitChatButton.setEnabled(false);
+                        messageContent.setText("Enter your message here!");
+                        UserPageClient.write("1", writer);
+                    } else {
+                        UserPageClient.write(messageContent.getText(), writer);
+                        messageContent.setText("");
+                        messageContent.setEnabled(false);
+                        editMessageButton.setEnabled(true);
+                        deleteMessageButton.setEnabled(true);
+                        exitChatButton.setEnabled(true);
+
+                        String serverResponse = reader.readLine();  // Read the server response
+                        String[] serverChatContent = serverResponse.split(";");  // Split the content by semicolons
+
+                        ArrayList<String> linesToDisplay = new ArrayList<>();
+
+                        for (String line : serverChatContent) {
+                            if (line.equals("---------------------------------------------------------------------") ||
+                                    line.equals("[Displaying up to 6 most recent messages]") ||
+                                    line.equals("1 - Compose message") || line.equals("2 - Delete previous message") ||
+                                    line.equals("3 - Edit previous message") || line.equals("4 - Exit chat") ||
+                                    line.contains("Chat #") || line.contains("Members: You, ") || line.isEmpty()) {
+                                continue;
+                            } else {
+                                linesToDisplay.add(line);
+                            }
+                        }
+
+                        // Join the chat content using newline characters and set it as the text of chatContent label
+                        String chatText = String.join("\n", linesToDisplay);  // Join array elements with '\n' to create a multiline string
+
+                        // Set the chat content text to the JLabel
+                        chatContent.setText("<html>" + chatText.replaceAll("\n", "<br>") + "</html>");  // Using HTML for line breaks
+                        chatViewLabel.setText((String) activeChatsBox.getSelectedItem());
+                    }
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+
+        editMessageButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //TODO: edit functionality (basically same as compose message)
             }
         });
     }
