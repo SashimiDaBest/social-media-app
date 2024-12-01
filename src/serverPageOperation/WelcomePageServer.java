@@ -56,6 +56,7 @@ public final class WelcomePageServer {
 
         try {
             while (true) {
+                System.out.println("LOOP");
                 // Proceed to the feed page once the user is signed in
                 if (isSignedIn) {
                     FeedPageServer.feedPageOperation(br, bw, user, users, chats);
@@ -66,75 +67,68 @@ public final class WelcomePageServer {
                 String mainChoice = br.readLine();
                 while (mainChoice == null) {
                     mainChoice = br.readLine();
-                    
+
                 }
                 System.out.println("Received the message!");
-                
+
                 if (mainChoice.equals("1")) { // Sign in
-                    while (true) {
-                        String username = br.readLine();
-                        String password = br.readLine();
+                    System.out.println("SIGN IN");
 
-                        if (User.hasLogin(username, password)) {
-                            bw.write(SUCCESSFUL_SIGN_IN);
-                            bw.newLine();
-                            bw.flush();
-                            isSignedIn = true;
-                            for (User u : users) {
-                                if (u.getUsername().equals(username)) {
-                                    user = u;
-                                    break;
-                                }
+                    String username = br.readLine();
+                    String password = br.readLine();
+
+                    if (User.hasLogin(username, password)) {
+                        bw.write(SUCCESSFUL_SIGN_IN);
+                        bw.newLine();
+                        bw.flush();
+                        isSignedIn = true;
+                        for (User u : users) {
+                            if (u.getUsername().equals(username)) {
+                                user = u;
+                                break;
                             }
-                            break;
-
-                        } else {
-                            bw.write(UNSUCCESSFUL_SIGN_IN);
-                            bw.newLine();
-                            bw.flush();
-                            break;
                         }
+
+                    } else {
+                        bw.write(UNSUCCESSFUL_SIGN_IN);
+                        bw.newLine();
+                        bw.flush();
                     }
 
                 } else if (mainChoice.equals("2")) { // Sign up
-                    while (true) {
-                        String newUsername = br.readLine();
-                        String newPassword = br.readLine();
+                    System.out.println("SIGN UP");
+                    String newUsername = br.readLine();
+                    String newPassword = br.readLine();
 
-                        // If new username/password is valid
-                        try {
-                            User newUser;
+                    // If new username/password is valid
+                    try {
+                        User newUser;
 
-                            if (!User.userNameValidation(newUsername)) {
-                                throw new InvalidCreateAccountException("Username is taken!");
-                            }
-
-                            try {
-                                newUser = new User(newUsername, newPassword);
-
-                            } catch (InvalidCreateAccountException e) {
-                                throw new InvalidCreateAccountException("Username is taken!");
-                            }
-
-                            newUser.createNewUser(newUsername, newPassword, newUser.getUserID());
-                            users.add(newUser);
-                            user = newUser;
-
-                            bw.write("User creation successful");
-                            bw.newLine();
-                            bw.flush();
-                            break;
-
-                        // If new username/password is invalid
-                        } catch (InvalidCreateAccountException e) {
-                            bw.write("Invalid fields");
-                            bw.newLine();
-                            bw.flush();
-                            continue;
+                        if (!User.userNameValidation(newUsername)) {
+                            throw new InvalidCreateAccountException("Username is taken!");
                         }
+
+                        try {
+                            newUser = new User(newUsername, newPassword);
+
+                        } catch (InvalidCreateAccountException e) {
+                            throw new InvalidCreateAccountException("Username is taken!");
+                        }
+
+                        newUser.createNewUser(newUsername, newPassword, newUser.getUserID());
+                        users.add(newUser);
+                        user = newUser;
+
+                        bw.write("User creation successful");
+                        bw.newLine();
+                        bw.flush();
+
+                    // If new username/password is invalid
+                    } catch (InvalidCreateAccountException e) {
+                        bw.write("Invalid fields");
+                        bw.newLine();
+                        bw.flush();
                     }
-                } else { // Invalid response
-                    continue;
                 }
             }
         } catch (IOException e) {
