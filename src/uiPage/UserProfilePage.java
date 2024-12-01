@@ -156,8 +156,8 @@ public class UserProfilePage extends JPanel {
 
                         button.addActionListener(e -> {
                             UserPageClient.write("2", bufferedWriter);
-                            UserPageClient.write(buttonName, bufferedWriter);
-                            pageManager.lazyLoadPage("other", () -> new OtherProfilePage(pageManager, bufferedWriter, bufferedReader, buttonName));
+//                            UserPageClient.write(buttonName, bufferedWriter);
+                            pageManager.lazyLoadPage(buttonName, () -> new OtherProfilePage(pageManager, bufferedWriter, bufferedReader, buttonName));
                             pageManager.removePage("user");
                         });
 
@@ -238,9 +238,9 @@ public class UserProfilePage extends JPanel {
                 JButton logoutButton = new JButton("Logout");
 
                 // Add components to the panel
-                settingsPanel.add(new JLabel("Username:"));
+                settingsPanel.add(new JLabel("Username"));
                 settingsPanel.add(usernameField);
-                settingsPanel.add(new JLabel("Password:"));
+                settingsPanel.add(new JLabel("Password"));
                 settingsPanel.add(passwordField);
 
                 // Create a button panel

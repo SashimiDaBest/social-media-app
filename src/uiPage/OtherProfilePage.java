@@ -192,8 +192,9 @@ public class OtherProfilePage  extends JPanel{
 
                         button.addActionListener(e -> {
                             UserPageClient.write("3", bufferedWriter);
-                            UserPageClient.write(buttonName, bufferedWriter);
-                            // TODO: do page loading...
+//                            UserPageClient.write(buttonName, bufferedWriter);
+                            pageManager.lazyLoadPage(buttonName, () -> new OtherProfilePage(pageManager, bufferedWriter, bufferedReader, buttonName));
+                            pageManager.removePage(otherUsername);
                         });
 
                         SwingUtilities.invokeLater(() -> {
@@ -255,7 +256,7 @@ public class OtherProfilePage  extends JPanel{
             public void actionPerformed(ActionEvent e) {
                 UserPageClient.write("5", bufferedWriter);
                 pageManager.lazyLoadPage("feed", () -> new FeedViewPage(pageManager, bufferedWriter, bufferedReader));
-                pageManager.removePage("other");
+                pageManager.removePage(otherUsername);
             }
         });
 

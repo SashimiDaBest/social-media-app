@@ -141,30 +141,8 @@ public final class OtherPageServer {
                     bw.newLine();
                     bw.flush();
                 } else if (input.equals("3")) {
-                    try {
-                        if (otherUser.getAccountType() == 1 && user.getFollowerList().contains(otherUser.getUserID())) {
-                            bw.write("message");
-                            bw.newLine();
-                            bw.flush();
-                            UserPageServer.write(new ArrayList<>(), bw);
-                        } else if (!otherUser.getFollowerList().get(0).isEmpty()) {
-                            bw.write("");
-                            bw.newLine();
-                            bw.flush();
-                            UserPageServer.write(otherUser.getFollowerList(), bw);
-                            if (br.readLine().equals("CHANGE")) {
-                                OtherPageServer.otherPageOperation(br, bw, user, users, chats);
-                                break;
-                            }
-                        } else {
-                            bw.write("[EMPTY]");
-                            bw.newLine();
-                            bw.flush();
-                            UserPageServer.write(otherUser.getFollowerList(), bw);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    OtherPageServer.otherPageOperation(br, bw, user, users, chats);
+                    break;
                 } else if (input.equals("5")) {
                     FeedPageServer.feedPageOperation(br, bw, user, users, chats);
                     break;
