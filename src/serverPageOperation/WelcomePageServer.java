@@ -51,12 +51,13 @@ public final class WelcomePageServer {
      */
     public static void welcomePageOperation(BufferedReader br, BufferedWriter bw, User user, ArrayList<User> users,
                                             ArrayList<Chat> chats) {
-        System.out.println("This is welcome page");
+        System.out.println("Welcome page operations started");
         boolean isSignedIn = false;
 
         try {
             while (true) {
                 // Proceed to the feed page once the user is signed in
+                System.out.println("LOOP");
                 if (isSignedIn) {
                     FeedPageServer.feedPageOperation(br, bw, user, users, chats);
                     break;
@@ -64,14 +65,9 @@ public final class WelcomePageServer {
 
                 // Wait for the client to choose an option (1 - Sign in, 2 - Sign up)
                 String mainChoice = br.readLine();
-                while (mainChoice == null) {
-                    mainChoice = br.readLine();
-                    
-                }
-                System.out.println("Received the message!");
-                
                 if (mainChoice.equals("1")) { // Sign in
-                    while (true) {
+                    System.out.println("USER INPUT: 1");
+
                         String username = br.readLine();
                         String password = br.readLine();
 
@@ -86,46 +82,42 @@ public final class WelcomePageServer {
                                     break;
                                 }
                             }
-                            break;
-
                         } else {
                             bw.write(UNSUCCESSFUL_SIGN_IN);
                             bw.newLine();
                             bw.flush();
-                            break;
                         }
-                    }
+
 
                 } else if (mainChoice.equals("2")) { // Sign up
-                    while (true) {
+                    System.out.println("USER INPUT: 2");
                         String newUsername = br.readLine();
                         String newPassword = br.readLine();
 
                         // If new username/password is valid
                         try {
+                            System.out.println("TRY CREATION");
                             User newUser = new User(newUsername, newPassword);
                             if (!User.userNameValidation(newUsername)) {
                                 throw new InvalidCreateAccountException("Username is taken!");
                             }
+                            System.out.println("USER CREATED");
                             newUser.createNewUser(newUsername, newPassword, newUser.getUserID());
                             users.add(newUser);
                             user = newUser;
+                            isSignedIn = true;
 
                             bw.write("User creation successful");
                             bw.newLine();
                             bw.flush();
-                            break;
 
                         // If new username/password is invalid
                         } catch (InvalidCreateAccountException e) {
+                            System.out.println("FAIL CREATION");
                             bw.write("Invalid fields");
                             bw.newLine();
                             bw.flush();
-                            continue;
                         }
-                    }
-                } else { // Invalid response
-                    continue;
                 }
             }
         } catch (IOException e) {
