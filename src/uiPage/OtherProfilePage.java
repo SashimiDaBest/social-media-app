@@ -39,8 +39,8 @@ public class OtherProfilePage  extends JPanel{
 
         JPanel accountPanel = setAccountInfo();
 //        JPanel relationPanel = new JPanel();
-        JPanel followerPanel = setPeople(1);
-        JPanel followingPanel = setPeople(2);
+        JPanel followerPanel = setPeople(1, "Follower");
+        JPanel followingPanel = setPeople(2, "Following");
 
         JPanel mainPanel = new JPanel(new GridLayout(0, 1, 0, 0));
         mainPanel.add(accountPanel);
@@ -142,53 +142,34 @@ public class OtherProfilePage  extends JPanel{
         return accountPanel;
     }
 
-    private JPanel setPeople(int category) {
-        JPanel peoplePanel = new JPanel(new GridBagLayout());
+    private JPanel setPeople(int category, String label) {
+        // Create the main panel with a border title
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBorder(BorderFactory.createTitledBorder(label));
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
-        gbc.fill = GridBagConstraints.BOTH;
+        // Create the button panel for the list of people
+        JPanel peopleButtonPanel = new JPanel(new GridLayout(0, 1, 5, 5));
+        JScrollPane scrollPanel = new JScrollPane(peopleButtonPanel);
+        scrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPanel.setPreferredSize(new Dimension(400, 300));
+        scrollPanel.setMinimumSize(new Dimension(300, 50));
 
-        // Add Follower Label on the left
-        JTextPane peopleTextPane = new JTextPane();
-        peopleTextPane.setEditable(false);
-        if (category == 1) {
-            peopleTextPane.setText("Followers");
-        } else if (category == 2) {
-            peopleTextPane.setText("Following");
-        }
-
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.weightx = 0; // Allow resizing
-        peoplePanel.add(peopleTextPane, gbc);
-
-        JTextPane peopleStatus = new JTextPane();
-        peopleStatus.setEditable(false);
-        JPanel peopleButtonPanel = new JPanel(new GridLayout(0, 1, 0, 0));
-
-        JScrollPane scrollPane = new JScrollPane(peopleButtonPanel);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scrollPane.setPreferredSize(new Dimension(400, 300));
-        scrollPane.setMinimumSize(new Dimension(300, 50)); // Width: 300, Height: 200
+        // Status area for showing messages
+        JLabel statusLabel = new JLabel("Loading...", SwingConstants.CENTER);
+        panel.add(statusLabel, BorderLayout.NORTH);
+        panel.add(scrollPanel, BorderLayout.CENTER);
 
         // Load data in a separate thread
         new Thread(() -> {
             try {
                 String peopleValidity = bufferedReader.readLine();
-                if (!"[EMPTY]".equals("")) {
-                    if (category == 1) {
-                        peopleStatus.setText("You have followers!");
-                    } else if (category == 2) {
-                        peopleStatus.setText("You have following!");
-                    }
-                    SwingUtilities.invokeLater(() -> peopleButtonPanel.add(peopleStatus));
+                if (!"[EMPTY]".equals(peopleValidity)) {
+                    SwingUtilities.invokeLater(() -> statusLabel.setText(""));
 
+                    // Populate the button panel with user buttons
                     ArrayList<String> buttonNames = UserPageClient.readAndPrint(bufferedReader);
                     for (String buttonName : buttonNames) {
                         JButton button = new JButton(buttonName);
-
-                        System.out.println(buttonName);
 
                         button.addActionListener(e -> {
                             UserPageClient.write("3", bufferedWriter);
@@ -203,41 +184,34 @@ public class OtherProfilePage  extends JPanel{
                             peopleButtonPanel.repaint();
                         });
                     }
-                } else if (peopleValidity.equals("[EMPTY]")) {
-                    if (category == 1) {
-                        peopleStatus.setText("You have no followers!");
-                    } else if (category == 2) {
-                        peopleStatus.setText("You have no following!");
+                } else {
+                    // Update the status message based on the category
+                    String noDataMessage = "";
+                    switch (category) {
+                        case 1:
+                            noDataMessage = "You have no followers!";
+                            break;
+                        case 2:
+                            noDataMessage = "You are not following anyone!";
+                            break;
+                        default:
+                            noDataMessage = "No data available.";
+                            break;
                     }
-                } else if (peopleValidity.equals("message")) {
-                    peopleStatus.setText("You have no permission to view!");
+
+                    String finalNoDataMessage = noDataMessage;
+                    SwingUtilities.invokeLater(() -> {
+                        statusLabel.setText(finalNoDataMessage);
+                        peopleButtonPanel.revalidate();
+                        peopleButtonPanel.repaint();
+                    });
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }).start();
 
-        /*
-//        UserPageClient.write("3", bufferedWriter);
-//        if (canView) {
-//            System.out.print("Do you want to view another user? (Y/N): ");
-//            String input2 = scanner.nextLine();
-//            if (input2.equals("Y")) {
-//                UserPageClient.write("CHANGE", bw);
-//                System.out.print("Other Username: ");
-//                String other = scanner.nextLine();
-//                otherPage(scanner, other, br, bw, socket);
-//                break;
-//            } else {
-//                UserPageClient.write("", bw);
-//            }
-//        }
-         */
-        gbc.gridx = 1;
-        gbc.weightx = 0; // Fix width
-        peoplePanel.add(scrollPane, gbc);
-
-        return peoplePanel;
+        return panel;
     }
 
     private JPanel setFooter() {
