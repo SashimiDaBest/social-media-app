@@ -5,25 +5,35 @@ import clientPageOperation.UserPageClient;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
-import clientPageOperation.UserPageClient;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
+import java.util.ArrayList;
 
 public class FeedViewPage extends JPanel {
 
     private JButton profileIconButton;
     private JButton viewAnotherProfile;
     private JButton endFeedButton;
+    private JButton loadChatsButton;
+    private JButton openChatButton;
+
+    private JLabel chatViewLabel;
+    private JLabel chatContent;
+    private JButton composeMessageButton;
+    private JButton editMessageButton;
+    private JButton deleteMessageButton;
+    private JButton exitChatButton;
+
+    private JComboBox activeChatsBox;
 
     // For navigation panel
     private JButton backButton;
     private JButton nextButton;
 
     private BufferedWriter writer;
-    private BufferedReader reader; 
+    private BufferedReader reader;
     private PageManager pageManager;
 
     public FeedViewPage(PageManager pageManager, BufferedWriter bw, BufferedReader br) {
@@ -33,7 +43,7 @@ public class FeedViewPage extends JPanel {
         this.reader = br;
         this.pageManager = pageManager;
 
-        // for viewing your own profile 
+        // for viewing your own profile
         JPanel headerPanel = new JPanel();
         headerPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
@@ -56,25 +66,103 @@ public class FeedViewPage extends JPanel {
         chatFeedPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         chatFeedPanel.setLayout(new BoxLayout(chatFeedPanel, BoxLayout.X_AXIS));
 
+        // Initialize chatSelectionPanel with GridBagLayout
         JPanel chatSelectionPanel = new JPanel();
         chatSelectionPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        chatSelectionPanel.setLayout(new BoxLayout(chatSelectionPanel, BoxLayout.Y_AXIS));
+        chatSelectionPanel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.NORTH;  // Align components at the top
 
+        // Add the "Load chats" button at the left, centered in the panel
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 1;  // Span 1 column
+        loadChatsButton = new JButton("Load chats");
+        chatSelectionPanel.add(loadChatsButton, gbc);
+
+        // Add the "Open chat" button just to the right of the "Load chats" button
+        gbc.gridx = 1;  // Move to the next column
+        openChatButton = new JButton("Open chat");
+        openChatButton.setEnabled(false);
+        chatSelectionPanel.add(openChatButton, gbc);
+
+        // Add the combo box below the buttons and center it
+        gbc.gridx = 0;  // Start at the first column
+        gbc.gridy = 1;  // Move to the second row
+        gbc.gridwidth = 2;  // Span across 2 columns to center the combo box
+        gbc.anchor = GridBagConstraints.CENTER;  // Center the combo box
+        activeChatsBox = new JComboBox();
+        activeChatsBox.setEditable(false);
+        chatSelectionPanel.add(activeChatsBox, gbc);
+
+        // Chat View Panel (Right side)
         JPanel chatViewPanel = new JPanel();
         chatViewPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        chatViewPanel.setLayout(new BoxLayout(chatViewPanel, BoxLayout.X_AXIS));
+        chatViewPanel.setLayout(new GridBagLayout());
 
-        chatFeedPanel.add(chatSelectionPanel);
-        chatFeedPanel.add(chatViewPanel);
+        // Add "Chat View" label at the top
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;  // Span across the whole panel
+        gbc.anchor = GridBagConstraints.NORTH;  // Align to the top
+        chatViewLabel = new JLabel("Chat view");
+        chatViewPanel.add(chatViewLabel, gbc);
 
+        // Add the "Chat content" label below "Chat view"
+        gbc.gridy = 1;
+        gbc.gridwidth = 2;  // Span across the whole panel
+        chatContent = new JLabel("Chat content");
+        chatContent.setVerticalAlignment(SwingConstants.TOP);  // Align text to the top
+        chatContent.setBorder(BorderFactory.createLineBorder(Color.BLACK));  // Add a border for clarity
+
+        // Set a preferred size that will fill the remaining vertical space
+        chatContent.setPreferredSize(new Dimension(400, 200));  // Make it large enough to hold chat content
+        chatContent.setMinimumSize(new Dimension(400, 100));  // Minimum size, in case chat content is small
+        chatViewPanel.add(chatContent, gbc);
+
+        // Add the four buttons (compose, edit, delete, exit) at the bottom
+        gbc.gridy = 2;
+        gbc.gridwidth = 1; // Reset grid width to 1 for each button
+        composeMessageButton = new JButton("Compose message");
+        composeMessageButton.setEnabled(false);
+        chatViewPanel.add(composeMessageButton, gbc);
+
+        gbc.gridx = 1;
+        editMessageButton = new JButton("Edit message");
+        editMessageButton.setEnabled(false);
+        chatViewPanel.add(editMessageButton, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        deleteMessageButton = new JButton("Delete message");
+        deleteMessageButton.setEnabled(false);
+        chatViewPanel.add(deleteMessageButton, gbc);
+
+        gbc.gridx = 1;
+        exitChatButton = new JButton("Exit chat");
+        exitChatButton.setEnabled(false);
+        chatViewPanel.add(exitChatButton, gbc);
+
+        // Add the chatSelectionPanel to the chatFeedPanel
+        gbc.weightx = 0.5;
+        gbc.gridx = 0;  // Add to the first column of chatFeedPanel
+        chatFeedPanel.add(chatSelectionPanel, gbc);
+
+        // Add chatViewPanel to the second column of chatFeedPanel
+        gbc.gridx = 1;  // Add to the second column
+        chatFeedPanel.add(chatViewPanel, gbc);
+
+        // Navigation Panel
         JPanel navigationPanel = new JPanel(new BorderLayout());
-        JButton backButton = new JButton("Back");
-        JButton nextButton = new JButton("Next");
+        backButton = new JButton("Back");
+        nextButton = new JButton("Next");
         endFeedButton = new JButton("Exit feed");
         navigationPanel.add(endFeedButton);
         navigationPanel.add(backButton, BorderLayout.WEST);
         navigationPanel.add(nextButton, BorderLayout.EAST);
 
+        // Add components to the main layout
         add(headerPanel, BorderLayout.NORTH);
         add(chatFeedPanel, BorderLayout.CENTER);
         add(navigationPanel, BorderLayout.SOUTH);
@@ -82,7 +170,7 @@ public class FeedViewPage extends JPanel {
         setupActionListeners();
     }
 
-    // 
+    //
     private void setupActionListeners() {
 
         // shows the current user's profile when clicked
@@ -95,14 +183,14 @@ public class FeedViewPage extends JPanel {
                     // username and accountType needs to be grabbed from to display following
                     String username = reader.readLine();
                     String accountType = "1".equals(reader.readLine()) ? "private" : "public";
-                    
+
                     // load the user's page
                     pageManager.lazyLoadPage(username, () -> new UserProfilePage(pageManager, writer, reader));
                     pageManager.removePage("feed");
                 } catch (IOException error) {
                     error.printStackTrace();
                 }
-                
+
             }
         });
 
@@ -116,9 +204,9 @@ public class FeedViewPage extends JPanel {
                     UserPageClient.write("4", writer);
                     // display list of users from the server
                     String[] userList = reader.readLine().split(";");
-                    String selectedUser = (String) JOptionPane.showInputDialog(null, 
-                        "Select a user to view", "USERS FOUND", 
-                        JOptionPane.QUESTION_MESSAGE, null, userList, userList[0]);
+                    String selectedUser = (String) JOptionPane.showInputDialog(null,
+                            "Select a user to view", "USERS FOUND",
+                            JOptionPane.QUESTION_MESSAGE, null, userList, userList[0]);
 
                     // choose user, send back for validation
                     UserPageClient.write(selectedUser, writer);
@@ -134,16 +222,16 @@ public class FeedViewPage extends JPanel {
                     error.printStackTrace();
                 }
             }
-            
+
         });
-        
+
         // discountiue feed when clicked
         endFeedButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                JOptionPane.showMessageDialog(null,"Logging out...", 
-                    "CLOSING FEED",JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Logging out...",
+                        "CLOSING FEED", JOptionPane.INFORMATION_MESSAGE);
 
                 try {
 
@@ -153,12 +241,70 @@ public class FeedViewPage extends JPanel {
                     if (reader != null) {
                         reader.close(); // Close BufferedReader
                     }
-                     
+
                 } catch (IOException error) {
                     error.printStackTrace();
                 }
-                
+
                 pageManager.removePage("feed");
+            }
+        });
+
+        loadChatsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    loadChatsButton.setEnabled(false);
+                    openChatButton.setEnabled(true);
+                    UserPageClient.write("2", writer);
+                    String[] currentChats = reader.readLine().split(";");
+                    for (String chat : currentChats) {
+                        activeChatsBox.addItem(chat);
+                    }
+
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+
+        openChatButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    if (activeChatsBox.getSelectedItem() != null) {
+                        openChatButton.setEnabled(false);
+                        String selectedChatID = (String) activeChatsBox.getSelectedItem();
+                        selectedChatID = selectedChatID.substring(6, 10); // Extract chat ID
+                        UserPageClient.write(selectedChatID, writer);
+
+                        String serverResponse = reader.readLine();  // Read the server response
+                        String[] serverChatContent = serverResponse.split(";");  // Split the content by semicolons
+
+                        ArrayList<String> linesToDisplay = new ArrayList<>();
+
+                        for (String line : serverChatContent) {
+                            if (line.equals("---------------------------------------------------------------------") ||
+                                    line.equals("[Displaying up to 6 most recent messages]") ||
+                                    line.equals("1 - Compose message") || line.equals("2 - Delete previous message") ||
+                                    line.equals("3 - Edit previous message") || line.equals("4 - Exit chat") ||
+                                    line.contains("Chat #") || line.contains("Members: You, ") || line.isEmpty()) {
+                                continue;
+                            } else {
+                                linesToDisplay.add(line);
+                            }
+                        }
+
+                        // Join the chat content using newline characters and set it as the text of chatContent label
+                        String chatText = String.join("\n", linesToDisplay);  // Join array elements with '\n' to create a multiline string
+
+                        // Set the chat content text to the JLabel
+                        chatContent.setText("<html>" + chatText.replaceAll("\n", "<br>") + "</html>");  // Using HTML for line breaks
+                        chatViewLabel.setText((String) activeChatsBox.getSelectedItem());
+                    }
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         });
     }

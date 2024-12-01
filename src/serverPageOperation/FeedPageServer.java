@@ -209,17 +209,17 @@ public final class FeedPageServer {
                                 // Ensure the last user in the list does not include ", ".
                                 chatContent = chatContent.substring(0, chatContent.length() - 2);
 
-                                // Ensure that only the last 10 messages of the chat are displayed. If the chat has less
-                                // than 10 messages, display all of its message to avoid a negative index.
+                                // Ensure that only the last 6 messages of the chat are displayed. If the chat has less
+                                // than 6 messages, display all of its message to avoid a negative index.
                                 int startingMessageIndex;
-                                if (chats.get(chatIndex).getMessageList().size() < 10)
+                                if (chats.get(chatIndex).getMessageList().size() < 6)
                                     startingMessageIndex = 0;
                                 else
                                     startingMessageIndex =
-                                            chats.get(chatIndex).getMessageList().size() - 10;
+                                            chats.get(chatIndex).getMessageList().size() - 6;
 
-                                // Display the 10 recent messages in the chat.
-                                chatContent += ";;[Displaying up to 10 most recent messages]";
+                                // Display the 7 recent messages in the chat.
+                                chatContent += ";;[Displaying up to 6 most recent messages]";
                                 for (int i = startingMessageIndex;
                                      i < chats.get(chatIndex).getMessageList().size();
                                      i++) {
