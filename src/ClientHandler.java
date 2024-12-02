@@ -109,8 +109,7 @@ public class ClientHandler implements Runnable {
 
                 if (confirmed == JOptionPane.YES_OPTION) {
                     closeResources();
-                    frame.dispose(); // Close the frame
-                    // since the original method exit on close, System.exit(0); could be used???
+                    frame.dispose();
                 }
             }
         });

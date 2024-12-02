@@ -157,7 +157,6 @@ public class UserProfilePage extends JPanel {
                         button.addActionListener(e -> {
                             UserPageClient.write("2", bufferedWriter);
                             pageManager.lazyLoadPage(buttonName, () -> new OtherProfilePage(pageManager, bufferedWriter, bufferedReader, buttonName));
-                            pageManager.printHistory();
                         });
 
                         SwingUtilities.invokeLater(() -> {
@@ -310,7 +309,6 @@ public class UserProfilePage extends JPanel {
                 logoutButton.addActionListener(ev -> {
                     UserPageClient.write("6", bufferedWriter);
                     pageManager.showPage("welcome");
-                    pageManager.printHistory();
                     settingsDialog.dispose();
                     JOptionPane.showMessageDialog(null, "You have been logged out.", "Logout", JOptionPane.INFORMATION_MESSAGE);
                 });
@@ -325,14 +323,12 @@ public class UserProfilePage extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 UserPageClient.write("5", bufferedWriter);
                 pageManager.lazyLoadPage("feed", () -> new FeedViewPage(pageManager, bufferedWriter, bufferedReader));
-                pageManager.printHistory();
             }
         });
-
+/*
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                pageManager.printHistory();
                 pageManager.goBack(); //REVISE
             }
         });
@@ -340,9 +336,10 @@ public class UserProfilePage extends JPanel {
         nextButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                pageManager.printHistory();
                 pageManager.goForward(); //REVISE
             }
         });
+
+ */
     }
 }

@@ -287,7 +287,6 @@ public class FeedViewPage extends JPanel {
                 UserPageClient.write("3", writer);
                 // load the user's page
                 pageManager.lazyLoadPage("user", () -> new UserProfilePage(pageManager, writer, reader));
-                pageManager.printHistory();
 
             }
         });

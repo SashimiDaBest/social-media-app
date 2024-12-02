@@ -39,7 +39,7 @@ public class OtherProfilePage  extends JPanel{
         setLayout(new BorderLayout());
 
         JPanel accountPanel = setAccountInfo();
-        JPanel relationPanel = new JPanel();
+        JPanel relationPanel = setRelation();
         JPanel followerPanel = setPeople(1, "Follower");
         JPanel followingPanel = setPeople(2, "Following");
 
@@ -172,6 +172,7 @@ public class OtherProfilePage  extends JPanel{
 
                         button.addActionListener(e -> {
                             UserPageClient.write("3", bufferedWriter);
+                            UserPageClient.write(buttonName, bufferedWriter);
                             pageManager.lazyLoadPage(buttonName, () -> new OtherProfilePage(pageManager, bufferedWriter, bufferedReader, buttonName));
                             pageManager.removePage(otherUsername);
                         });
@@ -233,16 +234,26 @@ public class OtherProfilePage  extends JPanel{
         return footer;
     }
 
+    private JPanel setRelation() {
+        JPanel relationPanel = new JPanel(new GridBagLayout());
+        followButton = new JButton("Follow");
+        blockButton = new JButton("Block");
+
+        relationPanel.add(followButton);
+        relationPanel.add(blockButton);
+
+        return relationPanel;
+    }
+
     private void setupActionListeners() {
         feedButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 UserPageClient.write("5", bufferedWriter);
                 pageManager.lazyLoadPage("feed", () -> new FeedViewPage(pageManager, bufferedWriter, bufferedReader));
-                pageManager.printHistory();
             }
         });
-
+/*
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -258,102 +269,31 @@ public class OtherProfilePage  extends JPanel{
                 pageManager.printHistory();
             }
         });
-    }
 
-    /*
-    public static void otherPage(Scanner scanner, String otherUsername, BufferedReader br, BufferedWriter bw,
-                                 Socket socket) {
-        try {
-            // Send the other username to the server
-            System.out.println("OTHER USERNAME: " + otherUsername);
-            bw.write(otherUsername);
-            bw.newLine();
-            bw.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        blockButton.addActionListener(new ActionListener() {
+           @Override
+           public void actionPerformed(ActionEvent e) {
+               UserPageClient.write("2", bufferedWriter);
+               try {
+                   System.out.println(bufferedReader.readLine());
+               } catch (IOException ex) {
+                   ex.printStackTrace();
+               }
+           }
+        });
 
-        // Main loop for handling user options
-        while (true) {
-            // Display menu options
-            System.out.println("Welcome to the Other Page\n" +
-                    "OTHER USERNAME: " + otherUsername + "\n" +
-                    "1 - Follow/Unfollow Other\n" +
-                    "2 - Block/Unblock Other\n" +
-                    "3 - View Follower\n" +
-                    "4 - View Following\n" +
-                    "5 - Go Back to Feed View\n" +
-                    "6 - Quit\n" +
-                    "Input: ");
-            String input = scanner.nextLine();
-
-            if (input.equals("1")) {
-                UserPageClient.write("1", bw);
+        followButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                UserPageClient.write("1", bufferedWriter);
                 try {
-                    System.out.println(br.readLine());
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    System.out.println(bufferedReader.readLine());
+                } catch (IOException ex) {
+                    ex.printStackTrace();
                 }
-            } else if (input.equals("2")) {
-                UserPageClient.write("2", bw);
-                try {
-                    System.out.println(br.readLine());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } else if (input.equals("3")) {
-            } else if (input.equals("4")) {
-                UserPageClient.write("4", bw);
-                boolean canView = false;
-                try {
-                    String line = br.readLine();
-                    if (line.equals("")) {
-                        canView = true;
-                    } else if (line.equals("[EMPTY]")) {
-                        System.out.println("User has no following!");
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                UserPageClient.readAndPrint(br);
-                if (canView) {
-                    System.out.print("Do you want to view another user? (Y/N): ");
-                    String input2 = scanner.nextLine();
-                    if (input2.equals("Y")) {
-                        UserPageClient.write("CHANGE", bw);
-                        System.out.print("Other Username: ");
-                        String other = scanner.nextLine();
-                        otherPage(scanner, other, br, bw, socket);
-                        break;
-                    } else {
-                        //UserPageClient.write("", bw);
-                    }
-                }
-            } else if (input.equals("5")) {
-                UserPageClient.write("5", bw);
-//                TODO: IMPLEMENT
-//                FeedPageClient.feedPage(scanner, br, bw, socket);
-//                break;
-            } else if (input.equals("6")) {
-                UserPageClient.write("6", bw);
-                try {
-                    if (bw != null) {
-                        bw.close(); // Close BufferedWriter
-                    }
-                    if (br != null) {
-                        br.close(); // Close BufferedReader
-                    }
-                    if (socket != null && !socket.isClosed()) {
-                        socket.close(); // Close the socket
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                break;
-            } else {
-                System.out.println("Invalid input. Please try again.");
             }
-        }
+        });
+
+ */
     }
-     */
 }
