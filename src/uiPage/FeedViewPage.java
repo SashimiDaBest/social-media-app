@@ -148,7 +148,7 @@ public class FeedViewPage extends JPanel {
         chatViewPanel.add(deleteMessageButton, gbc);
 
         gbc.gridx = 1;
-        exitChatButton = new JButton("Exit chat");
+        exitChatButton = new JButton("Exit chat and refresh");
         exitChatButton.setEnabled(false);
         chatViewPanel.add(exitChatButton, gbc);
 
@@ -369,7 +369,102 @@ public class FeedViewPage extends JPanel {
         editMessageButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO: edit functionality (basically same as compose message)
+                try {
+                    if (!messageContent.isEnabled()) {
+                        messageContent.setEnabled(true);
+                        composeMessageButton.setEnabled(false);
+                        deleteMessageButton.setEnabled(false);
+                        exitChatButton.setEnabled(false);
+                        messageContent.setText("Enter revised message here!");
+                        UserPageClient.write("3", writer);
+                    } else {
+                        UserPageClient.write(messageContent.getText(), writer);
+                        messageContent.setText("");
+                        messageContent.setEnabled(false);
+                        composeMessageButton.setEnabled(true);
+                        deleteMessageButton.setEnabled(true);
+                        exitChatButton.setEnabled(true);
+
+                        String serverResponse = reader.readLine();  // Read the server response
+                        String[] serverChatContent = serverResponse.split(";");  // Split the content by semicolons
+
+                        ArrayList<String> linesToDisplay = new ArrayList<>();
+
+                        for (String line : serverChatContent) {
+                            if (line.equals("---------------------------------------------------------------------") ||
+                                    line.equals("[Displaying up to 6 most recent messages]") ||
+                                    line.equals("1 - Compose message") || line.equals("2 - Delete previous message") ||
+                                    line.equals("3 - Edit previous message") || line.equals("4 - Exit chat") ||
+                                    line.contains("Chat #") || line.contains("Members: You, ") || line.isEmpty()) {
+                                continue;
+                            } else {
+                                linesToDisplay.add(line);
+                            }
+                        }
+
+                        // Join the chat content using newline characters and set it as the text of chatContent label
+                        String chatText = String.join("\n", linesToDisplay);  // Join array elements with '\n' to create a multiline string
+
+                        // Set the chat content text to the JLabel
+                        chatContent.setText("<html>" + chatText.replaceAll("\n", "<br>") + "</html>");  // Using HTML for line breaks
+                        chatViewLabel.setText((String) activeChatsBox.getSelectedItem());
+                    }
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+
+        deleteMessageButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    UserPageClient.write("2", writer);
+
+                    String serverResponse = reader.readLine();  // Read the server response
+                    String[] serverChatContent = serverResponse.split(";");  // Split the content by semicolons
+
+                    ArrayList<String> linesToDisplay = new ArrayList<>();
+
+                    for (String line : serverChatContent) {
+                        if (line.equals("---------------------------------------------------------------------") ||
+                                line.equals("[Displaying up to 6 most recent messages]") ||
+                                line.equals("1 - Compose message") || line.equals("2 - Delete previous message") ||
+                                line.equals("3 - Edit previous message") || line.equals("4 - Exit chat") ||
+                                line.contains("Chat #") || line.contains("Members: You, ") || line.isEmpty()) {
+                            continue;
+                        } else {
+                            linesToDisplay.add(line);
+                        }
+                    }
+
+                    // Join the chat content using newline characters and set it as the text of chatContent label
+                    String chatText = String.join("\n", linesToDisplay);  // Join array elements with '\n' to create a multiline string
+
+                    // Set the chat content text to the JLabel
+                    chatContent.setText("<html>" + chatText.replaceAll("\n", "<br>") + "</html>");  // Using HTML for line breaks
+                    chatViewLabel.setText((String) activeChatsBox.getSelectedItem());
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+
+        exitChatButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                UserPageClient.write("4", writer);
+                chatViewLabel.setText("Chat view");
+                chatContent.setText("Chat content");
+                loadChatsButton.setEnabled(true);
+                openChatButton.setEnabled(false);
+                composeMessageButton.setEnabled(false);
+                deleteMessageButton.setEnabled(false);
+                editMessageButton.setEnabled(false);
+                exitChatButton.setEnabled(false);
+                messageContent.setText("");
+                messageContent.setEnabled(false);
+                activeChatsBox.removeAllItems();
             }
         });
     }
