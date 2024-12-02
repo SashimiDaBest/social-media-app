@@ -16,7 +16,7 @@ public class UserProfilePage extends JPanel {
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
 
-    private JButton profileButton, settingButton, backButton, nextButton, logoutButton;
+    private JButton profileButton, settingButton, backButton, nextButton, logoutButton, feedButton;
 
     public UserProfilePage(PageManager pageManager, BufferedWriter bufferedWriter, BufferedReader bufferedReader) {
         this.pageManager = pageManager;
@@ -156,9 +156,8 @@ public class UserProfilePage extends JPanel {
 
                         button.addActionListener(e -> {
                             UserPageClient.write("2", bufferedWriter);
-//                            UserPageClient.write(buttonName, bufferedWriter);
                             pageManager.lazyLoadPage(buttonName, () -> new OtherProfilePage(pageManager, bufferedWriter, bufferedReader, buttonName));
-                            pageManager.removePage("user");
+                            pageManager.printHistory();
                         });
 
                         SwingUtilities.invokeLater(() -> {
@@ -203,8 +202,10 @@ public class UserProfilePage extends JPanel {
     private JPanel createFooter() {
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         backButton = new JButton("Back");
+        feedButton = new JButton("Feed");
         nextButton = new JButton("Next");
         footer.add(backButton);
+        footer.add(feedButton);
         footer.add(nextButton);
         return footer;
     }
@@ -215,6 +216,19 @@ public class UserProfilePage extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //TODO: IMPLEMENT FEATURES LATER
+                UserPageClient.write("1", bufferedWriter);
+                System.out.print("What is your image file path: ");
+                String path = "IMAGE PATH scanner.nextLine()";
+                UserPageClient.write(path, bufferedWriter);
+                try {
+                    if (bufferedReader.readLine().equals("SAVE")) {
+                        System.out.println("Set image successfully");
+                    } else {
+                        System.out.println("Set image failed");
+                    }
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
             }
         });
 
@@ -296,7 +310,7 @@ public class UserProfilePage extends JPanel {
                 logoutButton.addActionListener(ev -> {
                     UserPageClient.write("6", bufferedWriter);
                     pageManager.showPage("welcome");
-                    pageManager.removePage("user");
+                    pageManager.printHistory();
                     settingsDialog.dispose();
                     JOptionPane.showMessageDialog(null, "You have been logged out.", "Logout", JOptionPane.INFORMATION_MESSAGE);
                 });
@@ -306,58 +320,29 @@ public class UserProfilePage extends JPanel {
             }
         });
 
-        backButton.addActionListener(new ActionListener() {
+        feedButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 UserPageClient.write("5", bufferedWriter);
                 pageManager.lazyLoadPage("feed", () -> new FeedViewPage(pageManager, bufferedWriter, bufferedReader));
-                pageManager.removePage("user");
+                pageManager.printHistory();
+            }
+        });
+
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pageManager.printHistory();
+                pageManager.goBack(); //REVISE
             }
         });
 
         nextButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO: IMPLEMENT FEATURES LATER
+                pageManager.printHistory();
+                pageManager.goForward(); //REVISE
             }
         });
     }
-
-    /*
-            if (input.equals("1")) {
-                write("1", bw);
-                System.out.print("What is your image file path: ");
-                String path = scanner.nextLine();
-                write(path, bw);
-                try {
-                    if (br.readLine().equals("SAVE")) {
-                        System.out.println("Set image successfully");
-                    } else {
-                        System.out.println("Set image failed");
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            } else if (input.equals("6")) {
-                write("6", bw);
-                try {
-                    if (bw != null) {
-                        bw.close(); // Close BufferedWriter
-                    }
-                    if (br != null) {
-                        br.close(); // Close BufferedReader
-                    }
-                    if (socket != null && !socket.isClosed()) {
-                        socket.close(); // Close the socket
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                break;
-            } else {
-                System.out.println("Invalid input. Please try again.");
-            }
-        }
-     */
 }

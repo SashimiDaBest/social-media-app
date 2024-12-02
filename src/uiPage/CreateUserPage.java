@@ -130,6 +130,7 @@ public class CreateUserPage extends JPanel {
             if (USER_CREATION_SUCCESSFUL.equals(response)) {
                 JOptionPane.showMessageDialog(null, "Account created successfully! Redirecting to login page.", "Success", JOptionPane.INFORMATION_MESSAGE);
                 pageManager.showPage("welcome");
+                pageManager.removePage("signup");
             } else if (INVALID_FIELDS.equals(response)) {
                 JOptionPane.showMessageDialog(null, "Invalid fields. Please check your input and try again.", "Error", JOptionPane.ERROR_MESSAGE);
             }

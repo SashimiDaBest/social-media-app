@@ -131,6 +131,7 @@ public final class UserPageServer {
                     }
                 } else if (input.equals("2")) {
                     OtherPageServer.otherPageOperation(br, bw, user, users, chats);
+                    break;
                 } else if (input.equals("5")) {
                     FeedPageServer.feedPageOperation(br, bw, user, users, chats);
                     break;

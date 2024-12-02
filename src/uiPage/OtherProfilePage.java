@@ -22,6 +22,7 @@ public class OtherProfilePage  extends JPanel{
     private JButton profileButton;
     private JButton backButton;
     private JButton nextButton;
+    private JButton feedButton;
 
     private PageManager pageManager;
     private BufferedReader bufferedReader;
@@ -82,16 +83,13 @@ public class OtherProfilePage  extends JPanel{
         // Retrieve and Display User Information
         try {
             String line = bufferedReader.readLine();
-            System.out.println(line);
             usernameField.setText(line);
 
             line = bufferedReader.readLine();
-            System.out.println(line);
             String accountType = "1".equals(line) ? "private" : "public";
             accountTypeField.setText(accountType);
 
             line  = bufferedReader.readLine();
-            System.out.println(line);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -174,7 +172,6 @@ public class OtherProfilePage  extends JPanel{
 
                         button.addActionListener(e -> {
                             UserPageClient.write("3", bufferedWriter);
-                            UserPageClient.write(buttonName, bufferedWriter);
                             pageManager.lazyLoadPage(buttonName, () -> new OtherProfilePage(pageManager, bufferedWriter, bufferedReader, buttonName));
                             pageManager.removePage(otherUsername);
                         });
@@ -227,27 +224,38 @@ public class OtherProfilePage  extends JPanel{
     private JPanel setFooter() {
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         backButton = new JButton("Back");
+        feedButton = new JButton("Feed");
         nextButton = new JButton("Next");
 
         footer.add(backButton);
+        footer.add(feedButton);
         footer.add(nextButton);
         return footer;
     }
 
     private void setupActionListeners() {
-        backButton.addActionListener(new ActionListener() {
+        feedButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 UserPageClient.write("5", bufferedWriter);
                 pageManager.lazyLoadPage("feed", () -> new FeedViewPage(pageManager, bufferedWriter, bufferedReader));
-                pageManager.removePage(otherUsername);
+                pageManager.printHistory();
+            }
+        });
+
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pageManager.printHistory();
+                pageManager.goBack();
             }
         });
 
         nextButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO: IMPLEMENT FEATURES LATER
+                pageManager.goForward();
+                pageManager.printHistory();
             }
         });
     }
