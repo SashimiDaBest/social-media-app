@@ -99,8 +99,8 @@ public class FeedViewPage extends JPanel {
         for (int i = 1; i <= 6; i++) {
             JPanel chatRow = new JPanel();
             chatRow.setLayout(new FlowLayout(FlowLayout.LEFT));
-            JLabel chatLabel = new JLabel("CHAT " + i);
-            JLabel userLabel = new JLabel("| U" + (i % 2 + 1) + ": Message here");
+            JLabel chatLabel = new JLabel("U" + i);
+            JLabel userLabel = new JLabel(": Message here");
             chatRow.add(chatLabel);
             chatRow.add(userLabel);
             chatPanel.add(chatRow);
