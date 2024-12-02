@@ -4,23 +4,19 @@ import clientPageOperation.UserPageClient;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class UserProfilePage extends JPanel {
     private PageManager pageManager;
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
 
-    private JButton profileButton;
-    private JButton settingButton;
-    private JButton backButton;
-    private JButton nextButton;
-    private JButton logoutButton;
+    private JButton profileButton, settingButton, backButton, nextButton, logoutButton, feedButton;
 
     public UserProfilePage(PageManager pageManager, BufferedWriter bufferedWriter, BufferedReader bufferedReader) {
         this.pageManager = pageManager;
@@ -30,9 +26,9 @@ public class UserProfilePage extends JPanel {
         setLayout(new BorderLayout());
 
         JPanel accountPanel = setAccountInfo();
-        JPanel followerPanel = setPeople(1);
-        JPanel followingPanel = setPeople(2);
-        JPanel blockedPanel = setPeople(3);
+        JPanel followerPanel = setPeople(1, "Follower");
+        JPanel followingPanel = setPeople(2, "Following");
+        JPanel blockedPanel = setPeople(3, "Blocked");
 
         JPanel mainPanel = new JPanel(new GridLayout(0, 1, 0, 0));
         mainPanel.add(accountPanel);
@@ -41,8 +37,7 @@ public class UserProfilePage extends JPanel {
         mainPanel.add(blockedPanel);
         add(mainPanel, BorderLayout.CENTER);
 
-        JPanel footer = setFooter();
-        add(footer, BorderLayout.SOUTH);
+        add(createFooter(), BorderLayout.SOUTH);
 
         setupActionListeners();
     }
@@ -130,59 +125,38 @@ public class UserProfilePage extends JPanel {
         return accountPanel;
     }
 
-    private JPanel setPeople(int category) {
-        JPanel peoplePanel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
-        gbc.fill = GridBagConstraints.BOTH;
+    private JPanel setPeople(int category, String label) {
+        // Create the main panel with a border title
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBorder(BorderFactory.createTitledBorder(label));
 
-        // Add Follower Label on the left
-        JTextPane peopleTextPane = new JTextPane();
-        peopleTextPane.setEditable(false);
-        if (category == 1) {
-            peopleTextPane.setText("Followers");
-        } else if (category == 2) {
-            peopleTextPane.setText("Following");
-        } else if (category == 3) {
-            peopleTextPane.setText("Blocked");
-        }
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.weightx = 0; // Allow resizing
-        peoplePanel.add(peopleTextPane, gbc);
+        // Create the button panel for the list of people
+        JPanel peopleButtonPanel = new JPanel(new GridLayout(0, 1, 5, 5));
+        JScrollPane scrollPanel = new JScrollPane(peopleButtonPanel);
+        scrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPanel.setPreferredSize(new Dimension(400, 300));
+        scrollPanel.setMinimumSize(new Dimension(300, 50));
 
-        JTextPane peopleStatus = new JTextPane();
-        peopleStatus.setEditable(false);
-        JPanel peopleButtonPanel = new JPanel(new GridLayout(0, 1, 0, 0));
-
-        JScrollPane scrollPane = new JScrollPane(peopleButtonPanel);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scrollPane.setPreferredSize(new Dimension(400, 300));
-        scrollPane.setMinimumSize(new Dimension(300, 50)); // Width: 300, Height: 200
+        // Status area for showing messages
+        JLabel statusLabel = new JLabel("Loading...", SwingConstants.CENTER);
+        panel.add(statusLabel, BorderLayout.NORTH);
+        panel.add(scrollPanel, BorderLayout.CENTER);
 
         // Load data in a separate thread
         new Thread(() -> {
             try {
                 String peopleValidity = bufferedReader.readLine();
                 if (!"[EMPTY]".equals(peopleValidity)) {
-                    if (category == 1) {
-                        peopleStatus.setText("You have followers!");
-                    } else if (category == 2) {
-                        peopleStatus.setText("You have following!");
-                    } else if (category == 3) {
-                        peopleStatus.setText("You have blocked!");
-                    }
-                    SwingUtilities.invokeLater(() -> peopleButtonPanel.add(peopleStatus));
+                    SwingUtilities.invokeLater(() -> statusLabel.setText(""));
 
+                    // Populate the button panel with user buttons
                     ArrayList<String> buttonNames = UserPageClient.readAndPrint(bufferedReader);
                     for (String buttonName : buttonNames) {
                         JButton button = new JButton(buttonName);
 
                         button.addActionListener(e -> {
                             UserPageClient.write("2", bufferedWriter);
-                            UserPageClient.write(buttonName, bufferedWriter);
-                            pageManager.lazyLoadPage("other", () -> new OtherProfilePage(pageManager, bufferedWriter, bufferedReader, buttonName));
-                            pageManager.removePage("user");
+                            pageManager.lazyLoadPage(buttonName, () -> new OtherProfilePage(pageManager, bufferedWriter, bufferedReader, buttonName));
                         });
 
                         SwingUtilities.invokeLater(() -> {
@@ -192,37 +166,47 @@ public class UserProfilePage extends JPanel {
                         });
                     }
                 } else {
-                    if (category == 1) {
-                        peopleStatus.setText("You have no followers!");
-                    } else if (category == 2) {
-                        peopleStatus.setText("You have no following!");
-                    } else if (category == 3) {
-                        peopleStatus.setText("You have no blocked!");
+                    // Update the status message based on the category
+                    String noDataMessage = "";
+                    switch (category) {
+                        case 1:
+                            noDataMessage = "You have no followers!";
+                            break;
+                        case 2:
+                            noDataMessage = "You are not following anyone!";
+                            break;
+                        case 3:
+                            noDataMessage = "You have not blocked any users!";
+                            break;
+                        default:
+                            noDataMessage = "No data available.";
+                            break;
                     }
-                    SwingUtilities.invokeLater(() -> peopleButtonPanel.add(peopleStatus));
+
+                    String finalNoDataMessage = noDataMessage;
+                    SwingUtilities.invokeLater(() -> {
+                        statusLabel.setText(finalNoDataMessage);
+                        peopleButtonPanel.revalidate();
+                        peopleButtonPanel.repaint();
+                    });
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }).start();
 
-        gbc.gridx = 1;
-        gbc.weightx = 0; // Fix width
-        peoplePanel.add(scrollPane, gbc);
-
-        return peoplePanel;
+        return panel;
     }
 
-    private JPanel setFooter() {
-        JPanel navigationPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+    private JPanel createFooter() {
+        JPanel footer = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         backButton = new JButton("Back");
-        logoutButton = new JButton("Logout");
+        feedButton = new JButton("Feed");
         nextButton = new JButton("Next");
-
-        navigationPanel.add(backButton);
-        navigationPanel.add(logoutButton);
-        navigationPanel.add(nextButton);
-        return navigationPanel;
+        footer.add(backButton);
+        footer.add(feedButton);
+        footer.add(nextButton);
+        return footer;
     }
 
     private void setupActionListeners() {
@@ -231,77 +215,131 @@ public class UserProfilePage extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //TODO: IMPLEMENT FEATURES LATER
+                UserPageClient.write("1", bufferedWriter);
+                System.out.print("What is your image file path: ");
+                String path = "IMAGE PATH scanner.nextLine()";
+                UserPageClient.write(path, bufferedWriter);
+                try {
+                    if (bufferedReader.readLine().equals("SAVE")) {
+                        System.out.println("Set image successfully");
+                    } else {
+                        System.out.println("Set image failed");
+                    }
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
             }
         });
 
         settingButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO: IMPLEMENT FEATURES LATER
+                // Create a modal dialog for account settings
+                JDialog settingsDialog = new JDialog((Frame) null, "Account Settings", true);
+                settingsDialog.setLayout(new BorderLayout(10, 10));
+                settingsDialog.setSize(400, 200);
+                settingsDialog.setLocationRelativeTo(null);
+
+                // Create a panel to hold the fields and buttons
+                JPanel settingsPanel = new JPanel(new GridLayout(2, 2, 10, 10));
+                settingsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+                // Create components
+                JTextField usernameField = new JTextField(15);
+                JPasswordField passwordField = new JPasswordField(15);
+                JButton saveButton = new JButton("Save");
+                JButton logoutButton = new JButton("Logout");
+
+                // Add components to the panel
+                settingsPanel.add(new JLabel("Username"));
+                settingsPanel.add(usernameField);
+                settingsPanel.add(new JLabel("Password"));
+                settingsPanel.add(passwordField);
+
+                // Create a button panel
+                JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
+                buttonPanel.add(saveButton);
+                buttonPanel.add(logoutButton);
+
+                // Add panels to the dialog
+                settingsDialog.add(settingsPanel, BorderLayout.CENTER);
+                settingsDialog.add(buttonPanel, BorderLayout.SOUTH);
+
+                /*
+                // Load current account details
+                try {
+                    UserPageClient.write("getAccountInfo", bufferedWriter);
+                    String currentUsername = bufferedReader.readLine();
+                    usernameField.setText(currentUsername);
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(settingsDialog, "Failed to load account details.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                */
+
+                /*
+                // Save button action listener
+                saveButton.addActionListener(ev -> {
+                    String username = usernameField.getText();
+                    String password = new String(passwordField.getPassword());
+
+                    if (username.isEmpty() || password.isEmpty()) {
+                        JOptionPane.showMessageDialog(settingsDialog, "Username and password cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+                    try {
+                        UserPageClient.write("updateAccount", bufferedWriter);
+                        UserPageClient.write(username, bufferedWriter);
+                        UserPageClient.write(password, bufferedWriter);
+
+                        String response = bufferedReader.readLine();
+                        if ("success".equalsIgnoreCase(response)) {
+                            JOptionPane.showMessageDialog(settingsDialog, "Settings updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                            settingsDialog.dispose();
+                        } else {
+                            JOptionPane.showMessageDialog(settingsDialog, "Failed to update settings. Try again.", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } catch (IOException ex) {
+                        JOptionPane.showMessageDialog(settingsDialog, "Error while updating settings: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                });
+                */
+
+                // Logout button action listener
+                logoutButton.addActionListener(ev -> {
+                    UserPageClient.write("6", bufferedWriter);
+                    pageManager.showPage("welcome");
+                    settingsDialog.dispose();
+                    JOptionPane.showMessageDialog(null, "You have been logged out.", "Logout", JOptionPane.INFORMATION_MESSAGE);
+                });
+
+                // Display the dialog
+                settingsDialog.setVisible(true);
             }
         });
 
-        logoutButton.addActionListener(new ActionListener() {
-           @Override
-           public void actionPerformed(ActionEvent e) {
-               UserPageClient.write("6", bufferedWriter);
-               pageManager.showPage("welcome");
-               pageManager.removePage("user");
-           }
+        feedButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                UserPageClient.write("5", bufferedWriter);
+                pageManager.lazyLoadPage("feed", () -> new FeedViewPage(pageManager, bufferedWriter, bufferedReader));
+            }
         });
-
+/*
         backButton.addActionListener(new ActionListener() {
-           @Override
-           public void actionPerformed(ActionEvent e) {
-               UserPageClient.write("5", bufferedWriter);
-               pageManager.lazyLoadPage("feed", () -> new FeedViewPage(pageManager, bufferedWriter, bufferedReader));
-               pageManager.removePage("user");
-           }
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pageManager.goBack(); //REVISE
+            }
         });
 
         nextButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO: IMPLEMENT FEATURES LATER
+                pageManager.goForward(); //REVISE
             }
         });
+
+ */
     }
-
-    /*
-            if (input.equals("1")) {
-                write("1", bw);
-                System.out.print("What is your image file path: ");
-                String path = scanner.nextLine();
-                write(path, bw);
-                try {
-                    if (br.readLine().equals("SAVE")) {
-                        System.out.println("Set image successfully");
-                    } else {
-                        System.out.println("Set image failed");
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            } else if (input.equals("6")) {
-                write("6", bw);
-                try {
-                    if (bw != null) {
-                        bw.close(); // Close BufferedWriter
-                    }
-                    if (br != null) {
-                        br.close(); // Close BufferedReader
-                    }
-                    if (socket != null && !socket.isClosed()) {
-                        socket.close(); // Close the socket
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                break;
-            } else {
-                System.out.println("Invalid input. Please try again.");
-            }
-        }
-     */
 }

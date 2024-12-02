@@ -35,7 +35,14 @@ public class CreateUserPage extends JPanel {
 
         setLayout(new BorderLayout());
 
-        //1st Panel - Title
+        JScrollPane scrollablePanel = new JScrollPane(createMainPanel(), JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        add(scrollablePanel, BorderLayout.CENTER);
+
+        setupActionListeners();
+    }
+
+    private JPanel createMainPanel() {
+        // Title Panel
         JPanel titlePanel = new JPanel();
         titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.Y_AXIS));
         titlePanel.setBorder(new EmptyBorder(10, 0, 10, 0));
@@ -44,132 +51,121 @@ public class CreateUserPage extends JPanel {
         titlePanel.add(title);
         titlePanel.add(slogan);
 
-        //2nd Panel - Text Input
-        JPanel inputPanel = new JPanel();
-        inputPanel.setLayout(new GridBagLayout());
+        // Input Panel
+        JPanel inputPanel = new JPanel(new GridBagLayout());
         inputPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
-
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
-        gbc.anchor = GridBagConstraints.WEST;
 
-        //Add Username Label
+        // Username
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.weightx = 0;
-        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.WEST;
         inputPanel.add(usernameLabel, gbc);
-
-        //Add Username Field
         gbc.gridx = 1;
-        gbc.weightx = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         inputPanel.add(usernameField, gbc);
+        usernameField.setToolTipText("Enter your desired username (no special characters).");
 
-        //Add Password Label
+        // Password
         gbc.gridx = 0;
         gbc.gridy = 1;
-        gbc.weightx = 0;
         gbc.fill = GridBagConstraints.NONE;
         inputPanel.add(passwordLabel, gbc);
-
-        //Add Password Field
         gbc.gridx = 1;
-        gbc.weightx = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         inputPanel.add(passwordField, gbc);
+        passwordField.setToolTipText("Password must be at least 10 characters long, containing letters and numbers.");
 
-        //3rd Panel - Button
+        // Options Panel
         JPanel optionsPanel = new JPanel();
-        optionsPanel.setLayout(new BoxLayout(optionsPanel, BoxLayout.X_AXIS));
-        optionsPanel.setBorder(new EmptyBorder(10, 0, 10, 0));
-
-        backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        signUpButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-
+        optionsPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
         optionsPanel.add(signUpButton);
         optionsPanel.add(backButton);
 
-        //4th Panel - Group All Components
-        JPanel ultimatePanel = new JPanel();
-        ultimatePanel.setLayout(new BoxLayout(ultimatePanel, BoxLayout.Y_AXIS));
-        ultimatePanel.setBorder(new EmptyBorder(20, 20, 20, 20));
-        ultimatePanel.add(titlePanel);
-        ultimatePanel.add(inputPanel);
-        ultimatePanel.add(optionsPanel);
+        signUpButton.setToolTipText("Create your account with the entered details.");
+        backButton.setToolTipText("Cancel and return to the Welcome page.");
 
-        add(ultimatePanel, BorderLayout.CENTER);
-        setupActionListeners();
+        // Group All Components
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
+        mainPanel.add(titlePanel);
+        mainPanel.add(inputPanel);
+        mainPanel.add(optionsPanel);
+
+        return mainPanel;
     }
 
     private void setupActionListeners() {
-        signUpButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String username = usernameField.getText();
-                char[] passwordChars = passwordField.getPassword();
-
-                // Input validation
-                if (username.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Invalid username. Please type in a username.", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-                if (username.isEmpty() || username.contains(";")) {
-                    JOptionPane.showMessageDialog(null, "Invalid username. Please avoid special characters like ';'.", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-
-                if (passwordChars.length < 10) {
-                    JOptionPane.showMessageDialog(null, "Password must be at least 10 characters long.", "Error", JOptionPane.ERROR_MESSAGE);
-                    Arrays.fill(passwordChars, '\0'); // Clear password for security
-                    return;
-                }
-                if (!containsLetterAndDigit(passwordChars)) {
-                    JOptionPane.showMessageDialog(null, "Password must contain letters and numbers.", "Error", JOptionPane.ERROR_MESSAGE);
-                    Arrays.fill(passwordChars, '\0'); // Clear password for security
-                    return;
-                }
-                if (containsSemicolon(passwordChars)) {
-                    JOptionPane.showMessageDialog(null, "Password must not include semicolons.", "Error", JOptionPane.ERROR_MESSAGE);
-                    Arrays.fill(passwordChars, '\0'); // Clear password for security
-                    return;
-                }
-
-                try {
-                    UserPageClient.write("2", bufferedWriter); // "2" for sign-up operation
-                    UserPageClient.write(username, bufferedWriter);
-                    UserPageClient.write(new String(passwordChars), bufferedWriter);
-
-                    Arrays.fill(passwordChars, '\0'); // Clear password after use
-
-                    String messageFromServer = bufferedReader.readLine();
-                    if (messageFromServer == null) throw new IOException("Server closed the connection");
-
-                    if (USER_CREATION_SUCCESSFUL.equals(messageFromServer)) {
-                        JOptionPane.showMessageDialog(null, "Account created successfully! Redirecting to login page.", "Success", JOptionPane.INFORMATION_MESSAGE);
-                        pageManager.showPage("welcome"); // Assuming "welcomePage" is the login page
-                    } else if (INVALID_FIELDS.equals(messageFromServer)) {
-                        JOptionPane.showMessageDialog(null, "Invalid fields. Please check your input and try again.", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(null, "Communication error with the server. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
-                    ex.printStackTrace(); // Log error for debugging
-                }
-            }
-        });
-
-        backButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                pageManager.showPage("welcome");
-                pageManager.removePage("signup");
-            }
+        signUpButton.addActionListener(e -> handleSignUp());
+        backButton.addActionListener(e -> {
+            pageManager.showPage("welcome");
+            pageManager.removePage("signup");
         });
     }
 
+    private void handleSignUp() {
+        String username = usernameField.getText();
+        char[] passwordChars = passwordField.getPassword();
+
+        // Validate inputs
+        String validationError = validateInputs(username, passwordChars);
+        if (validationError != null) {
+            JOptionPane.showMessageDialog(null, validationError, "Error", JOptionPane.ERROR_MESSAGE);
+            clearPassword(passwordChars);
+            return;
+        }
+
+        try {
+            // Send sign-up request to server
+            UserPageClient.write("2", bufferedWriter); // "2" for sign-up operation
+            UserPageClient.write(username, bufferedWriter);
+            UserPageClient.write(new String(passwordChars), bufferedWriter);
+            clearPassword(passwordChars);
+
+            String response = bufferedReader.readLine();
+            if (response == null) throw new IOException("Server closed the connection.");
+
+            if (USER_CREATION_SUCCESSFUL.equals(response)) {
+                JOptionPane.showMessageDialog(null, "Account created successfully! Redirecting to login page.", "Success", JOptionPane.INFORMATION_MESSAGE);
+                pageManager.showPage("welcome");
+                pageManager.removePage("signup");
+            } else if (INVALID_FIELDS.equals(response)) {
+                JOptionPane.showMessageDialog(null, "Invalid fields. Please check your input and try again.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null, "Communication error with the server. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
+        }
+    }
+
+    private String validateInputs(String username, char[] password) {
+        if (username.isEmpty() || username.contains(";")) {
+            usernameField.requestFocus();
+            return "Invalid username. Please avoid special characters like ';'.";
+        }
+        if (password.length < 10) {
+            passwordField.requestFocus();
+            return "Password must be at least 10 characters long.";
+        }
+        if (!containsLetterAndDigit(password)) {
+            passwordField.requestFocus();
+            return "Password must contain letters and numbers.";
+        }
+        if (containsSemicolon(password)) {
+            passwordField.requestFocus();
+            return "Password must not include semicolons.";
+        }
+        return null;
+    }
+
+    private void clearPassword(char[] password) {
+        Arrays.fill(password, '\0'); // Clear sensitive data
+    }
+
     private boolean containsLetterAndDigit(char[] password) {
-        boolean hasLetter = false;
-        boolean hasDigit = false;
+        boolean hasLetter = false, hasDigit = false;
         for (char ch : password) {
             if (Character.isLetter(ch)) hasLetter = true;
             if (Character.isDigit(ch)) hasDigit = true;

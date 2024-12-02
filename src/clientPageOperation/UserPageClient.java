@@ -43,7 +43,7 @@ public final class UserPageClient {
             }
             return buttonNames;
         } catch (IOException e) {
-            System.out.println("readAndPrint() ERROR");
+            System.out.println("UserPageClient: readAndPrint() ERROR");
             e.printStackTrace();
             return null;
         }
@@ -63,7 +63,7 @@ public final class UserPageClient {
             bw.flush();
             return true;
         } catch (IOException e) {
-            System.out.println("write() ERROR");
+            System.out.println("UserPageClient: write() ERROR");
             e.printStackTrace();
             return false;
         }

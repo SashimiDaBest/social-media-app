@@ -1,5 +1,7 @@
 import uiPage.*;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.net.Socket;
 import java.io.*;
 import javax.swing.*;
@@ -80,9 +82,6 @@ public class ClientHandler implements Runnable {
             SwingUtilities.invokeLater(this::initializeUI);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Unexpected error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        } finally {
-//            TODO: look at how to close resources properly without enabling connection errors
-//            closeResources();
         }
     }
 
@@ -91,9 +90,30 @@ public class ClientHandler implements Runnable {
      */
     private void initializeUI() {
         frame = new JFrame("Boiler Gram");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.setSize(600, 400);
+
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); // Prevent default close operation
+
+        // Add a WindowListener to detect the close button click
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                int confirmed = JOptionPane.showConfirmDialog(
+                        frame,
+                        "Are you sure you want to close the application?",
+                        "Exit Confirmation",
+                        JOptionPane.YES_NO_OPTION
+                );
+
+                if (confirmed == JOptionPane.YES_OPTION) {
+                    closeResources();
+                    frame.dispose();
+                }
+            }
+        });
+
 
         PageManager pageManager = new PageManager();
 
@@ -104,24 +124,6 @@ public class ClientHandler implements Runnable {
         frame.setVisible(true);
 
         pageManager.showPage("welcome");
-
-//        cardLayout = new CardLayout();
-//        cardPanel = new JPanel(cardLayout);
-//
-//        // Initialize and add pages
-//        welcomePage = new WelcomePage(cardLayout, cardPanel, bw, br);
-//        createUserPage = new CreateUserPage(cardLayout, cardPanel, bw, br);
-//        feedViewPage = new FeedViewPage(cardLayout, cardPanel, bw, br);
-//
-//        cardPanel.add(welcomePage, "welcomePage");
-//        cardPanel.add(createUserPage, "createUserPage");
-//        cardPanel.add(feedViewPage, "feedViewPage");
-//
-//        frame.add(cardPanel);
-//        frame.setVisible(true);
-//
-//        // Show the welcome page
-//        cardLayout.show(cardPanel, "welcomePage");
     }
 
     /**
@@ -129,11 +131,17 @@ public class ClientHandler implements Runnable {
      */
     private void closeResources() {
         try {
-            if (br != null) br.close();
-            if (bw != null) bw.close();
-            if (socket != null) socket.close();
-        } catch (IOException ex) {
-            ex.printStackTrace();
+            if (bw != null) {
+                bw.close(); // Close BufferedWriter
+            }
+            if (br != null) {
+                br.close(); // Close BufferedReader
+            }
+            if (socket != null && !socket.isClosed()) {
+                socket.close(); // Close the socket
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

@@ -645,13 +645,11 @@ public class User implements UserInterface {
         try (BufferedReader reader = new BufferedReader(new FileReader(USERIDLIST))) {
             String line = reader.readLine();
             if (line.split(";")[0].equals(usernameToSearch)) {
-                System.out.println(line);
                 return line.split(";")[2];
             }
             while (line != null) {
                 line = reader.readLine();
                 if (line != null && line.split(";")[0].equals(usernameToSearch)) {
-                    System.out.println(line);
                     return line.split(";")[2];
                 }
             }
@@ -671,13 +669,11 @@ public class User implements UserInterface {
         try (BufferedReader reader = new BufferedReader(new FileReader(USERIDLIST))) {
             String line = reader.readLine();
             if (line.split(";")[2].equals(idToSearch)) {
-                System.out.println(line);
                 return line.split(";")[0];
             }
             while (line != null) {
                 line = reader.readLine();
                 if (line != null && line.split(";")[2].equals(idToSearch)) {
-                    System.out.println(line);
                     return line.split(";")[0];
                 }
             }
