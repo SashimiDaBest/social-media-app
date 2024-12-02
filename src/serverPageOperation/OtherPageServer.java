@@ -57,6 +57,7 @@ public final class OtherPageServer {
                 bw.write(Integer.toString(otherUser.getAccountType()));
                 bw.newLine();
                 bw.write("stop");
+                bw.newLine();
                 bw.flush();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -69,13 +70,10 @@ public final class OtherPageServer {
                     bw.flush();
                     UserPageServer.write(new ArrayList<>(), bw);
                 } else if (!otherUser.getFollowerList().get(0).isEmpty()) {
-                    bw.write("");
+                    bw.write("look");
                     bw.newLine();
                     bw.flush();
                     UserPageServer.write(otherUser.getFollowerList(), bw);
-                    for (String i : otherUser.getFollowerList()) {
-                        System.out.println(i);
-                    }
                 } else {
                     bw.write("[EMPTY]");
                     bw.newLine();
@@ -88,18 +86,15 @@ public final class OtherPageServer {
 
             try {
                 // If other account is private and other user follow user
-                if (otherUser.getAccountType() == 1 && !user.getFollowingList().contains(otherUser.getUserID())) {
+                if (otherUser.getAccountType() == 1 && !user.getFollowerList().contains(otherUser.getUserID())) {
                     bw.write("message");
                     bw.newLine();
                     bw.flush();
                     UserPageServer.write(new ArrayList<>(), bw);
                 } else if (!otherUser.getFollowingList().get(0).isEmpty()) {
-                    bw.write("");
+                    bw.write("look");
                     bw.newLine();
                     bw.flush();
-                    for (String i : otherUser.getFollowingList()) {
-                        System.out.println(i);
-                    }
                     UserPageServer.write(otherUser.getFollowingList(), bw);
                 } else {
                     bw.write("[EMPTY]");
@@ -152,7 +147,6 @@ public final class OtherPageServer {
                 }
                 input = br.readLine();
             }
-
 //                if (input.equals("1")) {
 //                    if (user.getFollowingList().contains(otherUser.getUserID())) {
 //                        user.deleteFollowing(otherUser.getUserID());

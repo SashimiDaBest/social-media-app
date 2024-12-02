@@ -38,15 +38,16 @@ public class OtherProfilePage  extends JPanel{
         setLayout(new BorderLayout());
 
         JPanel accountPanel = setAccountInfo();
-//        JPanel relationPanel = new JPanel();
+        JPanel relationPanel = new JPanel();
         JPanel followerPanel = setPeople(1, "Follower");
         JPanel followingPanel = setPeople(2, "Following");
 
         JPanel mainPanel = new JPanel(new GridLayout(0, 1, 0, 0));
         mainPanel.add(accountPanel);
-//        mainPanel.add(relationPanel);
+        mainPanel.add(relationPanel);
         mainPanel.add(followerPanel);
         mainPanel.add(followingPanel);
+
         add(mainPanel, BorderLayout.CENTER);
 
         JPanel footer = setFooter();
@@ -163,7 +164,7 @@ public class OtherProfilePage  extends JPanel{
         new Thread(() -> {
             try {
                 String peopleValidity = bufferedReader.readLine();
-                if (!"[EMPTY]".equals(peopleValidity)) {
+                if ("look".equals(peopleValidity)) {
                     SwingUtilities.invokeLater(() -> statusLabel.setText(""));
 
                     // Populate the button panel with user buttons
@@ -173,7 +174,7 @@ public class OtherProfilePage  extends JPanel{
 
                         button.addActionListener(e -> {
                             UserPageClient.write("3", bufferedWriter);
-//                            UserPageClient.write(buttonName, bufferedWriter);
+                            UserPageClient.write(buttonName, bufferedWriter);
                             pageManager.lazyLoadPage(buttonName, () -> new OtherProfilePage(pageManager, bufferedWriter, bufferedReader, buttonName));
                             pageManager.removePage(otherUsername);
                         });
@@ -184,6 +185,15 @@ public class OtherProfilePage  extends JPanel{
                             peopleButtonPanel.repaint();
                         });
                     }
+                } else if ("message".equals(peopleValidity)) {
+                    // Update the status message based on the category
+                    String noDataMessage = "You have no permission to view";
+
+                    SwingUtilities.invokeLater(() -> {
+                        statusLabel.setText(noDataMessage);
+                        peopleButtonPanel.revalidate();
+                        peopleButtonPanel.repaint();
+                    });
                 } else {
                     // Update the status message based on the category
                     String noDataMessage = "";
