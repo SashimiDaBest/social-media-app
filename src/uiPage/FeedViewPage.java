@@ -13,43 +13,143 @@ import java.util.ArrayList;
 
 public class FeedViewPage extends JPanel {
 
-    private JButton profileIconButton;
-    private JButton viewAnotherProfile;
-    private JButton endFeedButton;
-    private JButton loadChatsButton;
-    private JButton openChatButton;
+    private JButton profileButton;
+//    private JButton viewAnotherProfile;
+//    private JButton endFeedButton;
+//    private JButton loadChatsButton;
+//    private JButton openChatButton;
 
-    private JLabel chatViewLabel;
-    private JLabel chatContent;
-    private JTextField messageContent;
-    private JButton composeMessageButton;
-    private JButton editMessageButton;
-    private JButton deleteMessageButton;
-    private JButton exitChatButton;
+//    private JLabel chatViewLabel;
+//    private JLabel chatContent;
+//    private JTextField messageContent;
+//    private JButton composeMessageButton;
+//    private JButton editMessageButton;
+//    private JButton deleteMessageButton;
+//    private JButton exitChatButton;
 
-    private JComboBox activeChatsBox;
-
-    // For navigation panel
-    private JButton backButton;
-    private JButton nextButton;
+//    private JComboBox activeChatsBox;
 
     private BufferedWriter writer;
     private BufferedReader reader;
     private PageManager pageManager;
 
     public FeedViewPage(PageManager pageManager, BufferedWriter bw, BufferedReader br) {
-        setLayout(new BorderLayout());
-
+        this.pageManager = pageManager;
         this.writer = bw;
         this.reader = br;
-        this.pageManager = pageManager;
 
-        // for viewing your own profile
-        JPanel headerPanel = new JPanel();
-        headerPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
-        profileIconButton = new JButton("Profile icon");
-        headerPanel.add(profileIconButton);
+        setLayout(new BorderLayout());
+
+        // Top panel (Profile Icon and Search)
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BorderLayout());
+
+        // Profile Icon Button
+        profileButton = new JButton("User Page");
+        profileButton.setHorizontalAlignment(SwingConstants.LEFT);
+        topPanel.add(profileButton, BorderLayout.WEST);
+
+        // Search Panel
+        topPanel.add(createSearchPanel(), BorderLayout.CENTER);
+
+        add(topPanel, BorderLayout.NORTH);
+
+        // Center panel (Chat messages and left panel)
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+
+        // Left panel (Buttons) inside scroll pane
+        mainPanel.add(createChatViewPanel(), BorderLayout.WEST);
+
+        // Chat panel
+        JPanel rightPanel = new JPanel(new BorderLayout());
+        rightPanel.add(createChatPanel(), BorderLayout.CENTER);
+
+        // Bottom panel (Text input and actions)
+        rightPanel.add(createBottomPanel(), BorderLayout.SOUTH);
+        mainPanel.add(rightPanel, BorderLayout.CENTER);
+
+        add(mainPanel, BorderLayout.CENTER);
+
+        setupActionListeners();
+    }
+
+    public JPanel createBottomPanel() {
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setLayout(new BorderLayout());
+
+        JTextField textField = new JTextField();
+        textField.setPreferredSize(new Dimension(200, 30)); // Fixed size for text field
+        JButton uploadButton = new JButton("Upload Picture");
+        JButton sendButton = new JButton("Send");
+
+        JPanel buttonPanelBottom = new JPanel(new FlowLayout());
+        buttonPanelBottom.add(uploadButton);
+        buttonPanelBottom.add(sendButton);
+
+        bottomPanel.add(textField, BorderLayout.CENTER);
+        bottomPanel.add(buttonPanelBottom, BorderLayout.EAST);
+        return bottomPanel;
+    }
+
+    public JScrollPane createChatPanel() {
+        JPanel chatPanel = new JPanel();
+        chatPanel.setLayout(new BoxLayout(chatPanel, BoxLayout.Y_AXIS));
+
+        for (int i = 1; i <= 6; i++) {
+            JPanel chatRow = new JPanel();
+            chatRow.setLayout(new FlowLayout(FlowLayout.LEFT));
+            JLabel chatLabel = new JLabel("CHAT " + i);
+            JLabel userLabel = new JLabel("| U" + (i % 2 + 1) + ": Message here");
+            chatRow.add(chatLabel);
+            chatRow.add(userLabel);
+            chatPanel.add(chatRow);
+        }
+
+        JScrollPane chatScrollPane = new JScrollPane(chatPanel);
+        return chatScrollPane;
+    }
+
+    public JScrollPane createChatViewPanel() {
+        JPanel buttonPanelLeft = new JPanel();
+        buttonPanelLeft.setLayout(new GridLayout(8, 1, 5, 5)); // 8 buttons in a grid layout
+
+        for (int i = 1; i <= 8; i++) {
+            JButton button = new JButton("Button " + i);
+            button.setPreferredSize(new Dimension(50, 40)); // Fixed size for buttons
+            buttonPanelLeft.add(button);
+        }
+
+        JScrollPane leftScrollPane = new JScrollPane(buttonPanelLeft);
+        leftScrollPane.setPreferredSize(new Dimension(150, 0)); // Adjust width to fit buttons
+        return leftScrollPane;
+    }
+
+    public JPanel createSearchPanel() {
+        JPanel searchPanel = new JPanel();
+        searchPanel.setLayout(new BorderLayout());
+        JTextField searchField = new JTextField();
+        searchField.setPreferredSize(new Dimension(200, 30));
+        JButton searchButton = new JButton("Search");
+        JButton deleteButton = new JButton("Delete");
+        JButton clearButton = new JButton("Clear");
+        JButton prevButton = new JButton("<<");
+        JButton nextButton = new JButton(">>");
+
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        buttonPanel.add(searchButton);
+        buttonPanel.add(deleteButton);
+        buttonPanel.add(clearButton);
+        buttonPanel.add(prevButton);
+        buttonPanel.add(nextButton);
+
+        searchPanel.add(searchField, BorderLayout.CENTER);
+        searchPanel.add(buttonPanel, BorderLayout.EAST);
+        return searchPanel;
+    }
+
+    /*
+    public FeedViewPage(PageManager pageManager, BufferedWriter bw, BufferedReader br) {
 
         // for viewing other users' profiles
         viewAnotherProfile = new JButton("View another user's profile");
@@ -177,12 +277,11 @@ public class FeedViewPage extends JPanel {
 
         setupActionListeners();
     }
-
-    //
+     */
     private void setupActionListeners() {
 
         // shows the current user's profile when clicked
-        profileIconButton.addActionListener(new ActionListener() {
+        profileButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 UserPageClient.write("3", writer);
@@ -193,6 +292,7 @@ public class FeedViewPage extends JPanel {
             }
         });
 
+        /*
         // shows another users' profile
         viewAnotherProfile.addActionListener(new ActionListener() {
             @Override
@@ -467,7 +567,10 @@ public class FeedViewPage extends JPanel {
                 activeChatsBox.removeAllItems();
             }
         });
+
+         */
     }
+
 
     /*
     public static void feedPage(Scanner scanner, BufferedReader br, BufferedWriter bw, Socket socket) {
