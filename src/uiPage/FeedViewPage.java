@@ -14,6 +14,7 @@ import java.util.Arrays;
 
 public class FeedViewPage extends JPanel {
 
+    // for viewing own user profile
     private JButton profileButton;
     private JButton searchButton;
     private JButton loadButton;
@@ -29,6 +30,13 @@ public class FeedViewPage extends JPanel {
     private JButton uploadButton;
     private JButton editButton;
     private JButton sendButton;
+
+    // for search panel
+    private JButton viewSelectedButton;
+    private ArrayList<String> selectedUsers; // holds selected usernames
+    private JTextField searchField;
+
+
 //    private JButton viewAnotherProfile;
 //    private JButton endFeedButton;
 //    private JButton loadChatsButton;
@@ -52,6 +60,7 @@ public class FeedViewPage extends JPanel {
         this.pageManager = pageManager;
         this.writer = bw;
         this.reader = br;
+        this.selectedUsers = new ArrayList<>();
 
         setLayout(new BorderLayout());
 
@@ -162,12 +171,14 @@ public class FeedViewPage extends JPanel {
         searchPanel.setLayout(new BorderLayout());
         JTextField searchField = new JTextField();
         searchField.setPreferredSize(new Dimension(200, 30));
-        searchButton = new JButton("Search");
-        loadButton = new JButton("Load");
-        deleteButton = new JButton("Delete");
-        clearButton = new JButton("Clear");
-        prevButton = new JButton("<<");
-        nextButton = new JButton(">>");
+        this.searchButton = new JButton("Search");
+        this.loadButton = new JButton("Load");
+        this.deleteButton = new JButton("Delete");
+        this.clearButton = new JButton("Clear");
+        this.prevButton = new JButton("<<");
+        this.nextButton = new JButton(">>");
+        this.viewSelectedButton = new JButton("View Selected Users");
+        this.searchField = searchField;
 
         deleteButton.setEnabled(false);
 
@@ -176,6 +187,7 @@ public class FeedViewPage extends JPanel {
         buttonPanel.add(loadButton);
         buttonPanel.add(deleteButton);
         buttonPanel.add(clearButton);
+        buttonPanel.add(viewSelectedButton);
         buttonPanel.add(prevButton);
         buttonPanel.add(nextButton);
 
@@ -187,136 +199,7 @@ public class FeedViewPage extends JPanel {
         return searchPanel;
     }
 
-    /*
-    public FeedViewPage(PageManager pageManager, BufferedWriter bw, BufferedReader br) {
 
-        // for viewing other users' profiles
-        viewAnotherProfile = new JButton("View another user's profile");
-        headerPanel.add(viewAnotherProfile);
-
-        JPanel searchPanel = new JPanel();
-        searchPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        searchPanel.setLayout(new BoxLayout(searchPanel, BoxLayout.Y_AXIS));
-        JButton createChatButton = new JButton("Create chat");
-        JTextField userSearchField = new JTextField(15);
-        searchPanel.add(userSearchField);
-        searchPanel.add(createChatButton);
-
-        JPanel chatFeedPanel = new JPanel();
-        chatFeedPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        chatFeedPanel.setLayout(new BoxLayout(chatFeedPanel, BoxLayout.X_AXIS));
-
-        // Initialize chatSelectionPanel with GridBagLayout
-        JPanel chatSelectionPanel = new JPanel();
-        chatSelectionPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        chatSelectionPanel.setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.anchor = GridBagConstraints.NORTH;  // Align components at the top
-
-        // Add the "Load chats" button at the left, centered in the panel
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 1;  // Span 1 column
-        loadChatsButton = new JButton("Load chats");
-        chatSelectionPanel.add(loadChatsButton, gbc);
-
-        // Add the "Open chat" button just to the right of the "Load chats" button
-        gbc.gridx = 1;  // Move to the next column
-        openChatButton = new JButton("Open chat");
-        openChatButton.setEnabled(false);
-        chatSelectionPanel.add(openChatButton, gbc);
-
-        // Add the combo box below the buttons and center it
-        gbc.gridx = 0;  // Start at the first column
-        gbc.gridy = 1;  // Move to the second row
-        gbc.gridwidth = 2;  // Span across 2 columns to center the combo box
-        gbc.anchor = GridBagConstraints.CENTER;  // Center the combo box
-        activeChatsBox = new JComboBox();
-        activeChatsBox.setEditable(false);
-        chatSelectionPanel.add(activeChatsBox, gbc);
-
-        // Chat View Panel (Right side)
-        JPanel chatViewPanel = new JPanel();
-        chatViewPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        chatViewPanel.setLayout(new GridBagLayout());
-
-        // Add "Chat View" label at the top
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;  // Span across the whole panel
-        gbc.anchor = GridBagConstraints.NORTH;  // Align to the top
-        chatViewLabel = new JLabel("Chat view");
-        chatViewPanel.add(chatViewLabel, gbc);
-
-        // Add the "Chat content" label below "Chat view"
-        gbc.gridy = 1;
-        gbc.gridwidth = 2;  // Span across the whole panel
-        chatContent = new JLabel("Chat content");
-        chatContent.setVerticalAlignment(SwingConstants.TOP);  // Align text to the top
-        chatContent.setBorder(BorderFactory.createLineBorder(Color.BLACK));  // Add a border for clarity
-
-        // Set a preferred size that will fill the remaining vertical space
-        chatContent.setPreferredSize(new Dimension(400, 200));  // Make it large enough to hold chat content
-        chatContent.setMinimumSize(new Dimension(400, 100));  // Minimum size, in case chat content is small
-        chatViewPanel.add(chatContent, gbc);
-
-        // Add the new JTextField (messageContent) between chatContent and the buttons
-        gbc.gridy = 2;  // Move to the next row after the chat content label
-        messageContent = new JTextField();  // Create the text field
-        messageContent.setEnabled(false);  // Disable it by default
-        messageContent.setPreferredSize(new Dimension(400, 30));  // Set a preferred size for the text field
-        chatViewPanel.add(messageContent, gbc);
-
-        // Add the four buttons (compose, edit, delete, exit) at the bottom
-        gbc.gridy = 3;
-        gbc.gridwidth = 1; // Reset grid width to 1 for each button
-        composeMessageButton = new JButton("Compose message");
-        composeMessageButton.setEnabled(false);
-        chatViewPanel.add(composeMessageButton, gbc);
-
-        gbc.gridx = 1;
-        editMessageButton = new JButton("Edit message");
-        editMessageButton.setEnabled(false);
-        chatViewPanel.add(editMessageButton, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 4;
-        deleteMessageButton = new JButton("Delete message");
-        deleteMessageButton.setEnabled(false);
-        chatViewPanel.add(deleteMessageButton, gbc);
-
-        gbc.gridx = 1;
-        exitChatButton = new JButton("Exit chat and refresh");
-        exitChatButton.setEnabled(false);
-        chatViewPanel.add(exitChatButton, gbc);
-
-        // Add the chatSelectionPanel to the chatFeedPanel
-        gbc.weightx = 0.5;
-        gbc.gridx = 0;  // Add to the first column of chatFeedPanel
-        chatFeedPanel.add(chatSelectionPanel, gbc);
-
-        // Add chatViewPanel to the second column of chatFeedPanel
-        gbc.gridx = 1;  // Add to the second column
-        chatFeedPanel.add(chatViewPanel, gbc);
-
-        // Navigation Panel
-        JPanel navigationPanel = new JPanel(new BorderLayout());
-        backButton = new JButton("Back");
-        nextButton = new JButton("Next");
-        endFeedButton = new JButton("Exit feed");
-        navigationPanel.add(endFeedButton);
-        navigationPanel.add(backButton, BorderLayout.WEST);
-        navigationPanel.add(nextButton, BorderLayout.EAST);
-
-        // Add components to the main layout
-        add(headerPanel, BorderLayout.NORTH);
-        add(chatFeedPanel, BorderLayout.CENTER);
-        add(navigationPanel, BorderLayout.SOUTH);
-
-        setupActionListeners();
-    }
-     */
     private void setupActionListeners() {
 
         // shows the current user's profile when clicked
@@ -326,7 +209,7 @@ public class FeedViewPage extends JPanel {
                 UserPageClient.write("3", writer);
                 // load the user's page
                 pageManager.lazyLoadPage("user", () -> new UserProfilePage(pageManager, writer, reader));
-
+                pageManager.removePage("feed");
             }
         });
 
@@ -536,6 +419,85 @@ public class FeedViewPage extends JPanel {
         });
 
 
+        // search for other user
+        searchButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+
+                    // all stuff used below:
+                    UserPageClient.write("4", writer);
+                    String[] userList = reader.readLine().split(";");
+                    String userInput = searchField.getText();
+                    String selectedUser;
+
+                    // if the user types in the exact username, then there is no need for a dropdown
+                    if (Arrays.asList(userList).contains(userInput)) {
+                        selectedUser = userInput;
+                    
+                    // otherwise, use a dropdown menu
+                    } else {
+                        // for menu pop-up: show all usernames that are close to userList
+                        ArrayList<String> closeOptions = new ArrayList<>();
+                        for (String name: userList) {
+                            if (name.contains(userInput)) {
+                                closeOptions.add(name);
+                            }
+                        }
+                        String[] menuOptions = closeOptions.toArray(new String[closeOptions.size()]);
+
+                        // for selecting the user based off drop down
+                        if (menuOptions.length == 0) { // for whatever reason, then skip to displaying an error
+                            selectedUser = "";
+                        
+                        } else {
+                            selectedUser = (String) JOptionPane.showInputDialog(null, "Here are the closest options:", 
+                            "CLOSE TO MATCHING USERNAMES:", JOptionPane.QUESTION_MESSAGE, null, menuOptions, menuOptions[0]);
+                        }
+                        
+                    }
+
+                    // choose user, send back for validation
+                    UserPageClient.write(selectedUser, writer);
+
+                    // VALIDATION 
+                    boolean validation = Boolean.parseBoolean(reader.readLine());
+                    if (validation) {
+                        selectedUsers.add(selectedUser);
+                        pageManager.lazyLoadPage(selectedUser, () -> new OtherProfilePage(pageManager, writer, reader, selectedUser));
+                        pageManager.removePage("feed");
+                        System.out.println(selectedUsers);
+
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Could not find selected user" +
+                        " or the search field was empty!",
+                            "ERROR: USER SELECTION", JOptionPane.QUESTION_MESSAGE);
+                    }
+                    searchField.setText("");
+
+                } catch (IOException error) {
+                    error.printStackTrace();
+                }
+            }
+
+        });
+        
+        // for viewing all currently selectedUsers
+        viewSelectedButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                // creates list of usernames to display
+                String message = "";
+                for (String username: selectedUsers) {
+                    message += username + "\n";
+                }
+                System.out.println("All selected users: " + message);
+
+                JOptionPane.showMessageDialog(null, message, 
+                    "CURRENTLY SELECTED USERS", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
         /*
         // shows another users' profile
         viewAnotherProfile.addActionListener(new ActionListener() {
