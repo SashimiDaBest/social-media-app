@@ -308,7 +308,7 @@ public class UserProfilePage extends JPanel {
                 // Logout button action listener
                 logoutButton.addActionListener(ev -> {
                     UserPageClient.write("6", bufferedWriter);
-                    pageManager.showPage("welcome");
+                    pageManager.lazyLoadPage("welcome", () -> new WelcomePage(pageManager, bufferedWriter, bufferedReader));
                     settingsDialog.dispose();
                     JOptionPane.showMessageDialog(null, "You have been logged out.", "Logout", JOptionPane.INFORMATION_MESSAGE);
                 });
