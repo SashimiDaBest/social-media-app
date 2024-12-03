@@ -336,16 +336,22 @@ public class FeedViewPage extends JPanel {
                 UserPageClient.write("2", writer);
                 try {
                     loadButton.setEnabled(false);
-                    String[] activeChats = reader.readLine().split(";");
-                    for (int i = 0; i < chatButtons.size(); i++) {
-                        if (i < activeChats.length) {
-                            chatButtons.get(i).setEnabled(true);
-                            chatButtons.get(i).setVisible(true);
-                            chatButtons.get(i).setText(activeChats[i].substring(0, 10));
-                        } else
-                            chatButtons.get(i).setVisible(false);
+                    String response = reader.readLine();
+                    System.out.println(response);
+                    if (response.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "You have no chats!", "Boiler Gram", JOptionPane.ERROR_MESSAGE);
+                        loadButton.setEnabled(true);
+                    } else {
+                        String[] activeChats = response.split(";");
+                        for (int i = 0; i < chatButtons.size(); i++) {
+                            if (i < activeChats.length) {
+                                chatButtons.get(i).setEnabled(true);
+                                chatButtons.get(i).setVisible(true);
+                                chatButtons.get(i).setText(activeChats[i].substring(0, 10));
+                            } else
+                                chatButtons.get(i).setVisible(false);
+                        }
                     }
-
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
