@@ -10,10 +10,25 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class FeedViewPage extends JPanel {
 
     private JButton profileButton;
+    private JButton searchButton;
+    private JButton loadButton;
+    private JButton deleteButton;
+    private JButton clearButton;
+    private JButton prevButton;
+    private JButton nextButton;
+
+    private ArrayList<JButton> chatButtons;
+    private ArrayList<JLabel> chatLabels;
+
+    private JTextField chatField;
+    private JButton uploadButton;
+    private JButton editButton;
+    private JButton sendButton;
 //    private JButton viewAnotherProfile;
 //    private JButton endFeedButton;
 //    private JButton loadChatsButton;
@@ -78,16 +93,22 @@ public class FeedViewPage extends JPanel {
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new BorderLayout());
 
-        JTextField textField = new JTextField();
-        textField.setPreferredSize(new Dimension(200, 30)); // Fixed size for text field
-        JButton uploadButton = new JButton("Upload Picture");
-        JButton sendButton = new JButton("Send");
+        chatField = new JTextField();
+        chatField.setPreferredSize(new Dimension(200, 30)); // Fixed size for text field
+        uploadButton = new JButton("Upload Picture");
+        editButton = new JButton("Edit");
+        sendButton = new JButton("Send");
 
         JPanel buttonPanelBottom = new JPanel(new FlowLayout());
         buttonPanelBottom.add(uploadButton);
+        buttonPanelBottom.add(editButton);
         buttonPanelBottom.add(sendButton);
 
-        bottomPanel.add(textField, BorderLayout.CENTER);
+        editButton.setEnabled(false);
+        sendButton.setEnabled(false);
+        uploadButton.setEnabled(false);
+
+        bottomPanel.add(chatField, BorderLayout.CENTER);
         bottomPanel.add(buttonPanelBottom, BorderLayout.EAST);
         return bottomPanel;
     }
@@ -96,15 +117,18 @@ public class FeedViewPage extends JPanel {
         JPanel chatPanel = new JPanel();
         chatPanel.setLayout(new BoxLayout(chatPanel, BoxLayout.Y_AXIS));
 
+        chatLabels = new ArrayList<>();
+
         for (int i = 1; i <= 6; i++) {
             JPanel chatRow = new JPanel();
             chatRow.setLayout(new FlowLayout(FlowLayout.LEFT));
-            JLabel chatLabel = new JLabel("U" + i);
-            JLabel userLabel = new JLabel(": Message here");
-            chatRow.add(chatLabel);
+            JLabel userLabel = new JLabel("");
             chatRow.add(userLabel);
             chatPanel.add(chatRow);
+            chatLabels.add(userLabel);
         }
+
+        chatLabels.get(0).setText("Chat content will appear here!");
 
         JScrollPane chatScrollPane = new JScrollPane(chatPanel);
         return chatScrollPane;
@@ -114,11 +138,19 @@ public class FeedViewPage extends JPanel {
         JPanel buttonPanelLeft = new JPanel();
         buttonPanelLeft.setLayout(new GridLayout(8, 1, 5, 5)); // 8 buttons in a grid layout
 
+        chatButtons = new ArrayList<>(); // For accessing buttons after creation
+
         for (int i = 1; i <= 8; i++) {
             JButton button = new JButton("Button " + i);
             button.setPreferredSize(new Dimension(50, 40)); // Fixed size for buttons
             buttonPanelLeft.add(button);
+            chatButtons.add(button);
+            button.setEnabled(false);
+            button.setVisible(false);
         }
+
+        chatButtons.get(0).setVisible(true);
+        chatButtons.get(0).setText("Load chats!");
 
         JScrollPane leftScrollPane = new JScrollPane(buttonPanelLeft);
         leftScrollPane.setPreferredSize(new Dimension(150, 0)); // Adjust width to fit buttons
@@ -130,18 +162,25 @@ public class FeedViewPage extends JPanel {
         searchPanel.setLayout(new BorderLayout());
         JTextField searchField = new JTextField();
         searchField.setPreferredSize(new Dimension(200, 30));
-        JButton searchButton = new JButton("Search");
-        JButton deleteButton = new JButton("Delete");
-        JButton clearButton = new JButton("Clear");
-        JButton prevButton = new JButton("<<");
-        JButton nextButton = new JButton(">>");
+        searchButton = new JButton("Search");
+        loadButton = new JButton("Load");
+        deleteButton = new JButton("Delete");
+        clearButton = new JButton("Clear");
+        prevButton = new JButton("<<");
+        nextButton = new JButton(">>");
+
+        deleteButton.setEnabled(false);
 
         JPanel buttonPanel = new JPanel(new FlowLayout());
         buttonPanel.add(searchButton);
+        buttonPanel.add(loadButton);
         buttonPanel.add(deleteButton);
         buttonPanel.add(clearButton);
         buttonPanel.add(prevButton);
         buttonPanel.add(nextButton);
+
+        deleteButton.setEnabled(false);
+        clearButton.setEnabled(false);
 
         searchPanel.add(searchField, BorderLayout.CENTER);
         searchPanel.add(buttonPanel, BorderLayout.EAST);
@@ -290,6 +329,206 @@ public class FeedViewPage extends JPanel {
 
             }
         });
+
+        loadButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                UserPageClient.write("2", writer);
+                try {
+                    loadButton.setEnabled(false);
+                    String[] activeChats = reader.readLine().split(";");
+                    for (int i = 0; i < chatButtons.size(); i++) {
+                        if (i < activeChats.length) {
+                            chatButtons.get(i).setEnabled(true);
+                            chatButtons.get(i).setVisible(true);
+                            chatButtons.get(i).setText(activeChats[i].substring(0, 10));
+                        } else
+                            chatButtons.get(i).setVisible(false);
+                    }
+
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+
+        for (JButton chatButton : chatButtons) {
+            chatButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        UserPageClient.write(chatButton.getText().substring(6), writer);
+                        for (JButton button : chatButtons) {
+                            if (!button.equals(chatButton)) {
+                                button.setVisible(false);
+                            } else {
+                                button.setEnabled(false);
+                            }
+                        }
+                        clearButton.setEnabled(true);
+                        deleteButton.setEnabled(true);
+                        uploadButton.setEnabled(true);
+                        editButton.setEnabled(true);
+                        sendButton.setEnabled(true);
+
+                        ArrayList<String> menuToDisplay;
+                        String[] lines = reader.readLine().split(";");
+
+                        menuToDisplay = new ArrayList<>(Arrays.asList(lines));
+                        int index = 0;
+                        for (int i = 0; i < menuToDisplay.size(); i++) {
+                            String line = menuToDisplay.get(i);
+                            if (line.equals("---------------------------------------------------------------------") ||
+                                    line.equals("[Displaying up to 6 most recent messages]") ||
+                                    line.equals("1 - Compose message") || line.equals("2 - Delete previous message") ||
+                                    line.equals("3 - Edit previous message") || line.equals("4 - Exit chat") ||
+                                    line.contains("Chat #") || line.contains("Members: You, ") || (line.isEmpty())) {
+                                continue;
+                            } else {
+                                chatLabels.get(index).setText(line);
+                                index++;
+                            }
+                        }
+
+                        for (int i = index; i < chatLabels.size(); i++) {
+                            chatLabels.get(i).setText("");
+                        }
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+            });
+        }
+
+        sendButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    UserPageClient.write("1", writer);
+                    UserPageClient.write(chatField.getText(), writer);
+
+                    ArrayList<String> menuToDisplay;
+                    String[] lines = reader.readLine().split(";");
+
+                    menuToDisplay = new ArrayList<>(Arrays.asList(lines));
+                    int index = 0;
+                    for (int i = 0; i < menuToDisplay.size(); i++) {
+                        String line = menuToDisplay.get(i);
+                        if (line.equals("---------------------------------------------------------------------") ||
+                                line.equals("[Displaying up to 6 most recent messages]") ||
+                                line.equals("1 - Compose message") || line.equals("2 - Delete previous message") ||
+                                line.equals("3 - Edit previous message") || line.equals("4 - Exit chat") ||
+                                line.contains("Chat #") || line.contains("Members: You, ") || (line.isEmpty())) {
+                            continue;
+                        } else {
+                            chatLabels.get(index).setText(line);
+                            index++;
+                        }
+                    }
+
+                    for (int i = index; i < chatLabels.size(); i++) {
+                        chatLabels.get(i).setText("");
+                    }
+
+                    chatField.setText("");
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+
+        editButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    UserPageClient.write("3", writer);
+                    UserPageClient.write(chatField.getText(), writer);
+
+                    ArrayList<String> menuToDisplay;
+                    String[] lines = reader.readLine().split(";");
+
+                    menuToDisplay = new ArrayList<>(Arrays.asList(lines));
+                    int index = 0;
+                    for (int i = 0; i < menuToDisplay.size(); i++) {
+                        String line = menuToDisplay.get(i);
+                        if (line.equals("---------------------------------------------------------------------") ||
+                                line.equals("[Displaying up to 6 most recent messages]") ||
+                                line.equals("1 - Compose message") || line.equals("2 - Delete previous message") ||
+                                line.equals("3 - Edit previous message") || line.equals("4 - Exit chat") ||
+                                line.contains("Chat #") || line.contains("Members: You, ") || (line.isEmpty())) {
+                            continue;
+                        } else {
+                            chatLabels.get(index).setText(line);
+                            index++;
+                        }
+                    }
+
+                    for (int i = index; i < chatLabels.size(); i++) {
+                        chatLabels.get(i).setText("");
+                    }
+                    chatField.setText("");
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+
+        deleteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    UserPageClient.write("2", writer);
+
+                    ArrayList<String> menuToDisplay;
+                    String[] lines = reader.readLine().split(";");
+
+                    menuToDisplay = new ArrayList<>(Arrays.asList(lines));
+                    int index = 0;
+                    for (int i = 0; i < menuToDisplay.size(); i++) {
+                        String line = menuToDisplay.get(i);
+                        if (line.equals("---------------------------------------------------------------------") ||
+                                line.equals("[Displaying up to 6 most recent messages]") ||
+                                line.equals("1 - Compose message") || line.equals("2 - Delete previous message") ||
+                                line.equals("3 - Edit previous message") || line.equals("4 - Exit chat") ||
+                                line.contains("Chat #") || line.contains("Members: You, ") || (line.isEmpty())) {
+                            continue;
+                        } else {
+                            chatLabels.get(index).setText(line);
+                            index++;
+                        }
+                    }
+
+                    for (int i = index; i < chatLabels.size(); i++) {
+                        chatLabels.get(i).setText("");
+                    }
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+
+        clearButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                UserPageClient.write("4", writer);
+                chatButtons.get(0).setVisible(true);
+                chatButtons.get(0).setText("Load chats!");
+                chatButtons.get(0).setEnabled(false);
+                for (int i = 1; i < chatButtons.size(); i++) {
+                    chatButtons.get(i).setVisible(false);
+                }
+                chatLabels.get(0).setText("Chat content will appear here!");
+                for (int i = 1; i < chatLabels.size(); i++) {
+                    chatLabels.get(i).setText("");
+                }
+                loadButton.setEnabled(true);
+                deleteButton.setEnabled(false);
+                uploadButton.setEnabled(false);
+                editButton.setEnabled(false);
+                sendButton.setEnabled(false);
+            }
+        });
+
 
         /*
         // shows another users' profile
