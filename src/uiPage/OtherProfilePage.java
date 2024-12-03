@@ -13,7 +13,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class OtherProfilePage  extends JPanel{
+public class OtherProfilePage extends JPanel {
 
     private int count = 0;
     private JButton followButton;
@@ -89,7 +89,7 @@ public class OtherProfilePage  extends JPanel{
             String accountType = "1".equals(line) ? "private" : "public";
             accountTypeField.setText(accountType);
 
-            line  = bufferedReader.readLine();
+            line = bufferedReader.readLine();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -251,6 +251,40 @@ public class OtherProfilePage  extends JPanel{
             public void actionPerformed(ActionEvent e) {
                 UserPageClient.write("5", bufferedWriter);
                 pageManager.lazyLoadPage("feed", () -> new FeedViewPage(pageManager, bufferedWriter, bufferedReader));
+            }
+        });
+
+        followButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    UserPageClient.write("1", bufferedWriter);
+                    String response = bufferedReader.readLine();
+                    if (!response.contains("unfollowed")) {
+                        JOptionPane.showMessageDialog(null, "Followed the user!", "Boiler Gram", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Unfollowed the user!", "Boiler Gram", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+
+        blockButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    UserPageClient.write("2", bufferedWriter);
+                    String response = bufferedReader.readLine();
+                    if (!response.contains("unblocked")) {
+                        JOptionPane.showMessageDialog(null, "Blocked the user!", "Boiler Gram", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Unblocked the user!", "Boiler Gram", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         });
 /*
