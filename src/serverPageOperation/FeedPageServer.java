@@ -285,6 +285,7 @@ public final class FeedPageServer {
                 } else if (clientChosenOperation.equals("3")) {
                     users = updateUsers(users);
                     UserPageServer.userPageOperation(br, bw, user, users, chats);
+
                 } else if (clientChosenOperation.equals("4")) {
                     // Write list of available users to view to the client
                     users = updateUsers(users);
@@ -301,13 +302,21 @@ public final class FeedPageServer {
                     }
 
                     // Write list of available users to client
+                    System.out.println("Sending list of users to client...");
                     bw.write(listOfAvailableUsers);
                     bw.newLine();
                     bw.flush();
 
+                } else if (clientChosenOperation.equals("5")) {
+                    continueFeed = false;
+                
+                // for opening otherPage
+                } else if (clientChosenOperation.equals("6")) {
+                    
                     // Ensure that the user selected by the client exists.
                     boolean validUser = false;
                     String userSelection = br.readLine();
+                    
                     for (User u : users) {
                         if (u.getUsername().equals(userSelection)) {
                             validUser = true;
@@ -320,9 +329,8 @@ public final class FeedPageServer {
                     if (validUser) {
                         OtherPageServer.otherPageOperation(br, bw, user, users, chats);
                     }
-                } else if (clientChosenOperation.equals("5")) {
-                    continueFeed = false;
                 }
+
             } catch (IOException | InvalidFileFormatException e) {
                 throw new RuntimeException(e);
             }
