@@ -1,5 +1,11 @@
 C_0002
-U_0005;U_0009
-U_0005;0hello there!
-U_0009;0hey, how's it going?
-U_0005;0good to see you!
+U_0005;U_0006;U_0004;U_0003
+U_0005;0Testdata123xyz
+U_0005;0Random string test
+U_0006;0173902843294
+U_0006;0This should be a valid entry
+U_0006;0Another test line
+U_0005;0More data just to check
+U_0006;0Test end data for validation
+U_0003;0hello
+U_0003;0

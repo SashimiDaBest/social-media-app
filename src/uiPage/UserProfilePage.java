@@ -1,14 +1,15 @@
 package uiPage;
 
 import clientPageOperation.UserPageClient;
+import object.User;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.util.ArrayList;
 
 public class UserProfilePage extends JPanel {
@@ -16,6 +17,9 @@ public class UserProfilePage extends JPanel {
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
 
+    private int targetWidth = 50;  // Set your desired width
+    private int targetHeight = 50; // Set your desired height
+    private BufferedImage image;
     private JButton profileButton, settingButton, backButton, nextButton, logoutButton, feedButton;
 
     public UserProfilePage(PageManager pageManager, BufferedWriter bufferedWriter, BufferedReader bufferedReader) {
@@ -25,12 +29,48 @@ public class UserProfilePage extends JPanel {
 
         setLayout(new BorderLayout());
 
+        JPanel imagePanel = new JPanel() {
+            BufferedImage image;
+
+            {
+                try {
+                    String imageName = bufferedReader.readLine();
+                    image = ImageIO.read(new File("./Sample Test Folder/" + imageName + ".png/")); // Replace with your image path
+                    ImageIcon icon = new ImageIcon(image);
+//                    imagePanel.setIcon(icon);                } catch (IOException e) {
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+
+                if (image != null) {
+                    // Calculate the x and y position to center the image
+                    int x = (getWidth() - targetWidth) / 2;
+                    int y = (getHeight() - targetHeight) / 2;
+
+                    // Draw the image with the specified dimensions
+                    g.drawImage(image, x, y, targetWidth, targetHeight, this);
+                }
+            }
+
+            @Override
+            public Dimension getPreferredSize() {
+                return new Dimension(targetWidth, targetHeight);
+            }
+
+        };
+
         JPanel accountPanel = setAccountInfo();
         JPanel followerPanel = setPeople(1, "Follower");
         JPanel followingPanel = setPeople(2, "Following");
         JPanel blockedPanel = setPeople(3, "Blocked");
 
         JPanel mainPanel = new JPanel(new GridLayout(0, 1, 0, 0));
+        mainPanel.add(imagePanel);
         mainPanel.add(accountPanel);
         mainPanel.add(followerPanel);
         mainPanel.add(followingPanel);

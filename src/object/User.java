@@ -226,7 +226,7 @@ public class User implements UserInterface {
     /**
              * Sets the file pathway to the user's profile picture and updates data storage.
              *
-             * @param serverPhotoPathway the file pathway to the profile picture
+             * @param photoPathway the file pathway to the profile picture
              */
     public synchronized void setProfilePic(String photoPathway) {
         this.serverPhotoPathway = photoPathway;

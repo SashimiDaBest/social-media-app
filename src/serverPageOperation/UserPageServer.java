@@ -1,5 +1,6 @@
 package serverPageOperation;
 
+import clientPageOperation.UserPageClient;
 import object.Chat;
 import object.User;
 import uiPage.WelcomePage;
@@ -51,6 +52,8 @@ public final class UserPageServer {
         System.out.println("User page operations started");
         System.out.println("Username: " + user.getUsername());
         System.out.println("Account type: " + user.getAccountType());
+
+        UserPageClient.write(user.getProfilePic(), bw);
 
         try {
             System.out.println("sending account information...");
