@@ -171,10 +171,10 @@ public class OtherProfilePage extends JPanel {
                         JButton button = new JButton(buttonName);
 
                         button.addActionListener(e -> {
-                            UserPageClient.write("3", bufferedWriter);
+                            UserPageClient.write("other", bufferedWriter);
                             UserPageClient.write(buttonName, bufferedWriter);
                             pageManager.lazyLoadPage(buttonName, () -> new OtherProfilePage(pageManager, bufferedWriter, bufferedReader, buttonName));
-                            pageManager.removePage(otherUsername);
+//                            pageManager.removePage(otherUsername);
                         });
 
                         SwingUtilities.invokeLater(() -> {
@@ -249,7 +249,7 @@ public class OtherProfilePage extends JPanel {
         feedButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                UserPageClient.write("5", bufferedWriter);
+                UserPageClient.write("feed", bufferedWriter);
                 pageManager.lazyLoadPage("feed", () -> new FeedViewPage(pageManager, bufferedWriter, bufferedReader));
             }
         });
@@ -287,10 +287,11 @@ public class OtherProfilePage extends JPanel {
                 }
             }
         });
-/*
+
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                System.out.println("BACK");
                 pageManager.printHistory();
                 pageManager.goBack();
             }
@@ -299,11 +300,14 @@ public class OtherProfilePage extends JPanel {
         nextButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                pageManager.goForward();
+                System.out.println("NEXT");
                 pageManager.printHistory();
+                pageManager.goForward();
+
             }
         });
 
+        /*
         blockButton.addActionListener(new ActionListener() {
            @Override
            public void actionPerformed(ActionEvent e) {

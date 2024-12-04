@@ -285,6 +285,7 @@ public final class FeedPageServer {
                 } else if (clientChosenOperation.equals("3")) {
                     users = updateUsers(users);
                     UserPageServer.userPageOperation(br, bw, user, users, chats);
+                    break;
 
                 } else if (clientChosenOperation.equals("4")) {
                     // Write list of available users to view to the client

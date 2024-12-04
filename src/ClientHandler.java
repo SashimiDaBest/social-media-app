@@ -115,7 +115,7 @@ public class ClientHandler implements Runnable {
         });
 
 
-        PageManager pageManager = new PageManager();
+        PageManager pageManager = new PageManager(bw, br);
 
         pageManager.addPage("welcome", new WelcomePage(pageManager, bw, br));
         pageManager.addPage("signup", new CreateUserPage(pageManager, bw, br));

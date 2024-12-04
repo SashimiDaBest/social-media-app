@@ -129,13 +129,13 @@ public final class UserPageServer {
                         bw.newLine();
                         bw.flush();
                     }
-                } else if (input.equals("2")) {
+                } else if (input.equals("other")) {
                     OtherPageServer.otherPageOperation(br, bw, user, users, chats);
                     break;
-                } else if (input.equals("5")) {
+                } else if (input.equals("feed")) {
                     FeedPageServer.feedPageOperation(br, bw, user, users, chats);
                     break;
-                } else if (input.equals("6")) {
+                } else if (input.equals("welcome")) {
                     WelcomePageServer.welcomePageOperation(br, bw, user, users, chats);
                     break;
                 }

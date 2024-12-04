@@ -1,7 +1,12 @@
 package uiPage;
 
+import clientPageOperation.UserPageClient;
+
 import javax.swing.*;
 import java.awt.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
@@ -14,12 +19,17 @@ public class PageManager {
     private Stack<String> history;
     private Stack<String> forwardHistory;
 
-    public PageManager() {
+    private BufferedWriter bufferedWriter;
+    private BufferedReader bufferedReader;
+
+    public PageManager(BufferedWriter bufferedWriter, BufferedReader bufferedReader) {
         cardLayout = new CardLayout();
         cardPanel = new JPanel(cardLayout);
         pages = new HashMap<>();
         history = new Stack<>();
         forwardHistory = new Stack<>();
+        this.bufferedWriter = bufferedWriter;
+        this.bufferedReader = bufferedReader;
     }
 
     /**
@@ -110,13 +120,34 @@ public class PageManager {
      * Goes back to the previous page in history, if available.
      */
     public void goBack() {
-        if (!history.isEmpty()) {
-            String previousPage = history.pop();
+        navigateHistory(history, forwardHistory);
+    }
+
+    private void navigateHistory(Stack<String> sourceStack, Stack<String> targetStack) {
+        if (!sourceStack.isEmpty()) {
+            String targetPage = sourceStack.pop();
             if (currentPage != null) {
-                forwardHistory.push(currentPage); // Add current page to forward history
+                targetStack.push(currentPage);
             }
-            cardLayout.show(cardPanel, previousPage);
-            currentPage = previousPage;
+
+            // Log page navigation
+            System.out.println("PAGE: " + targetPage);
+
+            // Handle page-specific logic
+            handlePageSpecificLogic(targetPage);
+
+            // Lazy load and show the page
+            cardLayout.show(cardPanel, targetPage);
+//            lazyLoadPage(targetPage, () -> new OtherProfilePage(this, bufferedWriter, bufferedReader, targetPage));
+            currentPage = targetPage;
+        }
+    }
+
+    private void handlePageSpecificLogic(String pageName) {
+        if (!pageName.equals("user") && !pageName.equals("welcome") && !pageName.equals("signin") && !pageName.equals("feed")) {
+            UserPageClient.write("other", bufferedWriter);
+        } else {
+            UserPageClient.write(pageName, bufferedWriter);
         }
     }
 
@@ -128,6 +159,12 @@ public class PageManager {
             String nextPage = forwardHistory.pop();
             if (currentPage != null) {
                 history.push(currentPage); // Add current page to history
+            }
+            System.out.println("PAGE: " + nextPage);
+            if (!nextPage.equals("user") && !nextPage.equals("welcome") && !nextPage.equals("signin") && !nextPage.equals("feed")) {
+                UserPageClient.write("other", bufferedWriter);
+            } else {
+                UserPageClient.write(nextPage, bufferedWriter);
             }
             cardLayout.show(cardPanel, nextPage);
             currentPage = nextPage;

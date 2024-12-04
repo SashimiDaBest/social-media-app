@@ -3,11 +3,8 @@ package object;
 import exception.*;
 
 import java.io.*;
-import java.net.*;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
-import javax.swing.*;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 

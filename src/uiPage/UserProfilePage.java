@@ -155,7 +155,7 @@ public class UserProfilePage extends JPanel {
                         JButton button = new JButton(buttonName);
 
                         button.addActionListener(e -> {
-                            UserPageClient.write("2", bufferedWriter);
+                            UserPageClient.write("other", bufferedWriter);
                             pageManager.lazyLoadPage(buttonName, () -> new OtherProfilePage(pageManager, bufferedWriter, bufferedReader, buttonName));
                         });
 
@@ -307,7 +307,7 @@ public class UserProfilePage extends JPanel {
 
                 // Logout button action listener
                 logoutButton.addActionListener(ev -> {
-                    UserPageClient.write("6", bufferedWriter);
+                    UserPageClient.write("welcome", bufferedWriter);
                     pageManager.lazyLoadPage("welcome", () -> new WelcomePage(pageManager, bufferedWriter, bufferedReader));
                     settingsDialog.dispose();
                     JOptionPane.showMessageDialog(null, "You have been logged out.", "Logout", JOptionPane.INFORMATION_MESSAGE);
@@ -321,11 +321,11 @@ public class UserProfilePage extends JPanel {
         feedButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                UserPageClient.write("5", bufferedWriter);
+                UserPageClient.write("feed", bufferedWriter);
                 pageManager.lazyLoadPage("feed", () -> new FeedViewPage(pageManager, bufferedWriter, bufferedReader));
             }
         });
-/*
+
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -340,6 +340,6 @@ public class UserProfilePage extends JPanel {
             }
         });
 
- */
+
     }
 }

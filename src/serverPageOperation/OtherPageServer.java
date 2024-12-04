@@ -135,10 +135,10 @@ public final class OtherPageServer {
                     }
                     bw.newLine();
                     bw.flush();
-                } else if (input.equals("3")) {
+                } else if (input.equals("other")) {
                     OtherPageServer.otherPageOperation(br, bw, user, users, chats);
                     break;
-                } else if (input.equals("5")) {
+                } else if (input.equals("feed")) {
                     FeedPageServer.feedPageOperation(br, bw, user, users, chats);
                     break;
                 }
