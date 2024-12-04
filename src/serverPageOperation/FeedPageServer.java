@@ -292,14 +292,12 @@ public final class FeedPageServer {
                     String listOfAvailableUsers = "";
                     for (int i = 0; i < users.size(); i++) {
                         if (!users.get(i).getUserID().equals(user.getUserID())) {   // <- Do not include the log-in user
-                            listOfAvailableUsers += users.get(i).getUsername();
-
-                            // Separate list of users with semicolons
-                            if (i != users.size() - 1) {
-                                listOfAvailableUsers += ";";
-                            }
+                            listOfAvailableUsers += users.get(i).getUsername() + ";";
                         }
                     }
+
+                    // Separate list of users with semicolons
+                    listOfAvailableUsers = listOfAvailableUsers.substring(0, listOfAvailableUsers.length() - 1);
 
                     // Write list of available users to client
                     System.out.println("Sending list of users to client...");
@@ -328,6 +326,7 @@ public final class FeedPageServer {
 
                     if (validUser) {
                         OtherPageServer.otherPageOperation(br, bw, user, users, chats);
+                        break;
                     }
                 }
 

@@ -439,7 +439,18 @@ public class FeedViewPage extends JPanel {
 
                     // all stuff used below:
                     UserPageClient.write("4", writer);
-                    String[] userList = reader.readLine().split(";");
+
+                    String line = reader.readLine();
+
+                    while (true) {
+                        if (line.equals("END") || line.equals("[EMPTY]") || line.equals("message")) {
+                            line = reader.readLine();
+                        } else {
+                            break;
+                        }
+                    }
+
+                    String[] userList = line.split(";");
                     String userInput = searchField.getText();
                     String selectedUser;
 
@@ -492,7 +503,7 @@ public class FeedViewPage extends JPanel {
                     } else {
                         selectedUsers.add(selectedUser);
                         // // choose user, send back for validation
-                        UserPageClient.write(selectedUser, writer); // this may cause problems
+                        //UserPageClient.write(selectedUser, writer); // this may cause problems
 
                         // display current selection by changing the buttons
                         for (int i = 0; i < selectedUsers.size(); i++) {
