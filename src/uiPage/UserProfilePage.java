@@ -391,35 +391,39 @@ public class UserProfilePage extends JPanel {
  */
     }
 
-    private void saveImageAsNewFile(File sourceFile) throws Exception {
-        // Destination file (change this path as needed)
+    private void saveImageAsNewFile(File sourceFile) {
 
-        String fileName = sourceFile.getName();
-        if (!fileName.endsWith(".png")) {
-            throw new Exception("Error");
-        }
+        try {
+            String fileName = sourceFile.getName();
+            if (!fileName.endsWith(".png")) {
+                throw new Exception("Error");
+            }
+            // Destination file (change this path as needed)
+            File destinationFile = new File("Sample Test Folder/" + sourceFile.getName());
 
-        File destinationFile = new File("Sample Test Folder/" + sourceFile.getName());
-
-        // Ensure the destination directory exists
-        if (!destinationFile.getParentFile().exists()) {
-            destinationFile.getParentFile().mkdirs();
-        }
-
-        try (FileInputStream inputStream = new FileInputStream(sourceFile);
-             FileOutputStream outputStream = new FileOutputStream(destinationFile)) {
-
-            // Copy file data
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, bytesRead);
+            // Ensure the destination directory exists
+            if (!destinationFile.getParentFile().exists()) {
+                destinationFile.getParentFile().mkdirs();
             }
 
-            // Update status label on success
-            JOptionPane.showMessageDialog(null, "File uploaded", "Notification", JOptionPane.INFORMATION_MESSAGE);
+            try (FileInputStream inputStream = new FileInputStream(sourceFile);
+                 FileOutputStream outputStream = new FileOutputStream(destinationFile)) {
+
+                // Copy file data
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                }
+
+                // Update status label on success
+                JOptionPane.showMessageDialog(null, "File uploaded", "Notification", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception e) {
+                // Handle errors
+                JOptionPane.showMessageDialog(null, "Uploading fail", "ERROR", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            }
         } catch (Exception e) {
-            // Handle errors
             JOptionPane.showMessageDialog(null, "Uploading fail", "ERROR", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
