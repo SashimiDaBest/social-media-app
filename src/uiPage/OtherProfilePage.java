@@ -16,7 +16,6 @@ import java.util.ArrayList;
 
 public class OtherProfilePage extends JPanel {
 
-    private int count = 0;
     private JButton followButton;
     private JButton blockButton;
 
@@ -32,24 +31,23 @@ public class OtherProfilePage extends JPanel {
 
     private int targetWidth = 50;  // Set your desired width
     private int targetHeight = 50; // Set your desired height
+    private BufferedImage image;
 
     public OtherProfilePage(PageManager pageManager, BufferedWriter writer, BufferedReader reader, String otherUsername) {
         this.pageManager = pageManager;
         this.bufferedWriter = writer;
         this.bufferedReader = reader;
         this.otherUsername = otherUsername;
-        count++;
 
         setLayout(new BorderLayout());
 
         JPanel accountPanel = setAccountInfo();
-        JPanel imagePanel = createImagePanel();
+        createImagePanel();
         JPanel relationPanel = setRelation();
         JPanel followerPanel = setPeople(1, "Follower");
         JPanel followingPanel = setPeople(2, "Following");
 
         JPanel mainPanel = new JPanel(new GridLayout(0, 1, 0, 0));
-        mainPanel.add(imagePanel);
         mainPanel.add(accountPanel);
         mainPanel.add(relationPanel);
         mainPanel.add(followerPanel);
@@ -63,47 +61,34 @@ public class OtherProfilePage extends JPanel {
         setupActionListeners();
     }
 
-    private JPanel createImagePanel() {
-        JPanel imagePanel = new JPanel() {
-            BufferedImage image;
-
-            {
-                try {
-                    String imageName = bufferedReader.readLine();
-                    if (imageName == null || imageName.isEmpty()) {
-                        throw new IllegalStateException("Image name is missing or invalid");
-                    }
-                    image = ImageIO.read(new File("./Sample Test Folder/" + imageName + ".png"));
-                } catch (IOException e) {
-                    e.printStackTrace();
+    private void createImagePanel() {
+        // Run the image loading task on a new thread
+        new Thread(() -> {
+            try {
+                // Read image name from BufferedReader
+                String imageName = bufferedReader.readLine();
+                if (imageName == null || imageName.isEmpty()) {
+                    throw new IllegalStateException("Image name is missing or invalid");
                 }
+
+                // Load image from file
+                image = ImageIO.read(new File("./Sample Test Folder/" + imageName + ".png"));
+
+                // Scale the image
+                Image newImage = image.getScaledInstance(50, 50, java.awt.Image.SCALE_SMOOTH);
+
+                // Create an ImageIcon
+                ImageIcon imageIcon = new ImageIcon(newImage);
+
+                // Update the profile button on the EDT
+                SwingUtilities.invokeLater(() -> profileButton.setIcon(imageIcon));
+
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-
-                if (image != null) {
-                    int x = (getWidth() - targetWidth) / 2;
-                    int y = (getHeight() - targetHeight) / 2;
-
-                    g.drawImage(image, x, y, targetWidth, targetHeight, this);
-                }
-            }
-
-            @Override
-            public Dimension getPreferredSize() {
-                return new Dimension(targetWidth, targetHeight);
-            }
-        };
-
-        SwingUtilities.invokeLater(() -> {
-            imagePanel.revalidate();
-            imagePanel.repaint();
-        });
-
-        return imagePanel;
+        }).start();
     }
+
     private JPanel setAccountInfo() {
         UserPageClient.write(otherUsername, bufferedWriter);
 

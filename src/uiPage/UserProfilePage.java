@@ -29,48 +29,13 @@ public class UserProfilePage extends JPanel {
 
         setLayout(new BorderLayout());
 
-        JPanel imagePanel = new JPanel() {
-            BufferedImage image;
-
-            {
-                try {
-                    String imageName = bufferedReader.readLine();
-                    image = ImageIO.read(new File("./Sample Test Folder/" + imageName + ".png/")); // Replace with your image path
-                    ImageIcon icon = new ImageIcon(image);
-//                    imagePanel.setIcon(icon);                } catch (IOException e) {
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-
-                if (image != null) {
-                    // Calculate the x and y position to center the image
-                    int x = (getWidth() - targetWidth) / 2;
-                    int y = (getHeight() - targetHeight) / 2;
-
-                    // Draw the image with the specified dimensions
-                    g.drawImage(image, x, y, targetWidth, targetHeight, this);
-                }
-            }
-
-            @Override
-            public Dimension getPreferredSize() {
-                return new Dimension(targetWidth, targetHeight);
-            }
-
-        };
-
+        createImagePanel();
         JPanel accountPanel = setAccountInfo();
         JPanel followerPanel = setPeople(1, "Follower");
         JPanel followingPanel = setPeople(2, "Following");
         JPanel blockedPanel = setPeople(3, "Blocked");
 
         JPanel mainPanel = new JPanel(new GridLayout(0, 1, 0, 0));
-        mainPanel.add(imagePanel);
         mainPanel.add(accountPanel);
         mainPanel.add(followerPanel);
         mainPanel.add(followingPanel);
@@ -80,6 +45,34 @@ public class UserProfilePage extends JPanel {
         add(createFooter(), BorderLayout.SOUTH);
 
         setupActionListeners();
+    }
+
+    private void createImagePanel() {
+        // Run the image loading task on a new thread
+        new Thread(() -> {
+            try {
+                // Read image name from BufferedReader
+                String imageName = bufferedReader.readLine();
+                if (imageName == null || imageName.isEmpty()) {
+                    throw new IllegalStateException("Image name is missing or invalid");
+                }
+
+                // Load image from file
+                image = ImageIO.read(new File("./Sample Test Folder/" + imageName + ".png"));
+
+                // Scale the image
+                Image newImage = image.getScaledInstance(50, 50, java.awt.Image.SCALE_SMOOTH);
+
+                // Create an ImageIcon
+                ImageIcon imageIcon = new ImageIcon(newImage);
+
+                // Update the profile button on the EDT
+                SwingUtilities.invokeLater(() -> profileButton.setIcon(imageIcon));
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     private JPanel setAccountInfo() {
