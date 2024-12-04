@@ -247,19 +247,34 @@ public class UserProfilePage extends JPanel {
         profileButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO: IMPLEMENT FEATURES LATER
-                UserPageClient.write("1", bufferedWriter);
-                System.out.print("What is your image file path: ");
-                String path = "IMAGE PATH scanner.nextLine()";
-                UserPageClient.write(path, bufferedWriter);
-                try {
-                    if (bufferedReader.readLine().equals("SAVE")) {
-                        System.out.println("Set image successfully");
-                    } else {
-                        System.out.println("Set image failed");
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                int result = fileChooser.showOpenDialog(profileButton.getParent()); // Use parent component for context
+
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = fileChooser.getSelectedFile();
+
+                    // Save the image locally
+                    saveImageAsNewFile(selectedFile);
+
+                    // Send the file path to the server
+                    try {
+                        UserPageClient.write("1", bufferedWriter);
+
+                        // Send the absolute path of the selected file
+                        String path = selectedFile.getAbsolutePath();
+                        UserPageClient.write(path, bufferedWriter);
+
+                        // Read server response
+                        String response = bufferedReader.readLine();
+                        if ("SAVE".equals(response)) {
+                            System.out.println("Set image successfully");
+                        } else {
+                            System.out.println("Set image failed");
+                        }
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
                     }
-                } catch (IOException ex) {
-                    ex.printStackTrace();
                 }
             }
         });
@@ -374,5 +389,39 @@ public class UserProfilePage extends JPanel {
         });
 
  */
+    }
+
+    private void saveImageAsNewFile(File sourceFile) throws Exception {
+        // Destination file (change this path as needed)
+
+        String fileName = sourceFile.getName();
+        if (!fileName.endsWith(".png")) {
+            throw new Exception("Error");
+        }
+
+        File destinationFile = new File("Sample Test Folder/" + sourceFile.getName());
+
+        // Ensure the destination directory exists
+        if (!destinationFile.getParentFile().exists()) {
+            destinationFile.getParentFile().mkdirs();
+        }
+
+        try (FileInputStream inputStream = new FileInputStream(sourceFile);
+             FileOutputStream outputStream = new FileOutputStream(destinationFile)) {
+
+            // Copy file data
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+
+            // Update status label on success
+            JOptionPane.showMessageDialog(null, "File uploaded", "Notification", JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception e) {
+            // Handle errors
+            JOptionPane.showMessageDialog(null, "Uploading fail", "ERROR", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
     }
 }
