@@ -35,6 +35,7 @@ public class FeedViewPage extends JPanel {
     private ArrayList<String> selectedUsers; // holds selected usernames
     private ArrayList<JButton> selectionButtons; // for accessing selected users later
     private JTextField searchField;
+    private JButton addSelectedToChat;
 
     private BufferedWriter writer;
     private BufferedReader reader;
@@ -189,14 +190,20 @@ public class FeedViewPage extends JPanel {
 
         JPanel selectionPanel = new JPanel();
         selectionPanel.setPreferredSize(new Dimension(200, 0));;
-
         selectionPanel.setLayout(new GridLayout(8, 1, 5, 5)); // 8 buttons in a grid layout
 
         selectionButtons = new ArrayList<>(); // For accessing buttons after creation
+        
+        // for adding selected to chat
+        this.addSelectedToChat = new JButton("Add Selected To Chat");
+        addSelectedToChat.setPreferredSize(new Dimension(50, 40));
+        addSelectedToChat.setEnabled(false);
+        addSelectedToChat.setVisible(true);
 
-        for (int i = 1; i <= 8; i++) {
-            JButton button = new JButton("Selected User " + i);
-            button.setPreferredSize(new Dimension(50, 40)); // Fixed size for buttons
+        selectionPanel.add(addSelectedToChat);
+        for (int i = 0; i < 7; i++) { // limit of 8 buttons
+            JButton button = new JButton("");
+            button.setSize(new Dimension(50, 40)); // Fixed size for buttons
             selectionPanel.add(button);
             selectionButtons.add(button);
             button.setEnabled(false);
@@ -442,6 +449,7 @@ public class FeedViewPage extends JPanel {
 
                     String line = reader.readLine();
 
+                    // skirts past possible runtime error with OtherPageServer
                     while (true) {
                         if (line.equals("END") || line.equals("[EMPTY]") || line.equals("message")) {
                             line = reader.readLine();
@@ -502,14 +510,16 @@ public class FeedViewPage extends JPanel {
 
                     } else {
                         selectedUsers.add(selectedUser);
-                        // // choose user, send back for validation
-                        //UserPageClient.write(selectedUser, writer); // this may cause problems
 
                         // display current selection by changing the buttons
                         for (int i = 0; i < selectedUsers.size(); i++) {
                             selectionButtons.get(i).setEnabled(true);
                             selectionButtons.get(i).setVisible(true);
                             selectionButtons.get(i).setText(selectedUsers.get(i));
+                        }
+                        // if addSelectedChat isn't an option, make it an option
+                        if (!addSelectedToChat.isEnabled()) {
+                            addSelectedToChat.setEnabled(true);
                         }
                     }
                     searchField.setText("");
@@ -554,5 +564,57 @@ public class FeedViewPage extends JPanel {
                }    
             });
         }
+    
+        // for adding all selected users to a chat
+        addSelectedToChat.addActionListener(new ActionListener() {
+            @Override 
+            public void actionPerformed(ActionEvent e) {
+                ArrayList<String> invalidUsers = new ArrayList<>();
+
+                // to be sent for chat info (change later)
+                String membersList = "";
+                
+                try {
+                    UserPageClient.write("1", writer);
+                    String[] availableUsers = reader.readLine().split(";");
+
+                    for (String username: selectedUsers) {
+
+                        membersList += username;
+                        UserPageClient.write(username, writer);
+                        String validation = reader.readLine();
+                        if (validation.equals("self") || validation.equals("User cannot be chatted with!")) {
+                            invalidUsers.add(username);
+                        }
+                    }
+                    UserPageClient.write("[DONE]", writer);                    
+
+                    // send members; get rid of the ; at the end
+                    UserPageClient.write(membersList.substring(0, membersList.length() - 1), writer);
+
+                } catch (IOException error) {
+                    error.printStackTrace();
+                }
+
+                // display users that couldn't be added
+                if (invalidUsers.size() > 0) {
+                    String invalids = "";
+                    for (String username: invalidUsers) {
+                        invalids += username + "\n";
+                    }
+                    JOptionPane.showMessageDialog(null, invalids, 
+                        "USERS WHO COULDN'T BE ADDED", JOptionPane.INFORMATION_MESSAGE);
+                }
+                
+                // clear selectedUsers and reset the Selection Panel
+                addSelectedToChat.setEnabled(false);
+                for (JButton button: selectionButtons) {
+                    button.setVisible(false);
+                    button.setEnabled(false);
+                }
+                selectedUsers.clear();
+            }
+        });
+    
     }
 }
