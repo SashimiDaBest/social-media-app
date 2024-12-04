@@ -1,5 +1,6 @@
 package serverPageOperation;
 
+import clientPageOperation.UserPageClient;
 import object.Chat;
 import object.User;
 
@@ -57,6 +58,9 @@ public final class OtherPageServer {
                 bw.write(Integer.toString(otherUser.getAccountType()));
                 bw.newLine();
                 bw.write("stop");
+                bw.newLine();
+                bw.flush();
+                bw.write(otherUser.getProfilePic());
                 bw.newLine();
                 bw.flush();
             } catch (IOException e) {
