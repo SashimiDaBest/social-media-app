@@ -160,6 +160,37 @@ public final class OtherPageServer {
                     FeedPageServer.feedPageOperation(br, bw, user, users, chats);
                     break;
                 }
+
+                // the following is used only for setRelation in OtherProfilePage 
+                // (literally just for button text)
+
+                // for checking if client is following otherUser
+                else if (input.equals("4")){
+
+                    if(user.getFollowingList().contains(otherUser.getUserID())) {
+                        bw.write("Unfollow");
+                        bw.newLine();
+                        bw.flush();
+                    } else {
+                        bw.write("Follow");
+                        bw.newLine();
+                        bw.flush();
+                    }
+                }
+
+                // for checking if client has blocked other User
+                else if (input.equals("6")) {
+
+                    if(user.getBlockedList().contains(otherUser.getUserID())) {
+                        bw.write("Unblock");
+                        bw.newLine();
+                        bw.flush();
+                    } else {
+                        bw.write("Block");
+                        bw.newLine();
+                        bw.flush();
+                    }
+                }
                 else {
                     System.out.println("ERROR: " + input);
                 }
