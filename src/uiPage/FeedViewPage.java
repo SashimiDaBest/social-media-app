@@ -222,11 +222,11 @@ public class FeedViewPage extends JPanel {
 
     private void setupActionListeners() {
 
-        // shows the current user's profile when clicked
+        // navigate to user profile
         profileButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                UserPageClient.write("3", writer);
+                UserPageClient.write("user", writer);
                 // load the user's page
                 pageManager.lazyLoadPage("user", () -> new UserProfilePage(pageManager, writer, reader));
                 pageManager.removePage("feed");
@@ -531,7 +531,6 @@ public class FeedViewPage extends JPanel {
 
         });
         
-        // add functionality to selection buttons
         for (JButton selectionButton: selectionButtons) {
 
             selectionButton.addActionListener(new ActionListener() {
@@ -543,24 +542,9 @@ public class FeedViewPage extends JPanel {
                     UserPageClient.write("6", writer);
                     UserPageClient.write(selectedUser, writer);
 
-                    try {
-                        boolean validation = Boolean.parseBoolean(reader.readLine());
-
-                        if (validation) {
-                            selectedUsers.add(selectedUser);
-                            pageManager.lazyLoadPage(selectedUser, () -> new OtherProfilePage(pageManager, writer, reader, selectedUser));
-                            pageManager.removePage("feed");
-
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Could not find selected user" +
-                        " or the search field was empty!",
-                            "ERROR: USER SELECTION", JOptionPane.QUESTION_MESSAGE);
-                    }
-
-                    } catch (IOException error) {
-                        error.printStackTrace();
-                    } 
-                    
+                    selectedUsers.add(selectedUser);
+                    pageManager.lazyLoadPage(selectedUser, () -> new OtherProfilePage(pageManager, writer, reader, selectedUser));
+                    pageManager.removePage("feed");
                }    
             });
         }
