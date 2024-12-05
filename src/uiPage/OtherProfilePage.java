@@ -351,9 +351,10 @@ public class OtherProfilePage extends JPanel {
                     String response = bufferedReader.readLine();
                     if (!response.contains("unblocked")) {
                         JOptionPane.showMessageDialog(null, "Blocked the user!", "Boiler Gram", JOptionPane.INFORMATION_MESSAGE);
+                        blockButton.setText("Unblock");
                     } else {
                         JOptionPane.showMessageDialog(null, "Unblocked the user!", "Boiler Gram", JOptionPane.INFORMATION_MESSAGE);
-
+                        blockButton.setText("Block");
                     }
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
