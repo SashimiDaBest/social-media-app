@@ -7,7 +7,6 @@ import object.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 /**
  * FeedPageServer
@@ -35,6 +34,8 @@ import java.util.stream.Collectors;
  */
 public final class FeedPageServer {
 
+    private static final Object LOCK = new Object();
+
     /**
      * Main method for handling feed page operations. Users can create chats,
      * view chats, manage messages, and view profiles. The method communicates
@@ -49,127 +50,139 @@ public final class FeedPageServer {
     public static void feedPageOperation(BufferedReader br,
                                          BufferedWriter bw, User user, ArrayList<User> users, ArrayList<Chat> chats) {
         System.out.println("Feed page operations started");
+        boolean continueFeed = true;
 
-        while (true) {
-            System.out.println("LOOP");
+        do {
             try {
-                String input = br.readLine();
-                if (input == null) {
-                    System.out.println("No input received");
+                String clientChosenOperation = br.readLine();
+
+                if (clientChosenOperation == null)
                     break;
-                }
+
                 // 1 - Chat Creation
-                if (input.equals("1")) {
-                    handelOperationOne(users, user, bw, br, chats);
-                // 2 - View Existing Chat
-                } else if (input.equals("2")) {
-                    handelOperationTwo(users, user, bw, br, chats);
-                } else if (input.equals("user")) {
+                if (clientChosenOperation.equals("1")) {
+                    handleOperationOne(users, user, chats, br, bw);
+                    // 2 - View Existing Chat
+                } else if (clientChosenOperation.equals("2")) {
+                    handleOperationTwo(users, user, chats, br, bw);
+                } else if (clientChosenOperation.equals("3")) {
                     users = updateUsers(users);
                     UserPageServer.userPageOperation(br, bw, user, users, chats);
-                } else if (input.equals("4")) {
-                    handelOperationFour(users, user, bw);
-                } else if (input.equals("6")) {
+                } else if (clientChosenOperation.equals("4")) {
+                    handleOperationFour(users, user, bw);
+                // for opening otherPage
+                } else if (clientChosenOperation.equals("6")) {
+
+                    // Ensure that the user selected by the client exists.
+                    boolean validUser = false;
                     String userSelection = br.readLine();
-                    OtherPageServer.otherPageOperation(br, bw, user, users, chats);
-                    break;
+
+                    for (User u : users) {
+                        if (u.getUsername().equals(userSelection)) {
+                            validUser = true;
+                        }
+                    }
+                    UserPageClient.write(String.valueOf(validUser), bw);
+
+                    if (validUser) {
+                        OtherPageServer.otherPageOperation(br, bw, user, users, chats);
+                        break;
+                    }
                 }
+
             } catch (IOException | InvalidFileFormatException e) {
-                e.printStackTrace();
                 throw new RuntimeException(e);
             }
+        } while (continueFeed);
+    }
+
+    private static void handleOperationOne(ArrayList<User> users, User user, ArrayList<Chat> chats, BufferedReader br, BufferedWriter bw) throws IOException {
+        // Write list of available users to chat with to the client
+        users = updateUsers(users);
+        String listOfAvailableUsers = "";
+        for (int i = 0;
+             i < users.size(); i++) {
+            if (!users.get(i).getUserID().equals(user.getUserID())) {
+                listOfAvailableUsers += users.get(i).getUsername() + ";";
+            }
+        }
+
+        // Separate list of users with semicolons (except the last one)
+        if (!listOfAvailableUsers.isEmpty()) {
+            listOfAvailableUsers = listOfAvailableUsers.substring(0,
+                    listOfAvailableUsers.length() - 1);
+        }
+
+        // Write list of available users to client
+        System.out.println("Sent available users for chat:");
+        UserPageClient.write(listOfAvailableUsers, bw);
+
+        // Read each selected user from client and make sure they can be chatted with
+        String usernameToCheck = br.readLine();
+        while (!usernameToCheck.equals("[DONE]")) {
+
+            // Identify the target user
+            User targetUser = null;
+            for (User u : users) {
+                if (u.getUsername().equals(usernameToCheck)) {
+                    targetUser = u;
+                    break;
+                }
+            }
+
+            // Check if the target can be chatted with and report back to client
+            if (targetUser == null) {
+                UserPageClient.write("That user does not exist!", bw);
+            } else {
+                switch (user.checkChatAbility(targetUser)) {
+                    case "true":
+                        UserPageClient.write("", bw);
+                        System.out.println("VALID USER");
+                        break;
+                    case "self":
+                        UserPageClient.write("self", bw);
+                        System.out.println("INVALID USER");
+                        break;
+                    case "false":
+                        UserPageClient.write("User cannot be chatted with!", bw);
+                        System.out.println("INVALID USER");
+                        break;
+                }
+            }
+            usernameToCheck = br.readLine();
+        }
+
+
+        // Create and properly initialize a new chat based on the member input from the user.
+
+        String newChattersNames = br.readLine();
+        System.out.println("Received new chatters names");
+
+        if (!newChattersNames.isEmpty()) {
+
+            String membersFromClient = user.getUsername() + ";" + newChattersNames;
+            ArrayList<String> newChatMembers = new ArrayList<>(Arrays.asList(membersFromClient.split(";")));
+
+            // Turn the list of usernames into a list of IDs so they fit the Chat constructor
+            newChatMembers.replaceAll(User::findIDFromUsername);
+
+            // Create the new chat and add all the members to it.
+            Chat newChat = new Chat(newChatMembers);
+            chats.add(newChat);
+            for (User u : users) {
+                if (newChatMembers.contains(u.getUserID())) {
+                    u.addChat(newChat.getChatID());
+                }
+            }
+            System.out.println("New chat created!");
+            UserPageClient.write("[SUCCESSFUL CHAT CREATION]", bw);
+        } else {
+            System.out.println("Chat is empty; selection was full with invalid chatters!");
+            UserPageClient.write("[CHAT CREATION UNSUCCESSFUL]", bw);
         }
     }
 
-    private static void handelOperationOne(ArrayList<User> users, User user, BufferedWriter bw, BufferedReader br, ArrayList<Chat> chats) throws IOException {
-       // Write list of available users to chat with to the client
-       users = updateUsers(users);
-       String listOfAvailableUsers = "";
-       for (int i = 0;
-            i < users.size(); i++) {
-           if (!users.get(i).getUserID().equals(user.getUserID())) {
-               listOfAvailableUsers += users.get(i).getUsername() + ";";
-           }
-       }
-
-       // Separate list of users with semicolons (except the last one)
-       if (!listOfAvailableUsers.isEmpty()) {
-           listOfAvailableUsers = listOfAvailableUsers.substring(0,
-                   listOfAvailableUsers.length() - 1);
-       }
-
-       // Write list of available users to client
-       System.out.println("Sent available users for chat:");
-       UserPageClient.write(listOfAvailableUsers, bw);
-
-       // Read each selected user from client and make sure they can be chatted with
-       String usernameToCheck = br.readLine();
-       while (!usernameToCheck.equals("[DONE]")) {
-
-           // Identify the target user
-           User targetUser = null;
-           for (User u : users) {
-               if (u.getUsername().equals(usernameToCheck)) {
-                   targetUser = u;
-                   break;
-               }
-           }
-
-           // Check if the target can be chatted with and report back to client
-           if (targetUser == null) {
-               UserPageClient.write("That user does not exist!", bw);
-           } else {
-               switch (user.checkChatAbility(targetUser)) {
-                   case "true":
-                       System.out.println("VALID USER");
-                       UserPageClient.write("", bw);
-                       break;
-                   case "self":
-                       System.out.println("INVALID USER");
-                       UserPageClient.write("self", bw);
-                       break;
-                   case "false":
-                       System.out.println("INVALID USER");
-                       UserPageClient.write("User cannot be chatted with!", bw);
-                       break;
-               }
-           }
-           usernameToCheck = br.readLine();
-       }
-
-
-       // Create and properly initialize a new chat based on the member input from the user.
-
-       String newChattersNames = br.readLine();
-       System.out.println("Received new chatters names");
-
-       if (!newChattersNames.isEmpty()) {
-
-           String membersFromClient = user.getUsername() + ";" + newChattersNames;
-           ArrayList<String> newChatMembers = new ArrayList<>(Arrays.asList(membersFromClient.split(";")));
-
-           // Turn the list of usernames into a list of IDs so they fit the Chat constructor
-           newChatMembers.replaceAll(User::findIDFromUsername);
-
-           // Create the new chat and add all the members to it.
-           Chat newChat = new Chat(newChatMembers);
-           chats.add(newChat);
-           for (User u : users) {
-               if (newChatMembers.contains(u.getUserID())) {
-                   u.addChat(newChat.getChatID());
-               }
-           }
-           System.out.println("New chat created!");
-           UserPageClient.write("[SUCCESSFUL CHAT CREATION]", bw);
-
-       } else {
-           System.out.println("Chat is empty; selection was full with invalid chatters!");
-           UserPageClient.write("[CHAT CREATION UNSUCCESSFUL]", bw);
-       }
-    }
-
-    private static void handelOperationTwo(ArrayList<User> users, User user, BufferedWriter bw, BufferedReader br, ArrayList<Chat> chats) throws InvalidFileFormatException, IOException {
-
+    private static void handleOperationTwo(ArrayList<User> users, User user, ArrayList<Chat> chats, BufferedReader br, BufferedWriter bw) throws IOException, InvalidFileFormatException {
         chats = updateChats(chats);
         users = updateUsers(users);
         // Write the logged-in user's chats to the client.
@@ -226,7 +239,7 @@ public final class FeedPageServer {
                 do {
                     // Display the top bar of the chat and its relevant information. ; indicates a new line.
                     String chatContent = "";
-                    chatContent += "-";
+                    chatContent += "---------------------------------------------------------------------";
                     chatContent += ";Chat #" + chats.get(chatIndex).getChatID().substring(2);
                     chatContent += ";Members: You, ";
 
@@ -270,7 +283,7 @@ public final class FeedPageServer {
                         // Add the message's content.
                         chatContent += chats.get(chatIndex).getMessageList().get(i).getMessage();
                     }
-                    chatContent += "-";
+                    chatContent += ";---------------------------------------------------------------------";
                     chatContent += ";1 - Compose message";
                     chatContent += ";2 - Delete previous message";
                     chatContent += ";3 - Edit previous message";
@@ -313,7 +326,7 @@ public final class FeedPageServer {
         }
     }
 
-    private static void handelOperationFour(ArrayList<User> users, User user, BufferedWriter bw) {
+    private static void handleOperationFour(ArrayList<User> users, User user, BufferedWriter bw) throws IOException {
         // Write list of available users to view to the client
         users = updateUsers(users);
         String listOfAvailableUsers = "";
