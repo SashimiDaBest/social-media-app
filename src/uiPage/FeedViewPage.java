@@ -189,8 +189,8 @@ public class FeedViewPage extends JPanel {
     public JPanel createSelectionPanel() {
 
         JPanel selectionPanel = new JPanel();
-        selectionPanel.setPreferredSize(new Dimension(200, 0));;
-        selectionPanel.setLayout(new GridLayout(8, 1, 5, 5)); // 8 buttons in a grid layout
+        selectionPanel.setPreferredSize(new Dimension(100, 0));;
+        selectionPanel.setLayout(new GridLayout(8, 1, 5, 5)); // 8 buttons in a grid layout\
 
         selectionButtons = new ArrayList<>(); // For accessing buttons after creation
         
@@ -570,6 +570,7 @@ public class FeedViewPage extends JPanel {
             @Override 
             public void actionPerformed(ActionEvent e) {
                 ArrayList<String> invalidUsers = new ArrayList<>();
+                ArrayList<String> validUsers = new ArrayList<>();
 
                 // to be sent for chat info (change later)
                 String membersList = "";
@@ -580,17 +581,45 @@ public class FeedViewPage extends JPanel {
 
                     for (String username: selectedUsers) {
 
-                        membersList += username;
                         UserPageClient.write(username, writer);
+
                         String validation = reader.readLine();
                         if (validation.equals("self") || validation.equals("User cannot be chatted with!")) {
                             invalidUsers.add(username);
+                            continue;
                         }
+
+                        validUsers.add(username);
                     }
                     UserPageClient.write("[DONE]", writer);                    
 
-                    // send members; get rid of the ; at the end
-                    UserPageClient.write(membersList.substring(0, membersList.length() - 1), writer);
+                    // send members using only valid Users (send empty string if membersList is empty)
+
+                    if (validUsers.size() > 0) {
+                        for(int i = 0; i < validUsers.size(); i++) {
+                            if (i == validUsers.size() - 1) {
+                                membersList += validUsers.get(i);
+                            } else {
+                                membersList += validUsers.get(i) + ";";
+                            }
+                        }
+                    }
+                   
+                    UserPageClient.write(membersList, writer);
+
+                    // check if chat was made successfully
+                    String chatCreationValidation = reader.readLine();
+
+                    if (chatCreationValidation.equals("[SUCCESSFUL CHAT CREATION]")) {
+                        JOptionPane.showMessageDialog(null, "You've created a new chat!", 
+                            "CHAT SUCCESSFULLY MADE", JOptionPane.INFORMATION_MESSAGE);
+                    
+                    } else if (chatCreationValidation.equals("[CHAT CREATION UNSUCCESSFUL]")) {
+                        JOptionPane.showMessageDialog(null, "Chat could not be made with the selected users!", 
+                            "INVALID USERS SELECTED FOR CHAT", JOptionPane.ERROR_MESSAGE);
+                    }
+
+                    
 
                 } catch (IOException error) {
                     error.printStackTrace();

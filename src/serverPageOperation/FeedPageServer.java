@@ -77,6 +77,7 @@ public final class FeedPageServer {
                     }
 
                     // Write list of available users to client
+                    System.out.println("Sent available users for chat:");
                     bw.write(listOfAvailableUsers);
                     bw.newLine();
                     bw.flush();
@@ -100,13 +101,16 @@ public final class FeedPageServer {
                         } else {
                             switch (user.checkChatAbility(targetUser)) {
                                 case "true":
+                                    System.out.println("VALID USER");
                                     bw.write("");
                                     break;
                                 case "self":
                                     bw.write("self");
+                                    System.out.println("INVALID USER");
                                     break;
                                 case "false":
                                     bw.write("User cannot be chatted with!");
+                                    System.out.println("INVALID USER");
                                     break;
                             }
                         }
@@ -118,19 +122,36 @@ public final class FeedPageServer {
 
 
                     // Create and properly initialize a new chat based on the member input from the user.
-                    String membersFromClient = user.getUsername() + ";" + br.readLine();
-                    ArrayList<String> newChatMembers = new ArrayList<>(Arrays.asList(membersFromClient.split(";")));
+                    
+                    String newChattersNames = br.readLine();
+                    System.out.println("Received new chatters names");
 
-                    // Turn the list of usernames into a list of IDs so they fit the Chat constructor
-                    newChatMembers.replaceAll(User::findIDFromUsername);
+                    if (!newChattersNames.isEmpty()) {
 
-                    // Create the new chat and add all the members to it.
-                    Chat newChat = new Chat(newChatMembers);
-                    chats.add(newChat);
-                    for (User u : users) {
-                        if (newChatMembers.contains(u.getUserID())) {
-                            u.addChat(newChat.getChatID());
+                        String membersFromClient = user.getUsername() + ";" + newChattersNames;
+                        ArrayList<String> newChatMembers = new ArrayList<>(Arrays.asList(membersFromClient.split(";")));
+
+                        // Turn the list of usernames into a list of IDs so they fit the Chat constructor
+                        newChatMembers.replaceAll(User::findIDFromUsername);
+
+                        // Create the new chat and add all the members to it.
+                        Chat newChat = new Chat(newChatMembers);
+                        chats.add(newChat);
+                        for (User u : users) {
+                            if (newChatMembers.contains(u.getUserID())) {
+                                u.addChat(newChat.getChatID());
+                            }
                         }
+                        System.out.println("New chat created!");
+                        bw.write("[SUCCESSFUL CHAT CREATION]");
+                        bw.newLine();
+                        bw.flush();
+                    
+                    } else {
+                        System.out.println("Chat is empty; selection was full with invalid chatters!");
+                        bw.write("[CHAT CREATION UNSUCCESSFUL]");
+                        bw.newLine();
+                        bw.flush();
                     }
 
                     // 2 - View Existing Chat
