@@ -60,6 +60,7 @@ public final class OtherPageServer {
                 bw.write("stop");
                 bw.newLine();
                 bw.flush();
+                // not sent in setAccounts
                 bw.write(otherUser.getProfilePic());
                 bw.newLine();
                 bw.flush();
@@ -67,17 +68,24 @@ public final class OtherPageServer {
                 e.printStackTrace();
             }
 
+            // runs immediately after setAccount() and createImage() on client side
+            // runs for other user's FOLLOWER list
             try {
+                // client cannot view other user's info if they're privated and not following the client
                 if (otherUser.getAccountType() == 1 && !user.getFollowerList().contains(otherUser.getUserID())) {
                     bw.write("message");
                     bw.newLine();
                     bw.flush();
                     UserPageServer.write(new ArrayList<>(), bw);
+                
+                // if the selected user's following list is not empty, populate it with their information
                 } else if (!otherUser.getFollowerList().get(0).isEmpty()) {
                     bw.write("look");
                     bw.newLine();
                     bw.flush();
                     UserPageServer.write(otherUser.getFollowerList(), bw);
+                
+                // otherwise, it's empty 
                 } else {
                     bw.write("[EMPTY]");
                     bw.newLine();
@@ -88,6 +96,7 @@ public final class OtherPageServer {
                 e.printStackTrace();
             }
 
+            // runs for other user's FOLLOWING list
             try {
                 // If other account is private and other user follow user
                 if (otherUser.getAccountType() == 1 && !user.getFollowerList().contains(otherUser.getUserID())) {
@@ -113,12 +122,15 @@ public final class OtherPageServer {
             String input = br.readLine();
             while (input != null) {
                 System.out.println("Client input: " + input);
+
+                // for following
                 if (input.equals("1")) {
                     if (user.getFollowingList().contains(otherUser.getUserID())) {
                         user.deleteFollowing(otherUser.getUserID());
                         otherUser.deleteFollower(user.getUserID());
                         bw.write("unfollowed " + otherUser.getUsername());
                         users = FeedPageServer.updateUsers(users);
+
                     } else {
                         user.addFollowing(otherUser.getUserID());
                         otherUser.addFollower(user.getUserID());
@@ -127,6 +139,8 @@ public final class OtherPageServer {
                     }
                     bw.newLine();
                     bw.flush();
+
+                // for blocking
                 } else if (input.equals("2")) {
                     if (user.getBlockedList().contains(otherUser.getUserID())) {
                         user.deleteBlock(otherUser.getUserID());

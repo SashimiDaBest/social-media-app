@@ -121,7 +121,7 @@ public class OtherProfilePage extends JPanel {
             String accountType = "1".equals(line) ? "private" : "public";
             accountTypeField.setText(accountType);
 
-            line = bufferedReader.readLine();
+            line = bufferedReader.readLine(); // receives "stop", I think
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -191,7 +191,7 @@ public class OtherProfilePage extends JPanel {
         panel.add(scrollPanel, BorderLayout.CENTER);
 
         // Load data in a separate thread
-        new Thread(() -> {
+        Thread loadingThread = new Thread(() -> {
             try {
                 String peopleValidity = bufferedReader.readLine();
                 if ("look".equals(peopleValidity)) {
@@ -224,6 +224,7 @@ public class OtherProfilePage extends JPanel {
                         peopleButtonPanel.revalidate();
                         peopleButtonPanel.repaint();
                     });
+                    
                 } else {
                     // Update the status message based on the category
                     String noDataMessage = "";
@@ -249,7 +250,14 @@ public class OtherProfilePage extends JPanel {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }).start();
+        });
+        loadingThread.start();
+            
+        try {
+            loadingThread.join(); // makes sure thread ends with the function call
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         return panel;
     }
@@ -291,9 +299,20 @@ public class OtherProfilePage extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 try {
                     UserPageClient.write("1", bufferedWriter);
+                    
                     String response = bufferedReader.readLine();
+                    // System.out.println("Initial response: " + response);
+                    // // eat up any leftover invalid responses from server
+                    // while (!response.contains("unfollowed") || !response.contains("followed")) {
+                    //     System.out.println("Waiting to read response...");
+                    //     response = bufferedReader.readLine();
+                    //     System.out.println("RESPONSE RECEIVED");
+                    // }
+                    System.out.println("Real response: " + response);
+
                     if (!response.contains("unfollowed")) {
                         JOptionPane.showMessageDialog(null, "Followed the user!", "Boiler Gram", JOptionPane.INFORMATION_MESSAGE);
+
                     } else {
                         JOptionPane.showMessageDialog(null, "Unfollowed the user!", "Boiler Gram", JOptionPane.INFORMATION_MESSAGE);
                     }
