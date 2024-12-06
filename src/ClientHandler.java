@@ -91,8 +91,13 @@ public class ClientHandler implements Runnable {
         frame.setSize(750, 500);
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-        // Set the background color of the content pane to black
-        frame.getContentPane().setBackground(Color.BLACK);
+        try {
+            Image appIcon = new ImageIcon("./Sample Test Folder/BoilerGramLogo.png").getImage();
+            frame.setIconImage(appIcon);
+
+        } catch (Exception e) {
+            System.err.println("Failed to load application icon: " + e.getMessage());
+        }
 
         // Add a WindowListener to detect the close button click to dispose resources
         frame.addWindowListener(new WindowAdapter() {
