@@ -52,6 +52,7 @@ public final class FeedPageServer {
         while (true) {
             try {
                 String clientChosenOperation = br.readLine();
+                System.out.println("read: " + clientChosenOperation);
 
                 if (clientChosenOperation == null)
                     continue;
@@ -74,6 +75,7 @@ public final class FeedPageServer {
                     // Ensure that the user selected by the client exists.
                     boolean validUser = false;
                     String userSelection = br.readLine();
+                    System.out.println("read: " + userSelection);
 
                     for (User u : users) {
                         if (u.getUsername().equals(userSelection)) {
@@ -117,6 +119,7 @@ public final class FeedPageServer {
 
         // Read each selected user from client and make sure they can be chatted with
         String usernameToCheck = br.readLine();
+        System.out.println("read: " + usernameToCheck);
         while (!usernameToCheck.equals("[DONE]")) {
 
             // Identify the target user
@@ -148,12 +151,14 @@ public final class FeedPageServer {
                 }
             }
             usernameToCheck = br.readLine();
+            System.out.println("read: " + usernameToCheck);
         }
 
 
         // Create and properly initialize a new chat based on the member input from the user.
 
         String newChattersNames = br.readLine();
+        System.out.println("read: " + newChattersNames);
         System.out.println("Received new chatters names");
 
         if (!newChattersNames.isEmpty()) {
@@ -218,6 +223,7 @@ public final class FeedPageServer {
         if (!chatOutput.isEmpty()) {
             // Obtain the selected chat from the client.
             String chatID = "C_" + br.readLine();
+            System.out.println("read: " + chatID);
 
             // Validate and store the index of the chat corresponding to the received chat ID.
             int chatIndex = -1;
@@ -292,12 +298,14 @@ public final class FeedPageServer {
 
                     // Collect the client's decision and process accordingly.
                     String chatDecision = br.readLine();
+                    System.out.println("read: " + chatDecision);
 
                     switch (chatDecision) {
                         case "1":
                             // Compose message
                             chats = updateChats(chats);
                             String messageToCompose = br.readLine();
+                            System.out.println("read: " + messageToCompose);
                             chats.get(chatIndex).addMessage(new Message(user.getUserID(),
                                     0,
                                     messageToCompose));
@@ -311,6 +319,7 @@ public final class FeedPageServer {
                             // Edit previous message
                             chats = updateChats(chats);
                             String replacementMessage = br.readLine();
+                            System.out.println("read: " + replacementMessage);
                             chats.get(chatIndex).editMessage(replacementMessage, user.getUserID());
                             break;
                         case "4":

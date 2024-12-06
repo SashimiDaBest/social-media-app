@@ -134,6 +134,7 @@ public class WelcomePage extends JPanel {
                     Arrays.fill(passwordChars, '\0'); // Clear password from memory
 
                     String messageFromServer = bufferedReader.readLine();
+                    System.out.println("read: " + messageFromServer);
                     if (messageFromServer == null) throw new IOException("Server closed the connection.");
 
                     if (SUCCESSFUL_SIGN_IN.equals(messageFromServer)) {

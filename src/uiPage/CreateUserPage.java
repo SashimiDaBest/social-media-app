@@ -121,6 +121,7 @@ public class CreateUserPage extends JPanel {
             clearPassword(passwordChars);
 
             String response = bufferedReader.readLine();
+            System.out.println("read: " + response);
             if (response == null) throw new IOException("Server closed the connection.");
 
             if (USER_CREATION_SUCCESSFUL.equals(response)) {

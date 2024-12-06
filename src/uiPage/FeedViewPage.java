@@ -237,6 +237,7 @@ public class FeedViewPage extends JPanel {
                 try {
                     loadButton.setEnabled(false);
                     String response = reader.readLine();
+                    System.out.println("read: " + response);
                     System.out.println(response);
                     if (response.isEmpty()) {
                         JOptionPane.showMessageDialog(null, "You have no chats!", "Boiler Gram", JOptionPane.ERROR_MESSAGE);
@@ -279,6 +280,7 @@ public class FeedViewPage extends JPanel {
 
                         ArrayList<String> menuToDisplay;
                         String[] lines = reader.readLine().split(";");
+                        System.out.println("read: " + Arrays.toString(lines));
 
                         menuToDisplay = new ArrayList<>(Arrays.asList(lines));
                         int index = 0;
@@ -315,6 +317,7 @@ public class FeedViewPage extends JPanel {
 
                     ArrayList<String> menuToDisplay;
                     String[] lines = reader.readLine().split(";");
+                    System.out.println("read: " + Arrays.toString(lines));
 
                     menuToDisplay = new ArrayList<>(Arrays.asList(lines));
                     int index = 0;
@@ -352,6 +355,7 @@ public class FeedViewPage extends JPanel {
 
                     ArrayList<String> menuToDisplay;
                     String[] lines = reader.readLine().split(";");
+                    System.out.println("read: " + Arrays.toString(lines));
 
                     menuToDisplay = new ArrayList<>(Arrays.asList(lines));
                     int index = 0;
@@ -387,6 +391,7 @@ public class FeedViewPage extends JPanel {
 
                     ArrayList<String> menuToDisplay;
                     String[] lines = reader.readLine().split(";");
+                    System.out.println("read: " + Arrays.toString(lines));
 
                     menuToDisplay = new ArrayList<>(Arrays.asList(lines));
                     int index = 0;
@@ -445,11 +450,13 @@ public class FeedViewPage extends JPanel {
                     Writer.write("4", writer);
 
                     String line = reader.readLine();
+                    System.out.println("read: " + line);
 
                     // skirts past possible runtime error with OtherPageServer
                     while (true) {
                         if (line.equals("END") || line.equals("[EMPTY]") || line.equals("message")) {
                             line = reader.readLine();
+                            System.out.println("read: " + line);
                         } else {
                             break;
                         }
@@ -559,12 +566,14 @@ public class FeedViewPage extends JPanel {
                 try {
                     Writer.write("1", writer);
                     String[] availableUsers = reader.readLine().split(";");
+                    System.out.println("read: " + Arrays.toString(availableUsers));
 
                     for (String username: selectedUsers) {
 
                         Writer.write(username, writer);
 
                         String validation = reader.readLine();
+                        System.out.println("read: " + validation);
                         if (validation.equals("self") || validation.equals("User cannot be chatted with!")) {
                             invalidUsers.add(username);
                             continue;
@@ -590,6 +599,7 @@ public class FeedViewPage extends JPanel {
 
                     // check if chat was made successfully
                     String chatCreationValidation = reader.readLine();
+                    System.out.println("read: " + chatCreationValidation);
 
                     if (chatCreationValidation.equals("[SUCCESSFUL CHAT CREATION]")) {
                         JOptionPane.showMessageDialog(null, "You've created a new chat!", 

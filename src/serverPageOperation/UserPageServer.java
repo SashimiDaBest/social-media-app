@@ -83,10 +83,12 @@ public final class UserPageServer {
 
             // Handle client input
             String input = br.readLine();
+            System.out.println("read: " + input);
             while (input != null) {
                 System.out.println("Client input: " + input);
                 if (input.equals("1")) {
                     String path = br.readLine();
+                    System.out.println("read: " + path);
                     File file = new File(path);
                     if (saveImageAsNewFile(file, user.getUserID(), bw)){
                         user.setProfilePic("I" + user.getUserID().substring(1));
@@ -103,6 +105,7 @@ public final class UserPageServer {
                     break;
                 }
                 input = br.readLine();
+                System.out.println("read: " + input);
             }
 
         } catch (IOException e) {

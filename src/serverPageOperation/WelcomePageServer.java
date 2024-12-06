@@ -3,6 +3,7 @@ package serverPageOperation;
 import exception.InvalidCreateAccountException;
 import object.Chat;
 import object.User;
+import uiPage.Writer;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -65,8 +66,10 @@ public final class WelcomePageServer {
 
                 // Wait for the client to choose an option (1 - Sign in, 2 - Sign up)
                 String mainChoice = br.readLine();
+                System.out.println("read: " + mainChoice);
                 while (mainChoice == null) {
                     mainChoice = br.readLine();
+                    System.out.println("read: " + mainChoice);
 
                 }
                 System.out.println("Received the message!");
@@ -75,12 +78,12 @@ public final class WelcomePageServer {
                     System.out.println("SIGN IN");
 
                     String username = br.readLine();
+                    System.out.println("read: " + username);
                     String password = br.readLine();
+                    System.out.println("read: " + password);
 
                     if (User.hasLogin(username, password)) {
-                        bw.write(SUCCESSFUL_SIGN_IN);
-                        bw.newLine();
-                        bw.flush();
+                        Writer.write(SUCCESSFUL_SIGN_IN, bw);
                         isSignedIn = true;
                         for (User u : users) {
                             if (u.getUsername().equals(username)) {
@@ -90,15 +93,15 @@ public final class WelcomePageServer {
                         }
 
                     } else {
-                        bw.write(UNSUCCESSFUL_SIGN_IN);
-                        bw.newLine();
-                        bw.flush();
+                        Writer.write(UNSUCCESSFUL_SIGN_IN, bw);
                     }
 
                 } else if (mainChoice.equals("2")) { // Sign up
                     System.out.println("SIGN UP");
                     String newUsername = br.readLine();
+                    System.out.println("read: " + newUsername);
                     String newPassword = br.readLine();
+                    System.out.println("read: " + newPassword);
 
                     // If new username/password is valid
                     try {
@@ -119,15 +122,11 @@ public final class WelcomePageServer {
                         users.add(newUser);
                         user = newUser;
 
-                        bw.write("User creation successful");
-                        bw.newLine();
-                        bw.flush();
+                        Writer.write("User creation successful", bw);
 
                     // If new username/password is invalid
                     } catch (InvalidCreateAccountException e) {
-                        bw.write("Invalid fields");
-                        bw.newLine();
-                        bw.flush();
+                        Writer.write("Invalid fields", bw);
                     }
                 }
             }

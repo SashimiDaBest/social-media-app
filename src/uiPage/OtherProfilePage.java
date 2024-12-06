@@ -65,6 +65,7 @@ public class OtherProfilePage extends JPanel {
             try {
                 // Read image name from BufferedReader
                 String imageName = bufferedReader.readLine();
+                System.out.println("read: " + imageName);
                 if (imageName == null || imageName.isEmpty()) {
                     throw new IllegalStateException("Image name is missing or invalid");
                 }
@@ -120,13 +121,16 @@ public class OtherProfilePage extends JPanel {
         // Retrieve and Display User Information
         try {
             String line = bufferedReader.readLine();
+            System.out.println("read: " + line);
             usernameField.setText(line);
 
             line = bufferedReader.readLine();
+            System.out.println("read: " + line);
             String accountType = "1".equals(line) ? "private" : "public";
             accountTypeField.setText(accountType);
 
             line = bufferedReader.readLine(); // receives "stop", I think
+            System.out.println("read: " + line);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -199,6 +203,7 @@ public class OtherProfilePage extends JPanel {
         Thread loadingThread = new Thread(() -> {
             try {
                 String peopleValidity = bufferedReader.readLine();
+                System.out.println("read: " + peopleValidity);
                 if ("look".equals(peopleValidity)) {
                     SwingUtilities.invokeLater(() -> statusLabel.setText(""));
 
@@ -286,11 +291,13 @@ public class OtherProfilePage extends JPanel {
             // Check if following otherUser, then create button
             Writer.write("4", bufferedWriter);
             String followResponse = bufferedReader.readLine();
+            System.out.println("read: " + followResponse);
             followButton = new JButton(followResponse);
 
             // Do the same for block button
             Writer.write("6", bufferedWriter);
             String blockResponse = bufferedReader.readLine();
+            System.out.println("read: " + blockResponse);
             blockButton = new JButton(blockResponse);
 
             relationPanel.add(followButton);
@@ -319,6 +326,7 @@ public class OtherProfilePage extends JPanel {
                     Writer.write("1", bufferedWriter);
                     
                     String response = bufferedReader.readLine();
+                    System.out.println("read: " + response);
                     // System.out.println("Initial response: " + response);
                     // // eat up any leftover invalid responses from server
                     // while (!response.contains("unfollowed") || !response.contains("followed")) {
@@ -347,6 +355,7 @@ public class OtherProfilePage extends JPanel {
                 try {
                     Writer.write("2", bufferedWriter);
                     String response = bufferedReader.readLine();
+                    System.out.println("read: " + response);
                     if (!response.contains("unblocked")) {
                         JOptionPane.showMessageDialog(null, "Blocked the user!", "Boiler Gram", JOptionPane.INFORMATION_MESSAGE);
                         blockButton.setText("Unblock");

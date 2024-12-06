@@ -50,6 +50,7 @@ public class UserProfilePage extends JPanel {
             try {
                 // Read image name from BufferedReader
                 String imageName = bufferedReader.readLine();
+                System.out.println("read: " + imageName);
                 if (imageName == null || imageName.isEmpty()) {
                     throw new IllegalStateException("Image name is missing or invalid");
                 }
@@ -58,7 +59,7 @@ public class UserProfilePage extends JPanel {
                 image = ImageIO.read(new File("./Sample Test Folder/" + imageName + ".png"));
 
                 // Scale the image
-                Image newImage = image.getScaledInstance(50, 50, java.awt.Image.SCALE_SMOOTH);
+                Image newImage = image.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
 
                 // Update the profile button on the EDT
                 SwingUtilities.invokeLater(() -> {
@@ -73,7 +74,7 @@ public class UserProfilePage extends JPanel {
                 // Handle missing or error scenarios by setting a placeholder icon
                 try {
                     BufferedImage img = ImageIO.read(new File("./Sample Test Folder/I_0000.png"));
-                    Image newImage = img.getScaledInstance(50, 50, java.awt.Image.SCALE_SMOOTH);
+                    Image newImage = img.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
                     SwingUtilities.invokeLater(() -> {
                         profileButton.setIcon(new ImageIcon(img));
                         profileButton.revalidate();
@@ -110,9 +111,11 @@ public class UserProfilePage extends JPanel {
         // Retrieve and Display User Information
         try {
             String line = bufferedReader.readLine();
+            System.out.println("read: " + line);
             usernameField.setText(line);
             if (line != null) {
                 line = bufferedReader.readLine();
+                System.out.println("read: " + line);
                 String accountType = "1".equals(line) ? "private" : "public";
                 accountTypeField.setText(accountType);
             }
@@ -190,6 +193,7 @@ public class UserProfilePage extends JPanel {
         new Thread(() -> {
             try {
                 String peopleValidity = bufferedReader.readLine();
+                System.out.println("read: " + peopleValidity);
                 if (!"[EMPTY]".equals(peopleValidity)) {
                     SwingUtilities.invokeLater(() -> statusLabel.setText(""));
 
@@ -276,6 +280,7 @@ public class UserProfilePage extends JPanel {
 
                         // Read response from server
                         String response = bufferedReader.readLine();
+                        System.out.println("read: " + response);
                         if ("SAVE".equals(response)) {
                             JOptionPane.showMessageDialog(null, "File uploaded successfully!", "Notification", JOptionPane.INFORMATION_MESSAGE);
                         } else {
