@@ -271,13 +271,13 @@ public class OtherProfilePage extends JPanel {
 
     private JPanel setFooter() {
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-        backButton = new JButton("Back");
+//        backButton = new JButton("Back");
         feedButton = new JButton("Feed");
-        nextButton = new JButton("Next");
+//        nextButton = new JButton("Next");
 
-        footer.add(backButton);
+//        footer.add(backButton);
         footer.add(feedButton);
-        footer.add(nextButton);
+//        footer.add(nextButton);
         return footer;
     }
 

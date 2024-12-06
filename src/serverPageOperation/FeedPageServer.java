@@ -34,8 +34,6 @@ import java.util.Arrays;
  */
 public final class FeedPageServer {
 
-    private static final Object LOCK = new Object();
-
     /**
      * Main method for handling feed page operations. Users can create chats,
      * view chats, manage messages, and view profiles. The method communicates
@@ -50,24 +48,24 @@ public final class FeedPageServer {
     public static void feedPageOperation(BufferedReader br,
                                          BufferedWriter bw, User user, ArrayList<User> users, ArrayList<Chat> chats) {
         System.out.println("Feed page operations started");
-        boolean continueFeed = true;
 
-        do {
+        while (true) {
             try {
                 String clientChosenOperation = br.readLine();
 
                 if (clientChosenOperation == null)
-                    break;
+                    continue;
 
                 // 1 - Chat Creation
                 if (clientChosenOperation.equals("1")) {
                     handleOperationOne(users, user, chats, br, bw);
-                    // 2 - View Existing Chat
+                // 2 - View Existing Chat
                 } else if (clientChosenOperation.equals("2")) {
                     handleOperationTwo(users, user, chats, br, bw);
-                } else if (clientChosenOperation.equals("3")) {
+                } else if (clientChosenOperation.equals("user")) {
                     users = updateUsers(users);
                     UserPageServer.userPageOperation(br, bw, user, users, chats);
+                    break;
                 } else if (clientChosenOperation.equals("4")) {
                     handleOperationFour(users, user, bw);
                 // for opening otherPage
@@ -93,7 +91,7 @@ public final class FeedPageServer {
             } catch (IOException | InvalidFileFormatException e) {
                 throw new RuntimeException(e);
             }
-        } while (continueFeed);
+        }
     }
 
     private static void handleOperationOne(ArrayList<User> users, User user, ArrayList<Chat> chats, BufferedReader br, BufferedWriter bw) throws IOException {

@@ -2,6 +2,7 @@ package uiPage;
 
 import clientPageOperation.UserPageClient;
 import object.User;
+import serverPageOperation.UserPageServer;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -63,14 +64,28 @@ public class UserProfilePage extends JPanel {
                 // Scale the image
                 Image newImage = image.getScaledInstance(50, 50, java.awt.Image.SCALE_SMOOTH);
 
-                // Create an ImageIcon
-                ImageIcon imageIcon = new ImageIcon(newImage);
-
                 // Update the profile button on the EDT
-                SwingUtilities.invokeLater(() -> profileButton.setIcon(imageIcon));
+                SwingUtilities.invokeLater(() -> {
+                    profileButton.setIcon(new ImageIcon(newImage));
+                    profileButton.revalidate(); // Ensure layout updates properly
+                    profileButton.repaint();    // Force the button to redraw
+                });
 
             } catch (IOException e) {
                 e.printStackTrace();
+
+                // Handle missing or error scenarios by setting a placeholder icon
+                try {
+                    BufferedImage img = ImageIO.read(new File("./Sample Test Folder/I_0000.png"));
+                    Image newImage = img.getScaledInstance(50, 50, java.awt.Image.SCALE_SMOOTH);
+                    SwingUtilities.invokeLater(() -> {
+                        profileButton.setIcon(new ImageIcon(img));
+                        profileButton.revalidate();
+                        profileButton.repaint();
+                    });
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
             }
         }).start();
     }
@@ -125,7 +140,7 @@ public class UserProfilePage extends JPanel {
         accountInfoPanel.add(accountTypeField, gbc);
 
         // Profile Actions Section
-        profileButton = new JButton("Edit Profile");
+        profileButton = new JButton();
         settingButton = new JButton("Settings");
 
         JPanel buttonPanel = new JPanel(new GridBagLayout());
@@ -233,12 +248,12 @@ public class UserProfilePage extends JPanel {
 
     private JPanel createFooter() {
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-        backButton = new JButton("Back");
+//        backButton = new JButton("Back");
         feedButton = new JButton("Feed");
-        nextButton = new JButton("Next");
-        footer.add(backButton);
+//        nextButton = new JButton("Next");
+//        footer.add(backButton);
         footer.add(feedButton);
-        footer.add(nextButton);
+//        footer.add(nextButton);
         return footer;
     }
 
@@ -247,34 +262,35 @@ public class UserProfilePage extends JPanel {
         profileButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JFileChooser fileChooser = new JFileChooser();
-                fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                int result = fileChooser.showOpenDialog(profileButton.getParent()); // Use parent component for context
+                try {
+                    // Notify server of file upload action
+                    UserPageClient.write("1", bufferedWriter);
 
-                if (result == JFileChooser.APPROVE_OPTION) {
-                    File selectedFile = fileChooser.getSelectedFile();
+                    // Open file chooser dialog
+                    JFileChooser fileChooser = new JFileChooser();
+                    fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                    int result = fileChooser.showOpenDialog(profileButton.getParent());
 
-                    // Save the image locally
-                    saveImageAsNewFile(selectedFile);
-
-                    // Send the file path to the server
-                    try {
-                        UserPageClient.write("1", bufferedWriter);
-
-                        // Send the absolute path of the selected file
+                    if (result == JFileChooser.APPROVE_OPTION) {
+                        File selectedFile = fileChooser.getSelectedFile();
                         String path = selectedFile.getAbsolutePath();
+
+                        // Send file path to server
                         UserPageClient.write(path, bufferedWriter);
 
-                        // Read server response
+                        // Read response from server
                         String response = bufferedReader.readLine();
                         if ("SAVE".equals(response)) {
-                            System.out.println("Set image successfully");
+                            JOptionPane.showMessageDialog(null, "File uploaded successfully!", "Notification", JOptionPane.INFORMATION_MESSAGE);
                         } else {
-                            System.out.println("Set image failed");
+                            JOptionPane.showMessageDialog(null, "File upload failed.", "Error", JOptionPane.ERROR_MESSAGE);
                         }
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
                     }
+                } catch (IOException ex) {
+                    // Show error dialog for IOException
+                    JOptionPane.showMessageDialog(null, "An error occurred: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                } finally {
+                    createImagePanel();
                 }
             }
         });
@@ -357,6 +373,7 @@ public class UserProfilePage extends JPanel {
                 logoutButton.addActionListener(ev -> {
                     UserPageClient.write("6", bufferedWriter);
                     pageManager.lazyLoadPage("welcome", () -> new WelcomePage(pageManager, bufferedWriter, bufferedReader));
+                    pageManager.removePage("user");
                     settingsDialog.dispose();
                     JOptionPane.showMessageDialog(null, "You have been logged out.", "Logout", JOptionPane.INFORMATION_MESSAGE);
                 });
@@ -389,43 +406,5 @@ public class UserProfilePage extends JPanel {
         });
 
  */
-    }
-
-    private void saveImageAsNewFile(File sourceFile) {
-
-        try {
-            String fileName = sourceFile.getName();
-            if (!fileName.endsWith(".png")) {
-                throw new Exception("Error");
-            }
-            // Destination file (change this path as needed)
-            File destinationFile = new File("Sample Test Folder/" + sourceFile.getName());
-
-            // Ensure the destination directory exists
-            if (!destinationFile.getParentFile().exists()) {
-                destinationFile.getParentFile().mkdirs();
-            }
-
-            try (FileInputStream inputStream = new FileInputStream(sourceFile);
-                 FileOutputStream outputStream = new FileOutputStream(destinationFile)) {
-
-                // Copy file data
-                byte[] buffer = new byte[1024];
-                int bytesRead;
-                while ((bytesRead = inputStream.read(buffer)) != -1) {
-                    outputStream.write(buffer, 0, bytesRead);
-                }
-
-                // Update status label on success
-                JOptionPane.showMessageDialog(null, "File uploaded", "Notification", JOptionPane.INFORMATION_MESSAGE);
-            } catch (Exception e) {
-                // Handle errors
-                JOptionPane.showMessageDialog(null, "Uploading fail", "ERROR", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Uploading fail", "ERROR", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        }
     }
 }
