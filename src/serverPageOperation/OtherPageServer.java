@@ -1,6 +1,5 @@
 package serverPageOperation;
 
-import clientPageOperation.UserPageClient;
 import object.Chat;
 import object.User;
 
@@ -8,7 +7,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * OtherPageServer

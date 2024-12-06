@@ -12,20 +12,19 @@ import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
 /**
-         * User Class
-         * <p>
-         * Represents a user within the social media application. Stores user information such as username,
-         * user ID, profile picture, followers, following, blocked users, and associated chats.
-         * Provides methods for managing user data, such as adding followers, creating chats, and updating profile info.
-         * </p>
-         *
-         * @author Soleil Pham
-         * @author Connor Pugliese
-         * @author Venkat Mamidi
-         * @author Derek McTume
-         * @version 11/02/2024
-         * @since 1.0
-         */
+ * User Class
+ * <p>
+ * Represents a user within the social media application. Stores user information such as username,
+ * user ID, profile picture, followers, following, blocked users, and associated chats.
+ * Provides methods for managing user data, such as adding followers, creating chats, and updating profile info.
+ * </p>
+ *
+ * @author Soleil Pham
+ * @author Connor Pugliese
+ * @author Venkat Mamidi
+ * @author Derek McTume
+ * @version 11/02/2024
+ */
 public class User implements UserInterface {
     /** Pathway to the file listing all user IDs. */
     private static final String USERIDLIST = "UserIDList.txt";

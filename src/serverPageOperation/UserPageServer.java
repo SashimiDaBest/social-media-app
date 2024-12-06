@@ -1,12 +1,10 @@
 package serverPageOperation;
 
-import clientPageOperation.UserPageClient;
+import uiPage.Writer;
 import object.Chat;
 import object.User;
-import uiPage.WelcomePage;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.io.*;
 import java.util.ArrayList;
 
@@ -53,18 +51,18 @@ public final class UserPageServer {
         System.out.println("Username: " + user.getUsername());
         System.out.println("Account type: " + user.getAccountType());
 
-        UserPageClient.write(user.getProfilePic(), bw);
+        Writer.write(user.getProfilePic(), bw);
 
         try {
             System.out.println("sending account information...");
-            UserPageClient.write(user.getUsername(), bw);
-            UserPageClient.write(Integer.toString(user.getAccountType()), bw);
+            Writer.write(user.getUsername(), bw);
+            Writer.write(Integer.toString(user.getAccountType()), bw);
             if (!user.getFollowerList().isEmpty() && !user.getFollowerList().get(0).isEmpty()) {
                 bw.newLine();
                 bw.flush();
                 write(user.getFollowerList(), bw);
             } else {
-                UserPageClient.write("[EMPTY]", bw);
+                Writer.write("[EMPTY]", bw);
             }
 
             if (!user.getFollowingList().isEmpty() && !user.getFollowingList().get(0).isEmpty()) {
@@ -72,7 +70,7 @@ public final class UserPageServer {
                 bw.flush();
                 write(user.getFollowingList(), bw);
             } else {
-                UserPageClient.write("[EMPTY]", bw);
+                Writer.write("[EMPTY]", bw);
             }
 
             if (!user.getBlockedList().isEmpty() && !user.getBlockedList().get(0).isEmpty()) {
@@ -80,7 +78,7 @@ public final class UserPageServer {
                 bw.flush();
                 write(user.getBlockedList(), bw);
             } else {
-                UserPageClient.write("[EMPTY]", bw);
+                Writer.write("[EMPTY]", bw);
             }
 
             // Handle client input
@@ -93,7 +91,7 @@ public final class UserPageServer {
                     if (saveImageAsNewFile(file, user.getUserID(), bw)){
                         user.setProfilePic("I" + user.getUserID().substring(1));
                     }
-                    UserPageClient.write(user.getProfilePic(), bw);
+                    Writer.write(user.getProfilePic(), bw);
                 } else if (input.equals("2")) {
                     OtherPageServer.otherPageOperation(br, bw, user, users, chats);
                     break;
@@ -117,12 +115,12 @@ public final class UserPageServer {
         try {
             if (!people.isEmpty() && !people.get(0).isEmpty()) {
                 for (String person : people) {
-                    UserPageClient.write(User.findUsernameFromID(person), bw);
+                    Writer.write(User.findUsernameFromID(person), bw);
                 }
             } else {
-                UserPageClient.write("[EMPTY]", bw);
+                Writer.write("[EMPTY]", bw);
             }
-            UserPageClient.write("END", bw);
+            Writer.write("END", bw);
             return true;
         } catch (Exception e) {
             System.out.println("ERROR: write() can't write to client");
@@ -156,7 +154,7 @@ public final class UserPageServer {
                     outputStream.write(buffer, 0, bytesRead);
                 }
 
-                UserPageClient.write("SAVE", bw);
+                Writer.write("SAVE", bw);
                 return true;
 
             } catch (Exception e) {

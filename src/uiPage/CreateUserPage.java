@@ -1,11 +1,7 @@
 package uiPage;
 
-import clientPageOperation.UserPageClient;
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -119,9 +115,9 @@ public class CreateUserPage extends JPanel {
 
         try {
             // Send sign-up request to server
-            UserPageClient.write("2", bufferedWriter); // "2" for sign-up operation
-            UserPageClient.write(username, bufferedWriter);
-            UserPageClient.write(new String(passwordChars), bufferedWriter);
+            Writer.write("2", bufferedWriter); // "2" for sign-up operation
+            Writer.write(username, bufferedWriter);
+            Writer.write(new String(passwordChars), bufferedWriter);
             clearPassword(passwordChars);
 
             String response = bufferedReader.readLine();

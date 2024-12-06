@@ -11,7 +11,6 @@ package object;
  * @author Connor Pugliese
  * @author Soleil Pham
  * @version 11/02/2024
- * @since 1.0
  */
 public class Message {
     /** The ID of the message's author. */

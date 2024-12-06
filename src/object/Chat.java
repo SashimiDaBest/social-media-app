@@ -17,7 +17,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Connor Pugliese
  * @author Soleil Pham
  * @version 11/02/2024
- * @since 1.0
  */
 public class Chat implements ChatInterface {
     /** The unique identifier for the chat. */

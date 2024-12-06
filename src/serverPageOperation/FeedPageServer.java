@@ -1,6 +1,6 @@
 package serverPageOperation;
 
-import clientPageOperation.UserPageClient;
+import uiPage.Writer;
 import exception.InvalidFileFormatException;
 import object.*;
 
@@ -80,7 +80,7 @@ public final class FeedPageServer {
                             validUser = true;
                         }
                     }
-                    UserPageClient.write(String.valueOf(validUser), bw);
+                    Writer.write(String.valueOf(validUser), bw);
 
                     if (validUser) {
                         OtherPageServer.otherPageOperation(br, bw, user, users, chats);
@@ -113,7 +113,7 @@ public final class FeedPageServer {
 
         // Write list of available users to client
         System.out.println("Sent available users for chat:");
-        UserPageClient.write(listOfAvailableUsers, bw);
+        Writer.write(listOfAvailableUsers, bw);
 
         // Read each selected user from client and make sure they can be chatted with
         String usernameToCheck = br.readLine();
@@ -130,19 +130,19 @@ public final class FeedPageServer {
 
             // Check if the target can be chatted with and report back to client
             if (targetUser == null) {
-                UserPageClient.write("That user does not exist!", bw);
+                Writer.write("That user does not exist!", bw);
             } else {
                 switch (user.checkChatAbility(targetUser)) {
                     case "true":
-                        UserPageClient.write("", bw);
+                        Writer.write("", bw);
                         System.out.println("VALID USER");
                         break;
                     case "self":
-                        UserPageClient.write("self", bw);
+                        Writer.write("self", bw);
                         System.out.println("INVALID USER");
                         break;
                     case "false":
-                        UserPageClient.write("User cannot be chatted with!", bw);
+                        Writer.write("User cannot be chatted with!", bw);
                         System.out.println("INVALID USER");
                         break;
                 }
@@ -173,10 +173,10 @@ public final class FeedPageServer {
                 }
             }
             System.out.println("New chat created!");
-            UserPageClient.write("[SUCCESSFUL CHAT CREATION]", bw);
+            Writer.write("[SUCCESSFUL CHAT CREATION]", bw);
         } else {
             System.out.println("Chat is empty; selection was full with invalid chatters!");
-            UserPageClient.write("[CHAT CREATION UNSUCCESSFUL]", bw);
+            Writer.write("[CHAT CREATION UNSUCCESSFUL]", bw);
         }
     }
 
@@ -213,7 +213,7 @@ public final class FeedPageServer {
         if (!chatOutput.isEmpty()) {
             chatOutput = chatOutput.substring(0, chatOutput.length() - 1);
         }
-        UserPageClient.write(chatOutput, bw);
+        Writer.write(chatOutput, bw);
 
         if (!chatOutput.isEmpty()) {
             // Obtain the selected chat from the client.
@@ -230,7 +230,7 @@ public final class FeedPageServer {
             }
 
             if (chatIndex == -1) {
-                UserPageClient.write("Invalid Chat", bw);
+                Writer.write("Invalid Chat", bw);
             } else {
                 // Loop through the chat menu until the user stops.
                 boolean viewChat = true;
@@ -288,7 +288,7 @@ public final class FeedPageServer {
                     chatContent += ";4 - Exit chat";
 
                     // Write the fully formed chat menu to the client.
-                    UserPageClient.write(chatContent, bw);
+                    Writer.write(chatContent, bw);
 
                     // Collect the client's decision and process accordingly.
                     String chatDecision = br.readLine();
@@ -339,7 +339,7 @@ public final class FeedPageServer {
 
         // Write list of available users to client
         System.out.println("Sending list of users to client...");
-        UserPageClient.write(listOfAvailableUsers, bw);
+        Writer.write(listOfAvailableUsers, bw);
     }
 
     public static ArrayList<User> updateUsers(ArrayList<User> users) {

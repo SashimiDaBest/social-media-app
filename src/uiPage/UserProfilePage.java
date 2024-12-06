@@ -1,9 +1,5 @@
 package uiPage;
 
-import clientPageOperation.UserPageClient;
-import object.User;
-import serverPageOperation.UserPageServer;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -198,12 +194,12 @@ public class UserProfilePage extends JPanel {
                     SwingUtilities.invokeLater(() -> statusLabel.setText(""));
 
                     // Populate the button panel with user buttons
-                    ArrayList<String> buttonNames = UserPageClient.readAndPrint(bufferedReader);
+                    ArrayList<String> buttonNames = Writer.readAndPrint(bufferedReader);
                     for (String buttonName : buttonNames) {
                         JButton button = new JButton(buttonName);
 
                         button.addActionListener(e -> {
-                            UserPageClient.write("2", bufferedWriter);
+                            Writer.write("2", bufferedWriter);
                             pageManager.lazyLoadPage(buttonName, () -> new OtherProfilePage(pageManager, bufferedWriter, bufferedReader, buttonName));
                         });
 
@@ -264,7 +260,7 @@ public class UserProfilePage extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 try {
                     // Notify server of file upload action
-                    UserPageClient.write("1", bufferedWriter);
+                    Writer.write("1", bufferedWriter);
 
                     // Open file chooser dialog
                     JFileChooser fileChooser = new JFileChooser();
@@ -276,7 +272,7 @@ public class UserProfilePage extends JPanel {
                         String path = selectedFile.getAbsolutePath();
 
                         // Send file path to server
-                        UserPageClient.write(path, bufferedWriter);
+                        Writer.write(path, bufferedWriter);
 
                         // Read response from server
                         String response = bufferedReader.readLine();
@@ -371,7 +367,7 @@ public class UserProfilePage extends JPanel {
 
                 // Logout button action listener
                 logoutButton.addActionListener(ev -> {
-                    UserPageClient.write("6", bufferedWriter);
+                    Writer.write("6", bufferedWriter);
                     pageManager.lazyLoadPage("welcome", () -> new WelcomePage(pageManager, bufferedWriter, bufferedReader));
                     pageManager.removePage("user");
                     settingsDialog.dispose();
@@ -386,7 +382,7 @@ public class UserProfilePage extends JPanel {
         feedButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                UserPageClient.write("5", bufferedWriter);
+                Writer.write("5", bufferedWriter);
                 pageManager.lazyLoadPage("feed", () -> new FeedViewPage(pageManager, bufferedWriter, bufferedReader));
             }
         });

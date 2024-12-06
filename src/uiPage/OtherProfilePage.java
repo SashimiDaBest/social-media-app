@@ -3,7 +3,6 @@ package uiPage;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import clientPageOperation.UserPageClient;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,7 +20,6 @@ public class OtherProfilePage extends JPanel {
 
     private JButton profileButton;
     private JButton backButton;
-    private JButton nextButton;
     private JButton feedButton;
 
     private PageManager pageManager;
@@ -97,7 +95,7 @@ public class OtherProfilePage extends JPanel {
     }
 
     private JPanel setAccountInfo() {
-        UserPageClient.write(otherUsername, bufferedWriter);
+        Writer.write(otherUsername, bufferedWriter);
 
         JPanel accountInfoPanel = new JPanel(new GridBagLayout());
         accountInfoPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
@@ -149,7 +147,7 @@ public class OtherProfilePage extends JPanel {
         accountInfoPanel.add(accountTypeField, gbc);
 
         // Profile Actions Section
-        profileButton = new JButton("View Profile");
+        profileButton = new JButton();
 
         JPanel buttonPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbcButton = new GridBagConstraints();
@@ -205,13 +203,13 @@ public class OtherProfilePage extends JPanel {
                     SwingUtilities.invokeLater(() -> statusLabel.setText(""));
 
                     // Populate the button panel with user buttons
-                    ArrayList<String> buttonNames = UserPageClient.readAndPrint(bufferedReader);
+                    ArrayList<String> buttonNames = Writer.readAndPrint(bufferedReader);
                     for (String buttonName : buttonNames) {
                         JButton button = new JButton(buttonName);
 
                         button.addActionListener(e -> {
-                            UserPageClient.write("3", bufferedWriter);
-                            UserPageClient.write(buttonName, bufferedWriter);
+                            Writer.write("3", bufferedWriter);
+                            Writer.write(buttonName, bufferedWriter);
                             pageManager.lazyLoadPage(buttonName, () -> new OtherProfilePage(pageManager, bufferedWriter, bufferedReader, buttonName));
                             pageManager.removePage(otherUsername);
                         });
@@ -286,12 +284,12 @@ public class OtherProfilePage extends JPanel {
 
         try {
             // Check if following otherUser, then create button
-            UserPageClient.write("4", bufferedWriter);
+            Writer.write("4", bufferedWriter);
             String followResponse = bufferedReader.readLine();
             followButton = new JButton(followResponse);
 
             // Do the same for block button
-            UserPageClient.write("6", bufferedWriter);
+            Writer.write("6", bufferedWriter);
             String blockResponse = bufferedReader.readLine();
             blockButton = new JButton(blockResponse);
 
@@ -309,7 +307,7 @@ public class OtherProfilePage extends JPanel {
         feedButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                UserPageClient.write("5", bufferedWriter);
+                Writer.write("5", bufferedWriter);
                 pageManager.lazyLoadPage("feed", () -> new FeedViewPage(pageManager, bufferedWriter, bufferedReader));
             }
         });
@@ -318,7 +316,7 @@ public class OtherProfilePage extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    UserPageClient.write("1", bufferedWriter);
+                    Writer.write("1", bufferedWriter);
                     
                     String response = bufferedReader.readLine();
                     // System.out.println("Initial response: " + response);
@@ -347,7 +345,7 @@ public class OtherProfilePage extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    UserPageClient.write("2", bufferedWriter);
+                    Writer.write("2", bufferedWriter);
                     String response = bufferedReader.readLine();
                     if (!response.contains("unblocked")) {
                         JOptionPane.showMessageDialog(null, "Blocked the user!", "Boiler Gram", JOptionPane.INFORMATION_MESSAGE);

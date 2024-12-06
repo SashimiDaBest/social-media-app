@@ -17,7 +17,6 @@ import java.awt.image.BufferedImage;
  * @author Soleil Pham
  * @author Connor Pugliese
  * @version 11/01/2024
- * @since 1.0
  */
 public interface UserInterface {
     /**

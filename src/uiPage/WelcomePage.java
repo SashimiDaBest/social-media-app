@@ -1,7 +1,5 @@
 package uiPage;
 
-import clientPageOperation.UserPageClient;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -129,9 +127,9 @@ public class WelcomePage extends JPanel {
                 }
 
                 try {
-                    UserPageClient.write("1", bufferedWriter); // "1" for sign-in operation
-                    UserPageClient.write(username, bufferedWriter);
-                    UserPageClient.write(new String(passwordChars), bufferedWriter);
+                    Writer.write("1", bufferedWriter); // "1" for sign-in operation
+                    Writer.write(username, bufferedWriter);
+                    Writer.write(new String(passwordChars), bufferedWriter);
 
                     Arrays.fill(passwordChars, '\0'); // Clear password from memory
 

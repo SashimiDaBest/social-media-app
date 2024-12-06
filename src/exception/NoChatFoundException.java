@@ -10,7 +10,6 @@ package exception;
  *
  * @author Soleil Pham
  * @version 11/01/2024
- * @since 1.0
  */
 public class NoChatFoundException extends RuntimeException {
     /**

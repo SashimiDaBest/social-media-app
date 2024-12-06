@@ -9,17 +9,14 @@ import java.awt.*;
 
 /**
  * ClientHandler
- *
- * Manages individual client connections for a social media application. This class
  * facilitates communication between the client and the server, handling input and
  * output streams and user interface management.
  *
- * Implements {@link Runnable} to allow handling client connections in separate threads,
+ * Implements {@link Runnable} to handle client connections in separate threads,
  * supporting concurrent communication with multiple clients.
  *
  * @author Soleil Pham
  * @version 11/01/2024
- * @since 1.0
  */
 public class ClientHandler implements Runnable {
     private String hostname;
@@ -32,11 +29,6 @@ public class ClientHandler implements Runnable {
     private JFrame frame;
     private CardLayout cardLayout;
     private JPanel cardPanel;
-
-    // UI pages
-    private WelcomePage welcomePage;
-    private CreateUserPage createUserPage;
-    private FeedViewPage feedViewPage;
 
     /**
      * Constructs a ClientHandler object to manage the client-server connection.
@@ -55,8 +47,9 @@ public class ClientHandler implements Runnable {
 
     /**
      * Main method to start the client handler.
+     * Initializes a new ClientHandler instance and starts its thread.
      *
-     * @param args Command-line arguments
+     * @param args Command-line arguments where args[0] is the hostname and args[1] is the port.
      */
     public static void main(String[] args) {
 
@@ -68,80 +61,77 @@ public class ClientHandler implements Runnable {
             Thread clientThread = new Thread(client);
             clientThread.start();
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Unable to connect to server: " + e.getMessage(), "Connection Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null,
+                    "Unable to connect to server: " + e.getMessage(),
+                    "Connection Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     /**
-     * The run method for the ClientHandler. It initializes the user interface
-     * and manages communication with the server.
+     * Entry point for the ClientHandler thread.
+     * Invokes the initialization of the user interface on the Event Dispatch Thread (EDT).
      */
     @Override
     public void run() {
         try {
             SwingUtilities.invokeLater(this::initializeUI);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Unexpected error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null,
+                    "Unexpected error: " + e.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-
     /**
-     * Initializes the user interface components.
+     * Initializes the user interface components, including setting up the JFrame,
+     * defining behavior for the close operation, and loading initial pages.
      */
     private void initializeUI() {
         frame = new JFrame("Boiler Gram");
-//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.setSize(750, 500);
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); // Prevent default close operation
+        // Set the background color of the content pane to black
+        frame.getContentPane().setBackground(Color.BLACK);
 
-        // Add a WindowListener to detect the close button click
+        // Add a WindowListener to detect the close button click to dispose resources
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                int confirmed = JOptionPane.showConfirmDialog(
-                        frame,
-                        "Are you sure you want to close the application?",
-                        "Exit Confirmation",
-                        JOptionPane.YES_NO_OPTION
-                );
-
-                if (confirmed == JOptionPane.YES_OPTION) {
-                    closeResources();
-                    frame.dispose();
-                }
+                closeResources();
+                frame.dispose();
             }
         });
 
-
+        // Initialize and manage pages
         PageManager pageManager = new PageManager();
-
         pageManager.addPage("welcome", new WelcomePage(pageManager, bw, br));
         pageManager.addPage("signup", new CreateUserPage(pageManager, bw, br));
 
         frame.setContentPane(pageManager.getCardPanel());
         frame.setVisible(true);
 
+        // Show the welcome page
         pageManager.showPage("welcome");
     }
 
     /**
      * Closes the socket and streams to release resources.
+     * Ensures the BufferedWriter, BufferedReader, and socket are properly closed.
      */
     private void closeResources() {
         try {
             if (bw != null) {
-                bw.close(); // Close BufferedWriter
+                bw.close();
             }
             if (br != null) {
-                br.close(); // Close BufferedReader
+                br.close();
             }
             if (socket != null && !socket.isClosed()) {
-                socket.close(); // Close the socket
+                socket.close();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Error while closing resources: " + e.getMessage());
         }
     }
 }

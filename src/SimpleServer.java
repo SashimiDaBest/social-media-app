@@ -40,11 +40,11 @@ public class SimpleServer implements Runnable {
 
 
     /**
-     * Constructs a SimpleServer for handling a client connection.
+     * Constructs a SimpleServer instance to handle a client connection.
      *
-     * @param socket The client socket
-     * @param users  The list of users in the system
-     * @param chats  The list of chats in the system
+     * @param socket The socket representing the client connection.
+     * @param users  The list of users in the system.
+     * @param chats  The list of chats in the system.
      */
     public SimpleServer(Socket socket, ArrayList<User> users, ArrayList<Chat> chats) {
         this.socket = socket;
@@ -52,6 +52,10 @@ public class SimpleServer implements Runnable {
         this.chats = chats;
     }
 
+    /**
+     * The main logic for handling a client connection.
+     * Sets up input and output streams, and delegates operations to the WelcomePageServer.
+     */
     @Override
     public void run() {
         try {
@@ -65,12 +69,15 @@ public class SimpleServer implements Runnable {
             WelcomePageServer.welcomePageOperation(br, bw, null, users, chats);
         } catch (Exception e) {
             System.err.println("Error handling client: " + e.getMessage());
-            e.printStackTrace();
         } finally {
             closeResources();
         }
     }
 
+    /**
+     * Closes the resources associated with the client connection, including the socket,
+     * input stream, and output stream.
+     */
     private void closeResources() {
         try {
             if (bw != null) bw.close();
@@ -81,6 +88,12 @@ public class SimpleServer implements Runnable {
         }
     }
 
+    /**
+     * The entry point of the application. Initializes the server, loads data from files,
+     * and starts listening for client connections.
+     *
+     * @param args Command-line arguments. Not used in this implementation.
+     */
     public static void main(String[] args) {
         ArrayList<User> users = new ArrayList<>();
         ArrayList<Chat> chats = new ArrayList<>();
