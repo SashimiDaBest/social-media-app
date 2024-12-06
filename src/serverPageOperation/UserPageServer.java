@@ -1,12 +1,13 @@
 package serverPageOperation;
 
+import clientPageOperation.UserPageClient;
 import object.Chat;
 import object.User;
 import uiPage.WelcomePage;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.io.*;
 import java.util.ArrayList;
 
 /**
@@ -52,64 +53,34 @@ public final class UserPageServer {
         System.out.println("Username: " + user.getUsername());
         System.out.println("Account type: " + user.getAccountType());
 
+        UserPageClient.write(user.getProfilePic(), bw);
+
         try {
             System.out.println("sending account information...");
-            bw.write(user.getUsername());
-            bw.newLine();
-            bw.write(Integer.toString(user.getAccountType()));
-            bw.newLine();
-            bw.flush();
-
+            UserPageClient.write(user.getUsername(), bw);
+            UserPageClient.write(Integer.toString(user.getAccountType()), bw);
             if (!user.getFollowerList().isEmpty() && !user.getFollowerList().get(0).isEmpty()) {
                 bw.newLine();
                 bw.flush();
-
                 write(user.getFollowerList(), bw);
-
             } else {
-                bw.write("[EMPTY]");
-                bw.newLine();
-                bw.flush();
+                UserPageClient.write("[EMPTY]", bw);
             }
 
             if (!user.getFollowingList().isEmpty() && !user.getFollowingList().get(0).isEmpty()) {
                 bw.newLine();
                 bw.flush();
-
                 write(user.getFollowingList(), bw);
-//                try {
-//                    String line = br.readLine();
-//                    if (line != null && line.equals("VIEW")) {
-//                        OtherPageServer.otherPageOperation(br, bw, user, users, chats);
-//                        break;
-//                    }
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
             } else {
-                bw.write("[EMPTY]");
-                bw.newLine();
-                bw.flush();
+                UserPageClient.write("[EMPTY]", bw);
             }
 
             if (!user.getBlockedList().isEmpty() && !user.getBlockedList().get(0).isEmpty()) {
                 bw.newLine();
                 bw.flush();
-
                 write(user.getBlockedList(), bw);
-//                try {
-//                    String line = br.readLine();
-//                    if (line != null && line.equals("VIEW")) {
-//                        OtherPageServer.otherPageOperation(br, bw, user, users, chats);
-//                        break;
-//                    }
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
             } else {
-                bw.write("[EMPTY]");
-                bw.newLine();
-                bw.flush();
+                UserPageClient.write("[EMPTY]", bw);
             }
 
             // Handle client input
@@ -117,18 +88,12 @@ public final class UserPageServer {
             while (input != null) {
                 System.out.println("Client input: " + input);
                 if (input.equals("1")) {
-                    String userImagePath = br.readLine();
-                    try {
-                        user.saveImage(userImagePath);
-                        bw.write("SAVE");
-                        bw.newLine();
-                        bw.flush();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        bw.write("");
-                        bw.newLine();
-                        bw.flush();
+                    String path = br.readLine();
+                    File file = new File(path);
+                    if (saveImageAsNewFile(file, user.getUserID(), bw)){
+                        user.setProfilePic("I" + user.getUserID().substring(1));
                     }
+                    UserPageClient.write(user.getProfilePic(), bw);
                 } else if (input.equals("2")) {
                     OtherPageServer.otherPageOperation(br, bw, user, users, chats);
                     break;
@@ -152,19 +117,12 @@ public final class UserPageServer {
         try {
             if (!people.isEmpty() && !people.get(0).isEmpty()) {
                 for (String person : people) {
-                    bw.write(User.findUsernameFromID(person));
-                    bw.newLine();
-                    bw.flush();
+                    UserPageClient.write(User.findUsernameFromID(person), bw);
                 }
             } else {
-                bw.write("[EMPTY]");
-                bw.newLine();
-                bw.flush();
+                UserPageClient.write("[EMPTY]", bw);
             }
-
-            bw.write("END");
-            bw.newLine();
-            bw.flush();
+            UserPageClient.write("END", bw);
             return true;
         } catch (Exception e) {
             System.out.println("ERROR: write() can't write to client");
@@ -173,4 +131,49 @@ public final class UserPageServer {
         }
     }
 
+    private static boolean saveImageAsNewFile(File sourceFile, String userID, BufferedWriter bw) {
+
+        try {
+            String fileName = sourceFile.getName();
+            if (!isImage(sourceFile)) {
+                throw new Exception("Error: File is not an image");
+            }
+            // Destination file (change this path as needed)
+            File destinationFile = new File("Sample Test Folder/" + "I" + userID.substring(1) + ".png");
+
+            // Ensure the destination directory exists
+            if (!destinationFile.getParentFile().exists()) {
+                destinationFile.getParentFile().mkdirs();
+            }
+
+            try (FileInputStream inputStream = new FileInputStream(sourceFile);
+                 FileOutputStream outputStream = new FileOutputStream(destinationFile)) {
+
+                // Copy file data
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                }
+
+                UserPageClient.write("SAVE", bw);
+                return true;
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private static boolean isImage(File file) {
+        try {
+            return ImageIO.read(file) != null;
+        } catch (IOException e) {
+            return false;
+        }
+    }
 }

@@ -1,5 +1,5 @@
 C_0001
-U_0005;U_0006;U_0004
+U_0005;U_0006;U_0004;U_0003
 U_0005;0Testdata123xyz
 U_0005;0Random string test
 U_0006;0173902843294
@@ -7,3 +7,4 @@ U_0006;0This should be a valid entry
 U_0006;0Another test line
 U_0005;0More data just to check
 U_0006;0Test end data for validation
+U_0003;0hello

@@ -1,21 +1,21 @@
 package uiPage;
 
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
-
 import clientPageOperation.UserPageClient;
-
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-
+import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class OtherProfilePage  extends JPanel{
+public class OtherProfilePage extends JPanel {
 
-    private int count = 0;
     private JButton followButton;
     private JButton blockButton;
 
@@ -29,19 +29,23 @@ public class OtherProfilePage  extends JPanel{
     private BufferedWriter bufferedWriter;
     private String otherUsername;
 
+    private int targetWidth = 50;  // Set your desired width
+    private int targetHeight = 50; // Set your desired height
+    private BufferedImage image;
+
     public OtherProfilePage(PageManager pageManager, BufferedWriter writer, BufferedReader reader, String otherUsername) {
         this.pageManager = pageManager;
         this.bufferedWriter = writer;
         this.bufferedReader = reader;
         this.otherUsername = otherUsername;
-        count++;
 
         setLayout(new BorderLayout());
 
         JPanel accountPanel = setAccountInfo();
-        JPanel relationPanel = setRelation();
+        createImagePanel();
         JPanel followerPanel = setPeople(1, "Follower");
         JPanel followingPanel = setPeople(2, "Following");
+        JPanel relationPanel = setRelation();
 
         JPanel mainPanel = new JPanel(new GridLayout(0, 1, 0, 0));
         mainPanel.add(accountPanel);
@@ -55,6 +59,41 @@ public class OtherProfilePage  extends JPanel{
         add(footer, BorderLayout.SOUTH);
 
         setupActionListeners();
+    }
+
+    private void createImagePanel() {
+        // Run the image loading task on a new thread
+        Thread loadingThread = new Thread(() -> {
+            try {
+                // Read image name from BufferedReader
+                String imageName = bufferedReader.readLine();
+                if (imageName == null || imageName.isEmpty()) {
+                    throw new IllegalStateException("Image name is missing or invalid");
+                }
+
+                // Load image from file
+                image = ImageIO.read(new File("./Sample Test Folder/" + imageName + ".png"));
+
+                // Scale the image
+                Image newImage = image.getScaledInstance(50, 50, java.awt.Image.SCALE_SMOOTH);
+
+                // Create an ImageIcon
+                ImageIcon imageIcon = new ImageIcon(newImage);
+
+                // Update the profile button on the EDT
+                SwingUtilities.invokeLater(() -> profileButton.setIcon(imageIcon));
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        loadingThread.start();
+
+        try {   
+            loadingThread.join(); // makes sure this thread and its caller end at the same time
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private JPanel setAccountInfo() {
@@ -89,7 +128,7 @@ public class OtherProfilePage  extends JPanel{
             String accountType = "1".equals(line) ? "private" : "public";
             accountTypeField.setText(accountType);
 
-            line  = bufferedReader.readLine();
+            line = bufferedReader.readLine(); // receives "stop", I think
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -159,7 +198,7 @@ public class OtherProfilePage  extends JPanel{
         panel.add(scrollPanel, BorderLayout.CENTER);
 
         // Load data in a separate thread
-        new Thread(() -> {
+        Thread loadingThread = new Thread(() -> {
             try {
                 String peopleValidity = bufferedReader.readLine();
                 if ("look".equals(peopleValidity)) {
@@ -192,6 +231,7 @@ public class OtherProfilePage  extends JPanel{
                         peopleButtonPanel.revalidate();
                         peopleButtonPanel.repaint();
                     });
+                    
                 } else {
                     // Update the status message based on the category
                     String noDataMessage = "";
@@ -217,30 +257,50 @@ public class OtherProfilePage  extends JPanel{
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }).start();
+        });
+        loadingThread.start();
+            
+        try {
+            loadingThread.join(); // makes sure thread ends with the function call
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         return panel;
     }
 
     private JPanel setFooter() {
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-        backButton = new JButton("Back");
+//        backButton = new JButton("Back");
         feedButton = new JButton("Feed");
-        nextButton = new JButton("Next");
+//        nextButton = new JButton("Next");
 
-        footer.add(backButton);
+//        footer.add(backButton);
         footer.add(feedButton);
-        footer.add(nextButton);
+//        footer.add(nextButton);
         return footer;
     }
 
     private JPanel setRelation() {
         JPanel relationPanel = new JPanel(new GridBagLayout());
-        followButton = new JButton("Follow");
-        blockButton = new JButton("Block");
 
-        relationPanel.add(followButton);
-        relationPanel.add(blockButton);
+        try {
+            // Check if following otherUser, then create button
+            UserPageClient.write("4", bufferedWriter);
+            String followResponse = bufferedReader.readLine();
+            followButton = new JButton(followResponse);
+
+            // Do the same for block button
+            UserPageClient.write("6", bufferedWriter);
+            String blockResponse = bufferedReader.readLine();
+            blockButton = new JButton(blockResponse);
+
+            relationPanel.add(followButton);
+            relationPanel.add(blockButton);
+        
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         return relationPanel;
     }
@@ -251,6 +311,54 @@ public class OtherProfilePage  extends JPanel{
             public void actionPerformed(ActionEvent e) {
                 UserPageClient.write("5", bufferedWriter);
                 pageManager.lazyLoadPage("feed", () -> new FeedViewPage(pageManager, bufferedWriter, bufferedReader));
+            }
+        });
+
+        followButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    UserPageClient.write("1", bufferedWriter);
+                    
+                    String response = bufferedReader.readLine();
+                    // System.out.println("Initial response: " + response);
+                    // // eat up any leftover invalid responses from server
+                    // while (!response.contains("unfollowed") || !response.contains("followed")) {
+                    //     System.out.println("Waiting to read response...");
+                    //     response = bufferedReader.readLine();
+                    //     System.out.println("RESPONSE RECEIVED");
+                    // }
+                    System.out.println("Real response: " + response);
+
+                    if (!response.contains("unfollowed")) {
+                        JOptionPane.showMessageDialog(null, "Followed the user!", "Boiler Gram", JOptionPane.INFORMATION_MESSAGE);
+                        followButton.setText("Unfollow");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Unfollowed the user!", "Boiler Gram", JOptionPane.INFORMATION_MESSAGE);
+                        followButton.setText("Follow");
+                    }
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+
+        blockButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    UserPageClient.write("2", bufferedWriter);
+                    String response = bufferedReader.readLine();
+                    if (!response.contains("unblocked")) {
+                        JOptionPane.showMessageDialog(null, "Blocked the user!", "Boiler Gram", JOptionPane.INFORMATION_MESSAGE);
+                        blockButton.setText("Unblock");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Unblocked the user!", "Boiler Gram", JOptionPane.INFORMATION_MESSAGE);
+                        blockButton.setText("Block");
+                    }
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         });
 /*

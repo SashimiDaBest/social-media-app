@@ -92,7 +92,7 @@ public class ClientHandler implements Runnable {
         frame = new JFrame("Boiler Gram");
 //        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
-        frame.setSize(600, 400);
+        frame.setSize(750, 500);
 
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); // Prevent default close operation
 
