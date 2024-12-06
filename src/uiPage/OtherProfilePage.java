@@ -369,6 +369,22 @@ public class OtherProfilePage extends JPanel {
                 }
             }
         });
+
+        profileButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e){
+                if (image != null) {
+                    // Create and show the profile picture dialog
+                    SwingUtilities.invokeLater(() -> {
+                        JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(OtherProfilePage.this);
+                        ProfilePictureDialog dialog = new ProfilePictureDialog(parentFrame, image, otherUsername);
+                        dialog.setVisible(true);
+                    });
+                } else {
+                    JOptionPane.showMessageDialog(null, "Profile picture not available", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
 /*
         backButton.addActionListener(new ActionListener() {
             @Override
