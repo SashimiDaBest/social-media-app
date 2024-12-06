@@ -84,6 +84,7 @@ public final class WelcomePageServer {
 
                     if (User.hasLogin(username, password)) {
                         Writer.write(SUCCESSFUL_SIGN_IN, bw);
+                        System.out.println("writer: " + SUCCESSFUL_SIGN_IN);
                         isSignedIn = true;
                         for (User u : users) {
                             if (u.getUsername().equals(username)) {
@@ -94,6 +95,7 @@ public final class WelcomePageServer {
 
                     } else {
                         Writer.write(UNSUCCESSFUL_SIGN_IN, bw);
+                        System.out.println("writer: " + UNSUCCESSFUL_SIGN_IN);
                     }
 
                 } else if (mainChoice.equals("2")) { // Sign up
@@ -123,10 +125,12 @@ public final class WelcomePageServer {
                         user = newUser;
 
                         Writer.write("User creation successful", bw);
+                        System.out.println("writer: " + "User creation successful");
 
                     // If new username/password is invalid
                     } catch (InvalidCreateAccountException e) {
                         Writer.write("Invalid fields", bw);
+                        System.out.println("write: " + "Invalid fields");
                     }
                 }
             }

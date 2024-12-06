@@ -83,6 +83,7 @@ public final class FeedPageServer {
                         }
                     }
                     Writer.write(String.valueOf(validUser), bw);
+                    System.out.println("write: " + String.valueOf(validUser));
 
                     if (validUser) {
                         OtherPageServer.otherPageOperation(br, bw, user, users, chats);
@@ -116,6 +117,7 @@ public final class FeedPageServer {
         // Write list of available users to client
         System.out.println("Sent available users for chat:");
         Writer.write(listOfAvailableUsers, bw);
+        System.out.println("write: " + listOfAvailableUsers);
 
         // Read each selected user from client and make sure they can be chatted with
         String usernameToCheck = br.readLine();
@@ -134,18 +136,22 @@ public final class FeedPageServer {
             // Check if the target can be chatted with and report back to client
             if (targetUser == null) {
                 Writer.write("That user does not exist!", bw);
+                System.out.println("write: " + "That user does not exist!");
             } else {
                 switch (user.checkChatAbility(targetUser)) {
                     case "true":
                         Writer.write("", bw);
+                        System.out.println("write: " + "");
                         System.out.println("VALID USER");
                         break;
                     case "self":
                         Writer.write("self", bw);
+                        System.out.println("write: " + "self");
                         System.out.println("INVALID USER");
                         break;
                     case "false":
                         Writer.write("User cannot be chatted with!", bw);
+                        System.out.println("write: " + "User cannot be chatted with!");
                         System.out.println("INVALID USER");
                         break;
                 }
@@ -179,9 +185,11 @@ public final class FeedPageServer {
             }
             System.out.println("New chat created!");
             Writer.write("[SUCCESSFUL CHAT CREATION]", bw);
+            System.out.println("write: " + "[SUCCESSFUL CHAT CREATION]");
         } else {
             System.out.println("Chat is empty; selection was full with invalid chatters!");
             Writer.write("[CHAT CREATION UNSUCCESSFUL]", bw);
+            System.out.println("write: " + "[CHAT CREATION UNSUCCESSFUL]");
         }
     }
 
@@ -219,6 +227,7 @@ public final class FeedPageServer {
             chatOutput = chatOutput.substring(0, chatOutput.length() - 1);
         }
         Writer.write(chatOutput, bw);
+        System.out.println("write: " + chatOutput);
 
         if (!chatOutput.isEmpty()) {
             // Obtain the selected chat from the client.
@@ -237,6 +246,7 @@ public final class FeedPageServer {
 
             if (chatIndex == -1) {
                 Writer.write("Invalid Chat", bw);
+                System.out.println("write: " + "Invalid Chat");
             } else {
                 // Loop through the chat menu until the user stops.
                 boolean viewChat = true;
@@ -295,6 +305,7 @@ public final class FeedPageServer {
 
                     // Write the fully formed chat menu to the client.
                     Writer.write(chatContent, bw);
+                    System.out.println("write: " + chatContent);
 
                     // Collect the client's decision and process accordingly.
                     String chatDecision = br.readLine();
@@ -349,6 +360,7 @@ public final class FeedPageServer {
         // Write list of available users to client
         System.out.println("Sending list of users to client...");
         Writer.write(listOfAvailableUsers, bw);
+        System.out.println("write: " + listOfAvailableUsers);
     }
 
     public static ArrayList<User> updateUsers(ArrayList<User> users) {

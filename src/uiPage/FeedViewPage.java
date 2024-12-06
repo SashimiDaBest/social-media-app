@@ -225,6 +225,7 @@ public class FeedViewPage extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Writer.write("user", writer);
+                System.out.println("write: " + "user");
                 // load the user's page
                 pageManager.lazyLoadPage("user", () -> new UserProfilePage(pageManager, writer, reader));
                 pageManager.removePage("feed");
@@ -235,6 +236,7 @@ public class FeedViewPage extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Writer.write("2", writer);
+                System.out.println("write: " + "2");
                 try {
                     loadButton.setEnabled(false);
                     String response = reader.readLine();
@@ -266,6 +268,7 @@ public class FeedViewPage extends JPanel {
                 public void actionPerformed(ActionEvent e) {
                     try {
                         Writer.write(chatButton.getText().substring(6), writer);
+                        System.out.println("write: " + chatButton.getText().substring(6));
                         for (JButton button : chatButtons) {
                             if (!button.equals(chatButton)) {
                                 button.setVisible(false);
@@ -314,7 +317,9 @@ public class FeedViewPage extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 try {
                     Writer.write("1", writer);
+                    System.out.println("write: " + "1");
                     Writer.write(chatField.getText(), writer);
+                    System.out.println("write: " + chatField.getText());
 
                     ArrayList<String> menuToDisplay;
                     String[] lines = reader.readLine().split(";");
@@ -352,7 +357,9 @@ public class FeedViewPage extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 try {
                     Writer.write("3", writer);
+                    System.out.println("write: " + "3");
                     Writer.write(chatField.getText(), writer);
+                    System.out.println("write: " + chatField.getText());
 
                     ArrayList<String> menuToDisplay;
                     String[] lines = reader.readLine().split(";");
@@ -389,6 +396,7 @@ public class FeedViewPage extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 try {
                     Writer.write("2", writer);
+                    System.out.println("write: " + "2");
 
                     ArrayList<String> menuToDisplay;
                     String[] lines = reader.readLine().split(";");
@@ -423,6 +431,7 @@ public class FeedViewPage extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Writer.write("4", writer);
+                System.out.println("write: " + "4");
                 chatButtons.get(0).setVisible(true);
                 chatButtons.get(0).setText("Load chats!");
                 chatButtons.get(0).setEnabled(false);
@@ -449,6 +458,7 @@ public class FeedViewPage extends JPanel {
 
                     // all stuff used below:
                     Writer.write("4", writer);
+                    System.out.println("write: " + "4");
 
                     String line = reader.readLine();
                     System.out.println("read: " + line);
@@ -545,7 +555,9 @@ public class FeedViewPage extends JPanel {
                     String selectedUser = selectionButton.getText();
 
                     Writer.write("6", writer);
+                   System.out.println("write: " + "6");
                     Writer.write(selectedUser, writer);
+                   System.out.println("write: " + selectedUser);
 
                     selectedUsers.add(selectedUser);
                     pageManager.lazyLoadPage(selectedUser, () -> new OtherProfilePage(pageManager, writer, reader, selectedUser));
@@ -566,12 +578,14 @@ public class FeedViewPage extends JPanel {
                 
                 try {
                     Writer.write("1", writer);
+                    System.out.println("write: " + "1");
                     String[] availableUsers = reader.readLine().split(";");
                     System.out.println("read: " + Arrays.toString(availableUsers));
 
                     for (String username: selectedUsers) {
 
                         Writer.write(username, writer);
+                        System.out.println("write: " + username);
 
                         String validation = reader.readLine();
                         System.out.println("read: " + validation);
@@ -583,6 +597,7 @@ public class FeedViewPage extends JPanel {
                         validUsers.add(username);
                     }
                     Writer.write("[DONE]", writer);
+                    System.out.println("write: " + "[DONE]");
 
                     // send members using only valid Users (send empty string if membersList is empty)
 
@@ -597,6 +612,7 @@ public class FeedViewPage extends JPanel {
                     }
                    
                     Writer.write(membersList, writer);
+                    System.out.println("write: " + membersList);
 
                     // check if chat was made successfully
                     String chatCreationValidation = reader.readLine();

@@ -51,7 +51,7 @@ public class UserProfilePage extends JPanel {
             try {
                 // Read image name from BufferedReader
                 String imageName = bufferedReader.readLine();
-                System.out.println("read: " + imageName);
+                System.out.println("read1: " + imageName);
                 if (imageName == null || imageName.isEmpty()) {
                     throw new IllegalStateException("Image name is missing or invalid");
                 }
@@ -112,11 +112,11 @@ public class UserProfilePage extends JPanel {
         // Retrieve and Display User Information
         try {
             String line = bufferedReader.readLine();
-            System.out.println("read: " + line);
+            System.out.println("read2: " + line);
             usernameField.setText(line);
             if (line != null) {
                 line = bufferedReader.readLine();
-                System.out.println("read: " + line);
+                System.out.println("read3: " + line);
                 String accountType = "1".equals(line) ? "private" : "public";
                 accountTypeField.setText(accountType);
             }
@@ -191,10 +191,10 @@ public class UserProfilePage extends JPanel {
         panel.add(scrollPanel, BorderLayout.CENTER);
 
         // Load data in a separate thread
-        new Thread(() -> {
+        Thread loadingThread = new Thread(() -> {
             try {
                 String peopleValidity = bufferedReader.readLine();
-                System.out.println("read: " + peopleValidity);
+                System.out.println("read4: " + peopleValidity);
                 if (!"[EMPTY]".equals(peopleValidity)) {
                     SwingUtilities.invokeLater(() -> statusLabel.setText(""));
 
@@ -205,6 +205,7 @@ public class UserProfilePage extends JPanel {
 
                         button.addActionListener(e -> {
                             Writer.write("2", bufferedWriter);
+                            System.out.println("write: " + "2");
                             pageManager.lazyLoadPage(buttonName, () -> new OtherProfilePage(pageManager, bufferedWriter, bufferedReader, buttonName));
                         });
 
@@ -242,7 +243,14 @@ public class UserProfilePage extends JPanel {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }).start();
+        });
+        loadingThread.start();
+
+        try {
+            loadingThread.join(); // makes sure this thread and its caller end at the same time
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         return panel;
     }
@@ -266,6 +274,7 @@ public class UserProfilePage extends JPanel {
                 try {
                     // Notify server of file upload action
                     Writer.write("1", bufferedWriter);
+                    System.out.println("write: " + "1");
 
                     // Open file chooser dialog
                     JFileChooser fileChooser = new JFileChooser();
@@ -278,10 +287,11 @@ public class UserProfilePage extends JPanel {
 
                         // Send file path to server
                         Writer.write(path, bufferedWriter);
+                        System.out.println("write: " + path);
 
                         // Read response from server
                         String response = bufferedReader.readLine();
-                        System.out.println("read: " + response);
+                        System.out.println("read5: " + response);
                         if ("SAVE".equals(response)) {
                             JOptionPane.showMessageDialog(null, "File uploaded successfully!", "Notification", JOptionPane.INFORMATION_MESSAGE);
                         } else {
@@ -374,6 +384,7 @@ public class UserProfilePage extends JPanel {
                 // Logout button action listener
                 logoutButton.addActionListener(ev -> {
                     Writer.write("6", bufferedWriter);
+                    System.out.println("write: " + "6");
                     pageManager.lazyLoadPage("welcome", () -> new WelcomePage(pageManager, bufferedWriter, bufferedReader));
                     pageManager.removePage("user");
                     settingsDialog.dispose();
@@ -389,6 +400,7 @@ public class UserProfilePage extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Writer.write("5", bufferedWriter);
+                System.out.println("write: " + "5");
                 pageManager.lazyLoadPage("feed", () -> new FeedViewPage(pageManager, bufferedWriter, bufferedReader));
             }
         });

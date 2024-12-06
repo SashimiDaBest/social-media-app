@@ -146,8 +146,11 @@ public class WelcomePage extends JPanel {
 
                 try {
                     Writer.write("1", bufferedWriter); // "1" for sign-in operation
+                    System.out.println("write: " + "1");
                     Writer.write(username, bufferedWriter);
+                    System.out.println("write: " + username);
                     Writer.write(new String(passwordChars), bufferedWriter);
+                    System.out.println("write: " + new String(passwordChars));
 
                     Arrays.fill(passwordChars, '\0'); // Clear password from memory
 

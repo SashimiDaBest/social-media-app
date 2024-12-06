@@ -98,6 +98,7 @@ public class OtherProfilePage extends JPanel {
 
     private JPanel setAccountInfo() {
         Writer.write(otherUsername, bufferedWriter);
+        System.out.println("write: " + otherUsername);
 
         JPanel accountInfoPanel = new JPanel(new GridBagLayout());
         accountInfoPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
@@ -215,7 +216,9 @@ public class OtherProfilePage extends JPanel {
 
                         button.addActionListener(e -> {
                             Writer.write("3", bufferedWriter);
+                            System.out.println("write: " + "3");
                             Writer.write(buttonName, bufferedWriter);
+                            System.out.println("write: " + buttonName);
                             pageManager.lazyLoadPage(buttonName, () -> new OtherProfilePage(pageManager, bufferedWriter, bufferedReader, buttonName));
                             pageManager.removePage(otherUsername);
                         });
@@ -291,12 +294,14 @@ public class OtherProfilePage extends JPanel {
         try {
             // Check if following otherUser, then create button
             Writer.write("4", bufferedWriter);
+            System.out.println("write: " + "4");
             String followResponse = bufferedReader.readLine();
             System.out.println("read: " + followResponse);
             followButton = new JButton(followResponse);
 
             // Do the same for block button
             Writer.write("6", bufferedWriter);
+            System.out.println("write: " + "6");
             String blockResponse = bufferedReader.readLine();
             System.out.println("read: " + blockResponse);
             blockButton = new JButton(blockResponse);
@@ -316,6 +321,7 @@ public class OtherProfilePage extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Writer.write("5", bufferedWriter);
+                System.out.println("write: " + "5");
                 pageManager.lazyLoadPage("feed", () -> new FeedViewPage(pageManager, bufferedWriter, bufferedReader));
             }
         });
@@ -325,6 +331,7 @@ public class OtherProfilePage extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 try {
                     Writer.write("1", bufferedWriter);
+                    System.out.println("write: " + "1");
                     
                     String response = bufferedReader.readLine();
                     System.out.println("read: " + response);
@@ -355,6 +362,7 @@ public class OtherProfilePage extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 try {
                     Writer.write("2", bufferedWriter);
+                    System.out.println("write: " + "2");
                     String response = bufferedReader.readLine();
                     System.out.println("read: " + response);
                     if (!response.contains("unblocked")) {

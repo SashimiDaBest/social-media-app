@@ -110,12 +110,14 @@ public final class OtherPageServer {
                         user.deleteFollowing(otherUser.getUserID());
                         otherUser.deleteFollower(user.getUserID());
                         Writer.write("unfollowed " + otherUser.getUsername(), bw);
+                        System.out.println("write: " + "unfollowed " + otherUser.getUsername());
                         users = FeedPageServer.updateUsers(users);
 
                     } else {
                         user.addFollowing(otherUser.getUserID());
                         otherUser.addFollower(user.getUserID());
                         Writer.write("followed " + otherUser.getUsername(), bw);
+                        System.out.println("write: " + "followed " + otherUser.getUsername());
                         users = FeedPageServer.updateUsers(users);
                     }
 
@@ -124,10 +126,12 @@ public final class OtherPageServer {
                     if (user.getBlockedList().contains(otherUser.getUserID())) {
                         user.deleteBlock(otherUser.getUserID());
                         Writer.write("unblocked " + otherUser.getUsername(), bw);
+                        System.out.println("write: " + "unblocked " + otherUser.getUsername());
                         users = FeedPageServer.updateUsers(users);
                     } else {
                         user.addBlock(otherUser.getUserID());
                         Writer.write("blocked " + otherUser.getUsername(), bw);
+                        System.out.println("write: " + "blocked " + otherUser.getUsername());
                         users = FeedPageServer.updateUsers(users);
                     }
                 } else if (input.equals("3")) {
@@ -146,8 +150,10 @@ public final class OtherPageServer {
 
                     if(user.getFollowingList().contains(otherUser.getUserID())) {
                         Writer.write("Unfollow", bw);
+                        System.out.println("write: " + "Unfollow");
                     } else {
                         Writer.write("Follow", bw);
+                        System.out.println("write: " + "Follow");
                     }
                 }
 
@@ -156,8 +162,10 @@ public final class OtherPageServer {
 
                     if(user.getBlockedList().contains(otherUser.getUserID())) {
                         Writer.write("Unblock", bw);
+                        System.out.println("write: " + "Unblock");
                     } else {
                         Writer.write("Block", bw);
+                        System.out.println("write: " + "Block");
                     }
                 }
                 else {

@@ -32,11 +32,14 @@ public final class Writer {
         ArrayList<String> buttonNames = new ArrayList<>();
         try {
             String line = br.readLine();
+            System.out.println("WRITER READ: " + line);
             while (line != null && !line.equals("END")) {
-                if (!line.equals("[EMPTY]")) {
+//                if (!line.equals("[EMPTY]")) {
                     buttonNames.add(line);
-                }
+                    System.out.println("added");
+//                }
                 line = br.readLine();
+                System.out.println("WRITER READ: " + line);
             }
             return buttonNames;
         } catch (IOException e) {
