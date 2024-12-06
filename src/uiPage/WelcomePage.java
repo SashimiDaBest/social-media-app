@@ -31,6 +31,7 @@ public class WelcomePage extends JPanel {
     private static final String UNSUCCESSFUL_SIGN_IN = "Sign-in was unsuccessful";
 
     public WelcomePage(PageManager pageManager, BufferedWriter bufferedWriter, BufferedReader bufferedReader) {
+        System.out.println("This is welcome page");
         this.pageManager = pageManager;
         this.bufferedWriter = bufferedWriter;
         this.bufferedReader = bufferedReader;

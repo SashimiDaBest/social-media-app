@@ -39,6 +39,7 @@ public class FeedViewPage extends JPanel {
     private PageManager pageManager;
 
     public FeedViewPage(PageManager pageManager, BufferedWriter bw, BufferedReader br) {
+        System.out.println("This is feed view page");
         this.pageManager = pageManager;
         this.writer = bw;
         this.reader = br;

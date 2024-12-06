@@ -32,6 +32,7 @@ public class OtherProfilePage extends JPanel {
     private BufferedImage image;
 
     public OtherProfilePage(PageManager pageManager, BufferedWriter writer, BufferedReader reader, String otherUsername) {
+        System.out.println("This is other profile page");
         this.pageManager = pageManager;
         this.bufferedWriter = writer;
         this.bufferedReader = reader;

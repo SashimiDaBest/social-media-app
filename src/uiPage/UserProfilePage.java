@@ -20,6 +20,7 @@ public class UserProfilePage extends JPanel {
     private JButton profileButton, settingButton, backButton, nextButton, logoutButton, feedButton;
 
     public UserProfilePage(PageManager pageManager, BufferedWriter bufferedWriter, BufferedReader bufferedReader) {
+        System.out.println("This is user profile page");
         this.pageManager = pageManager;
         this.bufferedReader = bufferedReader;
         this.bufferedWriter = bufferedWriter;

@@ -25,6 +25,7 @@ public class CreateUserPage extends JPanel {
     private BufferedWriter bufferedWriter;
 
     public CreateUserPage(PageManager pageManager, BufferedWriter bufferedWriter, BufferedReader bufferedReader) {
+        System.out.println("This is create user page");
         this.bufferedReader = bufferedReader;
         this.bufferedWriter = bufferedWriter;
         this.pageManager = pageManager;
