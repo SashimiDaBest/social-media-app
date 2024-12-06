@@ -9,6 +9,9 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import javax.swing.border.EmptyBorder;
+import java.io.File;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 
 public class WelcomePage extends JPanel {
     private String username;
@@ -62,7 +65,21 @@ public class WelcomePage extends JPanel {
         titlePanel.setBorder(new EmptyBorder(10, 0, 10, 0));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
         titlePanel.add(title);
-
+    
+        // Load and resize the image
+        try {
+            BufferedImage image = ImageIO.read(new File("Sample Test Folder/BoilerGramLogo.png"));
+            int width = 200;  // Desired width
+            int height = (int) ((double) width / image.getWidth() * image.getHeight());  // Maintain aspect ratio
+            ImageIcon resizedImageIcon = new ImageIcon(image.getScaledInstance(width, height, Image.SCALE_SMOOTH));
+            JLabel imageLabel = new JLabel(resizedImageIcon);
+            imageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            titlePanel.add(imageLabel);
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error loading logo image. Please check the file path.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    
         return titlePanel;
     }
 
