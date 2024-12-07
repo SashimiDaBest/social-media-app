@@ -113,6 +113,8 @@ public class ClientHandler implements Runnable {
         pageManager.addPage("welcome", new WelcomePage(pageManager, bw, br));
         pageManager.addPage("signup", new CreateUserPage(pageManager, bw, br));
 
+        frame.setSize(700, 700);
+        frame.setLocationRelativeTo(null); // Centers the window
         frame.setContentPane(pageManager.getCardPanel());
         frame.setVisible(true);
 
