@@ -11,102 +11,111 @@ import java.util.Arrays;
 
 public class FeedViewPage extends JPanel {
 
-    // for viewing own user profile
-    private JButton profileButton;
-    private JButton searchButton;
-    private JButton loadButton;
-    private JButton deleteButton;
-    private JButton clearButton;
-    private JButton prevButton;
-    private JButton nextButton;
+    // Constants
+    private static final int MAX_SELECTED_USERS = 8;
 
-    private ArrayList<JButton> chatButtons;
+    // UI Components
+    private JButton profileButton, searchButton, loadButton, deleteButton, clearButton;
+    private ArrayList<JButton> chatButtons, selectionButtons;
     private ArrayList<JLabel> chatLabels;
+    private JTextField chatField, searchField;
+    private JButton uploadButton, editButton, sendButton, addSelectedToChat;
 
-    private JTextField chatField;
-    private JButton uploadButton;
-    private JButton editButton;
-    private JButton sendButton;
-
-    // for search panel
-    private ArrayList<String> selectedUsers; // holds selected usernames
-    private ArrayList<JButton> selectionButtons; // for accessing selected users later
-    private JTextField searchField;
-    private JButton addSelectedToChat;
-
+    // Logic
+    private ArrayList<String> selectedUsers; // Holds selected usernames
     private BufferedWriter writer;
     private BufferedReader reader;
     private PageManager pageManager;
 
     public FeedViewPage(PageManager pageManager, BufferedWriter bw, BufferedReader br) {
         System.out.println("This is feed view page");
+
         this.pageManager = pageManager;
         this.writer = bw;
         this.reader = br;
         this.selectedUsers = new ArrayList<>();
+        this.selectionButtons = new ArrayList<>();
 
         setLayout(new BorderLayout());
 
-        // Top panel (Profile Icon and Search)
-        JPanel topPanel = new JPanel();
-        topPanel.setLayout(new BorderLayout());
+        // Top Panel: Profile and Search
+        add(createTopPanel(), BorderLayout.NORTH);
 
-        // Profile Icon Button
-        profileButton = new JButton("User Page");
-        profileButton.setHorizontalAlignment(SwingConstants.LEFT);
-        topPanel.add(profileButton, BorderLayout.WEST);
+        // Center Panel: Chat view and message panel
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        JPanel chatPanel = new JPanel(new BorderLayout());
+        chatPanel.add(createChatPanel(), BorderLayout.CENTER);
+        chatPanel.add(createBottomPanel(), BorderLayout.SOUTH);
 
-        // Search Panel
-        topPanel.add(createSearchPanel(), BorderLayout.CENTER);
-
-        add(topPanel, BorderLayout.NORTH);
-
-        // Center panel (Chat messages and left panel)
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BorderLayout());
-
-        // Left panel (Buttons) inside scroll pane
         mainPanel.add(createChatViewPanel(), BorderLayout.WEST);
-
-        // Selection panel: shows current usernames that have been selected
-        mainPanel.add(createSelectionPanel(), BorderLayout.EAST);
-
-        // Chat panel
-        JPanel rightPanel = new JPanel(new BorderLayout());
-        rightPanel.add(createChatPanel(), BorderLayout.CENTER);
-
-        // Bottom panel (Text input and actions)
-        rightPanel.add(createBottomPanel(), BorderLayout.SOUTH);
-        mainPanel.add(rightPanel, BorderLayout.CENTER);
-
-
+        mainPanel.add(chatPanel, BorderLayout.CENTER);
         add(mainPanel, BorderLayout.CENTER);
 
         setupActionListeners();
     }
 
-    public JPanel createBottomPanel() {
-        JPanel bottomPanel = new JPanel();
-        bottomPanel.setLayout(new BorderLayout());
+    public JPanel createTopPanel() {
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
 
-        chatField = new JTextField();
-        chatField.setPreferredSize(new Dimension(200, 30)); // Fixed size for text field
-        uploadButton = new JButton("Upload Picture");
-        editButton = new JButton("Edit");
-        sendButton = new JButton("Send");
+        // Search Panel
+        JPanel searchPanel = new JPanel(new BorderLayout());
+        profileButton = new JButton("User Page");
+        searchPanel.add(profileButton, BorderLayout.WEST);
+        searchPanel.add(createSearchPanel(), BorderLayout.CENTER);
 
-        JPanel buttonPanelBottom = new JPanel(new FlowLayout());
-        buttonPanelBottom.add(uploadButton);
-        buttonPanelBottom.add(editButton);
-        buttonPanelBottom.add(sendButton);
+        // Selection Panel
+        JPanel selectionPanel = createSelectionPanel();
 
-        editButton.setEnabled(false);
-        sendButton.setEnabled(false);
-        uploadButton.setEnabled(false);
+        topPanel.add(searchPanel);
+        topPanel.add(selectionPanel);
+        return topPanel;
+    }
 
-        bottomPanel.add(chatField, BorderLayout.CENTER);
-        bottomPanel.add(buttonPanelBottom, BorderLayout.EAST);
-        return bottomPanel;
+    public JPanel createSearchPanel() {
+        JPanel searchPanel = new JPanel(new BorderLayout());
+        searchField = new JTextField(20);
+        searchField.setPreferredSize(new Dimension(200, 30));
+
+        searchButton = new JButton("Search");
+        deleteButton = new JButton("Delete");
+        clearButton = new JButton("Clear");
+        deleteButton.setEnabled(false);
+        clearButton.setEnabled(false);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        buttonPanel.add(searchButton);
+        buttonPanel.add(deleteButton);
+        buttonPanel.add(clearButton);
+
+        searchPanel.add(searchField, BorderLayout.CENTER);
+        searchPanel.add(buttonPanel, BorderLayout.EAST);
+        return searchPanel;
+    }
+
+    public JPanel createSelectionPanel() {
+        JPanel selectionPanel = new JPanel(new FlowLayout());
+
+        JTextPane textPane = new JTextPane();
+        textPane.setEditable(false);
+        textPane.setOpaque(false);
+        textPane.setText("Selected Users: ");
+        selectionPanel.add(textPane);
+
+        // Add selection buttons (hidden initially)
+        for (int i = 0; i < MAX_SELECTED_USERS; i++) {
+            JButton button = new JButton();
+            button.setVisible(false);
+            button.setEnabled(false);
+            selectionButtons.add(button);
+            selectionPanel.add(button);
+        }
+
+        addSelectedToChat = new JButton("Add Selected to Chat");
+        addSelectedToChat.setEnabled(false);
+        selectionPanel.add(addSelectedToChat);
+
+        return selectionPanel;
     }
 
     public JScrollPane createChatPanel() {
@@ -114,20 +123,39 @@ public class FeedViewPage extends JPanel {
         chatPanel.setLayout(new BoxLayout(chatPanel, BoxLayout.Y_AXIS));
 
         chatLabels = new ArrayList<>();
-
-        for (int i = 1; i <= 6; i++) {
-            JPanel chatRow = new JPanel();
-            chatRow.setLayout(new FlowLayout(FlowLayout.LEFT));
-            JLabel userLabel = new JLabel("");
-            chatRow.add(userLabel);
-            chatPanel.add(chatRow);
-            chatLabels.add(userLabel);
+        for (int i = 0; i < 6; i++) {
+            JLabel label = new JLabel("");
+            chatLabels.add(label);
+            chatPanel.add(label);
         }
 
-        chatLabels.get(0).setText("Chat content will appear here!");
+        chatLabels.get(0).setText("Add Users to Chat or View!");
 
-        JScrollPane chatScrollPane = new JScrollPane(chatPanel);
-        return chatScrollPane;
+        return new JScrollPane(chatPanel);
+    }
+
+    public JPanel createBottomPanel() {
+        JPanel bottomPanel = new JPanel(new BorderLayout());
+
+        chatField = new JTextField();
+        chatField.setPreferredSize(new Dimension(200, 30));
+
+        uploadButton = new JButton("Upload Picture");
+        editButton = new JButton("Edit");
+        sendButton = new JButton("Send");
+
+        uploadButton.setEnabled(false);
+        editButton.setEnabled(false);
+        sendButton.setEnabled(false);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        buttonPanel.add(uploadButton);
+        buttonPanel.add(editButton);
+        buttonPanel.add(sendButton);
+
+        bottomPanel.add(chatField, BorderLayout.CENTER);
+        bottomPanel.add(buttonPanel, BorderLayout.EAST);
+        return bottomPanel;
     }
 
     public JScrollPane createChatViewPanel() {
@@ -153,84 +181,20 @@ public class FeedViewPage extends JPanel {
         return leftScrollPane;
     }
 
-    public JPanel createSearchPanel() {
-        JPanel searchPanel = new JPanel();
-        searchPanel.setLayout(new BorderLayout());
-        JTextField searchField = new JTextField();
-        searchField.setPreferredSize(new Dimension(200, 30));
-        this.searchButton = new JButton("Search");
-        this.loadButton = new JButton("Load");
-        this.deleteButton = new JButton("Delete");
-        this.clearButton = new JButton("Clear");
-        this.prevButton = new JButton("<<");
-        this.nextButton = new JButton(">>");
-        this.searchField = searchField;
-
-        deleteButton.setEnabled(false);
-
-        JPanel buttonPanel = new JPanel(new FlowLayout());
-        buttonPanel.add(searchButton);
-        buttonPanel.add(loadButton);
-        buttonPanel.add(deleteButton);
-        buttonPanel.add(clearButton);
-        buttonPanel.add(prevButton);
-        buttonPanel.add(nextButton);
-
-        deleteButton.setEnabled(false);
-        clearButton.setEnabled(false);
-
-        searchPanel.add(searchField, BorderLayout.CENTER);
-        searchPanel.add(buttonPanel, BorderLayout.EAST);
-        return searchPanel;
-    }
-
-    public JPanel createSelectionPanel() {
-
-        JPanel selectionPanel = new JPanel();
-        selectionPanel.setPreferredSize(new Dimension(100, 0));;
-        selectionPanel.setLayout(new GridLayout(8, 1, 5, 5)); // 8 buttons in a grid layout\
-
-        selectionButtons = new ArrayList<>(); // For accessing buttons after creation
-        
-        // for adding selected to chat
-        this.addSelectedToChat = new JButton("Add Selected To Chat");
-        addSelectedToChat.setPreferredSize(new Dimension(50, 40));
-        addSelectedToChat.setEnabled(false);
-        addSelectedToChat.setVisible(true);
-
-        selectionPanel.add(addSelectedToChat);
-        for (int i = 0; i < 7; i++) { // limit of 8 buttons
-            JButton button = new JButton("");
-            button.setSize(new Dimension(50, 40)); // Fixed size for buttons
-            selectionPanel.add(button);
-            selectionButtons.add(button);
-            button.setEnabled(false);
-            button.setVisible(false);
-        }
-
-        selectionButtons.get(0).setVisible(true);
-        selectionButtons.get(0).setText("Waiting for user selection...");
-
-        // JScrollPane leftScrollPane = new JScrollPane(selectionPanel);
-        // leftScrollPane.setPreferredSize(new Dimension(150, 0)); // Adjust width to fit buttons
-
-        return selectionPanel;
-    }
-
     private void setupActionListeners() {
 
-        // navigate to user profile
-        profileButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Writer.write("user", writer);
-                System.out.println("write: " + "user");
-                // load the user's page
-                pageManager.lazyLoadPage("user", () -> new UserProfilePage(pageManager, writer, reader));
-                pageManager.removePage("feed");
-            }
+        // Profile button navigates to user profile
+        profileButton.addActionListener(e -> {
+            Writer.write("user", writer);
+            System.out.println("write: user");
+            pageManager.lazyLoadPage("user", () -> new UserProfilePage(pageManager, writer, reader));
+            pageManager.removePage("feed");
         });
 
+        // Search for users
+        searchButton.addActionListener(e -> handleUserSearch());
+
+        /*
         loadButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -260,7 +224,23 @@ public class FeedViewPage extends JPanel {
                 }
             }
         });
+         */
 
+        for (JButton selectionButton: selectionButtons) {
+            selectionButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String selectedUser = selectionButton.getText();
+                    Writer.write("6", writer);
+                    System.out.println("write: " + "6");
+                    selectedUsers.add(selectedUser);
+                    pageManager.lazyLoadPage(selectedUser, () -> new OtherProfilePage(pageManager, writer, reader, selectedUser));
+                    pageManager.removePage("feed");
+                }
+            });
+        }
+
+        /*
         for (JButton chatButton : chatButtons) {
             chatButton.addActionListener(new ActionListener() {
                 @Override
@@ -310,7 +290,9 @@ public class FeedViewPage extends JPanel {
                 }
             });
         }
+        */
 
+        /*
         sendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -449,116 +431,6 @@ public class FeedViewPage extends JPanel {
             }
         });
 
-        // search for other user
-        searchButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-
-                    // all stuff used below:
-                    Writer.write("4", writer);
-                    System.out.println("write: " + "4");
-
-                    String line = reader.readLine();
-                    System.out.println("read: " + line);
-
-                    // skirts past possible runtime error with OtherPageServer
-                    while (true) {
-                        if (line.equals("END") || line.equals("[EMPTY]") || line.equals("message")) {
-                            line = reader.readLine();
-                            System.out.println("read: " + line);
-                        } else {
-                            break;
-                        }
-                    }
-
-                    String[] userList = line.split(";");
-                    String userInput = searchField.getText();
-                    String selectedUser;
-
-                    // if the user types in the exact username, then there is no need for a dropdown
-                    if (Arrays.asList(userList).contains(userInput)) {
-                        selectedUser = userInput;
-                    
-                    } else if (userInput.equals("")) { // displays error if field is empty
-                        selectedUser = "";
-                    
-                    // otherwise, use a dropdown menu
-                    } else {
-                        // for menu pop-up: show all usernames that are close to userList
-                        ArrayList<String> closeOptions = new ArrayList<>();
-                        for (String name: userList) {
-                            if (name.contains(userInput)) {
-                                closeOptions.add(name);
-                            }
-                        }
-                        String[] menuOptions = closeOptions.toArray(new String[closeOptions.size()]);
-
-                        // for selecting the user based off drop down
-                        if (menuOptions.length == 0) { // for whatever reason, then skip to displaying an error
-                            selectedUser = "";
-                        
-                        } else {
-                            selectedUser = (String) JOptionPane.showInputDialog(null, "Here are the closest options:", 
-                            "CLOSE TO MATCHING USERNAMES:", JOptionPane.QUESTION_MESSAGE, null, menuOptions, menuOptions[0]);
-                        }
-
-                    }
-
-                    // VALIDATION 
-                    if (selectedUser == null) { // if user closes the drop down menu before selection
-                        // pass 
-
-                    } else if (selectedUser.equals("")) {
-                        JOptionPane.showMessageDialog(null, "Could not find selected user" +
-                        " or the search field was empty!",
-                            "ERROR: USER SELECTION", JOptionPane.QUESTION_MESSAGE);
-                    
-                    } else if (selectedUsers.contains(selectedUser)) {
-                        JOptionPane.showMessageDialog(null, "That user already exists in selection!",
-                            "ERROR: USER SELECTION", JOptionPane.QUESTION_MESSAGE);
-                    
-                    } else if (selectedUsers.size() >= 8) {
-                        JOptionPane.showMessageDialog(null, "Too many users have been selected (try clearing)!",
-                            "ERROR: USER SELECTION", JOptionPane.QUESTION_MESSAGE);
-
-                    } else {
-                        selectedUsers.add(selectedUser);
-
-                        // display current selection by changing the buttons
-                        for (int i = 0; i < selectedUsers.size(); i++) {
-                            selectionButtons.get(i).setEnabled(true);
-                            selectionButtons.get(i).setVisible(true);
-                            selectionButtons.get(i).setText(selectedUsers.get(i));
-                        }
-                        // if addSelectedChat isn't an option, make it an option
-                        if (!addSelectedToChat.isEnabled()) {
-                            addSelectedToChat.setEnabled(true);
-                        }
-                    }
-                    searchField.setText("");
-
-                } catch (IOException error) {
-                    error.printStackTrace();
-                }
-            }
-
-        });
-        
-        for (JButton selectionButton: selectionButtons) {
-            selectionButton.addActionListener(new ActionListener() {
-               @Override
-               public void actionPerformed(ActionEvent e) {
-                   String selectedUser = selectionButton.getText();
-                   Writer.write("6", writer);
-                   System.out.println("write: " + "6");
-                   selectedUsers.add(selectedUser);
-                   pageManager.lazyLoadPage(selectedUser, () -> new OtherProfilePage(pageManager, writer, reader, selectedUser));
-                   pageManager.removePage("feed");
-               }    
-            });
-        }
-
         addSelectedToChat.addActionListener(new ActionListener() {
             @Override 
             public void actionPerformed(ActionEvent e) {
@@ -629,6 +501,75 @@ public class FeedViewPage extends JPanel {
                 }
             }
         });
-    
+
+
+         */
+    }
+
+    // TODO: REVIEW LATER - SOMETHING IS WRONG WITH SEARCH FUNCTIONALITY
+    private void handleUserSearch() {
+        try {
+            Writer.write("4", writer);
+            System.out.println("write: 4");
+
+            String line = reader.readLine();
+            System.out.println("read: " + line);
+
+            // Logic for user search and dropdown
+            String userInput = searchField.getText();
+            String selectedUser = processSearchResult(line, userInput);
+
+            if (selectedUser != null) {
+                addUserToSelection(selectedUser);
+            } else {
+                JOptionPane.showMessageDialog(null, "No user selected or invalid input.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            searchField.setText("");
+        } catch (IOException error) {
+            error.printStackTrace();
+        }
+    }
+
+    private String processSearchResult(String userList, String userInput) {
+        String[] users = userList.split(";");
+        if (Arrays.asList(users).contains(userInput)) {
+            return userInput;
+        } else {
+            // Create dropdown for similar usernames
+            ArrayList<String> closeMatches = new ArrayList<>();
+            for (String user : users) {
+                if (user.contains(userInput)) {
+                    closeMatches.add(user);
+                }
+            }
+
+            if (closeMatches.isEmpty()) {
+                return null;
+            }
+
+            return (String) JOptionPane.showInputDialog(
+                    null, "Choose a user:", "Matching Users",
+                    JOptionPane.QUESTION_MESSAGE, null,
+                    closeMatches.toArray(new String[0]), closeMatches.get(0));
+        }
+    }
+
+    private void addUserToSelection(String selectedUser) {
+        if (selectedUsers.contains(selectedUser)) {
+            JOptionPane.showMessageDialog(null, "User already selected.", "Error", JOptionPane.ERROR_MESSAGE);
+        } else if (selectedUsers.size() >= MAX_SELECTED_USERS) {
+            JOptionPane.showMessageDialog(null, "Too many users selected.", "Error", JOptionPane.ERROR_MESSAGE);
+        } else {
+            selectedUsers.add(selectedUser);
+
+            // Update selection buttons
+            for (int i = 0; i < selectedUsers.size(); i++) {
+                JButton button = selectionButtons.get(i);
+                button.setVisible(true);
+                button.setEnabled(true);
+                button.setText(selectedUsers.get(i));
+            }
+            addSelectedToChat.setEnabled(true);
+        }
     }
 }
