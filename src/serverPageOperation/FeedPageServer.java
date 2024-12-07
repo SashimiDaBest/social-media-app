@@ -58,10 +58,7 @@ public final class FeedPageServer {
         while (true) {
             try {
                 String input = br.readLine();
-                System.out.println("read: " + input);
-
-                if (input == null)
-                    continue;
+                System.out.println("read 1: " + input);
 
                 // 1 - Chat Creation
                 if (input.equals("1")) {
@@ -104,7 +101,7 @@ public final class FeedPageServer {
      */
     private static void validateChatUsers(BufferedReader br, BufferedWriter bw, User user) throws IOException {
         String usernameToCheck = br.readLine();
-        System.out.println("read: " + usernameToCheck);
+        System.out.println("read 2: " + usernameToCheck);
 
         while (!"[DONE]".equals(usernameToCheck)) {
             User targetUser = new User("Sample Test Folder/" + User.findIDFromUsername(usernameToCheck) + ".txt");
@@ -130,7 +127,7 @@ public final class FeedPageServer {
                     break;
             }
             usernameToCheck = br.readLine();
-            System.out.println("read: " + usernameToCheck);
+            System.out.println("read 3: " + usernameToCheck);
         }
     }
 
@@ -139,7 +136,7 @@ public final class FeedPageServer {
      */
     private static void  createNewChat(BufferedReader br, BufferedWriter bw, ArrayList<User> users, User user, ArrayList<Chat> chats) throws IOException {
         String newChattersNames = br.readLine();
-        System.out.println("read: " + newChattersNames);
+        System.out.println("read 4: " + newChattersNames);
         System.out.println("Received new chatters names");
 
         if (newChattersNames != null && !newChattersNames.isEmpty()) {
@@ -181,7 +178,7 @@ public final class FeedPageServer {
         // FORMAT:
         // Chat #0000 (With username, username, ...etc);Chat #0001 (With username, username);...etc
         String selectedChat = br.readLine();
-        System.out.println("read: " + selectedChat);
+        System.out.println("read 5: " + selectedChat);
         String chatOutput = "";
         boolean found = false;
         for (Chat chat : chats) {
