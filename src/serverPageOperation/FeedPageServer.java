@@ -82,7 +82,6 @@ public final class FeedPageServer {
                             validUser = true;
                         }
                     }
-                    Writer.write(String.valueOf(validUser), bw);
                     System.out.println("write: " + String.valueOf(validUser));
 
                     if (validUser) {
