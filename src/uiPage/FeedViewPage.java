@@ -232,6 +232,7 @@ public class FeedViewPage extends JPanel {
             }
         });
 
+        // load chats on chat panel (instantiate buttons)
         loadButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -239,13 +240,21 @@ public class FeedViewPage extends JPanel {
                 System.out.println("write: " + "2");
                 try {
                     loadButton.setEnabled(false);
+
+                    // receives the chat's id, along with the users within the chat
                     String response = reader.readLine();
                     System.out.println("read: " + response);
                     System.out.println(response);
+
+                    // server says the client doesn't belong to any chats (if response string is empty)
                     if (response.isEmpty()) {
                         JOptionPane.showMessageDialog(null, "You have no chats!", "Boiler Gram", JOptionPane.ERROR_MESSAGE);
                         loadButton.setEnabled(true);
+                    
+                    // server has found the client to be in some chats
                     } else {
+
+                        // create the buttons using the chat names the client belongs to
                         String[] activeChats = response.split(";");
                         for (int i = 0; i < chatButtons.size(); i++) {
                             if (i < activeChats.length) {
@@ -262,6 +271,7 @@ public class FeedViewPage extends JPanel {
             }
         });
 
+        // for each chat button press: 
         for (JButton chatButton : chatButtons) {
             chatButton.addActionListener(new ActionListener() {
                 @Override
@@ -281,6 +291,11 @@ public class FeedViewPage extends JPanel {
                         uploadButton.setEnabled(true);
                         editButton.setEnabled(true);
                         sendButton.setEnabled(true);
+
+                        // OPENING USER PAGE WHILE CHAT IS OPEN: FREEZES EVERYTHING (disable that ability)
+                        if (profileButton.isEnabled()) {
+                            profileButton.setEnabled(false);
+                        }
 
                         ArrayList<String> menuToDisplay;
                         String[] lines = reader.readLine().split(";");
@@ -447,6 +462,11 @@ public class FeedViewPage extends JPanel {
                 uploadButton.setEnabled(false);
                 editButton.setEnabled(false);
                 sendButton.setEnabled(false);
+
+                // renable User Page once you've exited a chat
+                if(!profileButton.isEnabled()) {
+                    profileButton.setEnabled(true);
+                }
             }
         });
 

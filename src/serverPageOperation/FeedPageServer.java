@@ -192,6 +192,7 @@ public final class FeedPageServer {
         }
     }
 
+    // for loading chats in chat panel
     private static void handleOperationTwo(ArrayList<User> users, User user, ArrayList<Chat> chats, BufferedReader br, BufferedWriter bw) throws IOException, InvalidFileFormatException {
         chats = updateChats(chats);
         users = updateUsers(users);
@@ -341,6 +342,11 @@ public final class FeedPageServer {
                 } while (viewChat);
             }
         }
+    }
+
+
+    private static void sendMessage(ArrayList<User> users, User user, ArrayList<Chat> chats, BufferedReader br, BufferedWriter bw) throws IOException, InvalidFileFormatException {
+
     }
 
     private static void handleOperationFour(ArrayList<User> users, User user, BufferedWriter bw) throws IOException {
