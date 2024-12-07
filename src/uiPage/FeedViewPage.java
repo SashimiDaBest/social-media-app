@@ -551,17 +551,12 @@ public class FeedViewPage extends JPanel {
             selectionButton.addActionListener(new ActionListener() {
                @Override
                public void actionPerformed(ActionEvent e) {
-
-                    String selectedUser = selectionButton.getText();
-
-                    Writer.write("6", writer);
+                   String selectedUser = selectionButton.getText();
+                   Writer.write("6", writer);
                    System.out.println("write: " + "6");
-                    Writer.write(selectedUser, writer);
-                   System.out.println("write: " + selectedUser);
-
-                    selectedUsers.add(selectedUser);
-                    pageManager.lazyLoadPage(selectedUser, () -> new OtherProfilePage(pageManager, writer, reader, selectedUser));
-                    pageManager.removePage("feed");
+                   selectedUsers.add(selectedUser);
+                   pageManager.lazyLoadPage(selectedUser, () -> new OtherProfilePage(pageManager, writer, reader, selectedUser));
+                   pageManager.removePage("feed");
                }    
             });
         }

@@ -71,24 +71,8 @@ public final class FeedPageServer {
                     handleOperationFour(users, user, bw);
                 // for opening otherPage
                 } else if (clientChosenOperation.equals("6")) {
-
-                    // Ensure that the user selected by the client exists.
-                    boolean validUser = false;
-                    String userSelection = br.readLine();
-                    System.out.println("read: " + userSelection);
-
-                    for (User u : users) {
-                        if (u.getUsername().equals(userSelection)) {
-                            validUser = true;
-                        }
-                    }
-                    Writer.write(String.valueOf(validUser), bw);
-                    System.out.println("write: " + String.valueOf(validUser));
-
-                    if (validUser) {
-                        OtherPageServer.otherPageOperation(br, bw, user, users, chats);
-                        break;
-                    }
+                    OtherPageServer.otherPageOperation(br, bw, user, users, chats);
+                    break;
                 }
 
             } catch (IOException | InvalidFileFormatException e) {
