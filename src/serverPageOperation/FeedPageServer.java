@@ -176,7 +176,6 @@ public final class FeedPageServer {
         chats = updateChats(chats);
         users = updateUsers(users);
 
-
         // Prepare chat summary for the logged-in user
         // Write the logged-in user's chats to the client.
         // FORMAT:
@@ -270,7 +269,9 @@ public final class FeedPageServer {
         System.out.println("write: " + listOfAvailableUsers);
     }
 
-    // Get all the existing users (except main user)
+    /**
+     * Get all the existing users (except main user)
+     */
     public static ArrayList<User> updateUsers(ArrayList<User> users) {
         File dataDirectory = new File("Sample Test Folder");
         File[] userFiles = dataDirectory.listFiles((ignored, name) -> name.startsWith("U_"));
@@ -283,7 +284,9 @@ public final class FeedPageServer {
         return users;
     }
 
-    // Get all the existing chat
+    /**
+     * Get all the existing chat
+     */
     public static ArrayList<Chat> updateChats(ArrayList<Chat> chats) throws InvalidFileFormatException {
         File dataDirectory = new File("Sample Test Folder");
         File[] chatFiles = dataDirectory.listFiles((ignored, name) -> name.startsWith("C_"));

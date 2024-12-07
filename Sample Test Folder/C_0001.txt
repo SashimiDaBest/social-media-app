@@ -7,4 +7,5 @@ U_0006;0This should be a valid entry
 U_0006;0Another test line
 U_0005;0More data just to check
 U_0006;0Test end data for validation
-U_0003;0hello
+U_0003;0HELLO WORLD
+U_0003;0HOW'S EVERYONE DOING TODAY???
