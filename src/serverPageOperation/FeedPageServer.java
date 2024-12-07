@@ -77,6 +77,15 @@ public final class FeedPageServer {
                 } else if (input.equals("6")) {
                     OtherPageServer.otherPageOperation(br, bw, user, users, chats);
                     break;
+                } else if (input.equals("send")) {
+//                    sendText(user, chats, bw, br);
+                    break;
+                } else if (input.equals("edit")) {
+//                    editText(user, chats, bw, br);
+                    break;
+                } else if (input.equals("delete")) {
+//                    deleteText(user, chats, bw, br);
+                    break;
                 }
 
             } catch (IOException | InvalidFileFormatException e) {
@@ -84,6 +93,35 @@ public final class FeedPageServer {
             }
         }
     }
+
+    /*
+    private static void sendText(User user, ArrayList<Chat> chats, BufferedWriter bw, BufferedReader br) throws IOException {
+        // Compose a new message
+        String newMessage = br.readLine();
+        System.out.println("read: " + newMessage);
+
+        chat.addMessage(new Message(user.getUserID(), 0, newMessage));
+    }
+
+    private static void editText(User user, ArrayList<Chat> chats, BufferedWriter bw, BufferedReader br) {
+        // Edit the previous message by the user
+        String editedMessage = br.readLine();
+        System.out.println("read: " + editedMessage);
+        chat.editMessage(editedMessage, user.getUserID());
+    }
+
+    private static void deleteText(User user, ArrayList<Chat> chats, BufferedWriter bw, BufferedReader br) {
+        // Delete the previous message by the user
+        chat.deleteMessage(user.getUserID());
+        break;
+    }
+
+
+     */
+
+
+
+
 
     private static void handleOperationOne(ArrayList<User> users, User user, ArrayList<Chat> chats, BufferedReader br, BufferedWriter bw) throws IOException {
         // Step 1: Handle initial operations related to the user
@@ -206,37 +244,6 @@ public final class FeedPageServer {
                 // Send chat content to client
                 Writer.write(chatContent.substring(0, chatContent.length() - 1), bw);
                 System.out.println("write: " + chatContent);
-
-                /*
-                // Process client choice
-                String chatDecision = br.readLine();
-                System.out.println("read: " + chatDecision);
-                chats = updateChats(chats);
-
-                switch (chatDecision) {
-                    case "1":
-                        // Compose a new message
-                        String newMessage = br.readLine();
-                        System.out.println("read: " + newMessage);
-                        chat.addMessage(new Message(user.getUserID(), 0, newMessage));
-                        break;
-                    case "2":
-                        // Delete the previous message by the user
-                        chat.deleteMessage(user.getUserID());
-                        break;
-                    case "3":
-                        // Edit the previous message by the user
-                        String editedMessage = br.readLine();
-                        System.out.println("read: " + editedMessage);
-                        chat.editMessage(editedMessage, user.getUserID());
-                        break;
-                    case "4":
-                        // Exit the chat
-                        viewChat = false;
-                        break;
-                }
-
-                 */
                 break;
             }
         }
