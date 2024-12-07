@@ -17,8 +17,6 @@ public class FeedViewPage extends JPanel {
     private JButton loadButton;
     private JButton deleteButton;
     private JButton clearButton;
-    private JButton prevButton;
-    private JButton nextButton;
 
     private ArrayList<JButton> chatButtons;
     private ArrayList<JLabel> chatLabels;
@@ -82,6 +80,7 @@ public class FeedViewPage extends JPanel {
 
         add(mainPanel, BorderLayout.CENTER);
 
+        loadChats(false);
         setupActionListeners();
     }
 
@@ -162,8 +161,6 @@ public class FeedViewPage extends JPanel {
         this.loadButton = new JButton("Load");
         this.deleteButton = new JButton("Delete");
         this.clearButton = new JButton("Clear");
-        this.prevButton = new JButton("<<");
-        this.nextButton = new JButton(">>");
         this.searchField = searchField;
 
         deleteButton.setEnabled(false);
@@ -173,8 +170,6 @@ public class FeedViewPage extends JPanel {
         buttonPanel.add(loadButton);
         buttonPanel.add(deleteButton);
         buttonPanel.add(clearButton);
-        buttonPanel.add(prevButton);
-        buttonPanel.add(nextButton);
 
         deleteButton.setEnabled(false);
         clearButton.setEnabled(false);
@@ -217,6 +212,45 @@ public class FeedViewPage extends JPanel {
         return selectionPanel;
     }
 
+    // loads what chats are in the chat panel 
+    // (splits old loadButton's functionality across multiple functions)
+    // param: made so that messages don't pop up upon FeedPage loading
+    private void loadChats(boolean triggeredByButtonPress) {
+
+            Writer.write("2", writer);
+            System.out.println("write: " + "2");
+            try {
+                loadButton.setEnabled(false);
+
+                // receives the chat's id, along with the users within the chat
+                String response = reader.readLine();
+                System.out.println("read: " + response);
+                System.out.println(response);
+
+                // server says the client doesn't belong to any chats (if response string is empty)
+                if (response.isEmpty() && triggeredByButtonPress) {
+                    JOptionPane.showMessageDialog(null, "You have no chats!", "Boiler Gram", JOptionPane.ERROR_MESSAGE);
+                    loadButton.setEnabled(true);
+                    
+                // server has found the client to be in some chats
+                } else {
+
+                    // create the buttons using the chat names the client belongs to
+                    String[] activeChats = response.split(";");
+                    for (int i = 0; i < chatButtons.size(); i++) {
+                        if (i < activeChats.length) {
+                            chatButtons.get(i).setEnabled(true);
+                            chatButtons.get(i).setVisible(true);
+                            chatButtons.get(i).setText(activeChats[i].substring(0, 10));
+                        } else
+                            chatButtons.get(i).setVisible(false);
+                    }
+                }
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+
 
     private void setupActionListeners() {
 
@@ -229,45 +263,6 @@ public class FeedViewPage extends JPanel {
                 // load the user's page
                 pageManager.lazyLoadPage("user", () -> new UserProfilePage(pageManager, writer, reader));
                 pageManager.removePage("feed");
-            }
-        });
-
-        // load chats on chat panel (instantiate buttons)
-        loadButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Writer.write("2", writer);
-                System.out.println("write: " + "2");
-                try {
-                    loadButton.setEnabled(false);
-
-                    // receives the chat's id, along with the users within the chat
-                    String response = reader.readLine();
-                    System.out.println("read: " + response);
-                    System.out.println(response);
-
-                    // server says the client doesn't belong to any chats (if response string is empty)
-                    if (response.isEmpty()) {
-                        JOptionPane.showMessageDialog(null, "You have no chats!", "Boiler Gram", JOptionPane.ERROR_MESSAGE);
-                        loadButton.setEnabled(true);
-                    
-                    // server has found the client to be in some chats
-                    } else {
-
-                        // create the buttons using the chat names the client belongs to
-                        String[] activeChats = response.split(";");
-                        for (int i = 0; i < chatButtons.size(); i++) {
-                            if (i < activeChats.length) {
-                                chatButtons.get(i).setEnabled(true);
-                                chatButtons.get(i).setVisible(true);
-                                chatButtons.get(i).setText(activeChats[i].substring(0, 10));
-                            } else
-                                chatButtons.get(i).setVisible(false);
-                        }
-                    }
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
             }
         });
 
@@ -480,6 +475,14 @@ public class FeedViewPage extends JPanel {
                     Writer.write("4", writer);
                     System.out.println("write: " + "4");
 
+                    // eat up erronous "Invalid Chats" that is sent from loadChats()
+                    String eatUpLine = reader.readLine();
+                    System.out.println("read: eaten line by Search: " + eatUpLine);
+
+                    // try again by writing back to server
+                    Writer.write("4", writer);
+                    System.out.println("write: " + "4");
+
                     String line = reader.readLine();
                     System.out.println("read: " + line);
 
@@ -670,6 +673,9 @@ public class FeedViewPage extends JPanel {
                     button.setEnabled(false);
                 }
                 selectedUsers.clear();
+
+                // update chat panel with the new chat
+                loadChats(true);
             }
         });
     
