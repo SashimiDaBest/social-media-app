@@ -180,69 +180,70 @@ public final class FeedPageServer {
         // Write the logged-in user's chats to the client.
         // FORMAT:
         // Chat #0000 (With username, username, ...etc);Chat #0001 (With username, username);...etc
+        String selectedChat = br.readLine();
+        System.out.println("read: " + selectedChat);
         String chatOutput = "";
         boolean found = false;
         for (Chat chat : chats) {
-            if (br.readLine().equals(chat.getChatID())) {
+            if (selectedChat.equals(chat.getChatID())) {
                 Writer.write("valid", bw);
+                System.out.println("write: valid");
                 found = true;
-                boolean viewChat = true;
-                while (viewChat) {
-                    String chatContent = "";
+                String chatContent = "";
 
-                    for (int i = 0; i < chat.getMessageList().size(); i++) {
-                        Message message = chat.getMessageList().get(i);
+                for (int i = 0; i < chat.getMessageList().size(); i++) {
+                    Message message = chat.getMessageList().get(i);
 
-                        // Check if the message is from the logged-in user
-                        if (message.getAuthorID().equals(user.getUserID())) {
-                            chatContent += "You: ";
-                        } else {
-                            chatContent += User.findUsernameFromID(message.getAuthorID()) + ": ";
-                        }
-
-                        // Add the message's content
-                        chatContent += message.getMessage();
-                        chatContent += ";";
+                    // Check if the message is from the logged-in user
+                    if (message.getAuthorID().equals(user.getUserID())) {
+                        chatContent += "You: ";
+                    } else {
+                        chatContent += User.findUsernameFromID(message.getAuthorID()) + ": ";
                     }
 
-                    // Send chat content to client
-                    Writer.write(chatContent.substring(0, chatContent.length() - 1), bw);
-                    System.out.println("write: " + chatContent);
-
-                    /*
-                    // Process client choice
-                    String chatDecision = br.readLine();
-                    System.out.println("read: " + chatDecision);
-                    chats = updateChats(chats);
-
-                    switch (chatDecision) {
-                        case "1":
-                            // Compose a new message
-                            String newMessage = br.readLine();
-                            System.out.println("read: " + newMessage);
-                            chat.addMessage(new Message(user.getUserID(), 0, newMessage));
-                            break;
-                        case "2":
-                            // Delete the previous message by the user
-                            chat.deleteMessage(user.getUserID());
-                            break;
-                        case "3":
-                            // Edit the previous message by the user
-                            String editedMessage = br.readLine();
-                            System.out.println("read: " + editedMessage);
-                            chat.editMessage(editedMessage, user.getUserID());
-                            break;
-                        case "4":
-                            // Exit the chat
-                            viewChat = false;
-                            break;
-                    }
-
-                     */
+                    // Add the message's content
+                    chatContent += message.getMessage();
+                    chatContent += ";";
                 }
+
+                // Send chat content to client
+                Writer.write(chatContent.substring(0, chatContent.length() - 1), bw);
+                System.out.println("write: " + chatContent);
+
+                /*
+                // Process client choice
+                String chatDecision = br.readLine();
+                System.out.println("read: " + chatDecision);
+                chats = updateChats(chats);
+
+                switch (chatDecision) {
+                    case "1":
+                        // Compose a new message
+                        String newMessage = br.readLine();
+                        System.out.println("read: " + newMessage);
+                        chat.addMessage(new Message(user.getUserID(), 0, newMessage));
+                        break;
+                    case "2":
+                        // Delete the previous message by the user
+                        chat.deleteMessage(user.getUserID());
+                        break;
+                    case "3":
+                        // Edit the previous message by the user
+                        String editedMessage = br.readLine();
+                        System.out.println("read: " + editedMessage);
+                        chat.editMessage(editedMessage, user.getUserID());
+                        break;
+                    case "4":
+                        // Exit the chat
+                        viewChat = false;
+                        break;
+                }
+
+                 */
                 break;
             }
-        } if (!found) {
+        }
+        if (!found) {
             Writer.write("invalid", bw);
         }
     }

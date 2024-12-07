@@ -15,12 +15,13 @@ public class FeedViewPage extends JPanel {
     private static final int MAX_SELECTED_USERS = 8;
 
     // UI Components
-    private JButton profileButton, searchButton, loadButton, deleteButton, clearButton;
+    private JButton profileButton, searchButton, deleteButton, clearButton, addSelectedToChat;
     private ArrayList<JButton> chatButtons, selectionButtons;
     private ArrayList<JLabel> chatLabels;
     private JTextField chatField, searchField;
-    private JButton uploadButton, editButton, sendButton, addSelectedToChat;
+    private JButton uploadButton, editButton, sendButton;
     private JScrollPane chatViewPanel;
+    private JPanel chatPanel; // Dynamic chat panel
 
     // Logic
     private ArrayList<String> selectedUsers; // Holds selected usernames
@@ -37,6 +38,7 @@ public class FeedViewPage extends JPanel {
         this.selectedUsers = new ArrayList<>();
         this.selectionButtons = new ArrayList<>();
         this.chatButtons = new ArrayList<>();
+        this.chatLabels = new ArrayList<>();
 
         setLayout(new BorderLayout());
 
@@ -122,19 +124,36 @@ public class FeedViewPage extends JPanel {
     }
 
     public JScrollPane createChatPanel() {
-        JPanel chatPanel = new JPanel();
-        chatPanel.setLayout(new BoxLayout(chatPanel, BoxLayout.Y_AXIS));
+        chatPanel = new JPanel(); // Create a new panel for dynamic chat updates
+        chatPanel.setLayout(new BoxLayout(chatPanel, BoxLayout.Y_AXIS)); // Vertical alignment of chat messages
+        JScrollPane scrollPane = new JScrollPane(chatPanel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        return scrollPane;
 
-        chatLabels = new ArrayList<>();
-        for (int i = 0; i < 6; i++) {
-            JLabel label = new JLabel("");
-            chatLabels.add(label);
-            chatPanel.add(label);
+//        if (chatLabels == null) {
+//            JLabel label = new JLabel("Create or select chat to view chat!");
+//            chatLabels.add(label);
+//            chatPanel.add(label);
+//        } else {
+//            for (int i = 0; i < chatLabels.size(); i++) {
+//                JLabel label = new JLabel("");
+//                chatLabels.add(label);
+//                chatPanel.add(label);
+//            }
+//        }
+//
+//        chatLabels = new ArrayList<>();
+//        return new JScrollPane(chatPanel);
+    }
+
+    private void updateChatPanel(ArrayList<String> messages) {
+        chatPanel.removeAll(); // Clear existing components
+        for (String message : messages) {
+            JLabel messageLabel = new JLabel(message);
+            chatPanel.add(messageLabel); // Add new messages dynamically
         }
-
-        chatLabels.get(0).setText("Create or select chat to view chat!");
-
-        return new JScrollPane(chatPanel);
+        chatPanel.revalidate(); // Recalculate layout
+        chatPanel.repaint();    // Refresh UI
     }
 
     public JPanel createBottomPanel() {
@@ -217,22 +236,23 @@ public class FeedViewPage extends JPanel {
                    Writer.write("2", bufferedWriter);
                    String selectedChat = chatButton.getText();
                    Writer.write(selectedChat, bufferedWriter);
+
                    Thread loadingThread = new Thread(() -> {
                        try {
-                           String line = bufferedReader.readLine();
-                           ArrayList<String> resultMessageList;
-                           if (line.equals("valid")) {
-                               line = bufferedReader.readLine();
-                               resultMessageList = new ArrayList<>(Arrays.asList(line.split(";")));
+                           String response = bufferedReader.readLine();
+                           if (response.equals("valid")) {
+                               String messagesLine = bufferedReader.readLine();
+                               ArrayList<String> messages = new ArrayList<>(Arrays.asList(messagesLine.split(";")));
+                               SwingUtilities.invokeLater(() -> updateChatPanel(messages)); // Update chat panel on the Event Dispatch Thread
                            } else {
-                               resultMessageList = new ArrayList<>();
+                               ArrayList<String> messages = new ArrayList<>();
+                               messages.add("Invalid chat selected.");
+                               SwingUtilities.invokeLater(() -> {
+                                   updateChatPanel(messages);
+                               });
                            }
-                           for (int i = 0; i < resultMessageList.size(); i++) {
-                               chatLabels.add(new JLabel(resultMessageList.get(i)));
-                           }
-                           chatViewPanel = createChatPanel();
                        } catch (IOException ex) {
-                           throw new RuntimeException(ex);
+                           ex.printStackTrace();
                        }
                    });
                    loadingThread.start();
