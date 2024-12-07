@@ -217,7 +217,6 @@ public class FeedViewPage extends JPanel {
         return selectionPanel;
     }
 
-
     private void setupActionListeners() {
 
         // navigate to user profile
@@ -547,7 +546,6 @@ public class FeedViewPage extends JPanel {
         });
         
         for (JButton selectionButton: selectionButtons) {
-
             selectionButton.addActionListener(new ActionListener() {
                @Override
                public void actionPerformed(ActionEvent e) {
@@ -560,91 +558,75 @@ public class FeedViewPage extends JPanel {
                }    
             });
         }
-    
-        // for adding all selected users to a chat
+
         addSelectedToChat.addActionListener(new ActionListener() {
             @Override 
             public void actionPerformed(ActionEvent e) {
-                ArrayList<String> invalidUsers = new ArrayList<>();
                 ArrayList<String> validUsers = new ArrayList<>();
-
-                // to be sent for chat info (change later)
-                String membersList = "";
                 
                 try {
+                    // Initiate the chat creation process
                     Writer.write("1", writer);
-                    System.out.println("write: " + "1");
+                    System.out.println("write: 1");
+
+                    // Read available users
                     String[] availableUsers = reader.readLine().split(";");
                     System.out.println("read: " + Arrays.toString(availableUsers));
 
-                    for (String username: selectedUsers) {
-
+                    // Validate selected users
+                    for (String username : selectedUsers) {
                         Writer.write(username, writer);
                         System.out.println("write: " + username);
 
                         String validation = reader.readLine();
                         System.out.println("read: " + validation);
-                        if (validation.equals("self") || validation.equals("User cannot be chatted with!")) {
-                            invalidUsers.add(username);
-                            continue;
-                        }
 
-                        validUsers.add(username);
+                        // Skip invalid users
+                        if (!validation.equals("self") && !validation.equals("User cannot be chatted with!")) {
+                            validUsers.add(username);
+                        }
                     }
+
+                    // Signal the end of user validation
                     Writer.write("[DONE]", writer);
-                    System.out.println("write: " + "[DONE]");
+                    System.out.println("write: [DONE]");
 
-                    // send members using only valid Users (send empty string if membersList is empty)
-
-                    if (validUsers.size() > 0) {
-                        for(int i = 0; i < validUsers.size(); i++) {
-                            if (i == validUsers.size() - 1) {
-                                membersList += validUsers.get(i);
-                            } else {
-                                membersList += validUsers.get(i) + ";";
-                            }
-                        }
-                    }
-                   
+                    // Prepare and send the list of valid users
+                    String membersList = String.join(";", validUsers);
                     Writer.write(membersList, writer);
                     System.out.println("write: " + membersList);
 
-                    // check if chat was made successfully
+                    // Check chat creation status
                     String chatCreationValidation = reader.readLine();
                     System.out.println("read: " + chatCreationValidation);
 
-                    if (chatCreationValidation.equals("[SUCCESSFUL CHAT CREATION]")) {
-                        JOptionPane.showMessageDialog(null, "You've created a new chat!", 
-                            "CHAT SUCCESSFULLY MADE", JOptionPane.INFORMATION_MESSAGE);
-                    
-                    } else if (chatCreationValidation.equals("[CHAT CREATION UNSUCCESSFUL]")) {
-                        JOptionPane.showMessageDialog(null, "Chat could not be made with the selected users!", 
-                            "INVALID USERS SELECTED FOR CHAT", JOptionPane.ERROR_MESSAGE);
+                    // Handle chat creation result
+                    if ("[SUCCESSFUL CHAT CREATION]".equals(chatCreationValidation)) {
+                        JOptionPane.showMessageDialog(
+                                null,
+                                "You've created a new chat!",
+                                "CHAT SUCCESSFULLY MADE",
+                                JOptionPane.INFORMATION_MESSAGE
+                        );
+                    } else if ("[CHAT CREATION UNSUCCESSFUL]".equals(chatCreationValidation)) {
+                        JOptionPane.showMessageDialog(
+                                null,
+                                "Chat could not be made with the selected users!",
+                                "INVALID USERS SELECTED FOR CHAT",
+                                JOptionPane.ERROR_MESSAGE
+                        );
                     }
-
-                    
-
                 } catch (IOException error) {
                     error.printStackTrace();
-                }
-
-                // display users that couldn't be added
-                if (invalidUsers.size() > 0) {
-                    String invalids = "";
-                    for (String username: invalidUsers) {
-                        invalids += username + "\n";
+                } finally {
+                    // Resets the selection panel, disable the button, and clears the selected users list.
+                    addSelectedToChat.setEnabled(false);
+                    for (JButton button : selectionButtons) {
+                        button.setVisible(false);
+                        button.setEnabled(false);
                     }
-                    JOptionPane.showMessageDialog(null, invalids, 
-                        "USERS WHO COULDN'T BE ADDED", JOptionPane.INFORMATION_MESSAGE);
+                    selectedUsers.clear();
                 }
-                
-                // clear selectedUsers and reset the Selection Panel
-                addSelectedToChat.setEnabled(false);
-                for (JButton button: selectionButtons) {
-                    button.setVisible(false);
-                    button.setEnabled(false);
-                }
-                selectedUsers.clear();
             }
         });
     
