@@ -23,18 +23,19 @@ public class FeedViewPage extends JPanel {
 
     // Logic
     private ArrayList<String> selectedUsers; // Holds selected usernames
-    private BufferedWriter writer;
-    private BufferedReader reader;
+    private BufferedWriter bufferedWriter;
+    private BufferedReader bufferedReader;
     private PageManager pageManager;
 
     public FeedViewPage(PageManager pageManager, BufferedWriter bw, BufferedReader br) {
         System.out.println("This is feed view page");
 
         this.pageManager = pageManager;
-        this.writer = bw;
-        this.reader = br;
+        this.bufferedWriter = bw;
+        this.bufferedReader = br;
         this.selectedUsers = new ArrayList<>();
         this.selectionButtons = new ArrayList<>();
+        this.chatButtons = new ArrayList<>();
 
         setLayout(new BorderLayout());
 
@@ -129,7 +130,7 @@ public class FeedViewPage extends JPanel {
             chatPanel.add(label);
         }
 
-        chatLabels.get(0).setText("Add Users to Chat or View!");
+        chatLabels.get(0).setText("Create or select chat to view chat!");
 
         return new JScrollPane(chatPanel);
     }
@@ -159,25 +160,24 @@ public class FeedViewPage extends JPanel {
     }
 
     public JScrollPane createChatViewPanel() {
-        JPanel buttonPanelLeft = new JPanel();
-        buttonPanelLeft.setLayout(new GridLayout(8, 1, 5, 5)); // 8 buttons in a grid layout
+        // Create a panel for buttons with a grid layout
+        JPanel buttonPanelLeft = new JPanel(new GridLayout(8, 1, 5, 5)); // 8 buttons in a grid layout
 
-        chatButtons = new ArrayList<>(); // For accessing buttons after creation
-
-        for (int i = 1; i <= 8; i++) {
-            JButton button = new JButton("Button " + i);
-            button.setPreferredSize(new Dimension(50, 40)); // Fixed size for buttons
-            buttonPanelLeft.add(button);
-            chatButtons.add(button);
-            button.setEnabled(false);
-            button.setVisible(false);
+        try {
+            String line = bufferedReader.readLine();
+            while (line != null && !line.equals("stop")) {
+                chatButtons.add(new JButton(line));
+                buttonPanelLeft.add(chatButtons.get(chatButtons.size() - 1));
+                line = bufferedReader.readLine();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
-        chatButtons.get(0).setVisible(true);
-        chatButtons.get(0).setText("Load chats!");
-
+        // Wrap the panel in a scroll pane
         JScrollPane leftScrollPane = new JScrollPane(buttonPanelLeft);
-        leftScrollPane.setPreferredSize(new Dimension(150, 0)); // Adjust width to fit buttons
+        leftScrollPane.setPreferredSize(new Dimension(150, 0));
+
         return leftScrollPane;
     }
 
@@ -185,9 +185,9 @@ public class FeedViewPage extends JPanel {
 
         // Profile button navigates to user profile
         profileButton.addActionListener(e -> {
-            Writer.write("user", writer);
+            Writer.write("user", bufferedWriter);
             System.out.println("write: user");
-            pageManager.lazyLoadPage("user", () -> new UserProfilePage(pageManager, writer, reader));
+            pageManager.lazyLoadPage("user", () -> new UserProfilePage(pageManager, bufferedWriter, bufferedReader));
             pageManager.removePage("feed");
         });
 
@@ -198,11 +198,11 @@ public class FeedViewPage extends JPanel {
         loadButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Writer.write("2", writer);
+                Writer.write("2", bufferedWri);
                 System.out.println("write: " + "2");
                 try {
                     loadButton.setEnabled(false);
-                    String response = reader.readLine();
+                    String response = bufferedReader.readLine();
                     System.out.println("read: " + response);
                     System.out.println(response);
                     if (response.isEmpty()) {
@@ -231,12 +231,23 @@ public class FeedViewPage extends JPanel {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     String selectedUser = selectionButton.getText();
-                    Writer.write("6", writer);
+                    Writer.write("6", bufferedWriter);
                     System.out.println("write: " + "6");
                     selectedUsers.add(selectedUser);
-                    pageManager.lazyLoadPage(selectedUser, () -> new OtherProfilePage(pageManager, writer, reader, selectedUser));
+                    pageManager.lazyLoadPage(selectedUser, () -> new OtherProfilePage(pageManager, bufferedWriter, bufferedReader, selectedUser));
                     pageManager.removePage("feed");
                 }
+            });
+        }
+
+        for (JButton chatButton: chatButtons) {
+            chatButton.addActionListener(new ActionListener() {
+               @Override
+               public void actionPerformed(ActionEvent e) {
+                   Writer.write("2", bufferedWriter);
+                   String selectedChat = chatButton.getText();
+                   Writer.write(selectedChat, bufferedWriter);
+               }
             });
         }
 
@@ -246,7 +257,7 @@ public class FeedViewPage extends JPanel {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     try {
-                        Writer.write(chatButton.getText().substring(6), writer);
+                        Writer.write(chatButton.getText().substring(6), bufferedWri);
                         System.out.println("write: " + chatButton.getText().substring(6));
                         for (JButton button : chatButtons) {
                             if (!button.equals(chatButton)) {
@@ -262,7 +273,7 @@ public class FeedViewPage extends JPanel {
                         sendButton.setEnabled(true);
 
                         ArrayList<String> menuToDisplay;
-                        String[] lines = reader.readLine().split(";");
+                        String[] lines = bufferedReader.readLine().split(";");
                         System.out.println("read: " + Arrays.toString(lines));
 
                         menuToDisplay = new ArrayList<>(Arrays.asList(lines));
@@ -297,13 +308,13 @@ public class FeedViewPage extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    Writer.write("1", writer);
+                    Writer.write("1", bufferedWri);
                     System.out.println("write: " + "1");
-                    Writer.write(chatField.getText(), writer);
+                    Writer.write(chatField.getText(), bufferedWri);
                     System.out.println("write: " + chatField.getText());
 
                     ArrayList<String> menuToDisplay;
-                    String[] lines = reader.readLine().split(";");
+                    String[] lines = bufferedReader.readLine().split(";");
                     System.out.println("read: " + Arrays.toString(lines));
 
                     menuToDisplay = new ArrayList<>(Arrays.asList(lines));
@@ -337,13 +348,13 @@ public class FeedViewPage extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    Writer.write("3", writer);
+                    Writer.write("3", bufferedWri);
                     System.out.println("write: " + "3");
-                    Writer.write(chatField.getText(), writer);
+                    Writer.write(chatField.getText(), bufferedWri);
                     System.out.println("write: " + chatField.getText());
 
                     ArrayList<String> menuToDisplay;
-                    String[] lines = reader.readLine().split(";");
+                    String[] lines = bufferedReader.readLine().split(";");
                     System.out.println("read: " + Arrays.toString(lines));
 
                     menuToDisplay = new ArrayList<>(Arrays.asList(lines));
@@ -376,11 +387,11 @@ public class FeedViewPage extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    Writer.write("2", writer);
+                    Writer.write("2", bufferedWri);
                     System.out.println("write: " + "2");
 
                     ArrayList<String> menuToDisplay;
-                    String[] lines = reader.readLine().split(";");
+                    String[] lines = bufferedReader.readLine().split(";");
                     System.out.println("read: " + Arrays.toString(lines));
 
                     menuToDisplay = new ArrayList<>(Arrays.asList(lines));
@@ -411,7 +422,7 @@ public class FeedViewPage extends JPanel {
         clearButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Writer.write("4", writer);
+                Writer.write("4", bufferedWri);
                 System.out.println("write: " + "4");
                 chatButtons.get(0).setVisible(true);
                 chatButtons.get(0).setText("Load chats!");
@@ -438,19 +449,19 @@ public class FeedViewPage extends JPanel {
                 
                 try {
                     // Initiate the chat creation process
-                    Writer.write("1", writer);
+                    Writer.write("1", bufferedWri);
                     System.out.println("write: 1");
 
                     // Read available users
-                    String[] availableUsers = reader.readLine().split(";");
+                    String[] availableUsers = bufferedReader.readLine().split(";");
                     System.out.println("read: " + Arrays.toString(availableUsers));
 
                     // Validate selected users
                     for (String username : selectedUsers) {
-                        Writer.write(username, writer);
+                        Writer.write(username, bufferedWri);
                         System.out.println("write: " + username);
 
-                        String validation = reader.readLine();
+                        String validation = bufferedReader.readLine();
                         System.out.println("read: " + validation);
 
                         // Skip invalid users
@@ -460,16 +471,16 @@ public class FeedViewPage extends JPanel {
                     }
 
                     // Signal the end of user validation
-                    Writer.write("[DONE]", writer);
+                    Writer.write("[DONE]", bufferedWri);
                     System.out.println("write: [DONE]");
 
                     // Prepare and send the list of valid users
                     String membersList = String.join(";", validUsers);
-                    Writer.write(membersList, writer);
+                    Writer.write(membersList, bufferedWri);
                     System.out.println("write: " + membersList);
 
                     // Check chat creation status
-                    String chatCreationValidation = reader.readLine();
+                    String chatCreationValidation = bufferedReader.readLine();
                     System.out.println("read: " + chatCreationValidation);
 
                     // Handle chat creation result
@@ -509,10 +520,10 @@ public class FeedViewPage extends JPanel {
     // TODO: REVIEW LATER - SOMETHING IS WRONG WITH SEARCH FUNCTIONALITY
     private void handleUserSearch() {
         try {
-            Writer.write("4", writer);
+            Writer.write("4", bufferedWriter);
             System.out.println("write: 4");
 
-            String line = reader.readLine();
+            String line = bufferedReader.readLine();
             System.out.println("read: " + line);
 
             // Logic for user search and dropdown

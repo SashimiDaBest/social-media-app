@@ -49,6 +49,12 @@ public final class FeedPageServer {
                                          BufferedWriter bw, User user, ArrayList<User> users, ArrayList<Chat> chats) {
         System.out.println("Feed page operations started");
 
+        ArrayList<String> chatIDs = user.getChatIDList();
+        for (String chatID : chatIDs) {
+            Writer.write(chatID, bw);
+        }
+        Writer.write("stop", bw);
+
         while (true) {
             try {
                 String input = br.readLine();
@@ -170,12 +176,15 @@ public final class FeedPageServer {
         chats = updateChats(chats);
         users = updateUsers(users);
 
+       String chatID = br.readLine();
+
         // Prepare chat summary for the logged-in user
         // Write the logged-in user's chats to the client.
         // FORMAT:
         // Chat #0000 (With username, username, ...etc);Chat #0001 (With username, username);...etc
         String chatOutput = "";
         for (Chat chat : chats) {
+
             if (chat.getMemberList().contains(user.getUserID())) {
                 chatOutput += "Chat #" + chat.getChatID().substring(2) + " (With ";
 
