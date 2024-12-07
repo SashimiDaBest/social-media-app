@@ -28,6 +28,7 @@ public class FeedViewPage extends JPanel {
     private BufferedWriter bufferedWriter;
     private BufferedReader bufferedReader;
     private PageManager pageManager;
+    private String currentChatID;
 
     public FeedViewPage(PageManager pageManager, BufferedWriter bw, BufferedReader br) {
         System.out.println("This is feed view page");
@@ -39,6 +40,7 @@ public class FeedViewPage extends JPanel {
         this.selectionButtons = new ArrayList<>();
         this.chatButtons = new ArrayList<>();
         this.chatLabels = new ArrayList<>();
+        this.currentChatID = "";
 
         setLayout(new BorderLayout());
 
@@ -85,8 +87,6 @@ public class FeedViewPage extends JPanel {
         searchButton = new JButton("Search");
         deleteButton = new JButton("Delete");
         clearButton = new JButton("Clear");
-        deleteButton.setEnabled(false);
-        clearButton.setEnabled(false);
 
         JPanel buttonPanel = new JPanel(new FlowLayout());
         buttonPanel.add(searchButton);
@@ -129,21 +129,6 @@ public class FeedViewPage extends JPanel {
         JScrollPane scrollPane = new JScrollPane(chatPanel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         return scrollPane;
-
-//        if (chatLabels == null) {
-//            JLabel label = new JLabel("Create or select chat to view chat!");
-//            chatLabels.add(label);
-//            chatPanel.add(label);
-//        } else {
-//            for (int i = 0; i < chatLabels.size(); i++) {
-//                JLabel label = new JLabel("");
-//                chatLabels.add(label);
-//                chatPanel.add(label);
-//            }
-//        }
-//
-//        chatLabels = new ArrayList<>();
-//        return new JScrollPane(chatPanel);
     }
 
     private void updateChatPanel(ArrayList<String> messages) {
@@ -243,12 +228,26 @@ public class FeedViewPage extends JPanel {
                            if (response.equals("valid")) {
                                String messagesLine = bufferedReader.readLine();
                                ArrayList<String> messages = new ArrayList<>(Arrays.asList(messagesLine.split(";")));
-                               SwingUtilities.invokeLater(() -> updateChatPanel(messages)); // Update chat panel on the Event Dispatch Thread
+                               SwingUtilities.invokeLater(() -> {
+                                   updateChatPanel(messages);
+                                   currentChatID = selectedChat; // Update current chat ID
+
+                                   // Enable buttons
+                                   uploadButton.setEnabled(true);
+                                   editButton.setEnabled(true);
+                                   sendButton.setEnabled(true);
+                               }); // Update chat panel on the Event Dispatch Thread
                            } else {
                                ArrayList<String> messages = new ArrayList<>();
                                messages.add("Invalid chat selected.");
                                SwingUtilities.invokeLater(() -> {
                                    updateChatPanel(messages);
+                                   currentChatID = ""; // Reset current chat ID
+
+                                   // Disable buttons
+                                   uploadButton.setEnabled(false);
+                                   editButton.setEnabled(false);
+                                   sendButton.setEnabled(false);
                                });
                            }
                        } catch (IOException ex) {
@@ -266,57 +265,23 @@ public class FeedViewPage extends JPanel {
             });
         }
 
-        /*
-        for (JButton chatButton : chatButtons) {
-            chatButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    try {
-                        Writer.write(chatButton.getText().substring(6), bufferedWri);
-                        System.out.println("write: " + chatButton.getText().substring(6));
-                        for (JButton button : chatButtons) {
-                            if (!button.equals(chatButton)) {
-                                button.setVisible(false);
-                            } else {
-                                button.setEnabled(false);
-                            }
-                        }
-                        clearButton.setEnabled(true);
-                        deleteButton.setEnabled(true);
-                        uploadButton.setEnabled(true);
-                        editButton.setEnabled(true);
-                        sendButton.setEnabled(true);
+        // Set up action listeners
+        deleteButton.addActionListener(e -> {
+            deleteMostRecentSelection();
 
-                        ArrayList<String> menuToDisplay;
-                        String[] lines = bufferedReader.readLine().split(";");
-                        System.out.println("read: " + Arrays.toString(lines));
+            // Disable the `deleteButton` if there are no more users to delete
+            if (selectedUsers.isEmpty()) {
+                deleteButton.setEnabled(false);
+            }
+        });
 
-                        menuToDisplay = new ArrayList<>(Arrays.asList(lines));
-                        int index = 0;
-                        for (int i = 0; i < menuToDisplay.size(); i++) {
-                            String line = menuToDisplay.get(i);
-                            if (line.equals("---------------------------------------------------------------------") ||
-                                    line.equals("[Displaying up to 6 most recent messages]") ||
-                                    line.equals("1 - Compose message") || line.equals("2 - Delete previous message") ||
-                                    line.equals("3 - Edit previous message") || line.equals("4 - Exit chat") ||
-                                    line.contains("Chat #") || line.contains("Members: You, ") || (line.isEmpty())) {
-                                continue;
-                            } else {
-                                chatLabels.get(index).setText(line);
-                                index++;
-                            }
-                        }
+        clearButton.addActionListener(e -> {
+            clearSelections();
 
-                        for (int i = index; i < chatLabels.size(); i++) {
-                            chatLabels.get(i).setText("");
-                        }
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                }
-            });
-        }
-        */
+            // Disable both `deleteButton` and `clearButton` after clearing
+            deleteButton.setEnabled(false);
+            clearButton.setEnabled(false);
+        });
 
         /*
         sendButton.addActionListener(new ActionListener() {
@@ -431,29 +396,6 @@ public class FeedViewPage extends JPanel {
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
-            }
-        });
-
-        clearButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Writer.write("4", bufferedWri);
-                System.out.println("write: " + "4");
-                chatButtons.get(0).setVisible(true);
-                chatButtons.get(0).setText("Load chats!");
-                chatButtons.get(0).setEnabled(false);
-                for (int i = 1; i < chatButtons.size(); i++) {
-                    chatButtons.get(i).setVisible(false);
-                }
-                chatLabels.get(0).setText("Chat content will appear here!");
-                for (int i = 1; i < chatLabels.size(); i++) {
-                    chatLabels.get(i).setText("");
-                }
-                loadButton.setEnabled(true);
-                deleteButton.setEnabled(false);
-                uploadButton.setEnabled(false);
-                editButton.setEnabled(false);
-                sendButton.setEnabled(false);
             }
         });
 
@@ -595,7 +537,44 @@ public class FeedViewPage extends JPanel {
                 button.setEnabled(true);
                 button.setText(selectedUsers.get(i));
             }
+
+            // Enable `deleteButton`, `clearButton`, and `addSelectedToChat`
+            deleteButton.setEnabled(true);
+            clearButton.setEnabled(true);
             addSelectedToChat.setEnabled(true);
         }
+    }
+
+    private void deleteMostRecentSelection() {
+        if (!selectedUsers.isEmpty()) {
+            // Remove the most recent user and corresponding button
+            int lastIndex = selectedUsers.size() - 1;
+            selectedUsers.remove(lastIndex);
+
+            JButton button = selectionButtons.get(lastIndex);
+            button.setVisible(false);
+            button.setEnabled(false);
+            button.setText("");
+
+            // Disable `addSelectedToChat` if no users are selected
+            if (selectedUsers.isEmpty()) {
+                addSelectedToChat.setEnabled(false);
+            }
+        }
+    }
+
+    private void clearSelections() {
+        // Clear all selected users
+        selectedUsers.clear();
+
+        // Reset all selection buttons
+        for (JButton button : selectionButtons) {
+            button.setVisible(false);
+            button.setEnabled(false);
+            button.setText("");
+        }
+
+        // Disable `addSelectedToChat`
+        addSelectedToChat.setEnabled(false);
     }
 }
