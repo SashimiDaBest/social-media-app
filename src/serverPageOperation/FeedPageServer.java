@@ -166,49 +166,48 @@ public final class FeedPageServer {
     }
 
     private static void handleOperationTwo(ArrayList<User> users, User user, ArrayList<Chat> chats, BufferedReader br, BufferedWriter bw) throws IOException, InvalidFileFormatException {
+        // Update chats and users data
         chats = updateChats(chats);
         users = updateUsers(users);
+
+        // Prepare chat summary for the logged-in user
         // Write the logged-in user's chats to the client.
         // FORMAT:
         // Chat #0000 (With username, username, ...etc);Chat #0001 (With username, username);...etc
         String chatOutput = "";
-        for (Chat c : chats) {
-            if (c.getMemberList().contains(user.getUserID())) {
-                chatOutput += "Chat #" + c.getChatID().substring(2) + " (With ";
+        for (Chat chat : chats) {
+            if (chat.getMemberList().contains(user.getUserID())) {
+                chatOutput += "Chat #" + chat.getChatID().substring(2) + " (With ";
 
-                // Add each member in the chat to the displayed list of members
-                // if they are NOT the logged-in user
-                for (int i = 0; i < c.getMemberList().size(); i++) {
-                    if (!c.getMemberList().get(i).equals(user.getUserID())) {
-                        chatOutput += User.findUsernameFromID(c.getMemberList().get(i)) + ", ";
+                // Add usernames of chat members, excluding the logged-in user
+                for (String memberID : chat.getMemberList()) {
+                    if (!memberID.equals(user.getUserID())) {
+                        chatOutput += User.findUsernameFromID(memberID) + ", ";
                     }
                 }
 
-                // As the logged-in user may not always appear at the beginning of the list
-                // of chat members, separating members will be done by adding ", " to the end
-                // of ALL entries (and not just all except the last one) and then removing it
-                // from the last one at the end.
+                // Remove trailing ", " and close the parenthesis
                 if (!chatOutput.isEmpty()) {
                     chatOutput = chatOutput.substring(0, chatOutput.length() - 2);
                     chatOutput += ");";
                 }
             }
         }
-        // Write the list of chats to the client. See above for why substring is taken.
+
+        // Send chat summary to the client
         if (!chatOutput.isEmpty()) {
-            chatOutput = chatOutput.substring(0, chatOutput.length() - 1);
+            chatOutput = chatOutput.substring(0, chatOutput.length() - 1); // Remove trailing ";"
         }
         Writer.write(chatOutput, bw);
         System.out.println("write: " + chatOutput);
 
         if (!chatOutput.isEmpty()) {
-            // Obtain the selected chat from the client.
+            // Read the selected chat ID from the client
             String chatID = "C_" + br.readLine();
             System.out.println("read: " + chatID);
 
-            // Validate and store the index of the chat corresponding to the received chat ID.
+            // Validate chat ID and find its index
             int chatIndex = -1;
-
             for (int i = 0; i < chats.size(); i++) {
                 if (chats.get(i).getChatID().equals(chatID)) {
                     chatIndex = i;
@@ -216,102 +215,84 @@ public final class FeedPageServer {
                 }
             }
 
+            // Handle invalid chat ID
             if (chatIndex == -1) {
                 Writer.write("Invalid Chat", bw);
-                System.out.println("write: " + "Invalid Chat");
+                System.out.println("write: Invalid Chat");
             } else {
-                // Loop through the chat menu until the user stops.
+                // Process selected chat
                 boolean viewChat = true;
-                do {
+                while (viewChat) {
+                    Chat selectedChat = chats.get(chatIndex);
+
                     // Display the top bar of the chat and its relevant information. ; indicates a new line.
                     String chatContent = "";
                     chatContent += "---------------------------------------------------------------------";
-                    chatContent += ";Chat #" + chats.get(chatIndex).getChatID().substring(2);
+                    chatContent += ";Chat #" + selectedChat.getChatID().substring(2);
                     chatContent += ";Members: You, ";
 
-                    // Display the members apart from the logged-in user in the top bar of the chat.
-                    for (String userID : chats.get(chatIndex).getMemberList()) {
-                        if (!userID.equals(user.getUserID())) {
-                            chatContent += User.findUsernameFromID(userID) + ", ";
+                    // Add other members' usernames
+                    for (String memberID : selectedChat.getMemberList()) {
+                        if (!memberID.equals(user.getUserID())) {
+                            chatContent += User.findUsernameFromID(memberID) + ", ";
                         }
                     }
 
-                    // Ensure the last user in the list does not include ", ".
+                    // Remove trailing ", "
                     chatContent = chatContent.substring(0, chatContent.length() - 2);
 
-                    // Ensure that only the last 6 messages of the chat are displayed. If the chat has less
-                    // than 6 messages, display all of its message to avoid a negative index.
-                    int startingMessageIndex;
-                    if (chats.get(chatIndex).getMessageList().size() < 6)
-                        startingMessageIndex = 0;
-                    else
-                        startingMessageIndex =
-                                chats.get(chatIndex).getMessageList().size() - 6;
-
-                    // Display the 7 recent messages in the chat.
+                    // Display up to 6 most recent messages
+                    int startIndex = Math.max(0, selectedChat.getMessageList().size() - 6);
                     chatContent += ";;[Displaying up to 6 most recent messages]";
-                    for (int i = startingMessageIndex;
-                         i < chats.get(chatIndex).getMessageList().size();
-                         i++) {
-
-                        // If the author is the logged-in user, display
-                        // "You:" as the sender. Otherwise, display
-                        // the author's username.
-                        if (chats.get(chatIndex).getMessageList().get(i).getAuthorID().
-                                equals(user.getUserID())) {
-                            chatContent += ";You: ";
-                        } else {
-                            chatContent += ";" + User.findUsernameFromID(chats.get(chatIndex).
-                                    getMessageList().
-                                    get(i).getAuthorID()) + ": ";
-                        }
-
+                    for (int i = startIndex; i < selectedChat.getMessageList().size(); i++) {
+                        Message message = selectedChat.getMessageList().get(i);
+                        chatContent += ";";
+                        chatContent += message.getAuthorID().equals(user.getUserID())
+                                ? "You: "
+                                : User.findUsernameFromID(message.getAuthorID()) + ": ";
                         // Add the message's content.
-                        chatContent += chats.get(chatIndex).getMessageList().get(i).getMessage();
+                        chatContent += message.getMessage();
                     }
+
+                    // Add chat menu options
                     chatContent += ";---------------------------------------------------------------------";
                     chatContent += ";1 - Compose message";
                     chatContent += ";2 - Delete previous message";
                     chatContent += ";3 - Edit previous message";
                     chatContent += ";4 - Exit chat";
 
-                    // Write the fully formed chat menu to the client.
+                    // Send chat content to client
                     Writer.write(chatContent, bw);
                     System.out.println("write: " + chatContent);
 
-                    // Collect the client's decision and process accordingly.
+                    // Process client choice
                     String chatDecision = br.readLine();
                     System.out.println("read: " + chatDecision);
+                    chats = updateChats(chats);
 
                     switch (chatDecision) {
                         case "1":
-                            // Compose message
-                            chats = updateChats(chats);
-                            String messageToCompose = br.readLine();
-                            System.out.println("read: " + messageToCompose);
-                            chats.get(chatIndex).addMessage(new Message(user.getUserID(),
-                                    0,
-                                    messageToCompose));
+                            // Compose a new message
+                            String newMessage = br.readLine();
+                            System.out.println("read: " + newMessage);
+                            selectedChat.addMessage(new Message(user.getUserID(), 0, newMessage));
                             break;
                         case "2":
-                            // Delete previous message
-                            chats = updateChats(chats);
-                            chats.get(chatIndex).deleteMessage(user.getUserID());
+                            // Delete the previous message by the user
+                            selectedChat.deleteMessage(user.getUserID());
                             break;
                         case "3":
-                            // Edit previous message
-                            chats = updateChats(chats);
-                            String replacementMessage = br.readLine();
-                            System.out.println("read: " + replacementMessage);
-                            chats.get(chatIndex).editMessage(replacementMessage, user.getUserID());
+                            // Edit the previous message by the user
+                            String editedMessage = br.readLine();
+                            System.out.println("read: " + editedMessage);
+                            selectedChat.editMessage(editedMessage, user.getUserID());
                             break;
                         case "4":
-                            // End chat loop
+                            // Exit the chat
                             viewChat = false;
                             break;
                     }
-
-                } while (viewChat);
+                }
             }
         }
     }
