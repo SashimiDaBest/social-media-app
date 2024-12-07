@@ -119,8 +119,28 @@ public class Chat implements ChatInterface {
         this.messageList = new ArrayList<>();
         writeData();
         synchronized (Chat.class) {
-            try (PrintWriter writer = new PrintWriter(new FileOutputStream(chatIDListDoc, true))) {
-                writer.println(this.chatID);
+
+            // overwrite whole file in order to update chatIDList
+            String previousChatFileContent = "";
+            try (BufferedReader reader = new BufferedReader(new FileReader(new File(chatIDListDoc)))) {
+                
+                String line = reader.readLine();
+                while(line != null) {
+                    previousChatFileContent += line;
+                    line = reader.readLine();
+                }
+                System.out.println("After reading chatIDList: " + previousChatFileContent);
+
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            try (PrintWriter writer = new PrintWriter(new FileOutputStream(chatIDListDoc, false))) {
+                // writer.println(this.chatID);
+                previousChatFileContent += "\n" + this.chatID;
+                System.out.println("About to write to chatIDList: " + previousChatFileContent);
+
+                writer.println(previousChatFileContent);
             } catch (FileNotFoundException e) {
                 throw new RuntimeException(e);
             }
