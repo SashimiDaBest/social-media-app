@@ -179,7 +179,7 @@ public final class FeedPageServer {
 
         if (newChattersNames != null && !newChattersNames.isEmpty()) {
             // Include the current user in the chat
-            String membersFromClient = newChattersNames + user.getUsername();
+            String membersFromClient = newChattersNames + ";" + user.getUsername();
             // Convert usernames to user IDs
             ArrayList<String> newChatMembers = new ArrayList<>(Arrays.asList(membersFromClient.split(";")));
 
