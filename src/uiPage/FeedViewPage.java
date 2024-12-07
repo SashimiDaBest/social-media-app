@@ -20,6 +20,7 @@ public class FeedViewPage extends JPanel {
     private ArrayList<JLabel> chatLabels;
     private JTextField chatField, searchField;
     private JButton uploadButton, editButton, sendButton, addSelectedToChat;
+    private JScrollPane chatViewPanel;
 
     // Logic
     private ArrayList<String> selectedUsers; // Holds selected usernames
@@ -45,7 +46,8 @@ public class FeedViewPage extends JPanel {
         // Center Panel: Chat view and message panel
         JPanel mainPanel = new JPanel(new BorderLayout());
         JPanel chatPanel = new JPanel(new BorderLayout());
-        chatPanel.add(createChatPanel(), BorderLayout.CENTER);
+        chatViewPanel = createChatPanel();
+        chatPanel.add(chatViewPanel, BorderLayout.CENTER);
         chatPanel.add(createBottomPanel(), BorderLayout.SOUTH);
 
         mainPanel.add(createChatViewPanel(), BorderLayout.WEST);
@@ -194,38 +196,6 @@ public class FeedViewPage extends JPanel {
         // Search for users
         searchButton.addActionListener(e -> handleUserSearch());
 
-        /*
-        loadButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Writer.write("2", bufferedWri);
-                System.out.println("write: " + "2");
-                try {
-                    loadButton.setEnabled(false);
-                    String response = bufferedReader.readLine();
-                    System.out.println("read: " + response);
-                    System.out.println(response);
-                    if (response.isEmpty()) {
-                        JOptionPane.showMessageDialog(null, "You have no chats!", "Boiler Gram", JOptionPane.ERROR_MESSAGE);
-                        loadButton.setEnabled(true);
-                    } else {
-                        String[] activeChats = response.split(";");
-                        for (int i = 0; i < chatButtons.size(); i++) {
-                            if (i < activeChats.length) {
-                                chatButtons.get(i).setEnabled(true);
-                                chatButtons.get(i).setVisible(true);
-                                chatButtons.get(i).setText(activeChats[i].substring(0, 10));
-                            } else
-                                chatButtons.get(i).setVisible(false);
-                        }
-                    }
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
-            }
-        });
-         */
-
         for (JButton selectionButton: selectionButtons) {
             selectionButton.addActionListener(new ActionListener() {
                 @Override
@@ -247,6 +217,31 @@ public class FeedViewPage extends JPanel {
                    Writer.write("2", bufferedWriter);
                    String selectedChat = chatButton.getText();
                    Writer.write(selectedChat, bufferedWriter);
+                   Thread loadingThread = new Thread(() -> {
+                       try {
+                           String line = bufferedReader.readLine();
+                           ArrayList<String> resultMessageList;
+                           if (line.equals("valid")) {
+                               line = bufferedReader.readLine();
+                               resultMessageList = new ArrayList<>(Arrays.asList(line.split(";")));
+                           } else {
+                               resultMessageList = new ArrayList<>();
+                           }
+                           for (int i = 0; i < resultMessageList.size(); i++) {
+                               chatLabels.add(new JLabel(resultMessageList.get(i)));
+                           }
+                           chatViewPanel = createChatPanel();
+                       } catch (IOException ex) {
+                           throw new RuntimeException(ex);
+                       }
+                   });
+                   loadingThread.start();
+
+                   try {
+                       loadingThread.join(); // makes sure this thread and its caller end at the same time
+                   } catch (InterruptedException ex) {
+                       ex.printStackTrace();
+                   }
                }
             });
         }
