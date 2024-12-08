@@ -14,8 +14,8 @@ public class CreateUserPage extends JPanel {
 
     private JLabel title = new JLabel("Welcome to Boiler Gram!", SwingConstants.CENTER);
     private JLabel slogan = new JLabel("Sign up to text all your boilermakers!", SwingConstants.CENTER);
-    private JLabel usernameLabel = new JLabel("Username:");
-    private JLabel passwordLabel = new JLabel("Password:");
+    private JLabel usernameLabel = new JLabel("Username");
+    private JLabel passwordLabel = new JLabel("Password");
     private JTextField usernameField = new JTextField(15);
     private JPasswordField passwordField = new JPasswordField(15);
     private JButton signUpButton = new JButton("Sign Up");
@@ -70,8 +70,9 @@ public class CreateUserPage extends JPanel {
         usernameField.setPreferredSize(new Dimension(200, 30));
         usernameField.setFont(new Font("Roboto", Font.PLAIN, 20));
         usernameLabel.setFont(new Font("Roboto", Font.PLAIN, 20));
+        usernameField.setBackground(new Color(230, 230, 230)); // Light grey
         usernameField.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(Color.BLACK),
+            BorderFactory.createLineBorder(Color.WHITE),
             BorderFactory.createEmptyBorder(5, 5, 5, 5) // Added padding
         ));
 
@@ -86,8 +87,9 @@ public class CreateUserPage extends JPanel {
         passwordField.setPreferredSize(new Dimension(200, 30));
         passwordField.setFont(new Font("Roboto", Font.PLAIN, 20));
         passwordLabel.setFont(new Font("Roboto", Font.PLAIN, 20));
+        passwordField.setBackground(new Color(230, 230, 230)); // Light grey
         passwordField.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(Color.BLACK),
+            BorderFactory.createLineBorder(Color.WHITE),
             BorderFactory.createEmptyBorder(5, 5, 5, 5) // Added padding
         ));
 
@@ -95,14 +97,19 @@ public class CreateUserPage extends JPanel {
         JPanel optionsPanel = new JPanel();
         optionsPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
         optionsPanel.setBackground(Color.WHITE);
+        
+
+        signUpButton = new RoundedButton("Sign Up", 18);
+        signUpButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        signUpButton.setForeground(Color.BLACK);
+        signUpButton.setFont(new Font("Roboto", Font.PLAIN, 18));
+        backButton = new RoundedButton("Cancel", 18);
+        backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        backButton.setForeground(Color.BLACK);
+        backButton.setFont(new Font("Roboto", Font.PLAIN, 18));
+
         optionsPanel.add(signUpButton);
         optionsPanel.add(backButton);
-
-        signUpButton.setPreferredSize(new Dimension(130, 30));
-        signUpButton.setFont(new Font("Roboto", Font.BOLD, 20));
-        backButton.setPreferredSize(new Dimension(100, 30));
-        backButton.setFont(new Font("Roboto", Font.BOLD, 20));
-
 
         // Group All Components
         JPanel mainPanel = new JPanel();
