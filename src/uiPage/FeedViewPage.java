@@ -17,11 +17,11 @@ public class FeedViewPage extends JPanel {
     // UI Components
     private JButton profileButton, searchButton, deleteButton, clearButton, addSelectedToChat, deleteTextButton;
     private ArrayList<JButton> chatButtons, selectionButtons;
-    private ArrayList<JLabel> chatLabels;
     private JTextField chatField, searchField;
-    private JButton uploadButton, editButton, sendButton;
+    private JButton editButton, sendButton;
     private JScrollPane chatViewPanel, chatButtonPanel;
     private JPanel chatPanel; // Dynamic chat panel
+    private JLabel messageLabel;
 
     // Logic
     private ArrayList<String> selectedUsers; // Holds selected usernames
@@ -39,7 +39,6 @@ public class FeedViewPage extends JPanel {
         this.selectedUsers = new ArrayList<>();
         this.selectionButtons = new ArrayList<>();
         this.chatButtons = new ArrayList<>();
-        this.chatLabels = new ArrayList<>();
         this.currentChatID = "";
 
         setLayout(new BorderLayout());
@@ -140,7 +139,7 @@ public class FeedViewPage extends JPanel {
     private void updateChatPanel(ArrayList<String> messages) {
         chatPanel.removeAll(); // Clear existing components
         for (String message : messages) {
-            JLabel messageLabel = new JLabel(message);
+            messageLabel = new JLabel(message);
             chatPanel.add(messageLabel); // Add new messages dynamically
         }
         chatPanel.revalidate(); // Recalculate layout
@@ -156,18 +155,15 @@ public class FeedViewPage extends JPanel {
         chatField = new JTextField();
         chatField.setPreferredSize(new Dimension(200, 30));
 
-        uploadButton = new JButton("Upload Picture");
         editButton = new JButton("Edit");
         sendButton = new JButton("Send");
         deleteTextButton = new JButton("Delete");
 
-        uploadButton.setEnabled(false);
         editButton.setEnabled(false);
         sendButton.setEnabled(false);
         deleteTextButton.setEnabled(false);
 
         JPanel buttonPanel = new JPanel(new FlowLayout());
-        buttonPanel.add(uploadButton);
         buttonPanel.add(editButton);
         buttonPanel.add(sendButton);
         buttonPanel.add(deleteTextButton);
@@ -212,7 +208,7 @@ public class FeedViewPage extends JPanel {
         // Search for users
         searchButton.addActionListener(e -> handleUserSearch());
 
-        for (JButton selectionButton: selectionButtons) {
+        for (JButton selectionButton : selectionButtons) {
             selectionButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -226,56 +222,54 @@ public class FeedViewPage extends JPanel {
             });
         }
 
-        for (JButton chatButton: chatButtons) {
+        for (JButton chatButton : chatButtons) {
             chatButton.addActionListener(new ActionListener() {
-               @Override
-               public void actionPerformed(ActionEvent e) {
-                   Writer.write("2", bufferedWriter);
-                   String selectedChat = chatButton.getText();
-                   Writer.write(selectedChat, bufferedWriter);
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    Writer.write("2", bufferedWriter);
+                    String selectedChat = chatButton.getText();
+                    Writer.write(selectedChat, bufferedWriter);
 
-                   Thread loadingThread = new Thread(() -> {
-                       try {
-                           String response = bufferedReader.readLine();
-                           if (response.equals("valid")) {
-                               String messagesLine = bufferedReader.readLine();
-                               ArrayList<String> messages = new ArrayList<>(Arrays.asList(messagesLine.split(";")));
-                               SwingUtilities.invokeLater(() -> {
-                                   updateChatPanel(messages);
-                                   currentChatID = selectedChat; // Update current chat ID
+                    Thread loadingThread = new Thread(() -> {
+                        try {
+                            String response = bufferedReader.readLine();
+                            if (response.equals("valid")) {
+                                String messagesLine = bufferedReader.readLine();
+                                ArrayList<String> messages = new ArrayList<>(Arrays.asList(messagesLine.split(";")));
+                                SwingUtilities.invokeLater(() -> {
+                                    updateChatPanel(messages);
+                                    currentChatID = selectedChat; // Update current chat ID
 
-                                   // Enable buttons
-                                   uploadButton.setEnabled(true);
-                                   editButton.setEnabled(true);
-                                   deleteTextButton.setEnabled(true);
-                                   sendButton.setEnabled(true);
-                               }); // Update chat panel on the Event Dispatch Thread
-                           } else {
-                               ArrayList<String> messages = new ArrayList<>();
-                               messages.add("Invalid chat selected.");
-                               SwingUtilities.invokeLater(() -> {
-                                   updateChatPanel(messages);
-                                   currentChatID = ""; // Reset current chat ID
+                                    // Enable buttons
+                                    editButton.setEnabled(true);
+                                    deleteTextButton.setEnabled(true);
+                                    sendButton.setEnabled(true);
+                                }); // Update chat panel on the Event Dispatch Thread
+                            } else {
+                                ArrayList<String> messages = new ArrayList<>();
+                                messages.add("Invalid chat selected.");
+                                SwingUtilities.invokeLater(() -> {
+                                    updateChatPanel(messages);
+                                    currentChatID = ""; // Reset current chat ID
 
-                                   // Disable buttons
-                                   uploadButton.setEnabled(false);
-                                   editButton.setEnabled(false);
-                                   deleteTextButton.setEnabled(false);
-                                   sendButton.setEnabled(false);
-                               });
-                           }
-                       } catch (IOException ex) {
-                           ex.printStackTrace();
-                       }
-                   });
-                   loadingThread.start();
+                                    // Disable buttons
+                                    editButton.setEnabled(false);
+                                    deleteTextButton.setEnabled(false);
+                                    sendButton.setEnabled(false);
+                                });
+                            }
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                    });
+                    loadingThread.start();
 
-                   try {
-                       loadingThread.join(); // makes sure this thread and its caller end at the same time
-                   } catch (InterruptedException ex) {
-                       ex.printStackTrace();
-                   }
-               }
+                    try {
+                        loadingThread.join(); // makes sure this thread and its caller end at the same time
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }
+                }
             });
         }
 
@@ -336,13 +330,17 @@ public class FeedViewPage extends JPanel {
             }
         });
 
-        /*
+
         editButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String newMessage = chatField.getText().trim();
                 if (newMessage.isEmpty()) {
                     JOptionPane.showMessageDialog(null, "New message cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                if (messageLabel.getText().isEmpty()) {
                     return;
                 }
 
@@ -390,6 +388,10 @@ public class FeedViewPage extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Thread loadingThread = new Thread(() -> {
+                    if (messageLabel.getText().isEmpty()) {
+                        return;
+                    }
+
                     try {
                         Writer.write("delete", bufferedWriter);
                         Writer.write(currentChatID, bufferedWriter);
@@ -424,13 +426,13 @@ public class FeedViewPage extends JPanel {
                 }
             }
         });
-        */
+
 
         addSelectedToChat.addActionListener(new ActionListener() {
-            @Override 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 ArrayList<String> validUsers = new ArrayList<>();
-                
+
                 try {
                     // Initiate the chat creation process
                     Writer.write("1", bufferedWriter);
@@ -532,7 +534,7 @@ public class FeedViewPage extends JPanel {
         if (Arrays.asList(originalUsers).contains(userInput)) {
             return userInput;
 
-        // else, show dropdown (NOT case sensitive)
+            // else, show dropdown (NOT case sensitive)
         } else {
 
             // Create dropdown for similar usernames

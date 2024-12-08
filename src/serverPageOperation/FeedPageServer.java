@@ -63,17 +63,17 @@ public final class FeedPageServer {
                 // 1 - Chat Creation
                 if (input.equals("1")) {
                     handleOperationOne(users, user, chats, br, bw);
-                // 2 - View Existing Chat
+                    // 2 - View Existing Chat
                 } else if (input.equals("2")) {
                     handleOperationTwo(users, user, chats, br, bw);
                 } else if (input.equals("user")) {
                     users = updateUsers(users);
                     UserPageServer.userPageOperation(br, bw, user, users, chats);
                     break;
-                // Send a string representing a list of user separated by semi-colons to client
+                    // Send a string representing a list of user separated by semi-colons to client
                 } else if (input.equals("4")) {
                     handleOperationFour(users, user, bw);
-                // Navigate to Other Page
+                    // Navigate to Other Page
                 } else if (input.equals("6")) {
                     OtherPageServer.otherPageOperation(br, bw, user, users, chats);
                     break;
@@ -85,7 +85,7 @@ public final class FeedPageServer {
                     //break;
                 } else if (input.equals("delete")) {
                     deleteText(user, users, chats, bw, br);
-                    break;
+                    //break;
                 } else if (input.equals("refreshChats")) {
                     sendChatList(user, br, bw);
                     //break;
@@ -224,7 +224,11 @@ public final class FeedPageServer {
                 }
 
                 // Send chat content to client
-                Writer.write(chatContent.substring(0, chatContent.length() - 1), bw);
+                if (!chatContent.isEmpty()) {
+                    Writer.write(chatContent.substring(0, chatContent.length() - 1), bw);
+                } else {
+                    Writer.write(chatContent, bw);
+                }
                 System.out.println("write: " + chatContent);
                 break;
             }
@@ -283,7 +287,7 @@ public final class FeedPageServer {
     /**
      * Creates and initializes a new chat with the list of valid members.
      */
-    private static void  createNewChat(BufferedReader br, BufferedWriter bw, ArrayList<User> users, User user, ArrayList<Chat> chats) throws IOException {
+    private static void createNewChat(BufferedReader br, BufferedWriter bw, ArrayList<User> users, User user, ArrayList<Chat> chats) throws IOException {
         String newChattersNames = br.readLine();
         System.out.println("read 4: " + newChattersNames);
         System.out.println("Received new chatters names");
@@ -350,7 +354,11 @@ public final class FeedPageServer {
                 }
 
                 // Send chat content to client
-                Writer.write(chatContent.substring(0, chatContent.length() - 1), bw);
+                if (!chatContent.isEmpty()) {
+                    Writer.write(chatContent.substring(0, chatContent.length() - 1), bw);
+                } else {
+                    Writer.write("", bw);
+                }
                 System.out.println("write: " + chatContent);
                 break;
             }
@@ -381,7 +389,7 @@ public final class FeedPageServer {
 
         // Remove the last semicolon
         if (!listOfAvailableUsers.isEmpty()) {
-            listOfAvailableUsers = listOfAvailableUsers.substring(0,listOfAvailableUsers.length() - 1);
+            listOfAvailableUsers = listOfAvailableUsers.substring(0, listOfAvailableUsers.length() - 1);
         }
 
         // Send list to client
@@ -413,7 +421,7 @@ public final class FeedPageServer {
         File[] chatFiles = dataDirectory.listFiles((ignored, name) -> name.startsWith("C_"));
         chats = new ArrayList<>();
         for (File chatFile : chatFiles) {
-            chats.add(new Chat(chatFile.getAbsolutePath().substring(0,chatFile.getAbsolutePath().lastIndexOf("."))));
+            chats.add(new Chat(chatFile.getAbsolutePath().substring(0, chatFile.getAbsolutePath().lastIndexOf("."))));
         }
         return chats;
     }

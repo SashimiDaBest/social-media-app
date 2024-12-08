@@ -69,6 +69,7 @@ public class SimpleServer implements Runnable {
             WelcomePageServer.welcomePageOperation(br, bw, null, users, chats);
         } catch (Exception e) {
             System.err.println("Error handling client: " + e.getMessage());
+            e.printStackTrace();
         } finally {
             //closeResources();
         }
