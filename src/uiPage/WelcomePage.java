@@ -146,8 +146,6 @@ public class WelcomePage extends JPanel {
         return inputPanel;
     }
 
-    
-
     private JPanel createOptionsPanel() {
         JPanel optionsPanel = new JPanel();
         optionsPanel.setLayout(new BoxLayout(optionsPanel, BoxLayout.Y_AXIS));
@@ -203,8 +201,6 @@ public class WelcomePage extends JPanel {
             g2d.drawRoundRect(x, y, width - 1, height - 1, radius, radius);
         }
     }
-    
-    
 
     private GridBagConstraints createGridBagConstraints(int x, int y, int weightx, int fill) {
         GridBagConstraints gbc = new GridBagConstraints();
