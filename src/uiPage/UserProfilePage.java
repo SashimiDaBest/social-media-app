@@ -2,9 +2,7 @@ package uiPage;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-
 import uiPage.WelcomePage.RoundedBorder;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,6 +19,7 @@ public class UserProfilePage extends JPanel {
     private int targetHeight = 50; // Set your desired height
     private BufferedImage image;
     private JButton profileButton, settingButton, backButton, nextButton, logoutButton, feedButton;
+
     public UserProfilePage(PageManager pageManager, BufferedWriter bufferedWriter, BufferedReader bufferedReader) {
         System.out.println("This is user profile page");
         this.pageManager = pageManager;

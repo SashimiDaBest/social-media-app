@@ -3,9 +3,7 @@ package uiPage;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-
 import uiPage.WelcomePage.RoundedBorder;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
