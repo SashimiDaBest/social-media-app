@@ -70,7 +70,7 @@ public class SimpleServer implements Runnable {
         } catch (Exception e) {
             System.err.println("Error handling client: " + e.getMessage());
         } finally {
-            closeResources();
+            //closeResources();
         }
     }
 

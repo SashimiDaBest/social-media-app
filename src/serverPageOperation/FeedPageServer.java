@@ -79,16 +79,16 @@ public final class FeedPageServer {
                     break;
                 } else if (input.equals("send")) {
                     sendText(user, users, chats, bw, br);
-                    break;
+                    //break;
                 } else if (input.equals("edit")) {
                     editText(user, users, chats, bw, br);
-                    break;
+                    //break;
                 } else if (input.equals("delete")) {
                     deleteText(user, users, chats, bw, br);
                     break;
                 } else if (input.equals("refreshChats")) {
                     sendChatList(user, br, bw);
-                    break;
+                    //break;
                 }
 
             } catch (IOException | InvalidFileFormatException e) {
