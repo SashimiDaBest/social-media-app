@@ -49,11 +49,11 @@ public final class FeedPageServer {
                                          BufferedWriter bw, User user, ArrayList<User> users, ArrayList<Chat> chats) {
         System.out.println("Feed page operations started");
 
-        ArrayList<String> chatIDs = user.getChatIDList();
-        for (String chatID : chatIDs) {
-            Writer.write(chatID, bw);
+        try {
+            sendChatList(user, br, bw);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        Writer.write("stop", bw);
 
         while (true) {
             try {
@@ -86,6 +86,9 @@ public final class FeedPageServer {
                 } else if (input.equals("delete")) {
                     deleteText(user, users, chats, bw, br);
                     break;
+                } else if (input.equals("refreshChats")) {
+                    sendChatList(user, br, bw);
+                    break;
                 }
 
             } catch (IOException | InvalidFileFormatException e) {
@@ -93,7 +96,6 @@ public final class FeedPageServer {
             }
         }
     }
-
 
     private static void sendText(User user, ArrayList<User> users, ArrayList<Chat> chats, BufferedWriter bw, BufferedReader br) throws IOException, InvalidFileFormatException {
         // Update chats and users data
@@ -358,6 +360,13 @@ public final class FeedPageServer {
         }
     }
 
+    private static void sendChatList(User user, BufferedReader br, BufferedWriter bw) throws IOException {
+        ArrayList<String> chatIDs = user.getChatIDList();
+        for (String chatID : chatIDs) {
+            Writer.write(chatID, bw);
+        }
+        Writer.write("stop", bw);
+    }
 
     private static void handleOperationFour(ArrayList<User> users, User user, BufferedWriter bw) throws IOException {
         // Reinitialize user arrayList With existing user

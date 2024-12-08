@@ -20,7 +20,7 @@ public class FeedViewPage extends JPanel {
     private ArrayList<JLabel> chatLabels;
     private JTextField chatField, searchField;
     private JButton uploadButton, editButton, sendButton;
-    private JScrollPane chatViewPanel;
+    private JScrollPane chatViewPanel, chatButtonPanel;
     private JPanel chatPanel; // Dynamic chat panel
 
     // Logic
@@ -50,11 +50,13 @@ public class FeedViewPage extends JPanel {
         // Center Panel: Chat view and message panel
         JPanel mainPanel = new JPanel(new BorderLayout());
         JPanel chatPanel = new JPanel(new BorderLayout());
+
         chatViewPanel = createChatPanel();
         chatPanel.add(chatViewPanel, BorderLayout.CENTER);
         chatPanel.add(createBottomPanel(), BorderLayout.SOUTH);
 
-        mainPanel.add(createChatViewPanel(), BorderLayout.WEST);
+        chatButtonPanel = createChatViewPanel();
+        mainPanel.add(chatButtonPanel, BorderLayout.WEST);
         mainPanel.add(chatPanel, BorderLayout.CENTER);
         add(mainPanel, BorderLayout.CENTER);
 
@@ -334,6 +336,7 @@ public class FeedViewPage extends JPanel {
             }
         });
 
+        /*
         editButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -421,8 +424,8 @@ public class FeedViewPage extends JPanel {
                 }
             }
         });
+        */
 
-        /*
         addSelectedToChat.addActionListener(new ActionListener() {
             @Override 
             public void actionPerformed(ActionEvent e) {
@@ -430,7 +433,7 @@ public class FeedViewPage extends JPanel {
                 
                 try {
                     // Initiate the chat creation process
-                    Writer.write("1", bufferedWri);
+                    Writer.write("1", bufferedWriter);
                     System.out.println("write: 1");
 
                     // Read available users
@@ -439,7 +442,7 @@ public class FeedViewPage extends JPanel {
 
                     // Validate selected users
                     for (String username : selectedUsers) {
-                        Writer.write(username, bufferedWri);
+                        Writer.write(username, bufferedWriter);
                         System.out.println("write: " + username);
 
                         String validation = bufferedReader.readLine();
@@ -452,12 +455,12 @@ public class FeedViewPage extends JPanel {
                     }
 
                     // Signal the end of user validation
-                    Writer.write("[DONE]", bufferedWri);
+                    Writer.write("[DONE]", bufferedWriter);
                     System.out.println("write: [DONE]");
 
                     // Prepare and send the list of valid users
                     String membersList = String.join(";", validUsers);
-                    Writer.write(membersList, bufferedWri);
+                    Writer.write(membersList, bufferedWriter);
                     System.out.println("write: " + membersList);
 
                     // Check chat creation status
@@ -472,6 +475,10 @@ public class FeedViewPage extends JPanel {
                                 "CHAT SUCCESSFULLY MADE",
                                 JOptionPane.INFORMATION_MESSAGE
                         );
+
+                        // Refresh chat buttons to include the newly created chat
+                        refreshChatViewPanel();
+
                     } else if ("[CHAT CREATION UNSUCCESSFUL]".equals(chatCreationValidation)) {
                         JOptionPane.showMessageDialog(
                                 null,
@@ -493,7 +500,6 @@ public class FeedViewPage extends JPanel {
                 }
             }
         });
-        */
     }
 
     private void handleUserSearch() {
@@ -618,4 +624,33 @@ public class FeedViewPage extends JPanel {
         // Disable `addSelectedToChat`
         addSelectedToChat.setEnabled(false);
     }
+
+    private void refreshChatViewPanel() {
+        // Clear existing chat buttons
+        chatButtons.clear();
+
+        // Create a new panel for updated chat buttons
+        JPanel buttonPanelLeft = new JPanel(new GridLayout(8, 1, 5, 5)); // 8 buttons in a grid layout
+
+        // Request the updated list of chats from the server
+        Writer.write("refreshChats", bufferedWriter);
+        System.out.println("write: refreshChats");
+
+        try {
+            String line = bufferedReader.readLine();
+            while (line != null && !line.equals("stop")) {
+                chatButtons.add(new JButton(line));
+                buttonPanelLeft.add(chatButtons.get(chatButtons.size() - 1));
+                line = bufferedReader.readLine();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        // Update the chat view panel with new buttons
+        chatButtonPanel.setViewportView(buttonPanelLeft); // Replace the old panel
+        chatButtonPanel.revalidate();
+        chatButtonPanel.repaint();
+    }
+
 }
