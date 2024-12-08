@@ -17,12 +17,12 @@ CS 180 Team Project
 ## Simplified Directory Structure
 ```plaintext
 src/ 
-│
-├── clientPageOperation/           # Client-side operations and functionalities
-│   ├── FeedPageClient.java        # Handles operations related to the user's feed page
-│   ├── OtherPageClient.java       # Manages interactions with other users' profile pages
-│   ├── UserPageClient.java        # Manages operations for the user's own profile page
-│   └── WelcomePageClient.java     # Handles the welcome page operations
+|
+├── common/                        # Shared utilities and reusable components
+│   ├── PageManager.java           # Manages navigation between pages
+│   ├── ProfilePictureDialog.java  # Dialog for displaying profile pictures
+│   ├── RoundedButton.java         # Custom button with animation effects
+│   └── Writer.java                # Handles server communication (reading/writing)
 │
 ├── exception/                     # Custom exceptions for handling errors
 │   ├── InvalidCreateAccountException.java # Thrown when account creation fails due to invalid fields
@@ -37,18 +37,18 @@ src/
 │   ├── User.java                  # User class for managing user-related operations
 │   └── UserInterface.java         # Interface for user operations
 │
-├── serverPageOperation/           # Server-side operations and functionality
+├── page/                        # UI-related classes and client-side operations
+│   ├── CreateUserPage.java        # Page for user creation
+│   ├── FeedViewPage.java          # Page for displaying the user's feed
+│   ├── OtherProfilePage.java      # Page for viewing other users' profiles
+│   ├── UserProfilePage.java       # Page for viewing the user's own profile 
+│   └── WelcomePage.java           # Welcome page for the application creation
+│
+├── serverPageOperation/           # Server-side operations and functionality 
 │   ├── FeedPageServer.java        # Handles feed page operations on the server
 │   ├── OtherPageServer.java       # Handles other user page operations on the server
 │   ├── UserPageServer.java        # Handles user profile operations on the server
 │   └── WelcomePageServer.java     # Handles welcome page operations on the server
-│
-├── page/                        # User interface and UI-related classes
-│   ├── CreateUserPage.java        # Page for user creation
-│   ├── FeedViewPage.java          # Page for displaying the user's feed
-│   ├── OtherProfilePage.java      # Page for viewing other users' profiles
-│   ├── UserProfilePage.java       # Page for viewing the user's own profile
-│   └── WelcomePage.java           # Welcome page for the application
 │
 ├── ClientHandler.java             # Main client handler class
 ├── MessageTest.java               # Test class for message functionality

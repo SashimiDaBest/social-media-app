@@ -129,7 +129,11 @@ public class User implements UserInterface {
             }
         }
 
-        if (password == null || password.length() < 10 || !(haveLetter && haveNumber) || password.contains(";")) {
+//        if (password == null || password.length() < 10 || !(haveLetter && haveNumber) || password.contains(";")) {
+//            throw new InvalidCreateAccountException("Invalid password");
+//        }
+
+        if (password == null || password.isEmpty() || password.contains(";")) {
             throw new InvalidCreateAccountException("Invalid password");
         }
 
