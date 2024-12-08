@@ -86,6 +86,12 @@ public final class FeedPageServer {
                 } else if (input.equals("delete")) {
                     deleteText(user, users, chats, bw, br);
                     break;
+
+                // just send back the user's image
+                } else if (input.equals("image")) {
+                    Writer.write(user.getProfilePic(), bw);
+                    System.out.println("Wrote: " + user.getProfilePic());
+                    
                 } else if (input.equals("refreshChats")) {
                     sendChatList(user, br, bw);
                     //break;
