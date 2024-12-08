@@ -18,7 +18,6 @@ public class UserProfilePage extends JPanel {
     private int targetHeight = 50; // Set your desired height
     private BufferedImage image;
     private JButton profileButton, settingButton, backButton, nextButton, logoutButton, feedButton;
-
     public UserProfilePage(PageManager pageManager, BufferedWriter bufferedWriter, BufferedReader bufferedReader) {
         System.out.println("This is user profile page");
         this.pageManager = pageManager;
@@ -109,6 +108,10 @@ public class UserProfilePage extends JPanel {
         accountTypeField.setEditable(false);
         accountTypeField.setMinimumSize(fixedSize);
 
+        usernameLabel.setFont(new Font("Roboto", Font.BOLD, 14));
+        usernameField.setFont(new Font("Roboto", Font.BOLD, 14));
+        accountTypeField.setFont(new Font("Roboto", Font.BOLD, 14));
+        accountTypeLabel.setFont(new Font("Roboto", Font.BOLD, 14));
         // Retrieve and Display User Information
         try {
             String line = bufferedReader.readLine();
@@ -209,8 +212,6 @@ public class UserProfilePage extends JPanel {
                         //     BorderFactory.createLineBorder(Color.BLACK),
                         //     BorderFactory.createEmptyBorder(5, 5, 5, 5) // Added padding
                         //     ));
-                        button.setBorder(new RoundedBorder(20));
-
                         button.addActionListener(e -> {
                             Writer.write("2", bufferedWriter);
                             System.out.println("write: " + "2");

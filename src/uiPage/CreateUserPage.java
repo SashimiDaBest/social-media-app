@@ -32,8 +32,14 @@ public class CreateUserPage extends JPanel {
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
 
+        // Create a scrollable main panel
         JPanel mainPanel = createMainPanel();
-        add(mainPanel, BorderLayout.CENTER);
+        JScrollPane scrollPane = new JScrollPane(mainPanel);
+        scrollPane.setBorder(null);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+
+        add(scrollPane, BorderLayout.CENTER);
 
         setupActionListeners();
     }

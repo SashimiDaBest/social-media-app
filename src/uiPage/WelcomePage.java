@@ -45,8 +45,16 @@ public class WelcomePage extends JPanel {
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
 
+        // Create the main panel
         JPanel mainPanel = createMainPanel();
-        add(mainPanel, BorderLayout.CENTER);
+        
+        // Wrap the main panel in a JScrollPane
+        JScrollPane scrollPane = new JScrollPane(mainPanel);
+        scrollPane.setBorder(null);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16); // Make scrolling smoother
+        
+        // Add the scroll pane to the panel
+        add(scrollPane, BorderLayout.CENTER);
 
         setPreferredSize(new Dimension(600, 800));
         setupActionListeners();

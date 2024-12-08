@@ -120,6 +120,11 @@ public class OtherProfilePage extends JPanel {
         accountTypeField.setEditable(false);
         accountTypeField.setMinimumSize(fixedSize);
 
+        usernameLabel.setFont(new Font("Roboto", Font.BOLD, 14));
+        usernameField.setFont(new Font("Roboto", Font.BOLD, 14));
+        accountTypeField.setFont(new Font("Roboto", Font.BOLD, 14));
+        accountTypeLabel.setFont(new Font("Roboto", Font.BOLD, 14));
+
         // Retrieve and Display User Information
         try {
             String line = bufferedReader.readLine();
@@ -219,8 +224,6 @@ public class OtherProfilePage extends JPanel {
                         //     BorderFactory.createLineBorder(Color.BLACK),
                         //     BorderFactory.createEmptyBorder(5, 5, 5, 5) // Added padding
                         //     ));
-                        button.setBorder(new RoundedBorder(20));
-
                         button.addActionListener(e -> {
                             Writer.write("3", bufferedWriter);
                             System.out.println("write: " + "3");
