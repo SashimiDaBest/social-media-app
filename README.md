@@ -1,28 +1,24 @@
 
-# Social Media App
-CS 180 Team Project
-
-## Table of Contents
-- [Simplified Directory Structure](#simplified-directory-structure)
-- [Compilation and Execution Instructions](#compilation-and-execution-instructions)
-- [Submission Record](#submission-record)
-- [Documentation](#documentation)
-    - [clientPageOperation](#clientpageoperation)
-    - [exception](#exception)
-    - [object](#object)
-    - [serverPageOperation](#serverpageoperation)
-    - [uiPage](#uipage)
-- [Testing and Verification Instructions](#testing-and-verification-instructions)
-
+Boiler Gram - CS 18000 Team Project
+BoilerGram is a social media application inspired by Instagram, offering a range of interactive and intuitive functionalities. The app is designed to mimic a typical social media platform, emphasizing user interaction, messaging, and profile management.
+Table of Contents
+## Table of Contents	1
+## Simplified Directory Structure	1
+## Compilation and Execution Instructions	2
+## Documentation	3
+### clientPageOperation	8
+### exception	10
+### object	11
+### uiPage (Incomplete)	15
+## Testing and Verification Instructions	15
+### **_Running Test Cases_**	15
+### _**Test Welcome Page**_	15
+### **_Test Feed Page_**	16
+### **_Test User Page_**	18
+### **_Test Other Page_**	19
 ## Simplified Directory Structure
 ```plaintext
 src/ 
-│
-├── clientPageOperation/           # Client-side operations and functionalities
-│   ├── FeedPageClient.java        # Handles operations related to the user's feed page
-│   ├── OtherPageClient.java       # Manages interactions with other users' profile pages
-│   ├── UserPageClient.java        # Manages operations for the user's own profile page
-│   └── WelcomePageClient.java     # Handles the welcome page operations
 │
 ├── exception/                     # Custom exceptions for handling errors
 │   ├── InvalidCreateAccountException.java # Thrown when account creation fails due to invalid fields
@@ -43,12 +39,16 @@ src/
 │   ├── UserPageServer.java        # Handles user profile operations on the server
 │   └── WelcomePageServer.java     # Handles welcome page operations on the server
 │
-├── uiPage/                        # User interface and UI-related classes
+├── uiPage/                        # UI-related operations and functionalities
 │   ├── CreateUserPage.java        # Page for user creation
 │   ├── FeedViewPage.java          # Page for displaying the user's feed
 │   ├── OtherProfilePage.java      # Page for viewing other users' profiles
+│   ├── PageManager.java
+│   ├── ProfilePictureDialog.java
+│   ├── RoundedButton.java
 │   ├── UserProfilePage.java       # Page for viewing the user's own profile
-│   └── WelcomePage.java           # Welcome page for the application
+│   ├── WelcomePage.java           # Welcome page for the application
+│   └── Writer.java
 │
 ├── ClientHandler.java             # Main client handler class
 ├── MessageTest.java               # Test class for message functionality
@@ -59,30 +59,27 @@ src/
 ├── SimpleServerTest.java          # Test class for the SimpleServer
 └── UserTest.java                  # Test class for the User object
 ```
-
 ## Compilation and Execution Instructions
-
 1. **Starting the Server:**
-    - Open your terminal and navigate to the directory containing `SimpleServer.java`.
-    - Compile and run the server using the following commands:
-      ```bash
-      javac SimpleServer.java && java SimpleServer
-      ```
+    - Open the project in IntelliJ and press the green Run button to run the SimpleServer class.
+    - It should notify you that it is awaiting client connections.
 
 2. **Starting the Client:**
-    - Open a separate terminal and navigate to the directory containing `ClientHandler.java`.
-    - Compile and run the client using the following commands:
-      ```bash
-      javac ClientHandler.java && java ClientHandler
-      ```
+    - Ensure your IntelliJ settings are set so that multiple instances of a class can be ran at once, and then use the Run button twice to concurrently run two instances of the ClientHandler class.
       
 ## Submission Record
-A list of who submitted which parts of the assignment on Brightspace and Vocareum
-- Connor Pugliese - Submitted Vocareum workspace v1 for Phase 1
-- Derek McTume - Submitted Vocareum workspace v2 for Phase 1
-- Soleil Pham - Submitted Vocareum workspace v3 for Phase 1
+A list of who submitted which parts of the assignment on Brightspace and Vocareum.
 
+**Phase 1**
+- Connor Pugliese - Submitted Vocareum workspace v1
+- Derek McTume - Submitted Vocareum workspace v2
+- Soleil Pham - Submitted Vocareum workspace v3
 
+**Phase 2**
+- Soleil Pham - Submitted Vocareum workspace v1
+- Soleil Pham - Submitted Vocareum workspace v2
+- Soleil Pham - Submitted Vocareum workspace v3
+- Connor Pugliese - Submitted Vocareum workspace v4
 ## Documentation
 A comprehensive overview of each class, covering its functionality, the testing conducted to ensure it operates correctly, and its interactions with other classes within the project.
 1. **ClientHandler.java**
@@ -243,16 +240,14 @@ A comprehensive overview of each class, covering its functionality, the testing 
   - Redirects to `FeedPageClient` once the user is authenticated.
 
 ### exception
-1. **InvalidCreateAccountException.java**
+1.  **InvalidCreateAccountException.java**
 - **Functionality**: A custom exception designed to handle errors during account creation, such as invalid passwords or other fields that fail to meet predefined validation requirements. It provides meaningful error messages, enhancing the debugging and user experience.
 - **Testing**: Verified through unit tests by passing various invalid inputs (e.g., short passwords, null fields) and confirming that the exception is thrown with the correct message. Edge cases, such as empty strings, were also tested to ensure comprehensive coverage.
 - **Relationships**: Primarily used in the `User` class for validation during account creation. It may also be referenced by UI classes to display error messages and by server logic to reject invalid requests. The exception simplifies error handling and promotes clear communication of issues.
-
 2. **InvalidFileFormatException.java**
 - **Functionality**: A custom exception class used to handle errors related to file format mismatches. It ensures that files being read or processed conform to a specified structure and throws this exception when the format is incorrect, preventing the program from using invalid or corrupted data.
 - **Testing**: Verified through unit tests by attempting to load files with incorrect or unexpected formats, such as missing fields or invalid delimiters. Tests ensured that the exception is thrown and that the error message correctly identifies the format issue.
 - **Relationships**: Used in classes like `Chat` and `User` where file operations are crucial. It helps maintain data integrity by catching and handling format errors before they can cause broader application failures, thus providing a robust mechanism for file validation.
-
 3. **NoChatFoundException.java**
 - **Functionality**: A custom exception class that handles scenarios where a requested chat cannot be found. This exception is thrown when operations are attempted on a chat ID that does not exist, providing clear feedback on the error and allowing for more graceful error handling within the application.
 - **Testing**: Verified through unit tests by attempting to access non-existent chat IDs and ensuring that the exception is thrown with an appropriate message. The tests also check that the exception does not disrupt the application flow and that error handling mechanisms are activated as expected.
@@ -348,182 +343,79 @@ A comprehensive overview of each class, covering its functionality, the testing 
 - **Relationships**:
   - Interacts with WelcomePageClient for user authentication.
   - Redirects to FeedPageServer once the user is authenticated or a new account is created.
-  - Uses User and Chat objects to manage user data and interactions.
-
-### uiPage (Incomplete)
-
+  - Uses User and Chat objects to manage user data and interactions.	
 ## Testing and Verification Instructions
 ### **_Running Test Cases_**
 Sample data is provided for physically testing this program, but the test cases are not compatible with this sample data (as I/O is tested manually). When you have finished testing the functionality of the chat by following the instructions below, you should delete all of the files within the “Sample Test Folder” and then run the test cases, and they should all pass.
 ### _**Test Welcome Page**_
 1. **Signing in with an existing user successfully**
-- Press 1 to Sign In
-- Type in “TechSavvyMinds” for username
-- Type in “easyPassword123” for password
-- A print should indicate that you’ve signed in and a new page should pop up
+- Launch the program
+- Type in “EchoHorizon” for username
+- Type in “gj50v75nLU” for password
+- You should be welcomed into the feed page
 2. **Test creating a new account from initial welcome page successfully**
-- Press 2 to Sign Up
+- Press the Sign Up button at the bottom
 - Type in a new username (adhere to the printed restrictions)
-- Type in a new password (adhere to the printed restrictions)
-- A print should indicate you’ve signed up and a new page should pop up
-3. **Entering an invalid initial decision**
-- Enter an option that isn’t available (not a 1 or 2)
-- A print should indicate that the value you had entered is invalid and the Welcome Page should be redisplayed
-4. **Failing to create a new account the first time**
-- Press 2 to Sign Up
-- Mess up by not adhering to the provided restrictions
-- A message should pop up saying that the entered fields are invalid; you’ll then be redirected to try again
-5. **Signing in after failing to sign in the first time**
-- Press 1 to Sign in
-- Mess up by typing in a random username and random password (one that is not provided in the Sample Folder)
-- A new screen should ask if you’d like to retry signing in or create a new account
-- Press 1 to retry signing in
-- Use any valid username and password from UserIDList.txt
-- The sign in should be successful and a new page should pop up 
-6. **Creating a new account after failing to sign in the first time**
-- Press 1 to Sign in
-- Mess up by entering random fields
-- A new screen should ask if you’d like to retry signing in or create a new account
-- Press 2 to create a new account
-- Adhere to the printed restrictions and create a new account
-- A print should indicate success and a new page should pop up 
-7. **Failing any option after failing to sign in the first time**
-- Press 1 to Sign in
-- Mess up by entering random fields
-- A new screen should ask if you’d like to retry signing in or create a new account
-- Select either option and again mess up
-- If you mess up signing in again, the above screen should be printed (asking for a retry)
-- If you mess up signing up, then continuously ask you to enter the appropriate fields to create a new account
-
+- Type in a new password (can ignore the printed restrictions except for including semicolons or having blank passwords)
+- You should be welcomed into the feed page
+3. Failing to log in / sign up
+- If you make any intentional errors in signing up or logging in (invalid username, password, etc), it should prompt you with an error JOptionPane explaining what you did wrong and prompting you to try again.
 ### **_Test Feed Page_**
-When signed in, you will be entered into the Feed page. You can play around with the options, and can follow the instructions based on each option to test functionality. Some pointers for adding chats:
-When you are prompted to make a chat, it will ask you if you want to finalize the members of the chat. For your first user, you should always enter “N” and add a user, but you can choose to continue adding users or finalize the group chat once you have at least one user selected.
-It should not let you chat with users who have blocked you or vice versa, among other restrictions (such as private users).
+When signed in, you will be entered into the Feed page. 
 
 1. **Test creating a new chat with selected users**
-- Enter “1” to create a new chat
-- A list of all users registered on the Server should be printed
-- Enter “N” to add new members
-- Enter one of the listed usernames to add them
-- A print should indicate that the addition was successful
-- Press Enter “Y” to finalize additions
-- A print should indicate that a new chat was created and you should return to the main Feed Page menu
-2. **Test creating a new chat without selecting any users**
-- Enter “1” to create a new chat
-- A list of all users registered on the Server should be printed
-- Enter “Y” to finalize members
-- The response should be invalid because no usernames were entered and you should be prompted to try again
-3. **Test creating a new chat and selecting a user that doesn’t exist**
-- Enter “1” to create a new chat
-- Enter “N” to add a member
-- Enter a random username (not included in the Sample Folder)
-- A print should indicate that the user you searched for is not registered, thus returning you to the Feed Page menu
-4. **Test creating a new chat and selecting yourself to add to the chat**
-- Enter “1” to create a new chat
-- Enter “N” to add a member
-- Enter your own username
-- A print should indicate that you can’t add yourself, thus returning you to the Feed Page menu
-5. **Test creating a new chat and selecting someone you’ve blocked to the chat**
-- Enter “1” to create a new chat
-- Enter “N” to add a member
-- Enter a username from your blocked list (a corresponding username for any of the User files specified on the seventh line of your page)
-- A print should indicate that you can’t add users you’ve blocked (or has you blocked), thus returning you to the Feed Page menu
-6. **Test creating a new chat and selecting a private account to add**
-- Enter “1” to create a new chat
-- Enter “N” to add a member
-- Enter a private account (the 4th line of the User file should be 1)
-- A print should indicate that you can’t add users with private accounts, thus returning you to the Fedd Page menu 
-7. **Test trying to open an existing chat when you belong to no chats**
-- Enter “2” to open an existing chat
-- A print should indicate that you don’t belong in any chats, thus returning you to the Welcome Page
-8. **Test opening an existing chat**
-- Enter “2” to open an existing chat
-- Enter the number of an existing chat
-- Some chat options should appear (further tests for those below):
-9. **Test sending a message**
-- Enter “2” to open an existing chat
-- Enter the number of an existing chat
-- Enter “1” to send a message
-- Enter any message you’d like to send (any String will do)
-- The chat options should pop up again
-- Enter “2” and enter the number of the chat you just send a message to
-- That same message should then be displayed in the 10 most recent messages
-10. **Test deleting a message**
-- Enter “2” to open an existing chat
-- Enter the number of an existing chat
-- Enter “2” to delete your most recently sent message
-- Chat options should pop up again
-- Enter “2” and the number of the chat you were just in
-- You should see that your most recent message sent had been deleted in the 10 most recent messages
-11. **Test replacing a message**
-- Enter “2” to open an existing chat
-- Enter “3” to edit your most recently sent message (type whatever you want)
-- Chat options should pop up again
-- Enter “2” and number of the chat you were just in
-- You should see that you most recent message has changed to the one you had just entered
-12. **Test closing the chat menu**
-- Enter “2” to open an existing chat
-- Enter the number of an existing chat
-- Enter “4” to immediately exit the chat options screen, thus returning you to the Chat Options
-13. **Test exiting the feed page**
-- Enter “5”
-- The ClientHandler should terminate and disconnect from the server
-
+- Search for a specific user or a generic text like “e” in the search bar to access a list of users (press the magnifying glass to search what you typed in)
+- Select the user you’d like to add
+- You should see that user appear in your list of selected users
+- When you’ve added all the users you want to chat with, press the “Add Selected to Chat” button  (the plus sign next to the selection list) and the chat should be created.
+2. **Test editing the selection list**
+- When users are selected from the dropdown, you can delete the last user you just added (the back button) or clear the entire list (the eraser button)
+3. **Test opening an existing chat**
+- You can select any of the buttons on the left with chat ID numbers on them to immediately switch between your participating chats.
+4. **Test sending, editing, and deleting messages**
+- Type anything into the chat box
+- Press “send” (the paper airplane) to send that text into the chat, “edit” (the pencil) to replace your most previous message text with the text you typed, or “delete” (the trash can) to delete your most recent message
+10. Accessing your own and other profiles
+- You can click the “User Page” (the profile icon) button in the top left to navigate to your own profile
+- When you select a user to add them to a chat, you can alternatively click the new button that appears with their name on it to view their profile
 ### **_Test User Page_**
 Before testing the user page, navigate to the profile page. The instruction below uses the user EchoHorizon account (the information of which is in U_0003.txt). That said, testing with any user should still work.
 Note: since the actual program will only display the option to navigate to a certain user after viewing the followers, “followings”, and blocked users, testing whether the program correctly extracts and displays these people’s information and profile page should indicate that the program ran successfully.
 
 1. **Test Storing Image**
-- [1]
-- [] - Use a file path from the tester's computer. The tester’s image appearing in the sample test folder after following the prompt should indicate successful writing of the image file on the server side.
-2. **Test View Followers**
-- [2]
-- [N] - using “N” should return the user back to the profile page menu, but any other input will work as well.
-3. **Test going to one of the follower’s profile page**
-- [2]
-- [Y]
-- [CodeWanderer] - tester should be able to navigate to CodeWanderer’s profile page.
-4. **Test View Following (people user follows)**
-- [3]
-- [N] - any input should return user back to profile page menu.
-5. **Test going to one of the following’s profile page**
-- [3]
-- [Y]
-- [PixelTrail] - tester should be able to navigate to PixelTrail’s profile page.
-6. **Test View Blocked Users**
-- [4] - tester should encounter a message that indicates EchoHorizon haven't blocked anyone and return to the profile menu. Testing with a different user will display a different result (similar to those when testing view follower and following feature).
-- [N] - using “N” should return the user back to the profile page menu, but any other input will work as well.
-7. **Test going to one of the blocked’s profile page (note: to test this feature, tester should log in with username AstraVault and password nzLpyVCEx6 or using any other user’s information that contain blocked people)**
-- [4]
-- [Y]
-- [N] - using “N” should return the user back to the profile page menu, but any other input will work as well.
-8. **Test Switching Back to App Feed Page**
-- [5] - tester should see the feed page menu pop up, which indicates the program works.
-9. **Test Exiting App**
-- [6] - Program should terminate
+- Click the user profile icon in the top left
+- Use a file path from the tester's computer. The tester’s image appearing in the sample test folder after following the prompt should indicate successful writing of the image file on the server side.
+2. **Test Opening Other Users’ Pages**
+- The usernames on the screen should show your follower, followed, and blocked lists
+- Press any of the buttons to open their pages
+- Press “Feed” to return back to the feed page
+3. **Test Switching Back to App Feed Page**
+- press “Feed” at the bottom of the page
+ - this should return you back to the main Feed page from before
+4. **Test Exiting App**
+  - Close the window to exit the program and logout 
+ - Program should terminate
 
 ### **_Test Other Page_**
 To View another User’s profile, in the Feed page, enter 4.
 Enter “PixelTrail” to select PixelTrail’s account to view
 1. **Testing unfollowing/following the other user AKA the profile being viewed**
-- Enter 1 in order to unfollow/follow the other user
-  - If TechSavvyMinds is not following the other user, then TechSavvyMinds will start to follow the other user. TechSavvyMinds’s following list will add PixelTrail’s ID to itself, and PixelTrail’s follower list will add TechSavvyMinds ID to itself. The server will write to the client “followed PixelTrail”.
-  - If TechSavvyMinds is following the user, then TechSavvyMinds will stop following the user. TechSavvyMinds’s following list will remove PixelTrail’s ID and PixelTrail’s follower list will remove TechSavvyMinds’s ID from itself. The server will write to the client “unfollowed PixelTrail”.
+- Press the “Follow” button to follow the user
+  - If your account is not following the other user, then your account will start to follow the other user. Your account’s following list will add PixelTrail’s ID to itself, and PixelTrail’s follower list will add your account’s ID to itself.   
+- If your account is following the user, then your account will stop following the user. Your account’s following list will remove PixelTrail’s ID and PixelTrail’s follower list will remove your account’s ID from itself. 
 2. **Testing unblocking/blocking the other user AKA the profile being viewed**
 - Enter 2 in order to unblock/block the other user
-  - If PixelTrail is blocked by the current user (TechSavvyMinds), then PixelTrail will be unblocked by the current user. TechSavvy’s blocked list will remove PixelTrail’s id from itself. The server will write to the client “unblocked PixelTrail”.
-    - If PixelTrail is not blocked by the current user (TechSavvyMinds ), then PixelTrail will become blocked by the current user. TechSavvyMinds’s blocked list will add PixelTrail’s ID to itself. The server will write to the client “blocked PIxelTrail”. 
+  - If PixelTrail is blocked by the current user (your account), then PixelTrail will be unblocked by the current user. Your account’s blocked list will remove PixelTrail’s id from itself.
+    - If PixelTrail is not blocked by the current user (your account), then PixelTrail will become blocked by the current user. Your account’s blocked list will add PixelTrail’s ID to itself. 
 3. **Testing viewing followers of the other user AKA the profile being viewed**
-  - Enter 3 in order to view the followers of the other user
-  - If the other User is a private account, but follows the current user, then the followers of the other user will be returned. If the other user is a private account, and doesn’t follow the current user, then nothing will be returned. If the other user is public, then the followers will be returned regardless if the current user follows the other user or not.
-    - In this case, PixelTrail is a private account, and DOES follow the current user. Therefore, PixelTrail’s follower list should be returned, when 3 is entered.
+  - If the other User is a private account, but follows the current user, then you’ll be able to see their followers. If the other user is a private account, and doesn’t follow the current user, then nothing will be displayed. If the other user is public, then the followers will be displayed regardless.
+    - In this case, PixelTrail is a private account, and DOES follow the current user. Therefore, PixelTrail’s follower list should be displayed.
 4. **Testing viewing the following of the other user AKA the profile being viewed**
-   - Enter 4 in order to view the following of the other user
-     - If the other user is private and the current user follows the other user, then the following of the other user will be returned. If the other user is private, and the current user doesn’t follow the other user, then the following list will not be returned. If the profile is public then the following list will be returned regardless if the current user follows the other user or not.
+     - If the other user is private and the current user follows the other user, then the following of the other user will be displayed. If the other user is private, and the current user doesn’t follow the other user, then the following list will not be displayed. If the profile is public then the following list will be displayed regardless if the current user follows the other user or not.
        - In this case, PixelTrail is a private account. Whether or not the current user follows PixelTrail should be known to the TA operating the program.
 5. **Testing returning to the feed**
-   - Enter 5 in order to return to the Feed page
+   - Press “Feed” at the bottom in order to return to the Feed page
      - Current user should be returned to the Feed page
 6. **Exiting the program**
-   - Enter 6 in order to terminate the program
+   - Close the window to exit the program and logout 
      - Program should terminate
