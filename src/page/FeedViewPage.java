@@ -1,6 +1,7 @@
 package page;
 
 import common.PageManager;
+import common.RoundedButton;
 import common.Writer;
 
 import javax.swing.*;
@@ -71,7 +72,8 @@ public class FeedViewPage extends JPanel {
 
         // Search Panel
         JPanel searchPanel = new JPanel(new BorderLayout());
-        profileButton = new JButton("User Page");
+        profileButton = new RoundedButton("User Page", 18);
+        profileButton.setFont(new Font("Arial", Font.BOLD, 12));
         searchPanel.add(profileButton, BorderLayout.WEST);
         searchPanel.add(createSearchPanel(), BorderLayout.CENTER);
 
@@ -90,9 +92,12 @@ public class FeedViewPage extends JPanel {
 
         searchField.setPreferredSize(new Dimension(200, 30));
 
-        searchButton = new JButton("Search");
-        deleteButton = new JButton("Delete");
-        clearButton = new JButton("Clear");
+        searchButton = new RoundedButton("Search", 18);
+        deleteButton = new RoundedButton("Delete", 18);
+        clearButton = new RoundedButton("Clear", 18);
+        searchButton.setFont(new Font("Arial", Font.BOLD, 12));
+        deleteButton.setFont(new Font("Arial", Font.BOLD, 12));
+        clearButton.setFont(new Font("Arial", Font.BOLD, 12));
         deleteButton.setToolTipText("Remove the most recently added user from the selection.");
         clearButton.setToolTipText("Clear all selected users.");
 
@@ -124,7 +129,7 @@ public class FeedViewPage extends JPanel {
             selectionPanel.add(button);
         }
 
-        addSelectedToChat = new JButton("Add Selected to Chat");
+        addSelectedToChat = new RoundedButton("Add Selected to Chat", 18);
         addSelectedToChat.setEnabled(false);
         selectionPanel.add(addSelectedToChat);
 
@@ -158,9 +163,12 @@ public class FeedViewPage extends JPanel {
         chatField = new JTextField();
         chatField.setPreferredSize(new Dimension(200, 30));
 
-        editButton = new JButton("Edit");
-        sendButton = new JButton("Send");
-        deleteTextButton = new JButton("Delete");
+        editButton = new RoundedButton("Edit", 18);
+        sendButton = new RoundedButton("Send", 18);
+        deleteTextButton = new RoundedButton("Delete", 18);
+        editButton.setFont(new Font("Arial", Font.BOLD, 12));
+        sendButton.setFont(new Font("Arial", Font.BOLD, 12));
+        deleteTextButton.setFont(new Font("Arial", Font.BOLD, 12));
 
         editButton.setEnabled(false);
         sendButton.setEnabled(false);
@@ -183,7 +191,7 @@ public class FeedViewPage extends JPanel {
         try {
             String line = bufferedReader.readLine();
             while (line != null && !line.equals("stop")) {
-                chatButtons.add(new JButton(line));
+                chatButtons.add(new RoundedButton(line, 18));
                 buttonPanelLeft.add(chatButtons.get(chatButtons.size() - 1));
                 line = bufferedReader.readLine();
             }
