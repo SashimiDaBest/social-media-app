@@ -10,7 +10,6 @@ package object;
  *
  * @author Soleil Pham
  * @version 11/02/2024
- * @since 1.0
  */
 public interface MessageInterface {
     /**

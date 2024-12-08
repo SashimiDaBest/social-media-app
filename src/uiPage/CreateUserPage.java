@@ -1,11 +1,7 @@
 package uiPage;
 
-import clientPageOperation.UserPageClient;
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -16,10 +12,10 @@ public class CreateUserPage extends JPanel {
     private static final String USER_CREATION_SUCCESSFUL = "User creation successful";
     private static final String INVALID_FIELDS = "Invalid fields";
 
-    private JLabel title = new JLabel("Boiler Gram!", JLabel.CENTER);
-    private JLabel slogan = new JLabel("Sign up to text all your boilermakers!", JLabel.CENTER);
-    private JLabel usernameLabel = new JLabel("Username: ");
-    private JLabel passwordLabel = new JLabel("Password: ");
+    private JLabel title = new JLabel("Welcome to Boiler Gram!", SwingConstants.CENTER);
+    private JLabel slogan = new JLabel("Sign up to text all your boilermakers!", SwingConstants.CENTER);
+    private JLabel usernameLabel = new JLabel("Username");
+    private JLabel passwordLabel = new JLabel("Password");
     private JTextField usernameField = new JTextField(15);
     private JPasswordField passwordField = new JPasswordField(15);
     private JButton signUpButton = new JButton("Sign Up");
@@ -34,9 +30,16 @@ public class CreateUserPage extends JPanel {
         this.pageManager = pageManager;
 
         setLayout(new BorderLayout());
+        setBackground(Color.WHITE);
 
-        JScrollPane scrollablePanel = new JScrollPane(createMainPanel(), JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        add(scrollablePanel, BorderLayout.CENTER);
+        // Create a scrollable main panel
+        JPanel mainPanel = createMainPanel();
+        JScrollPane scrollPane = new JScrollPane(mainPanel);
+        scrollPane.setBorder(null);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+
+        add(scrollPane, BorderLayout.CENTER);
 
         setupActionListeners();
     }
@@ -45,17 +48,22 @@ public class CreateUserPage extends JPanel {
         // Title Panel
         JPanel titlePanel = new JPanel();
         titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.Y_AXIS));
-        titlePanel.setBorder(new EmptyBorder(10, 0, 10, 0));
+        titlePanel.setBorder(new EmptyBorder(40, 20, 20, 20));
+        titlePanel.setBackground(Color.WHITE);
+        title.setFont(new Font("Roboto", Font.BOLD, 40));
+        slogan.setFont(new Font("Roboto", Font.PLAIN, 20));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
         slogan.setAlignmentX(Component.CENTER_ALIGNMENT);
         titlePanel.add(title);
+        titlePanel.add(Box.createVerticalStrut(5)); // Reduced vertical gap between labels
         titlePanel.add(slogan);
 
         // Input Panel
         JPanel inputPanel = new JPanel(new GridBagLayout());
         inputPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
+        inputPanel.setBackground(Color.WHITE);
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.insets = new Insets(10, 10, 10, 10);
 
         // Username
         gbc.gridx = 0;
@@ -65,7 +73,14 @@ public class CreateUserPage extends JPanel {
         gbc.gridx = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         inputPanel.add(usernameField, gbc);
-        usernameField.setToolTipText("Enter your desired username (no special characters).");
+        usernameField.setPreferredSize(new Dimension(200, 30));
+        usernameField.setFont(new Font("Roboto", Font.PLAIN, 20));
+        usernameLabel.setFont(new Font("Roboto", Font.PLAIN, 20));
+        usernameField.setBackground(new Color(230, 230, 230)); // Light grey
+        usernameField.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(Color.WHITE),
+            BorderFactory.createEmptyBorder(5, 5, 5, 5) // Added padding
+        ));
 
         // Password
         gbc.gridx = 0;
@@ -75,23 +90,42 @@ public class CreateUserPage extends JPanel {
         gbc.gridx = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         inputPanel.add(passwordField, gbc);
-        passwordField.setToolTipText("Password must be at least 10 characters long, containing letters and numbers.");
+        passwordField.setPreferredSize(new Dimension(200, 30));
+        passwordField.setFont(new Font("Roboto", Font.PLAIN, 20));
+        passwordLabel.setFont(new Font("Roboto", Font.PLAIN, 20));
+        passwordField.setBackground(new Color(230, 230, 230)); // Light grey
+        passwordField.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(Color.WHITE),
+            BorderFactory.createEmptyBorder(5, 5, 5, 5) // Added padding
+        ));
 
         // Options Panel
         JPanel optionsPanel = new JPanel();
         optionsPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        optionsPanel.setBackground(Color.WHITE);
+        
+
+        signUpButton = new RoundedButton("Sign Up", 18);
+        signUpButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        signUpButton.setForeground(Color.BLACK);
+        signUpButton.setFont(new Font("Roboto", Font.PLAIN, 18));
+        backButton = new RoundedButton("Cancel", 18);
+        backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        backButton.setForeground(Color.BLACK);
+        backButton.setFont(new Font("Roboto", Font.PLAIN, 18));
+
         optionsPanel.add(signUpButton);
         optionsPanel.add(backButton);
-
-        signUpButton.setToolTipText("Create your account with the entered details.");
-        backButton.setToolTipText("Cancel and return to the Welcome page.");
 
         // Group All Components
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
+        mainPanel.setBackground(Color.WHITE);
         mainPanel.add(titlePanel);
+        mainPanel.add(Box.createVerticalStrut(20));
         mainPanel.add(inputPanel);
+        mainPanel.add(Box.createVerticalStrut(20));
         mainPanel.add(optionsPanel);
 
         return mainPanel;
@@ -119,12 +153,13 @@ public class CreateUserPage extends JPanel {
 
         try {
             // Send sign-up request to server
-            UserPageClient.write("2", bufferedWriter); // "2" for sign-up operation
-            UserPageClient.write(username, bufferedWriter);
-            UserPageClient.write(new String(passwordChars), bufferedWriter);
+            Writer.write("2", bufferedWriter); // "2" for sign-up operation
+            Writer.write(username, bufferedWriter);
+            Writer.write(new String(passwordChars), bufferedWriter);
             clearPassword(passwordChars);
 
             String response = bufferedReader.readLine();
+            System.out.println("read: " + response);
             if (response == null) throw new IOException("Server closed the connection.");
 
             if (USER_CREATION_SUCCESSFUL.equals(response)) {

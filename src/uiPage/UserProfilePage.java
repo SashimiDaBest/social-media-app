@@ -1,11 +1,8 @@
 package uiPage;
 
-import clientPageOperation.UserPageClient;
-import object.User;
-import serverPageOperation.UserPageServer;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import uiPage.WelcomePage.RoundedBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,6 +21,7 @@ public class UserProfilePage extends JPanel {
     private JButton profileButton, settingButton, backButton, nextButton, logoutButton, feedButton;
 
     public UserProfilePage(PageManager pageManager, BufferedWriter bufferedWriter, BufferedReader bufferedReader) {
+        System.out.println("This is user profile page");
         this.pageManager = pageManager;
         this.bufferedReader = bufferedReader;
         this.bufferedWriter = bufferedWriter;
@@ -54,6 +52,7 @@ public class UserProfilePage extends JPanel {
             try {
                 // Read image name from BufferedReader
                 String imageName = bufferedReader.readLine();
+                System.out.println("read1: " + imageName);
                 if (imageName == null || imageName.isEmpty()) {
                     throw new IllegalStateException("Image name is missing or invalid");
                 }
@@ -62,7 +61,7 @@ public class UserProfilePage extends JPanel {
                 image = ImageIO.read(new File("./Sample Test Folder/" + imageName + ".png"));
 
                 // Scale the image
-                Image newImage = image.getScaledInstance(50, 50, java.awt.Image.SCALE_SMOOTH);
+                Image newImage = image.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
 
                 // Update the profile button on the EDT
                 SwingUtilities.invokeLater(() -> {
@@ -77,7 +76,7 @@ public class UserProfilePage extends JPanel {
                 // Handle missing or error scenarios by setting a placeholder icon
                 try {
                     BufferedImage img = ImageIO.read(new File("./Sample Test Folder/I_0000.png"));
-                    Image newImage = img.getScaledInstance(50, 50, java.awt.Image.SCALE_SMOOTH);
+                    Image newImage = img.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
                     SwingUtilities.invokeLater(() -> {
                         profileButton.setIcon(new ImageIcon(img));
                         profileButton.revalidate();
@@ -111,12 +110,18 @@ public class UserProfilePage extends JPanel {
         accountTypeField.setEditable(false);
         accountTypeField.setMinimumSize(fixedSize);
 
+        usernameLabel.setFont(new Font("Roboto", Font.BOLD, 14));
+        usernameField.setFont(new Font("Roboto", Font.BOLD, 14));
+        accountTypeField.setFont(new Font("Roboto", Font.BOLD, 14));
+        accountTypeLabel.setFont(new Font("Roboto", Font.BOLD, 14));
         // Retrieve and Display User Information
         try {
             String line = bufferedReader.readLine();
+            System.out.println("read2: " + line);
             usernameField.setText(line);
             if (line != null) {
                 line = bufferedReader.readLine();
+                System.out.println("read3: " + line);
                 String accountType = "1".equals(line) ? "private" : "public";
                 accountTypeField.setText(accountType);
             }
@@ -191,19 +196,27 @@ public class UserProfilePage extends JPanel {
         panel.add(scrollPanel, BorderLayout.CENTER);
 
         // Load data in a separate thread
-        new Thread(() -> {
+        Thread loadingThread = new Thread(() -> {
             try {
                 String peopleValidity = bufferedReader.readLine();
+                System.out.println("read4: " + peopleValidity);
                 if (!"[EMPTY]".equals(peopleValidity)) {
                     SwingUtilities.invokeLater(() -> statusLabel.setText(""));
 
                     // Populate the button panel with user buttons
-                    ArrayList<String> buttonNames = UserPageClient.readAndPrint(bufferedReader);
-                    for (String buttonName : buttonNames) {
-                        JButton button = new JButton(buttonName);
+                    ArrayList<String> buttonNames = Writer.readAndPrint(bufferedReader);
 
+                    for (String buttonName : buttonNames) {
+                        RoundedButton button = new RoundedButton(buttonName, 18);
+                        button.setFont(new Font("Roboto", Font.BOLD, 14));
+                        button.setBackground(new Color(230, 230, 230));
+                        // button.setBorder(BorderFactory.createCompoundBorder(
+                        //     BorderFactory.createLineBorder(Color.BLACK),
+                        //     BorderFactory.createEmptyBorder(5, 5, 5, 5) // Added padding
+                        //     ));
                         button.addActionListener(e -> {
-                            UserPageClient.write("2", bufferedWriter);
+                            Writer.write("2", bufferedWriter);
+                            System.out.println("write: " + "2");
                             pageManager.lazyLoadPage(buttonName, () -> new OtherProfilePage(pageManager, bufferedWriter, bufferedReader, buttonName));
                         });
 
@@ -241,7 +254,14 @@ public class UserProfilePage extends JPanel {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }).start();
+        });
+        loadingThread.start();
+
+        try {
+            loadingThread.join(); // makes sure this thread and its caller end at the same time
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         return panel;
     }
@@ -264,7 +284,8 @@ public class UserProfilePage extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 try {
                     // Notify server of file upload action
-                    UserPageClient.write("1", bufferedWriter);
+                    Writer.write("1", bufferedWriter);
+                    System.out.println("write: " + "1");
 
                     // Open file chooser dialog
                     JFileChooser fileChooser = new JFileChooser();
@@ -276,10 +297,12 @@ public class UserProfilePage extends JPanel {
                         String path = selectedFile.getAbsolutePath();
 
                         // Send file path to server
-                        UserPageClient.write(path, bufferedWriter);
+                        Writer.write(path, bufferedWriter);
+                        System.out.println("write: " + path);
 
                         // Read response from server
                         String response = bufferedReader.readLine();
+                        System.out.println("read5: " + response);
                         if ("SAVE".equals(response)) {
                             JOptionPane.showMessageDialog(null, "File uploaded successfully!", "Notification", JOptionPane.INFORMATION_MESSAGE);
                         } else {
@@ -371,7 +394,8 @@ public class UserProfilePage extends JPanel {
 
                 // Logout button action listener
                 logoutButton.addActionListener(ev -> {
-                    UserPageClient.write("6", bufferedWriter);
+                    Writer.write("6", bufferedWriter);
+                    System.out.println("write: " + "6");
                     pageManager.lazyLoadPage("welcome", () -> new WelcomePage(pageManager, bufferedWriter, bufferedReader));
                     pageManager.removePage("user");
                     settingsDialog.dispose();
@@ -386,7 +410,8 @@ public class UserProfilePage extends JPanel {
         feedButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                UserPageClient.write("5", bufferedWriter);
+                Writer.write("5", bufferedWriter);
+                System.out.println("write: " + "5");
                 pageManager.lazyLoadPage("feed", () -> new FeedViewPage(pageManager, bufferedWriter, bufferedReader));
             }
         });

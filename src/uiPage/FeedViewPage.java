@@ -1,9 +1,6 @@
 package uiPage;
 
-import clientPageOperation.UserPageClient;
-
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -14,172 +11,92 @@ import java.util.Arrays;
 
 public class FeedViewPage extends JPanel {
 
-    // for viewing own user profile
-    private JButton profileButton;
-    private JButton searchButton;
-    private JButton loadButton;
-    private JButton deleteButton;
-    private JButton clearButton;
-    private JButton prevButton;
-    private JButton nextButton;
+    // Constants
+    private static final int MAX_SELECTED_USERS = 8;
 
-    private ArrayList<JButton> chatButtons;
-    private ArrayList<JLabel> chatLabels;
+    // UI Components
+    private JButton profileButton, searchButton, deleteButton, clearButton, addSelectedToChat, deleteTextButton;
+    private ArrayList<JButton> chatButtons, selectionButtons;
+    private JTextField chatField, searchField;
+    private JButton editButton, sendButton;
+    private JScrollPane chatViewPanel, chatButtonPanel;
+    private JPanel chatPanel; // Dynamic chat panel
+    private JLabel messageLabel;
 
-    private JTextField chatField;
-    private JButton uploadButton;
-    private JButton editButton;
-    private JButton sendButton;
-
-    // for search panel
-    private ArrayList<String> selectedUsers; // holds selected usernames
-    private ArrayList<JButton> selectionButtons; // for accessing selected users later
-    private JTextField searchField;
-    private JButton addSelectedToChat;
-
-    private BufferedWriter writer;
-    private BufferedReader reader;
+    // Logic
+    private ArrayList<String> selectedUsers; // Holds selected usernames
+    private BufferedWriter bufferedWriter;
+    private BufferedReader bufferedReader;
     private PageManager pageManager;
+    private String currentChatID;
 
     public FeedViewPage(PageManager pageManager, BufferedWriter bw, BufferedReader br) {
+        System.out.println("This is feed view page");
+
         this.pageManager = pageManager;
-        this.writer = bw;
-        this.reader = br;
+        this.bufferedWriter = bw;
+        this.bufferedReader = br;
         this.selectedUsers = new ArrayList<>();
+        this.selectionButtons = new ArrayList<>();
+        this.chatButtons = new ArrayList<>();
+        this.currentChatID = "";
 
         setLayout(new BorderLayout());
 
-        // Top panel (Profile Icon and Search)
-        JPanel topPanel = new JPanel();
-        topPanel.setLayout(new BorderLayout());
+        // Top Panel: Profile and Search
+        add(createTopPanel(), BorderLayout.NORTH);
 
-        // Profile Icon Button
-        profileButton = new JButton("User Page");
-        profileButton.setHorizontalAlignment(SwingConstants.LEFT);
-        topPanel.add(profileButton, BorderLayout.WEST);
+        // Center Panel: Chat view and message panel
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        JPanel chatPanel = new JPanel(new BorderLayout());
 
-        // Search Panel
-        topPanel.add(createSearchPanel(), BorderLayout.CENTER);
+        chatViewPanel = createChatPanel();
+        chatPanel.add(chatViewPanel, BorderLayout.CENTER);
+        chatPanel.add(createBottomPanel(), BorderLayout.SOUTH);
 
-        add(topPanel, BorderLayout.NORTH);
-
-        // Center panel (Chat messages and left panel)
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BorderLayout());
-
-        // Left panel (Buttons) inside scroll pane
-        mainPanel.add(createChatViewPanel(), BorderLayout.WEST);
-
-        // Selection panel: shows current usernames that have been selected
-        mainPanel.add(createSelectionPanel(), BorderLayout.EAST);
-
-        // Chat panel
-        JPanel rightPanel = new JPanel(new BorderLayout());
-        rightPanel.add(createChatPanel(), BorderLayout.CENTER);
-
-        // Bottom panel (Text input and actions)
-        rightPanel.add(createBottomPanel(), BorderLayout.SOUTH);
-        mainPanel.add(rightPanel, BorderLayout.CENTER);
-
-
+        chatButtonPanel = createChatViewPanel();
+        mainPanel.add(chatButtonPanel, BorderLayout.WEST);
+        mainPanel.add(chatPanel, BorderLayout.CENTER);
         add(mainPanel, BorderLayout.CENTER);
 
         setupActionListeners();
     }
 
-    public JPanel createBottomPanel() {
-        JPanel bottomPanel = new JPanel();
-        bottomPanel.setLayout(new BorderLayout());
+    public JPanel createTopPanel() {
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
 
-        chatField = new JTextField();
-        chatField.setPreferredSize(new Dimension(200, 30)); // Fixed size for text field
-        uploadButton = new JButton("Upload Picture");
-        editButton = new JButton("Edit");
-        sendButton = new JButton("Send");
+        // Search Panel
+        JPanel searchPanel = new JPanel(new BorderLayout());
+        profileButton = new JButton("User Page");
+        searchPanel.add(profileButton, BorderLayout.WEST);
+        searchPanel.add(createSearchPanel(), BorderLayout.CENTER);
 
-        JPanel buttonPanelBottom = new JPanel(new FlowLayout());
-        buttonPanelBottom.add(uploadButton);
-        buttonPanelBottom.add(editButton);
-        buttonPanelBottom.add(sendButton);
+        // Selection Panel
+        JPanel selectionPanel = createSelectionPanel();
 
-        editButton.setEnabled(false);
-        sendButton.setEnabled(false);
-        uploadButton.setEnabled(false);
-
-        bottomPanel.add(chatField, BorderLayout.CENTER);
-        bottomPanel.add(buttonPanelBottom, BorderLayout.EAST);
-        return bottomPanel;
-    }
-
-    public JScrollPane createChatPanel() {
-        JPanel chatPanel = new JPanel();
-        chatPanel.setLayout(new BoxLayout(chatPanel, BoxLayout.Y_AXIS));
-
-        chatLabels = new ArrayList<>();
-
-        for (int i = 1; i <= 6; i++) {
-            JPanel chatRow = new JPanel();
-            chatRow.setLayout(new FlowLayout(FlowLayout.LEFT));
-            JLabel userLabel = new JLabel("");
-            chatRow.add(userLabel);
-            chatPanel.add(chatRow);
-            chatLabels.add(userLabel);
-        }
-
-        chatLabels.get(0).setText("Chat content will appear here!");
-
-        JScrollPane chatScrollPane = new JScrollPane(chatPanel);
-        return chatScrollPane;
-    }
-
-    public JScrollPane createChatViewPanel() {
-        JPanel buttonPanelLeft = new JPanel();
-        buttonPanelLeft.setLayout(new GridLayout(8, 1, 5, 5)); // 8 buttons in a grid layout
-
-        chatButtons = new ArrayList<>(); // For accessing buttons after creation
-
-        for (int i = 1; i <= 8; i++) {
-            JButton button = new JButton("Button " + i);
-            button.setPreferredSize(new Dimension(50, 40)); // Fixed size for buttons
-            buttonPanelLeft.add(button);
-            chatButtons.add(button);
-            button.setEnabled(false);
-            button.setVisible(false);
-        }
-
-        chatButtons.get(0).setVisible(true);
-        chatButtons.get(0).setText("Load chats!");
-
-        JScrollPane leftScrollPane = new JScrollPane(buttonPanelLeft);
-        leftScrollPane.setPreferredSize(new Dimension(150, 0)); // Adjust width to fit buttons
-        return leftScrollPane;
+        topPanel.add(searchPanel);
+        topPanel.add(selectionPanel);
+        return topPanel;
     }
 
     public JPanel createSearchPanel() {
-        JPanel searchPanel = new JPanel();
-        searchPanel.setLayout(new BorderLayout());
-        JTextField searchField = new JTextField();
-        searchField.setPreferredSize(new Dimension(200, 30));
-        this.searchButton = new JButton("Search");
-        this.loadButton = new JButton("Load");
-        this.deleteButton = new JButton("Delete");
-        this.clearButton = new JButton("Clear");
-        this.prevButton = new JButton("<<");
-        this.nextButton = new JButton(">>");
-        this.searchField = searchField;
+        JPanel searchPanel = new JPanel(new BorderLayout());
+        searchField = new JTextField(20);
+        searchField.setToolTipText("Search for users (case-insensitive)");
 
-        deleteButton.setEnabled(false);
+        searchField.setPreferredSize(new Dimension(200, 30));
+
+        searchButton = new JButton("Search");
+        deleteButton = new JButton("Delete");
+        clearButton = new JButton("Clear");
+        deleteButton.setToolTipText("Remove the most recently added user from the selection.");
+        clearButton.setToolTipText("Clear all selected users.");
 
         JPanel buttonPanel = new JPanel(new FlowLayout());
         buttonPanel.add(searchButton);
-        buttonPanel.add(loadButton);
         buttonPanel.add(deleteButton);
         buttonPanel.add(clearButton);
-        buttonPanel.add(prevButton);
-        buttonPanel.add(nextButton);
-
-        deleteButton.setEnabled(false);
-        clearButton.setEnabled(false);
 
         searchPanel.add(searchField, BorderLayout.CENTER);
         searchPanel.add(buttonPanel, BorderLayout.EAST);
@@ -187,447 +104,555 @@ public class FeedViewPage extends JPanel {
     }
 
     public JPanel createSelectionPanel() {
+        JPanel selectionPanel = new JPanel(new FlowLayout());
 
-        JPanel selectionPanel = new JPanel();
-        selectionPanel.setPreferredSize(new Dimension(100, 0));;
-        selectionPanel.setLayout(new GridLayout(8, 1, 5, 5)); // 8 buttons in a grid layout\
+        JTextPane textPane = new JTextPane();
+        textPane.setEditable(false);
+        textPane.setOpaque(false);
+        textPane.setText("Selected Users: ");
+        selectionPanel.add(textPane);
 
-        selectionButtons = new ArrayList<>(); // For accessing buttons after creation
-        
-        // for adding selected to chat
-        this.addSelectedToChat = new JButton("Add Selected To Chat");
-        addSelectedToChat.setPreferredSize(new Dimension(50, 40));
-        addSelectedToChat.setEnabled(false);
-        addSelectedToChat.setVisible(true);
-
-        selectionPanel.add(addSelectedToChat);
-        for (int i = 0; i < 7; i++) { // limit of 8 buttons
-            JButton button = new JButton("");
-            button.setSize(new Dimension(50, 40)); // Fixed size for buttons
-            selectionPanel.add(button);
-            selectionButtons.add(button);
-            button.setEnabled(false);
+        // Add selection buttons (hidden initially)
+        for (int i = 0; i < MAX_SELECTED_USERS; i++) {
+            JButton button = new JButton();
             button.setVisible(false);
+            button.setEnabled(false);
+            selectionButtons.add(button);
+            selectionPanel.add(button);
         }
 
-        selectionButtons.get(0).setVisible(true);
-        selectionButtons.get(0).setText("Waiting for user selection...");
-
-        // JScrollPane leftScrollPane = new JScrollPane(selectionPanel);
-        // leftScrollPane.setPreferredSize(new Dimension(150, 0)); // Adjust width to fit buttons
+        addSelectedToChat = new JButton("Add Selected to Chat");
+        addSelectedToChat.setEnabled(false);
+        selectionPanel.add(addSelectedToChat);
 
         return selectionPanel;
     }
 
+    public JScrollPane createChatPanel() {
+        chatPanel = new JPanel(); // Create a new panel for dynamic chat updates
+        chatPanel.setLayout(new BoxLayout(chatPanel, BoxLayout.Y_AXIS)); // Vertical alignment of chat messages
+        JScrollPane scrollPane = new JScrollPane(chatPanel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        return scrollPane;
+    }
+
+    private void updateChatPanel(ArrayList<String> messages) {
+        chatPanel.removeAll(); // Clear existing components
+        for (String message : messages) {
+            messageLabel = new JLabel(message);
+            chatPanel.add(messageLabel); // Add new messages dynamically
+        }
+        chatPanel.revalidate(); // Recalculate layout
+        chatPanel.repaint();    // Refresh UI
+
+        // Scroll to the bottom
+        SwingUtilities.invokeLater(() -> chatViewPanel.getVerticalScrollBar().setValue(chatViewPanel.getVerticalScrollBar().getMaximum()));
+    }
+
+    public JPanel createBottomPanel() {
+        JPanel bottomPanel = new JPanel(new BorderLayout());
+
+        chatField = new JTextField();
+        chatField.setPreferredSize(new Dimension(200, 30));
+
+        editButton = new JButton("Edit");
+        sendButton = new JButton("Send");
+        deleteTextButton = new JButton("Delete");
+
+        editButton.setEnabled(false);
+        sendButton.setEnabled(false);
+        deleteTextButton.setEnabled(false);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        buttonPanel.add(editButton);
+        buttonPanel.add(sendButton);
+        buttonPanel.add(deleteTextButton);
+
+        bottomPanel.add(chatField, BorderLayout.CENTER);
+        bottomPanel.add(buttonPanel, BorderLayout.EAST);
+        return bottomPanel;
+    }
+
+    public JScrollPane createChatViewPanel() {
+        // Create a panel for buttons with a grid layout
+        JPanel buttonPanelLeft = new JPanel(new GridLayout(8, 1, 5, 5)); // 8 buttons in a grid layout
+
+        try {
+            String line = bufferedReader.readLine();
+            while (line != null && !line.equals("stop")) {
+                chatButtons.add(new JButton(line));
+                buttonPanelLeft.add(chatButtons.get(chatButtons.size() - 1));
+                line = bufferedReader.readLine();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        // Wrap the panel in a scroll pane
+        JScrollPane leftScrollPane = new JScrollPane(buttonPanelLeft);
+        leftScrollPane.setPreferredSize(new Dimension(150, 0));
+
+        return leftScrollPane;
+    }
 
     private void setupActionListeners() {
 
-        // navigate to user profile
-        profileButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                UserPageClient.write("user", writer);
-                // load the user's page
-                pageManager.lazyLoadPage("user", () -> new UserProfilePage(pageManager, writer, reader));
-                pageManager.removePage("feed");
-            }
+        // Profile button navigates to user profile
+        profileButton.addActionListener(e -> {
+            Writer.write("user", bufferedWriter);
+            System.out.println("write: user");
+            pageManager.lazyLoadPage("user", () -> new UserProfilePage(pageManager, bufferedWriter, bufferedReader));
+            pageManager.removePage("feed");
         });
 
-        loadButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                UserPageClient.write("2", writer);
-                try {
-                    loadButton.setEnabled(false);
-                    String response = reader.readLine();
-                    System.out.println(response);
-                    if (response.isEmpty()) {
-                        JOptionPane.showMessageDialog(null, "You have no chats!", "Boiler Gram", JOptionPane.ERROR_MESSAGE);
-                        loadButton.setEnabled(true);
-                    } else {
-                        String[] activeChats = response.split(";");
-                        for (int i = 0; i < chatButtons.size(); i++) {
-                            if (i < activeChats.length) {
-                                chatButtons.get(i).setEnabled(true);
-                                chatButtons.get(i).setVisible(true);
-                                chatButtons.get(i).setText(activeChats[i].substring(0, 10));
-                            } else
-                                chatButtons.get(i).setVisible(false);
-                        }
-                    }
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
+        // Search for users
+        searchButton.addActionListener(e -> handleUserSearch());
+
+        for (JButton selectionButton : selectionButtons) {
+            selectionButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String selectedUser = selectionButton.getText();
+                    Writer.write("6", bufferedWriter);
+                    System.out.println("write: " + "6");
+                    selectedUsers.add(selectedUser);
+                    pageManager.lazyLoadPage(selectedUser, () -> new OtherProfilePage(pageManager, bufferedWriter, bufferedReader, selectedUser));
+                    pageManager.removePage("feed");
                 }
-            }
-        });
+            });
+        }
 
         for (JButton chatButton : chatButtons) {
             chatButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
+                    Writer.write("2", bufferedWriter);
+                    String selectedChat = chatButton.getText();
+                    Writer.write(selectedChat, bufferedWriter);
+
+                    Thread loadingThread = new Thread(() -> {
+                        try {
+                            String response = bufferedReader.readLine();
+                            if (response.equals("valid")) {
+                                String messagesLine = bufferedReader.readLine();
+                                ArrayList<String> messages = new ArrayList<>(Arrays.asList(messagesLine.split(";")));
+                                SwingUtilities.invokeLater(() -> {
+                                    updateChatPanel(messages);
+                                    currentChatID = selectedChat; // Update current chat ID
+
+                                    // Enable buttons
+                                    editButton.setEnabled(true);
+                                    deleteTextButton.setEnabled(true);
+                                    sendButton.setEnabled(true);
+                                }); // Update chat panel on the Event Dispatch Thread
+                            } else {
+                                ArrayList<String> messages = new ArrayList<>();
+                                messages.add("Invalid chat selected.");
+                                SwingUtilities.invokeLater(() -> {
+                                    updateChatPanel(messages);
+                                    currentChatID = ""; // Reset current chat ID
+
+                                    // Disable buttons
+                                    editButton.setEnabled(false);
+                                    deleteTextButton.setEnabled(false);
+                                    sendButton.setEnabled(false);
+                                });
+                            }
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                    });
+                    loadingThread.start();
+
                     try {
-                        UserPageClient.write(chatButton.getText().substring(6), writer);
-                        for (JButton button : chatButtons) {
-                            if (!button.equals(chatButton)) {
-                                button.setVisible(false);
-                            } else {
-                                button.setEnabled(false);
-                            }
-                        }
-                        clearButton.setEnabled(true);
-                        deleteButton.setEnabled(true);
-                        uploadButton.setEnabled(true);
-                        editButton.setEnabled(true);
-                        sendButton.setEnabled(true);
-
-                        ArrayList<String> menuToDisplay;
-                        String[] lines = reader.readLine().split(";");
-
-                        menuToDisplay = new ArrayList<>(Arrays.asList(lines));
-                        int index = 0;
-                        for (int i = 0; i < menuToDisplay.size(); i++) {
-                            String line = menuToDisplay.get(i);
-                            if (line.equals("---------------------------------------------------------------------") ||
-                                    line.equals("[Displaying up to 6 most recent messages]") ||
-                                    line.equals("1 - Compose message") || line.equals("2 - Delete previous message") ||
-                                    line.equals("3 - Edit previous message") || line.equals("4 - Exit chat") ||
-                                    line.contains("Chat #") || line.contains("Members: You, ") || (line.isEmpty())) {
-                                continue;
-                            } else {
-                                chatLabels.get(index).setText(line);
-                                index++;
-                            }
-                        }
-
-                        for (int i = index; i < chatLabels.size(); i++) {
-                            chatLabels.get(i).setText("");
-                        }
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
+                        loadingThread.join(); // makes sure this thread and its caller end at the same time
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
                     }
                 }
             });
         }
+
+        // Set up action listeners
+        deleteButton.addActionListener(e -> {
+            deleteMostRecentSelection();
+
+            // Disable the `deleteButton` if there are no more users to delete
+            if (selectedUsers.isEmpty()) {
+                deleteButton.setEnabled(false);
+            }
+        });
+
+        clearButton.addActionListener(e -> {
+            clearSelections();
+
+            // Disable both `deleteButton` and `clearButton` after clearing
+            deleteButton.setEnabled(false);
+            clearButton.setEnabled(false);
+        });
 
         sendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    UserPageClient.write("1", writer);
-                    UserPageClient.write(chatField.getText(), writer);
+                Writer.write("send", bufferedWriter);
+                Writer.write(currentChatID, bufferedWriter);
+                String message = chatField.getText();
+                Thread loadingThread = new Thread(() -> {
+                    try {
+                        String response = bufferedReader.readLine();
+                        if (response.equals("valid")) {
+                            Writer.write(message, bufferedWriter);
 
-                    ArrayList<String> menuToDisplay;
-                    String[] lines = reader.readLine().split(";");
-
-                    menuToDisplay = new ArrayList<>(Arrays.asList(lines));
-                    int index = 0;
-                    for (int i = 0; i < menuToDisplay.size(); i++) {
-                        String line = menuToDisplay.get(i);
-                        if (line.equals("---------------------------------------------------------------------") ||
-                                line.equals("[Displaying up to 6 most recent messages]") ||
-                                line.equals("1 - Compose message") || line.equals("2 - Delete previous message") ||
-                                line.equals("3 - Edit previous message") || line.equals("4 - Exit chat") ||
-                                line.contains("Chat #") || line.contains("Members: You, ") || (line.isEmpty())) {
-                            continue;
+                            String messagesLine = bufferedReader.readLine();
+                            ArrayList<String> messages = new ArrayList<>(Arrays.asList(messagesLine.split(";")));
+                            SwingUtilities.invokeLater(() -> {
+                                updateChatPanel(messages);
+                            }); // Update chat panel on the Event Dispatch Thread
                         } else {
-                            chatLabels.get(index).setText(line);
-                            index++;
+                            ArrayList<String> messages = new ArrayList<>();
+                            messages.add("Invalid chat selected.");
+                            SwingUtilities.invokeLater(() -> {
+                                updateChatPanel(messages);
+                            });
                         }
+                        chatField.setText("");
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
                     }
+                });
+                loadingThread.start();
 
-                    for (int i = index; i < chatLabels.size(); i++) {
-                        chatLabels.get(i).setText("");
-                    }
-
-                    chatField.setText("");
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
+                try {
+                    loadingThread.join(); // makes sure this thread and its caller end at the same time
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
                 }
             }
         });
+
 
         editButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    UserPageClient.write("3", writer);
-                    UserPageClient.write(chatField.getText(), writer);
+                String newMessage = chatField.getText().trim();
+                if (newMessage.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "New message cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
 
-                    ArrayList<String> menuToDisplay;
-                    String[] lines = reader.readLine().split(";");
+                if (messageLabel.getText().isEmpty()) {
+                    return;
+                }
 
-                    menuToDisplay = new ArrayList<>(Arrays.asList(lines));
-                    int index = 0;
-                    for (int i = 0; i < menuToDisplay.size(); i++) {
-                        String line = menuToDisplay.get(i);
-                        if (line.equals("---------------------------------------------------------------------") ||
-                                line.equals("[Displaying up to 6 most recent messages]") ||
-                                line.equals("1 - Compose message") || line.equals("2 - Delete previous message") ||
-                                line.equals("3 - Edit previous message") || line.equals("4 - Exit chat") ||
-                                line.contains("Chat #") || line.contains("Members: You, ") || (line.isEmpty())) {
-                            continue;
+                Writer.write("edit", bufferedWriter);
+                Writer.write(currentChatID, bufferedWriter);
+
+                Thread loadingThread = new Thread(() -> {
+                    try {
+                        String response = bufferedReader.readLine();
+                        if (response.equals("valid")) {
+                            Writer.write(newMessage, bufferedWriter);
+
+                            // Refresh chat panel
+                            String messagesLine = bufferedReader.readLine();
+                            ArrayList<String> messages = new ArrayList<>(Arrays.asList(messagesLine.split(";")));
+                            SwingUtilities.invokeLater(() -> updateChatPanel(messages));
                         } else {
-                            chatLabels.get(index).setText(line);
-                            index++;
+                            ArrayList<String> messages = new ArrayList<>();
+                            messages.add("Invalid chat selected.");
+                            SwingUtilities.invokeLater(() -> {
+                                updateChatPanel(messages);
+                                JOptionPane.showMessageDialog(
+                                        null,
+                                        "Failed to edit the message. Please try again.",
+                                        "Error",
+                                        JOptionPane.ERROR_MESSAGE);
+                            });
                         }
+                        chatField.setText("");
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
                     }
+                });
+                loadingThread.start();
 
-                    for (int i = index; i < chatLabels.size(); i++) {
-                        chatLabels.get(i).setText("");
-                    }
-                    chatField.setText("");
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
+                try {
+                    loadingThread.join(); // makes sure this thread and its caller end at the same time
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
                 }
             }
         });
 
-        deleteButton.addActionListener(new ActionListener() {
+        deleteTextButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                Thread loadingThread = new Thread(() -> {
+                    if (messageLabel.getText().isEmpty()) {
+                        return;
+                    }
+
+                    try {
+                        Writer.write("delete", bufferedWriter);
+                        Writer.write(currentChatID, bufferedWriter);
+                        String response = bufferedReader.readLine();
+                        System.out.println("read: " + response);
+                        if (response.equals("valid")) {
+                            // Refresh the chat panel
+                            String messagesLine = bufferedReader.readLine();
+                            ArrayList<String> messages = new ArrayList<>(Arrays.asList(messagesLine.split(";")));
+                            SwingUtilities.invokeLater(() -> updateChatPanel(messages));
+                        } else {
+                            ArrayList<String> messages = new ArrayList<>();
+                            messages.add("Invalid chat selected.");
+                            SwingUtilities.invokeLater(() -> updateChatPanel(messages));
+                            JOptionPane.showMessageDialog(
+                                    null,
+                                    "Failed to delete the message.",
+                                    "Error",
+                                    JOptionPane.ERROR_MESSAGE);
+                        }
+                        chatField.setText("");
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                });
+                loadingThread.start();
+
                 try {
-                    UserPageClient.write("2", writer);
-
-                    ArrayList<String> menuToDisplay;
-                    String[] lines = reader.readLine().split(";");
-
-                    menuToDisplay = new ArrayList<>(Arrays.asList(lines));
-                    int index = 0;
-                    for (int i = 0; i < menuToDisplay.size(); i++) {
-                        String line = menuToDisplay.get(i);
-                        if (line.equals("---------------------------------------------------------------------") ||
-                                line.equals("[Displaying up to 6 most recent messages]") ||
-                                line.equals("1 - Compose message") || line.equals("2 - Delete previous message") ||
-                                line.equals("3 - Edit previous message") || line.equals("4 - Exit chat") ||
-                                line.contains("Chat #") || line.contains("Members: You, ") || (line.isEmpty())) {
-                            continue;
-                        } else {
-                            chatLabels.get(index).setText(line);
-                            index++;
-                        }
-                    }
-
-                    for (int i = index; i < chatLabels.size(); i++) {
-                        chatLabels.get(i).setText("");
-                    }
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
+                    loadingThread.join(); // makes sure this thread and its caller end at the same time
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
                 }
             }
         });
 
-        clearButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                UserPageClient.write("4", writer);
-                chatButtons.get(0).setVisible(true);
-                chatButtons.get(0).setText("Load chats!");
-                chatButtons.get(0).setEnabled(false);
-                for (int i = 1; i < chatButtons.size(); i++) {
-                    chatButtons.get(i).setVisible(false);
-                }
-                chatLabels.get(0).setText("Chat content will appear here!");
-                for (int i = 1; i < chatLabels.size(); i++) {
-                    chatLabels.get(i).setText("");
-                }
-                loadButton.setEnabled(true);
-                deleteButton.setEnabled(false);
-                uploadButton.setEnabled(false);
-                editButton.setEnabled(false);
-                sendButton.setEnabled(false);
-            }
-        });
 
-        // search for other user
-        searchButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-
-                    // all stuff used below:
-                    UserPageClient.write("4", writer);
-
-                    String line = reader.readLine();
-
-                    // skirts past possible runtime error with OtherPageServer
-                    while (true) {
-                        if (line.equals("END") || line.equals("[EMPTY]") || line.equals("message")) {
-                            line = reader.readLine();
-                        } else {
-                            break;
-                        }
-                    }
-
-                    String[] userList = line.split(";");
-                    String userInput = searchField.getText();
-                    String selectedUser;
-
-                    // if the user types in the exact username, then there is no need for a dropdown
-                    if (Arrays.asList(userList).contains(userInput)) {
-                        selectedUser = userInput;
-                    
-                    } else if (userInput.equals("")) { // displays error if field is empty
-                        selectedUser = "";
-                    
-                    // otherwise, use a dropdown menu
-                    } else {
-                        // for menu pop-up: show all usernames that are close to userList
-                        ArrayList<String> closeOptions = new ArrayList<>();
-                        for (String name: userList) {
-                            if (name.contains(userInput)) {
-                                closeOptions.add(name);
-                            }
-                        }
-                        String[] menuOptions = closeOptions.toArray(new String[closeOptions.size()]);
-
-                        // for selecting the user based off drop down
-                        if (menuOptions.length == 0) { // for whatever reason, then skip to displaying an error
-                            selectedUser = "";
-                        
-                        } else {
-                            selectedUser = (String) JOptionPane.showInputDialog(null, "Here are the closest options:", 
-                            "CLOSE TO MATCHING USERNAMES:", JOptionPane.QUESTION_MESSAGE, null, menuOptions, menuOptions[0]);
-                        }
-
-                    }
-
-                    // VALIDATION 
-                    if (selectedUser == null) { // if user closes the drop down menu before selection
-                        // pass 
-
-                    } else if (selectedUser.equals("")) {
-                        JOptionPane.showMessageDialog(null, "Could not find selected user" +
-                        " or the search field was empty!",
-                            "ERROR: USER SELECTION", JOptionPane.QUESTION_MESSAGE);
-                    
-                    } else if (selectedUsers.contains(selectedUser)) {
-                        JOptionPane.showMessageDialog(null, "That user already exists in selection!",
-                            "ERROR: USER SELECTION", JOptionPane.QUESTION_MESSAGE);
-                    
-                    } else if (selectedUsers.size() >= 8) {
-                        JOptionPane.showMessageDialog(null, "Too many users have been selected (try clearing)!",
-                            "ERROR: USER SELECTION", JOptionPane.QUESTION_MESSAGE);
-
-                    } else {
-                        selectedUsers.add(selectedUser);
-
-                        // display current selection by changing the buttons
-                        for (int i = 0; i < selectedUsers.size(); i++) {
-                            selectionButtons.get(i).setEnabled(true);
-                            selectionButtons.get(i).setVisible(true);
-                            selectionButtons.get(i).setText(selectedUsers.get(i));
-                        }
-                        // if addSelectedChat isn't an option, make it an option
-                        if (!addSelectedToChat.isEnabled()) {
-                            addSelectedToChat.setEnabled(true);
-                        }
-                    }
-                    searchField.setText("");
-
-                } catch (IOException error) {
-                    error.printStackTrace();
-                }
-            }
-
-        });
-        
-        for (JButton selectionButton: selectionButtons) {
-
-            selectionButton.addActionListener(new ActionListener() {
-               @Override
-               public void actionPerformed(ActionEvent e) {
-
-                    String selectedUser = selectionButton.getText();
-
-                    UserPageClient.write("6", writer);
-                    UserPageClient.write(selectedUser, writer);
-
-                    selectedUsers.add(selectedUser);
-                    pageManager.lazyLoadPage(selectedUser, () -> new OtherProfilePage(pageManager, writer, reader, selectedUser));
-                    pageManager.removePage("feed");
-               }    
-            });
-        }
-    
-        // for adding all selected users to a chat
         addSelectedToChat.addActionListener(new ActionListener() {
-            @Override 
+            @Override
             public void actionPerformed(ActionEvent e) {
-                ArrayList<String> invalidUsers = new ArrayList<>();
                 ArrayList<String> validUsers = new ArrayList<>();
 
-                // to be sent for chat info (change later)
-                String membersList = "";
-                
                 try {
-                    UserPageClient.write("1", writer);
-                    String[] availableUsers = reader.readLine().split(";");
+                    // Initiate the chat creation process
+                    Writer.write("1", bufferedWriter);
+                    System.out.println("write: 1");
 
-                    for (String username: selectedUsers) {
+                    // Read available users
+                    String[] availableUsers = bufferedReader.readLine().split(";");
+                    System.out.println("read: " + Arrays.toString(availableUsers));
 
-                        UserPageClient.write(username, writer);
+                    // Validate selected users
+                    for (String username : selectedUsers) {
+                        Writer.write(username, bufferedWriter);
+                        System.out.println("write: " + username);
 
-                        String validation = reader.readLine();
-                        if (validation.equals("self") || validation.equals("User cannot be chatted with!")) {
-                            invalidUsers.add(username);
-                            continue;
-                        }
+                        String validation = bufferedReader.readLine();
+                        System.out.println("read: " + validation);
 
-                        validUsers.add(username);
-                    }
-                    UserPageClient.write("[DONE]", writer);                    
-
-                    // send members using only valid Users (send empty string if membersList is empty)
-
-                    if (validUsers.size() > 0) {
-                        for(int i = 0; i < validUsers.size(); i++) {
-                            if (i == validUsers.size() - 1) {
-                                membersList += validUsers.get(i);
-                            } else {
-                                membersList += validUsers.get(i) + ";";
-                            }
+                        // Skip invalid users
+                        if (!validation.equals("self") && !validation.equals("User cannot be chatted with!")) {
+                            validUsers.add(username);
                         }
                     }
-                   
-                    UserPageClient.write(membersList, writer);
 
-                    // check if chat was made successfully
-                    String chatCreationValidation = reader.readLine();
+                    // Signal the end of user validation
+                    Writer.write("[DONE]", bufferedWriter);
+                    System.out.println("write: [DONE]");
 
-                    if (chatCreationValidation.equals("[SUCCESSFUL CHAT CREATION]")) {
-                        JOptionPane.showMessageDialog(null, "You've created a new chat!", 
-                            "CHAT SUCCESSFULLY MADE", JOptionPane.INFORMATION_MESSAGE);
-                    
-                    } else if (chatCreationValidation.equals("[CHAT CREATION UNSUCCESSFUL]")) {
-                        JOptionPane.showMessageDialog(null, "Chat could not be made with the selected users!", 
-                            "INVALID USERS SELECTED FOR CHAT", JOptionPane.ERROR_MESSAGE);
+                    // Prepare and send the list of valid users
+                    String membersList = String.join(";", validUsers);
+                    Writer.write(membersList, bufferedWriter);
+                    System.out.println("write: " + membersList);
+
+                    // Check chat creation status
+                    String chatCreationValidation = bufferedReader.readLine();
+                    System.out.println("read: " + chatCreationValidation);
+
+                    // Handle chat creation result
+                    if ("[SUCCESSFUL CHAT CREATION]".equals(chatCreationValidation)) {
+                        JOptionPane.showMessageDialog(
+                                null,
+                                "You've created a new chat!",
+                                "CHAT SUCCESSFULLY MADE",
+                                JOptionPane.INFORMATION_MESSAGE
+                        );
+
+                        // Refresh chat buttons to include the newly created chat
+                        refreshChatViewPanel();
+
+                    } else if ("[CHAT CREATION UNSUCCESSFUL]".equals(chatCreationValidation)) {
+                        JOptionPane.showMessageDialog(
+                                null,
+                                "Chat could not be made with the selected users!",
+                                "INVALID USERS SELECTED FOR CHAT",
+                                JOptionPane.ERROR_MESSAGE
+                        );
                     }
-
-                    
-
                 } catch (IOException error) {
                     error.printStackTrace();
-                }
-
-                // display users that couldn't be added
-                if (invalidUsers.size() > 0) {
-                    String invalids = "";
-                    for (String username: invalidUsers) {
-                        invalids += username + "\n";
+                } finally {
+                    // Resets the selection panel, disable the button, and clears the selected users list.
+                    addSelectedToChat.setEnabled(false);
+                    for (JButton button : selectionButtons) {
+                        button.setVisible(false);
+                        button.setEnabled(false);
                     }
-                    JOptionPane.showMessageDialog(null, invalids, 
-                        "USERS WHO COULDN'T BE ADDED", JOptionPane.INFORMATION_MESSAGE);
+                    selectedUsers.clear();
                 }
-                
-                // clear selectedUsers and reset the Selection Panel
-                addSelectedToChat.setEnabled(false);
-                for (JButton button: selectionButtons) {
-                    button.setVisible(false);
-                    button.setEnabled(false);
-                }
-                selectedUsers.clear();
             }
         });
-    
     }
+
+    private void handleUserSearch() {
+        try {
+            Writer.write("4", bufferedWriter);
+            System.out.println("write: 4");
+
+            String line = bufferedReader.readLine();
+            System.out.println("read: " + line);
+
+            // Logic for user search and dropdown
+            String userInput = searchField.getText();
+            String selectedUser = processSearchResult(line, userInput);
+
+            if (selectedUser != null) {
+                addUserToSelection(selectedUser);
+            } else {
+                JOptionPane.showMessageDialog(null, "No user selected or invalid input.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            searchField.setText("");
+        } catch (IOException error) {
+            error.printStackTrace();
+        }
+    }
+
+    private String processSearchResult(String userList, String userInput) {
+        String[] originalUsers = userList.split(";");
+
+        // return searched user if input matches exactly
+        if (Arrays.asList(originalUsers).contains(userInput)) {
+            return userInput;
+
+            // else, show dropdown (NOT case sensitive)
+        } else {
+
+            // Create dropdown for similar usernames
+            String[] lowercaseUsers = userList.toLowerCase().split(";");
+            ArrayList<String> closeMatches = new ArrayList<>();
+
+            for (String user : lowercaseUsers) {
+                if (user.contains(userInput.toLowerCase())) {
+                    closeMatches.add(user);
+                }
+            }
+
+            // convert all found matches back to their original case
+            for (int i = 0; i < closeMatches.size(); i++) {
+
+                for (int j = 0; j < originalUsers.length; j++) {
+                    String convertedOriginalUser = originalUsers[j].toLowerCase();
+
+                    if (convertedOriginalUser.equals(closeMatches.get(i))) {
+                        closeMatches.set(i, originalUsers[j]);
+                        continue; // because all usernames should be unique
+                    }
+                }
+            }
+
+            if (closeMatches.isEmpty()) {
+                return null;
+            }
+
+            return (String) JOptionPane.showInputDialog(
+                    null, "Choose a user:", "Matching Users",
+                    JOptionPane.QUESTION_MESSAGE, null,
+                    closeMatches.toArray(new String[0]), closeMatches.get(0));
+        }
+    }
+
+    private void addUserToSelection(String selectedUser) {
+        if (selectedUsers.contains(selectedUser)) {
+            JOptionPane.showMessageDialog(null, "User already selected.", "Error", JOptionPane.ERROR_MESSAGE);
+        } else if (selectedUsers.size() >= MAX_SELECTED_USERS) {
+            JOptionPane.showMessageDialog(null, "Too many users selected.", "Error", JOptionPane.ERROR_MESSAGE);
+        } else {
+            selectedUsers.add(selectedUser);
+
+            // Update selection buttons
+            for (int i = 0; i < selectedUsers.size(); i++) {
+                JButton button = selectionButtons.get(i);
+                button.setVisible(true);
+                button.setEnabled(true);
+                button.setText(selectedUsers.get(i));
+            }
+
+            // Enable `deleteButton`, `clearButton`, and `addSelectedToChat`
+            deleteButton.setEnabled(true);
+            clearButton.setEnabled(true);
+            addSelectedToChat.setEnabled(true);
+        }
+    }
+
+    private void deleteMostRecentSelection() {
+        if (!selectedUsers.isEmpty()) {
+            // Remove the most recent user and corresponding button
+            int lastIndex = selectedUsers.size() - 1;
+            selectedUsers.remove(lastIndex);
+
+            JButton button = selectionButtons.get(lastIndex);
+            button.setVisible(false);
+            button.setEnabled(false);
+            button.setText("");
+
+            // Disable `addSelectedToChat` if no users are selected
+            if (selectedUsers.isEmpty()) {
+                addSelectedToChat.setEnabled(false);
+            }
+        }
+    }
+
+    private void clearSelections() {
+        // Clear all selected users
+        selectedUsers.clear();
+
+        // Reset all selection buttons
+        for (JButton button : selectionButtons) {
+            button.setVisible(false);
+            button.setEnabled(false);
+            button.setText("");
+        }
+
+        // Disable `addSelectedToChat`
+        addSelectedToChat.setEnabled(false);
+    }
+
+    private void refreshChatViewPanel() {
+        // Clear existing chat buttons
+        chatButtons.clear();
+
+        // Create a new panel for updated chat buttons
+        JPanel buttonPanelLeft = new JPanel(new GridLayout(8, 1, 5, 5)); // 8 buttons in a grid layout
+
+        // Request the updated list of chats from the server
+        Writer.write("refreshChats", bufferedWriter);
+        System.out.println("write: refreshChats");
+
+        try {
+            String line = bufferedReader.readLine();
+            while (line != null && !line.equals("stop")) {
+                chatButtons.add(new JButton(line));
+                buttonPanelLeft.add(chatButtons.get(chatButtons.size() - 1));
+                line = bufferedReader.readLine();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        // Update the chat view panel with new buttons
+        chatButtonPanel.setViewportView(buttonPanelLeft); // Replace the old panel
+        chatButtonPanel.revalidate();
+        chatButtonPanel.repaint();
+    }
+
 }

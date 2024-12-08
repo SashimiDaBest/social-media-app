@@ -3,7 +3,7 @@ package uiPage;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import clientPageOperation.UserPageClient;
+import uiPage.WelcomePage.RoundedBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,7 +21,6 @@ public class OtherProfilePage extends JPanel {
 
     private JButton profileButton;
     private JButton backButton;
-    private JButton nextButton;
     private JButton feedButton;
 
     private PageManager pageManager;
@@ -34,6 +33,7 @@ public class OtherProfilePage extends JPanel {
     private BufferedImage image;
 
     public OtherProfilePage(PageManager pageManager, BufferedWriter writer, BufferedReader reader, String otherUsername) {
+        System.out.println("This is other profile page");
         this.pageManager = pageManager;
         this.bufferedWriter = writer;
         this.bufferedReader = reader;
@@ -67,6 +67,7 @@ public class OtherProfilePage extends JPanel {
             try {
                 // Read image name from BufferedReader
                 String imageName = bufferedReader.readLine();
+                System.out.println("read: " + imageName);
                 if (imageName == null || imageName.isEmpty()) {
                     throw new IllegalStateException("Image name is missing or invalid");
                 }
@@ -97,7 +98,8 @@ public class OtherProfilePage extends JPanel {
     }
 
     private JPanel setAccountInfo() {
-        UserPageClient.write(otherUsername, bufferedWriter);
+        Writer.write(otherUsername, bufferedWriter);
+        System.out.println("write: " + otherUsername);
 
         JPanel accountInfoPanel = new JPanel(new GridBagLayout());
         accountInfoPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
@@ -119,16 +121,24 @@ public class OtherProfilePage extends JPanel {
         accountTypeField.setEditable(false);
         accountTypeField.setMinimumSize(fixedSize);
 
+        usernameLabel.setFont(new Font("Roboto", Font.BOLD, 14));
+        usernameField.setFont(new Font("Roboto", Font.BOLD, 14));
+        accountTypeField.setFont(new Font("Roboto", Font.BOLD, 14));
+        accountTypeLabel.setFont(new Font("Roboto", Font.BOLD, 14));
+
         // Retrieve and Display User Information
         try {
             String line = bufferedReader.readLine();
+            System.out.println("read: " + line);
             usernameField.setText(line);
 
             line = bufferedReader.readLine();
+            System.out.println("read: " + line);
             String accountType = "1".equals(line) ? "private" : "public";
             accountTypeField.setText(accountType);
 
             line = bufferedReader.readLine(); // receives "stop", I think
+            System.out.println("read: " + line);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -149,7 +159,7 @@ public class OtherProfilePage extends JPanel {
         accountInfoPanel.add(accountTypeField, gbc);
 
         // Profile Actions Section
-        profileButton = new JButton("View Profile");
+        profileButton = new JButton();
 
         JPanel buttonPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbcButton = new GridBagConstraints();
@@ -201,17 +211,25 @@ public class OtherProfilePage extends JPanel {
         Thread loadingThread = new Thread(() -> {
             try {
                 String peopleValidity = bufferedReader.readLine();
+                System.out.println("read: " + peopleValidity);
                 if ("look".equals(peopleValidity)) {
                     SwingUtilities.invokeLater(() -> statusLabel.setText(""));
 
                     // Populate the button panel with user buttons
-                    ArrayList<String> buttonNames = UserPageClient.readAndPrint(bufferedReader);
+                    ArrayList<String> buttonNames = Writer.readAndPrint(bufferedReader);
                     for (String buttonName : buttonNames) {
-                        JButton button = new JButton(buttonName);
-
+                        RoundedButton button = new RoundedButton(buttonName, 18);
+                        button.setFont(new Font("Roboto", Font.BOLD, 14));
+                        button.setBackground(new Color(230, 230, 230));
+                        // button.setBorder(BorderFactory.createCompoundBorder(
+                        //     BorderFactory.createLineBorder(Color.BLACK),
+                        //     BorderFactory.createEmptyBorder(5, 5, 5, 5) // Added padding
+                        //     ));
                         button.addActionListener(e -> {
-                            UserPageClient.write("3", bufferedWriter);
-                            UserPageClient.write(buttonName, bufferedWriter);
+                            Writer.write("3", bufferedWriter);
+                            System.out.println("write: " + "3");
+                            Writer.write(buttonName, bufferedWriter);
+                            System.out.println("write: " + buttonName);
                             pageManager.lazyLoadPage(buttonName, () -> new OtherProfilePage(pageManager, bufferedWriter, bufferedReader, buttonName));
                             pageManager.removePage(otherUsername);
                         });
@@ -286,13 +304,17 @@ public class OtherProfilePage extends JPanel {
 
         try {
             // Check if following otherUser, then create button
-            UserPageClient.write("4", bufferedWriter);
+            Writer.write("4", bufferedWriter);
+            System.out.println("write: " + "4");
             String followResponse = bufferedReader.readLine();
+            System.out.println("read: " + followResponse);
             followButton = new JButton(followResponse);
 
             // Do the same for block button
-            UserPageClient.write("6", bufferedWriter);
+            Writer.write("6", bufferedWriter);
+            System.out.println("write: " + "6");
             String blockResponse = bufferedReader.readLine();
+            System.out.println("read: " + blockResponse);
             blockButton = new JButton(blockResponse);
 
             relationPanel.add(followButton);
@@ -309,7 +331,8 @@ public class OtherProfilePage extends JPanel {
         feedButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                UserPageClient.write("5", bufferedWriter);
+                Writer.write("5", bufferedWriter);
+                System.out.println("write: " + "5");
                 pageManager.lazyLoadPage("feed", () -> new FeedViewPage(pageManager, bufferedWriter, bufferedReader));
             }
         });
@@ -318,9 +341,11 @@ public class OtherProfilePage extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    UserPageClient.write("1", bufferedWriter);
+                    Writer.write("1", bufferedWriter);
+                    System.out.println("write: " + "1");
                     
                     String response = bufferedReader.readLine();
+                    System.out.println("read: " + response);
                     // System.out.println("Initial response: " + response);
                     // // eat up any leftover invalid responses from server
                     // while (!response.contains("unfollowed") || !response.contains("followed")) {
@@ -347,8 +372,10 @@ public class OtherProfilePage extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    UserPageClient.write("2", bufferedWriter);
+                    Writer.write("2", bufferedWriter);
+                    System.out.println("write: " + "2");
                     String response = bufferedReader.readLine();
+                    System.out.println("read: " + response);
                     if (!response.contains("unblocked")) {
                         JOptionPane.showMessageDialog(null, "Blocked the user!", "Boiler Gram", JOptionPane.INFORMATION_MESSAGE);
                         blockButton.setText("Unblock");
@@ -358,6 +385,22 @@ public class OtherProfilePage extends JPanel {
                     }
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
+                }
+            }
+        });
+
+        profileButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e){
+                if (image != null) {
+                    // Create and show the profile picture dialog
+                    SwingUtilities.invokeLater(() -> {
+                        JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(OtherProfilePage.this);
+                        ProfilePictureDialog dialog = new ProfilePictureDialog(parentFrame, image, otherUsername);
+                        dialog.setVisible(true);
+                    });
+                } else {
+                    JOptionPane.showMessageDialog(null, "Profile picture not available", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });

@@ -19,8 +19,7 @@ package exception;
  * }
  * </pre>
  *
- * @version 1.0
- * @since 11/01/2024
+ * @version 11/01/2024
  */
 public class InvalidCreateAccountException extends RuntimeException {
     public InvalidCreateAccountException(String message) {

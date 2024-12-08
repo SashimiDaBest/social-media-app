@@ -9,7 +9,6 @@ package exception;
  *
  * @author Connor Pugliese
  * @version 11/01/2024
- * @since 1.0
  */
 public class InvalidFileFormatException extends Exception {
     /**

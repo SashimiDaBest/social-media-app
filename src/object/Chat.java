@@ -17,7 +17,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Connor Pugliese
  * @author Soleil Pham
  * @version 11/02/2024
- * @since 1.0
  */
 public class Chat implements ChatInterface {
     /** The unique identifier for the chat. */
@@ -120,8 +119,29 @@ public class Chat implements ChatInterface {
         this.messageList = new ArrayList<>();
         writeData();
         synchronized (Chat.class) {
-            try (PrintWriter writer = new PrintWriter(new FileOutputStream(chatIDListDoc, true))) {
-                writer.println(this.chatID);
+
+            // overwrite whole file in order to update chatIDList
+            String previousChatFileContent = "";
+            try (BufferedReader reader = new BufferedReader(new FileReader(new File(chatIDListDoc)))) {
+                
+                String line = reader.readLine();
+                while(line != null) {
+                    previousChatFileContent += line + "\n";
+                    line = reader.readLine();
+                }
+                previousChatFileContent = previousChatFileContent.substring(0, previousChatFileContent.length() - 1);
+                System.out.println("After reading chatIDList: " + previousChatFileContent);
+
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            try (PrintWriter writer = new PrintWriter(new FileOutputStream(chatIDListDoc, false))) {
+                // writer.println(this.chatID);
+                previousChatFileContent += "\n" + this.chatID;
+                System.out.println("About to write to chatIDList: " + previousChatFileContent);
+
+                writer.println(previousChatFileContent);
             } catch (FileNotFoundException e) {
                 throw new RuntimeException(e);
             }
@@ -171,6 +191,7 @@ public class Chat implements ChatInterface {
      */
     public synchronized String createChatID() {
         String id = "C_";
+        counter.incrementAndGet();
         synchronized (Chat.class) {
             try (BufferedReader reader = new BufferedReader(new FileReader(chatIDListDoc))) {
                 String line = reader.readLine();
