@@ -126,9 +126,10 @@ public class Chat implements ChatInterface {
                 
                 String line = reader.readLine();
                 while(line != null) {
-                    previousChatFileContent += line;
+                    previousChatFileContent += line + "\n";
                     line = reader.readLine();
                 }
+                previousChatFileContent = previousChatFileContent.substring(0, previousChatFileContent.length() - 1);
                 System.out.println("After reading chatIDList: " + previousChatFileContent);
 
             } catch (IOException e) {
@@ -190,6 +191,7 @@ public class Chat implements ChatInterface {
      */
     public synchronized String createChatID() {
         String id = "C_";
+        counter.incrementAndGet();
         synchronized (Chat.class) {
             try (BufferedReader reader = new BufferedReader(new FileReader(chatIDListDoc))) {
                 String line = reader.readLine();
