@@ -200,8 +200,16 @@ public class UserProfilePage extends JPanel {
 
                     // Populate the button panel with user buttons
                     ArrayList<String> buttonNames = Writer.readAndPrint(bufferedReader);
+
                     for (String buttonName : buttonNames) {
-                        JButton button = new JButton(buttonName);
+                        RoundedButton button = new RoundedButton(buttonName, 18);
+                        button.setFont(new Font("Roboto", Font.BOLD, 14));
+                        button.setBackground(new Color(230, 230, 230));
+                        // button.setBorder(BorderFactory.createCompoundBorder(
+                        //     BorderFactory.createLineBorder(Color.BLACK),
+                        //     BorderFactory.createEmptyBorder(5, 5, 5, 5) // Added padding
+                        //     ));
+                        button.setBorder(new RoundedBorder(20));
 
                         button.addActionListener(e -> {
                             Writer.write("2", bufferedWriter);
