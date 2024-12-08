@@ -129,7 +129,9 @@ public class Chat implements ChatInterface {
                     previousChatFileContent += line + "\n";
                     line = reader.readLine();
                 }
-                previousChatFileContent = previousChatFileContent.substring(0, previousChatFileContent.length() - 1);
+                if (!previousChatFileContent.isEmpty()) {
+                    previousChatFileContent = previousChatFileContent.substring(0, previousChatFileContent.length() - 1);
+                }
                 System.out.println("After reading chatIDList: " + previousChatFileContent);
 
             } catch (IOException e) {
