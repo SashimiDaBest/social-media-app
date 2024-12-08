@@ -9,28 +9,27 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.RoundRectangle2D;
 
 /**
- * A custom JButton with a rounded rectangle shape and a pop animation effect when clicked.
+ * A custom JButton with a rounded rectangle shape and a "zoom in and zoom back out" animation effect when clicked.
  *
  * <p>This button provides a modern and visually appealing rounded appearance
- * with smooth text scaling animations during mouse press events.</p>
+ * with smooth scaling animations during mouse press events.</p>
  *
  * <h3>Key Features:</h3>
  * <ul>
  *     <li>Customizable corner radius for rounded edges.</li>
- *     <li>Pop animation effect when the button is clicked.</li>
- *     <li>Scalable text during the animation.</li>
+ *     <li>Zoom-in and shrink-back animation effect when clicked.</li>
  *     <li>Anti-aliased rendering for smooth graphics.</li>
  * </ul>
  *
- * @version 21/08/
+ * @version 1.3 (2024-12-08)
  */
 public class RoundedButton extends JButton {
     private final int radius;
     private Color backgroundColor;
-    private final int animationSteps = 5;
+    private final int animationSteps = 10;
     private final Timer animationTimer;
     private int currentStep = 0;
-    private boolean isExpanding = false;
+    private boolean isZoomingIn = true;
     private double textScaleFactor = 1.0;
 
     /**
@@ -52,11 +51,11 @@ public class RoundedButton extends JButton {
         // Add padding for the button content
         setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
 
-        // Create an animation timer for text scaling effect
-        animationTimer = new Timer(20, new ActionListener() {
+        // Create an animation timer for zoom-in and shrink-back effect
+        animationTimer = new Timer(3, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                animateText();
+                animateZoom();
             }
         });
         animationTimer.setRepeats(true);
@@ -65,38 +64,42 @@ public class RoundedButton extends JButton {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                startPopAnimation();
+                startZoomAnimation();
             }
         });
     }
 
     /**
-     * Starts the pop animation effect by scaling the button text.
+     * Starts the zoom-in and shrink-back animation effect.
      */
-    private void startPopAnimation() {
+    private void startZoomAnimation() {
         currentStep = 0;
-        isExpanding = true;
+        isZoomingIn = true;
         animationTimer.start();
     }
 
     /**
-     * Handles the text scaling animation logic.
+     * Handles the zoom-in and shrink-back animation logic.
      */
-    private void animateText() {
-        if (isExpanding) {
+    private void animateZoom() {
+        if (isZoomingIn) {
             currentStep++;
             if (currentStep > animationSteps) {
-                isExpanding = false;
+                isZoomingIn = false; // Reverse to shrink back
             }
         } else {
             currentStep--;
             if (currentStep <= 0) {
-                animationTimer.stop();
+                animationTimer.stop(); // Stop animation once back to normal size
             }
         }
 
         // Update the text scale factor based on the animation step
-        textScaleFactor = 1 + (0.2 * (currentStep / (double) animationSteps));
+        if (isZoomingIn) {
+            textScaleFactor = 1.0 + (0.3 * (currentStep / (double) animationSteps)); // Scale up to 150%
+        } else {
+            textScaleFactor = 1.0 + (0.3 * (currentStep / (double) animationSteps)); // Scale back to 100%
+        }
         repaint();
     }
 
