@@ -1,6 +1,11 @@
 package page;
 
 
+import common.PageManager;
+import common.ProfilePictureDialog;
+import common.RoundedButton;
+import common.Writer;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 

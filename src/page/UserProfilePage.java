@@ -1,5 +1,9 @@
 package page;
 
+import common.PageManager;
+import common.RoundedButton;
+import common.Writer;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
@@ -215,7 +219,7 @@ public class UserProfilePage extends JPanel {
                     SwingUtilities.invokeLater(() -> statusLabel.setText(""));
 
                     // Populate the button panel with user buttons
-                    ArrayList<String> buttonNames = Writer.readAndPrint(bufferedReader);
+                    ArrayList<String> buttonNames = common.Writer.readAndPrint(bufferedReader);
 
                     for (String buttonName : buttonNames) {
                         RoundedButton button = new RoundedButton(buttonName, 18);
@@ -226,7 +230,7 @@ public class UserProfilePage extends JPanel {
                         //     BorderFactory.createEmptyBorder(5, 5, 5, 5) // Added padding
                         //     ));
                         button.addActionListener(e -> {
-                            Writer.write("2", bufferedWriter);
+                            common.Writer.write("2", bufferedWriter);
                             System.out.println("write: " + "2");
                             pageManager.lazyLoadPage(buttonName, () -> new OtherProfilePage(pageManager, bufferedWriter, bufferedReader, buttonName));
                         });
@@ -296,7 +300,7 @@ public class UserProfilePage extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 try {
                     // Notify server of file upload action
-                    Writer.write("1", bufferedWriter);
+                    common.Writer.write("1", bufferedWriter);
                     System.out.println("write: " + "1");
 
                     // Open file chooser dialog
@@ -309,7 +313,7 @@ public class UserProfilePage extends JPanel {
                         String path = selectedFile.getAbsolutePath();
 
                         // Send file path to server
-                        Writer.write(path, bufferedWriter);
+                        common.Writer.write(path, bufferedWriter);
                         System.out.println("write: " + path);
 
                         // Read response from server
@@ -406,7 +410,7 @@ public class UserProfilePage extends JPanel {
 
                 // Logout button action listener
                 logoutButton.addActionListener(ev -> {
-                    Writer.write("6", bufferedWriter);
+                    common.Writer.write("6", bufferedWriter);
                     System.out.println("write: " + "6");
                     pageManager.lazyLoadPage("welcome", () -> new WelcomePage(pageManager, bufferedWriter, bufferedReader));
                     pageManager.removePage("user");

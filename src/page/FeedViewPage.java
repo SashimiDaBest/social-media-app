@@ -1,5 +1,8 @@
 package page;
 
+import common.PageManager;
+import common.Writer;
+
 import javax.swing.*;
 
 import java.awt.*;
@@ -199,7 +202,7 @@ public class FeedViewPage extends JPanel {
 
         // Profile button navigates to user profile
         profileButton.addActionListener(e -> {
-            Writer.write("user", bufferedWriter);
+            common.Writer.write("user", bufferedWriter);
             System.out.println("write: user");
             pageManager.lazyLoadPage("user", () -> new UserProfilePage(pageManager, bufferedWriter, bufferedReader));
             pageManager.removePage("feed");
@@ -213,7 +216,7 @@ public class FeedViewPage extends JPanel {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     String selectedUser = selectionButton.getText();
-                    Writer.write("6", bufferedWriter);
+                    common.Writer.write("6", bufferedWriter);
                     System.out.println("write: " + "6");
                     selectedUsers.add(selectedUser);
                     pageManager.lazyLoadPage(selectedUser, () -> new OtherProfilePage(pageManager, bufferedWriter, bufferedReader, selectedUser));
@@ -226,9 +229,9 @@ public class FeedViewPage extends JPanel {
             chatButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Writer.write("2", bufferedWriter);
+                    common.Writer.write("2", bufferedWriter);
                     String selectedChat = chatButton.getText();
-                    Writer.write(selectedChat, bufferedWriter);
+                    common.Writer.write(selectedChat, bufferedWriter);
 
                     Thread loadingThread = new Thread(() -> {
                         try {
@@ -294,14 +297,14 @@ public class FeedViewPage extends JPanel {
         sendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Writer.write("send", bufferedWriter);
-                Writer.write(currentChatID, bufferedWriter);
+                common.Writer.write("send", bufferedWriter);
+                common.Writer.write(currentChatID, bufferedWriter);
                 String message = chatField.getText();
                 Thread loadingThread = new Thread(() -> {
                     try {
                         String response = bufferedReader.readLine();
                         if (response.equals("valid")) {
-                            Writer.write(message, bufferedWriter);
+                            common.Writer.write(message, bufferedWriter);
 
                             String messagesLine = bufferedReader.readLine();
                             ArrayList<String> messages = new ArrayList<>(Arrays.asList(messagesLine.split(";")));
@@ -344,14 +347,14 @@ public class FeedViewPage extends JPanel {
                     return;
                 }
 
-                Writer.write("edit", bufferedWriter);
-                Writer.write(currentChatID, bufferedWriter);
+                common.Writer.write("edit", bufferedWriter);
+                common.Writer.write(currentChatID, bufferedWriter);
 
                 Thread loadingThread = new Thread(() -> {
                     try {
                         String response = bufferedReader.readLine();
                         if (response.equals("valid")) {
-                            Writer.write(newMessage, bufferedWriter);
+                            common.Writer.write(newMessage, bufferedWriter);
 
                             // Refresh chat panel
                             String messagesLine = bufferedReader.readLine();
@@ -393,8 +396,8 @@ public class FeedViewPage extends JPanel {
                     }
 
                     try {
-                        Writer.write("delete", bufferedWriter);
-                        Writer.write(currentChatID, bufferedWriter);
+                        common.Writer.write("delete", bufferedWriter);
+                        common.Writer.write(currentChatID, bufferedWriter);
                         String response = bufferedReader.readLine();
                         System.out.println("read: " + response);
                         if (response.equals("valid")) {
@@ -435,7 +438,7 @@ public class FeedViewPage extends JPanel {
 
                 try {
                     // Initiate the chat creation process
-                    Writer.write("1", bufferedWriter);
+                    common.Writer.write("1", bufferedWriter);
                     System.out.println("write: 1");
 
                     // Read available users
@@ -444,7 +447,7 @@ public class FeedViewPage extends JPanel {
 
                     // Validate selected users
                     for (String username : selectedUsers) {
-                        Writer.write(username, bufferedWriter);
+                        common.Writer.write(username, bufferedWriter);
                         System.out.println("write: " + username);
 
                         String validation = bufferedReader.readLine();
@@ -457,12 +460,12 @@ public class FeedViewPage extends JPanel {
                     }
 
                     // Signal the end of user validation
-                    Writer.write("[DONE]", bufferedWriter);
+                    common.Writer.write("[DONE]", bufferedWriter);
                     System.out.println("write: [DONE]");
 
                     // Prepare and send the list of valid users
                     String membersList = String.join(";", validUsers);
-                    Writer.write(membersList, bufferedWriter);
+                    common.Writer.write(membersList, bufferedWriter);
                     System.out.println("write: " + membersList);
 
                     // Check chat creation status
@@ -506,7 +509,7 @@ public class FeedViewPage extends JPanel {
 
     private void handleUserSearch() {
         try {
-            Writer.write("4", bufferedWriter);
+            common.Writer.write("4", bufferedWriter);
             System.out.println("write: 4");
 
             String line = bufferedReader.readLine();

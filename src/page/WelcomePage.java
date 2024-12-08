@@ -1,5 +1,9 @@
 package page;
 
+import common.PageManager;
+import common.RoundedButton;
+import common.Writer;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;

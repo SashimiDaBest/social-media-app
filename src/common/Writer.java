@@ -1,4 +1,4 @@
-package page;
+package common;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -18,43 +18,39 @@ import java.util.ArrayList;
  * </ul>
  *
  * @author Soleil Pham
- * @version 1.0
+ * @version 12/01/2024
  */
 public final class Writer {
 
     /**
-     * Reads and prints lines from the server until "END" is received.
+     * Reads lines from the server until "END" is received and stores them in an ArrayList.
      *
-     * @param br BufferedReader for reading server responses
-     * @return true if successful, false otherwise
+     * @param br the {@link BufferedReader} for reading server responses
+     * @return a {@link ArrayList} of strings containing the responses from the server,
+     *         or {@code null} if an exception occurs
      */
     public static ArrayList<String> readAndPrint(BufferedReader br) {
         ArrayList<String> buttonNames = new ArrayList<>();
         try {
             String line = br.readLine();
-            System.out.println("WRITER READ: " + line);
             while (line != null && !line.equals("END")) {
-//                if (!line.equals("[EMPTY]")) {
-                    buttonNames.add(line);
-                    System.out.println("added");
-//                }
+                buttonNames.add(line);
                 line = br.readLine();
-                System.out.println("WRITER READ: " + line);
             }
             return buttonNames;
         } catch (IOException e) {
-            System.out.println("UserPageClient: readAndPrint() ERROR");
             e.printStackTrace();
             return null;
         }
     }
 
     /**
-     * Writes a message to the server and flushes the BufferedWriter.
+     * Writes a message to the server and flushes the output stream.
      *
-     * @param outMessage The message to send
-     * @param bw         BufferedWriter for sending the message
-     * @return true if successful, false otherwise
+     * @param outMessage the message to send to the server
+     * @param bw         the {@link BufferedWriter} for sending the message
+     * @return {@code true} if the message is successfully written and flushed,
+     *         {@code false} otherwise
      */
     public static boolean write(String outMessage, BufferedWriter bw) {
         try {
@@ -63,7 +59,6 @@ public final class Writer {
             bw.flush();
             return true;
         } catch (IOException e) {
-            System.out.println("UserPageClient: write() ERROR");
             e.printStackTrace();
             return false;
         }

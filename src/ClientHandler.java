@@ -1,3 +1,4 @@
+import common.PageManager;
 import page.*;
 
 import java.awt.event.WindowAdapter;

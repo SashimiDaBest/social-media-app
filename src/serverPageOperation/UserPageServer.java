@@ -1,6 +1,6 @@
 package serverPageOperation;
 
-import page.Writer;
+import common.Writer;
 import object.Chat;
 import object.User;
 
