@@ -9,4 +9,7 @@ U_0005;0More data just to check
 U_0006;0Test end data for validation
 U_0003;0HELLO WORLD
 U_0003;0HOW'S EVERYONE DOING TODAY???
-U_0003;0hello chat
+U_0005;0Hello people
+U_0003;0Hello again
+U_0005;0hi
+U_0003;0

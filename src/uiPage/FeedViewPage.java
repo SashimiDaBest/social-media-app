@@ -82,11 +82,15 @@ public class FeedViewPage extends JPanel {
     public JPanel createSearchPanel() {
         JPanel searchPanel = new JPanel(new BorderLayout());
         searchField = new JTextField(20);
+        searchField.setToolTipText("Search for users (case-insensitive)");
+
         searchField.setPreferredSize(new Dimension(200, 30));
 
         searchButton = new JButton("Search");
         deleteButton = new JButton("Delete");
         clearButton = new JButton("Clear");
+        deleteButton.setToolTipText("Remove the most recently added user from the selection.");
+        clearButton.setToolTipText("Clear all selected users.");
 
         JPanel buttonPanel = new JPanel(new FlowLayout());
         buttonPanel.add(searchButton);
@@ -139,6 +143,9 @@ public class FeedViewPage extends JPanel {
         }
         chatPanel.revalidate(); // Recalculate layout
         chatPanel.repaint();    // Refresh UI
+
+        // Scroll to the bottom
+        SwingUtilities.invokeLater(() -> chatViewPanel.getVerticalScrollBar().setValue(chatViewPanel.getVerticalScrollBar().getMaximum()));
     }
 
     public JPanel createBottomPanel() {
@@ -379,12 +386,10 @@ public class FeedViewPage extends JPanel {
         deleteTextButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Writer.write("delete", bufferedWriter);
-                Writer.write(currentChatID, bufferedWriter);
-
-                String message = chatField.getText();
                 Thread loadingThread = new Thread(() -> {
                     try {
+                        Writer.write("delete", bufferedWriter);
+                        Writer.write(currentChatID, bufferedWriter);
                         String response = bufferedReader.readLine();
                         System.out.println("read: " + response);
                         if (response.equals("valid")) {
@@ -398,7 +403,7 @@ public class FeedViewPage extends JPanel {
                             SwingUtilities.invokeLater(() -> updateChatPanel(messages));
                             JOptionPane.showMessageDialog(
                                     null,
-                                    "Failed to delete the message. Please try again.",
+                                    "Failed to delete the message.",
                                     "Error",
                                     JOptionPane.ERROR_MESSAGE);
                         }
