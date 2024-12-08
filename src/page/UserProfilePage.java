@@ -110,6 +110,7 @@ public class UserProfilePage extends JPanel {
         JTextField usernameField = new JTextField(15);
         usernameField.setEditable(false);
         usernameField.setMinimumSize(fixedSize);
+        usernameField.setBackground(new Color(230, 230, 230));
 
         JLabel accountTypeLabel = new JLabel("Account Type:");
         JTextField accountTypeField = new JTextField(15);
@@ -285,7 +286,7 @@ public class UserProfilePage extends JPanel {
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         footer.setBackground(Color.WHITE);
 //        backButton = new JButton("Back");
-        feedButton = new JButton("Feed");
+        feedButton = new RoundedButton("Feed", 18);
 //        nextButton = new JButton("Next");
 //        footer.add(backButton);
         footer.add(feedButton);
@@ -350,6 +351,7 @@ public class UserProfilePage extends JPanel {
                 // Create components
                 JTextField usernameField = new JTextField(15);
                 JPasswordField passwordField = new JPasswordField(15);
+                passwordField.setBackground(new Color(230, 230, 230));
                 JButton saveButton = new JButton("Save");
                 JButton logoutButton = new JButton("Logout");
 

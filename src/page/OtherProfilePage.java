@@ -301,7 +301,7 @@ public class OtherProfilePage extends JPanel {
     private JPanel setFooter() {
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
 //        backButton = new JButton("Back");
-        feedButton = new JButton("Feed");
+        feedButton = new RoundedButton("Feed", 18);
 //        nextButton = new JButton("Next");
         footer.setBackground(Color.WHITE);
 //        footer.add(backButton);
@@ -319,14 +319,14 @@ public class OtherProfilePage extends JPanel {
             System.out.println("write: " + "4");
             String followResponse = bufferedReader.readLine();
             System.out.println("read: " + followResponse);
-            followButton = new JButton(followResponse);
+            followButton = new RoundedButton(followResponse, 18);
 
             // Do the same for block button
             Writer.write("6", bufferedWriter);
             System.out.println("write: " + "6");
             String blockResponse = bufferedReader.readLine();
             System.out.println("read: " + blockResponse);
-            blockButton = new JButton(blockResponse);
+            blockButton = new RoundedButton(blockResponse, 18);
 
             relationPanel.add(followButton);
             relationPanel.add(blockButton);
