@@ -1,4 +1,4 @@
-import uiPage.*;
+import page.*;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;

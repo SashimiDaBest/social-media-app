@@ -11,7 +11,7 @@ CS 180 Team Project
     - [exception](#exception)
     - [object](#object)
     - [serverPageOperation](#serverpageoperation)
-    - [uiPage](#uipage)
+    - [page](#uipage)
 - [Testing and Verification Instructions](#testing-and-verification-instructions)
 
 ## Simplified Directory Structure
@@ -43,7 +43,7 @@ src/
 │   ├── UserPageServer.java        # Handles user profile operations on the server
 │   └── WelcomePageServer.java     # Handles welcome page operations on the server
 │
-├── uiPage/                        # User interface and UI-related classes
+├── page/                        # User interface and UI-related classes
 │   ├── CreateUserPage.java        # Page for user creation
 │   ├── FeedViewPage.java          # Page for displaying the user's feed
 │   ├── OtherProfilePage.java      # Page for viewing other users' profiles
@@ -350,7 +350,7 @@ A comprehensive overview of each class, covering its functionality, the testing 
   - Redirects to FeedPageServer once the user is authenticated or a new account is created.
   - Uses User and Chat objects to manage user data and interactions.
 
-### uiPage (Incomplete)
+### page (Incomplete)
 
 ## Testing and Verification Instructions
 ### **_Running Test Cases_**

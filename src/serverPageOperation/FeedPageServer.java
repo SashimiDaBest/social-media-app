@@ -1,6 +1,6 @@
 package serverPageOperation;
 
-import uiPage.Writer;
+import page.Writer;
 import exception.InvalidFileFormatException;
 import object.*;
 

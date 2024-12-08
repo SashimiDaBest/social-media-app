@@ -2,12 +2,10 @@ package serverPageOperation;
 
 import object.Chat;
 import object.User;
-import uiPage.UserProfilePage;
-import uiPage.Writer;
+import page.Writer;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 
 /**

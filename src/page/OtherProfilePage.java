@@ -1,4 +1,4 @@
-package uiPage;
+package page;
 
 
 import javax.imageio.ImageIO;

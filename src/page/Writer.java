@@ -1,4 +1,4 @@
-package uiPage;
+package page;
 
 import java.io.*;
 import java.util.ArrayList;

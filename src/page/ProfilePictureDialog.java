@@ -1,11 +1,8 @@
-package uiPage;
+package page;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
 
 public class ProfilePictureDialog extends JDialog {
     public ProfilePictureDialog(JFrame parent, BufferedImage originalImage, String username) {

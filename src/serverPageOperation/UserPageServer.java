@@ -1,6 +1,6 @@
 package serverPageOperation;
 
-import uiPage.Writer;
+import page.Writer;
 import object.Chat;
 import object.User;
 

@@ -3,7 +3,7 @@ package serverPageOperation;
 import exception.InvalidCreateAccountException;
 import object.Chat;
 import object.User;
-import uiPage.Writer;
+import page.Writer;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
