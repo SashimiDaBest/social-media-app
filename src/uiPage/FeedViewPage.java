@@ -1,5 +1,6 @@
 package uiPage;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import java.awt.*;
@@ -8,11 +9,23 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 
 public class FeedViewPage extends JPanel {
 
     // Constants
     private static final int MAX_SELECTED_USERS = 8;
+    private final int iconSideLength = 20;
+
+    // Paths for icons
+    private final String addSelectionIconPath = "Sample Test Folder/addToSelectionIcon.png";
+    private final String clearSelectionIconPath = "Sample Test Folder/clearSelectionIcon.png";
+    private final String deleteMessageIconPath = "Sample Test Folder/deleteMessageIcon.png";
+    private final String editMessageIconPath = "Sample Test Folder/editMessageIcon.png";
+    private final String searchIconPath = "Sample Test Folder/searchIcon.png";
+    private final String sendMessageIconPath = "Sample Test Folder/sendMessageIcon.png";
+    private final String deleteSelectionIconPath = "Sample Test Folder/deleteSelectionIcon.png";
 
     // UI Components
     private JButton profileButton, searchButton, deleteButton, clearButton, addSelectedToChat, deleteTextButton;
@@ -22,6 +35,11 @@ public class FeedViewPage extends JPanel {
     private JScrollPane chatViewPanel, chatButtonPanel;
     private JPanel chatPanel; // Dynamic chat panel
     private JLabel messageLabel;
+
+    // Icons
+    BufferedImage editMessageIcon, deleteMessageIcon, 
+        deleteSelectionIcon, sendMessageIcon, addToSelectionIcon,
+        clearSelectionIcon, searchIcon, userProfilePic;
 
     // Logic
     private ArrayList<String> selectedUsers; // Holds selected usernames
@@ -59,6 +77,8 @@ public class FeedViewPage extends JPanel {
         mainPanel.add(chatPanel, BorderLayout.CENTER);
         add(mainPanel, BorderLayout.CENTER);
 
+        createUtilityIcons();
+        createProfilePic();
         setupActionListeners();
     }
 
@@ -68,7 +88,7 @@ public class FeedViewPage extends JPanel {
 
         // Search Panel
         JPanel searchPanel = new JPanel(new BorderLayout());
-        profileButton = new JButton("User Page");
+        profileButton = new JButton("");
         searchPanel.add(profileButton, BorderLayout.WEST);
         searchPanel.add(createSearchPanel(), BorderLayout.CENTER);
 
@@ -87,9 +107,9 @@ public class FeedViewPage extends JPanel {
 
         searchField.setPreferredSize(new Dimension(200, 30));
 
-        searchButton = new JButton("Search");
-        deleteButton = new JButton("Delete");
-        clearButton = new JButton("Clear");
+        searchButton = new JButton("");
+        deleteButton = new JButton("");
+        clearButton = new JButton("");
         deleteButton.setToolTipText("Remove the most recently added user from the selection.");
         clearButton.setToolTipText("Clear all selected users.");
 
@@ -121,7 +141,7 @@ public class FeedViewPage extends JPanel {
             selectionPanel.add(button);
         }
 
-        addSelectedToChat = new JButton("Add Selected to Chat");
+        addSelectedToChat = new JButton("");
         addSelectedToChat.setEnabled(false);
         selectionPanel.add(addSelectedToChat);
 
@@ -155,9 +175,9 @@ public class FeedViewPage extends JPanel {
         chatField = new JTextField();
         chatField.setPreferredSize(new Dimension(200, 30));
 
-        editButton = new JButton("Edit");
-        sendButton = new JButton("Send");
-        deleteTextButton = new JButton("Delete");
+        editButton = new JButton("");
+        sendButton = new JButton("");
+        deleteTextButton = new JButton("");
 
         editButton.setEnabled(false);
         sendButton.setEnabled(false);
@@ -193,6 +213,114 @@ public class FeedViewPage extends JPanel {
         leftScrollPane.setPreferredSize(new Dimension(150, 0));
 
         return leftScrollPane;
+    }
+
+    private void createProfilePic() {
+        // Run the image loading task on a new thread
+        new Thread(() -> {
+            try {
+                // Read image name from BufferedReader
+                Writer.write("image", bufferedWriter);
+                String imageName = bufferedReader.readLine();
+
+                System.out.println("read1: " + imageName);
+                if (imageName == null || imageName.isEmpty()) {
+                    throw new IllegalStateException("Image name is missing or invalid");
+                }
+
+                // Load image from file
+                userProfilePic = ImageIO.read(new File("./Sample Test Folder/" + imageName + ".png"));
+
+                // Scale the image
+                Image newImage = userProfilePic.getScaledInstance(iconSideLength, iconSideLength, Image.SCALE_SMOOTH);
+
+                // Update the profile button on the EDT
+                SwingUtilities.invokeLater(() -> {
+                    profileButton.setIcon(new ImageIcon(newImage));
+                    profileButton.revalidate(); // Ensure layout updates properly
+                    profileButton.repaint();    // Force the button to redraw
+                });
+
+            } catch (IOException e) {
+                e.printStackTrace();
+
+                // Handle missing or error scenarios by setting a placeholder icon
+                try {
+                    BufferedImage img = ImageIO.read(new File("./Sample Test Folder/I_0000.png"));
+                    Image newImage = img.getScaledInstance(iconSideLength, iconSideLength, Image.SCALE_SMOOTH);
+                    SwingUtilities.invokeLater(() -> {
+                        profileButton.setIcon(new ImageIcon(newImage));
+                        profileButton.revalidate();
+                        profileButton.repaint();
+                    });
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+
+    private void createUtilityIcons() {
+
+         // Run the image loading task on a new thread
+         new Thread(() -> {
+            try {
+
+                // Load image from file
+                addToSelectionIcon = ImageIO.read(new File(addSelectionIconPath));
+                clearSelectionIcon = ImageIO.read(new File(clearSelectionIconPath));
+                deleteMessageIcon = ImageIO.read(new File(deleteMessageIconPath));
+                deleteSelectionIcon = ImageIO.read(new File(deleteSelectionIconPath));
+                searchIcon = ImageIO.read(new File(searchIconPath));
+                sendMessageIcon = ImageIO.read(new File(sendMessageIconPath));
+                editMessageIcon = ImageIO.read(new File(editMessageIconPath));
+
+                // Scale the image
+                Image addToSelectionImage = addToSelectionIcon.getScaledInstance(iconSideLength, iconSideLength, Image.SCALE_SMOOTH);
+                Image clearSelectionImage = clearSelectionIcon.getScaledInstance(iconSideLength, iconSideLength, Image.SCALE_SMOOTH);
+                Image deleteMessageImage = deleteMessageIcon.getScaledInstance(iconSideLength, iconSideLength, Image.SCALE_SMOOTH);
+                Image deleteSelectionImage = deleteSelectionIcon.getScaledInstance(iconSideLength, iconSideLength, Image.SCALE_SMOOTH);
+                Image searchImage = searchIcon.getScaledInstance(iconSideLength, iconSideLength, Image.SCALE_SMOOTH);
+                Image sendMessageImage = sendMessageIcon.getScaledInstance(iconSideLength, iconSideLength, Image.SCALE_SMOOTH);
+                Image editMessageImage = editMessageIcon.getScaledInstance(iconSideLength, iconSideLength, Image.SCALE_SMOOTH);
+
+                // Update the profile button on the EDT
+                SwingUtilities.invokeLater(() -> {
+
+                    addSelectedToChat.setIcon(new ImageIcon(addToSelectionImage));
+                    addSelectedToChat.revalidate();
+                    addSelectedToChat.repaint();
+
+                    clearButton.setIcon(new ImageIcon(clearSelectionImage));
+                    clearButton.revalidate();
+                    clearButton.repaint();
+
+                    deleteTextButton.setIcon(new ImageIcon(deleteMessageImage));
+                    deleteTextButton.revalidate();
+                    deleteTextButton.repaint();
+
+                    deleteButton.setIcon(new ImageIcon(deleteSelectionImage));
+                    deleteButton.revalidate();
+                    deleteButton.repaint();
+
+                    searchButton.setIcon(new ImageIcon(searchImage));
+                    searchButton.revalidate();
+                    searchButton.repaint();
+
+                    sendButton.setIcon(new ImageIcon(sendMessageImage));
+                    sendButton.revalidate();
+                    sendButton.repaint();
+
+                    editButton.setIcon(new ImageIcon(editMessageImage));
+                    editButton.revalidate();
+                    editButton.repaint();
+                });
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     private void setupActionListeners() {
