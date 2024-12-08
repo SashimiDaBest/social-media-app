@@ -232,7 +232,7 @@ public class FeedViewPage extends JPanel {
                 userProfilePic = ImageIO.read(new File("./Sample Test Folder/" + imageName + ".png"));
 
                 // Scale the image
-                Image newImage = userProfilePic.getScaledInstance(iconSideLength, iconSideLength, Image.SCALE_SMOOTH);
+                Image newImage = userProfilePic.getScaledInstance(iconSideLength + 10, iconSideLength + 10, Image.SCALE_SMOOTH);
 
                 // Update the profile button on the EDT
                 SwingUtilities.invokeLater(() -> {
@@ -247,7 +247,7 @@ public class FeedViewPage extends JPanel {
                 // Handle missing or error scenarios by setting a placeholder icon
                 try {
                     BufferedImage img = ImageIO.read(new File("./Sample Test Folder/I_0000.png"));
-                    Image newImage = img.getScaledInstance(iconSideLength, iconSideLength, Image.SCALE_SMOOTH);
+                    Image newImage = img.getScaledInstance(iconSideLength + 10, iconSideLength + 10, Image.SCALE_SMOOTH);
                     SwingUtilities.invokeLater(() -> {
                         profileButton.setIcon(new ImageIcon(newImage));
                         profileButton.revalidate();
