@@ -287,34 +287,42 @@ public class FeedViewPage extends JPanel {
             deleteButton.setEnabled(false);
             clearButton.setEnabled(false);
         });
-/*
+
         sendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                Writer.write("send", bufferedWriter);
+                Writer.write(currentChatID, bufferedWriter);
+                String message = chatField.getText();
+                Thread loadingThread = new Thread(() -> {
+                    try {
+                        String response = bufferedReader.readLine();
+                        if (response.equals("valid")) {
+                            Writer.write(message, bufferedWriter);
+
+                            String messagesLine = bufferedReader.readLine();
+                            ArrayList<String> messages = new ArrayList<>(Arrays.asList(messagesLine.split(";")));
+                            SwingUtilities.invokeLater(() -> {
+                                updateChatPanel(messages);
+                            }); // Update chat panel on the Event Dispatch Thread
+                        } else {
+                            ArrayList<String> messages = new ArrayList<>();
+                            messages.add("Invalid chat selected.");
+                            SwingUtilities.invokeLater(() -> {
+                                updateChatPanel(messages);
+                            });
+                        }
+                        chatField.setText("");
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                });
+                loadingThread.start();
+
                 try {
-                    Writer.write("send", bufferedWriter);
-                    System.out.println("write: " + "send");
-                    Writer.write(currentChatID, bufferedWriter);
-                    System.out.println("write: " + currentChatID);
-
-                    String[] lines = bufferedReader.readLine().split(";");
-                    System.out.println("read: " + Arrays.toString(lines));
-
-//                    menuToDisplay = new ArrayList<>(Arrays.asList(lines));
-//                    int index = 0;
-//                    for (int i = 0; i < menuToDisplay.size(); i++) {
-//                        String line = menuToDisplay.get(i);
-//                        chatLabels.get(index).setText(line);
-//                        index++;
-//                    }
-//
-//                    for (int i = index; i < chatLabels.size(); i++) {
-//                        chatLabels.get(i).setText("");
-//                    }
-
-                    chatField.setText("");
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
+                    loadingThread.join(); // makes sure this thread and its caller end at the same time
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
                 }
             }
         });
@@ -322,38 +330,48 @@ public class FeedViewPage extends JPanel {
         editButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    Writer.write("edit", bufferedWriter);
-                    System.out.println("write: " + "edit");
-                    Writer.write(chatField.getText(), bufferedWriter);
-                    System.out.println("write: " + chatField.getText());
+                String newMessage = chatField.getText().trim();
+                if (newMessage.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "New message cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
 
-                    ArrayList<String> menuToDisplay;
-                    String[] lines = bufferedReader.readLine().split(";");
-                    System.out.println("read: " + Arrays.toString(lines));
+                Writer.write("edit", bufferedWriter);
+                Writer.write(currentChatID, bufferedWriter);
 
-                    menuToDisplay = new ArrayList<>(Arrays.asList(lines));
-                    int index = 0;
-                    for (int i = 0; i < menuToDisplay.size(); i++) {
-                        String line = menuToDisplay.get(i);
-                        if (line.equals("---------------------------------------------------------------------") ||
-                                line.equals("[Displaying up to 6 most recent messages]") ||
-                                line.equals("1 - Compose message") || line.equals("2 - Delete previous message") ||
-                                line.equals("3 - Edit previous message") || line.equals("4 - Exit chat") ||
-                                line.contains("Chat #") || line.contains("Members: You, ") || (line.isEmpty())) {
-                            continue;
+                Thread loadingThread = new Thread(() -> {
+                    try {
+                        String response = bufferedReader.readLine();
+                        if (response.equals("valid")) {
+                            Writer.write(newMessage, bufferedWriter);
+
+                            // Refresh chat panel
+                            String messagesLine = bufferedReader.readLine();
+                            ArrayList<String> messages = new ArrayList<>(Arrays.asList(messagesLine.split(";")));
+                            SwingUtilities.invokeLater(() -> updateChatPanel(messages));
                         } else {
-                            chatLabels.get(index).setText(line);
-                            index++;
+                            ArrayList<String> messages = new ArrayList<>();
+                            messages.add("Invalid chat selected.");
+                            SwingUtilities.invokeLater(() -> {
+                                updateChatPanel(messages);
+                                JOptionPane.showMessageDialog(
+                                        null,
+                                        "Failed to edit the message. Please try again.",
+                                        "Error",
+                                        JOptionPane.ERROR_MESSAGE);
+                            });
                         }
+                        chatField.setText("");
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
                     }
+                });
+                loadingThread.start();
 
-                    for (int i = index; i < chatLabels.size(); i++) {
-                        chatLabels.get(i).setText("");
-                    }
-                    chatField.setText("");
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
+                try {
+                    loadingThread.join(); // makes sure this thread and its caller end at the same time
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
                 }
             }
         });
@@ -361,42 +379,45 @@ public class FeedViewPage extends JPanel {
         deleteTextButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    Writer.write("delete", bufferedWriter);
-                    System.out.println("write: " + "delete");
+                Writer.write("delete", bufferedWriter);
+                Writer.write(currentChatID, bufferedWriter);
 
-                    ArrayList<String> menuToDisplay;
-                    String[] lines = bufferedReader.readLine().split(";");
-                    System.out.println("read: " + Arrays.toString(lines));
-
-                    menuToDisplay = new ArrayList<>(Arrays.asList(lines));
-                    int index = 0;
-                    for (int i = 0; i < menuToDisplay.size(); i++) {
-                        String line = menuToDisplay.get(i);
-                        if (line.equals("---------------------------------------------------------------------") ||
-                                line.equals("[Displaying up to 6 most recent messages]") ||
-                                line.equals("1 - Compose message") || line.equals("2 - Delete previous message") ||
-                                line.equals("3 - Edit previous message") || line.equals("4 - Exit chat") ||
-                                line.contains("Chat #") || line.contains("Members: You, ") || (line.isEmpty())) {
-                            continue;
+                String message = chatField.getText();
+                Thread loadingThread = new Thread(() -> {
+                    try {
+                        String response = bufferedReader.readLine();
+                        System.out.println("read: " + response);
+                        if (response.equals("valid")) {
+                            // Refresh the chat panel
+                            String messagesLine = bufferedReader.readLine();
+                            ArrayList<String> messages = new ArrayList<>(Arrays.asList(messagesLine.split(";")));
+                            SwingUtilities.invokeLater(() -> updateChatPanel(messages));
                         } else {
-                            chatLabels.get(index).setText(line);
-                            index++;
+                            ArrayList<String> messages = new ArrayList<>();
+                            messages.add("Invalid chat selected.");
+                            SwingUtilities.invokeLater(() -> updateChatPanel(messages));
+                            JOptionPane.showMessageDialog(
+                                    null,
+                                    "Failed to delete the message. Please try again.",
+                                    "Error",
+                                    JOptionPane.ERROR_MESSAGE);
                         }
+                        chatField.setText("");
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
                     }
+                });
+                loadingThread.start();
 
-                    for (int i = index; i < chatLabels.size(); i++) {
-                        chatLabels.get(i).setText("");
-                    }
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
+                try {
+                    loadingThread.join(); // makes sure this thread and its caller end at the same time
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
                 }
             }
         });
 
-
- */
-        ///*
+        /*
         addSelectedToChat.addActionListener(new ActionListener() {
             @Override 
             public void actionPerformed(ActionEvent e) {
@@ -404,7 +425,7 @@ public class FeedViewPage extends JPanel {
                 
                 try {
                     // Initiate the chat creation process
-                    Writer.write("1", bufferedWriter);
+                    Writer.write("1", bufferedWri);
                     System.out.println("write: 1");
 
                     // Read available users
@@ -413,7 +434,7 @@ public class FeedViewPage extends JPanel {
 
                     // Validate selected users
                     for (String username : selectedUsers) {
-                        Writer.write(username, bufferedWriter);
+                        Writer.write(username, bufferedWri);
                         System.out.println("write: " + username);
 
                         String validation = bufferedReader.readLine();
@@ -426,12 +447,12 @@ public class FeedViewPage extends JPanel {
                     }
 
                     // Signal the end of user validation
-                    Writer.write("[DONE]", bufferedWriter);
+                    Writer.write("[DONE]", bufferedWri);
                     System.out.println("write: [DONE]");
 
-                    // Prepare and send the list of valid users (newChattersNames)
+                    // Prepare and send the list of valid users
                     String membersList = String.join(";", validUsers);
-                    Writer.write(membersList, bufferedWriter);
+                    Writer.write(membersList, bufferedWri);
                     System.out.println("write: " + membersList);
 
                     // Check chat creation status
@@ -467,7 +488,7 @@ public class FeedViewPage extends JPanel {
                 }
             }
         });
-        // */
+        */
     }
 
     private void handleUserSearch() {
@@ -500,7 +521,7 @@ public class FeedViewPage extends JPanel {
         if (Arrays.asList(originalUsers).contains(userInput)) {
             return userInput;
 
-        // else, show dropdown (NOT case sensitive) 
+        // else, show dropdown (NOT case sensitive)
         } else {
 
             // Create dropdown for similar usernames
@@ -518,7 +539,7 @@ public class FeedViewPage extends JPanel {
 
                 for (int j = 0; j < originalUsers.length; j++) {
                     String convertedOriginalUser = originalUsers[j].toLowerCase();
-                    
+
                     if (convertedOriginalUser.equals(closeMatches.get(i))) {
                         closeMatches.set(i, originalUsers[j]);
                         continue; // because all usernames should be unique
@@ -540,10 +561,8 @@ public class FeedViewPage extends JPanel {
     private void addUserToSelection(String selectedUser) {
         if (selectedUsers.contains(selectedUser)) {
             JOptionPane.showMessageDialog(null, "User already selected.", "Error", JOptionPane.ERROR_MESSAGE);
-
         } else if (selectedUsers.size() >= MAX_SELECTED_USERS) {
             JOptionPane.showMessageDialog(null, "Too many users selected.", "Error", JOptionPane.ERROR_MESSAGE);
-
         } else {
             selectedUsers.add(selectedUser);
 

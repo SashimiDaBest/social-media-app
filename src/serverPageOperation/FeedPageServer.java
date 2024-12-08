@@ -78,13 +78,13 @@ public final class FeedPageServer {
                     OtherPageServer.otherPageOperation(br, bw, user, users, chats);
                     break;
                 } else if (input.equals("send")) {
-//                    sendText(user, chats, bw, br);
+                    sendText(user, users, chats, bw, br);
                     break;
                 } else if (input.equals("edit")) {
-//                    editText(user, chats, bw, br);
+                    editText(user, users, chats, bw, br);
                     break;
                 } else if (input.equals("delete")) {
-//                    deleteText(user, chats, bw, br);
+                    deleteText(user, users, chats, bw, br);
                     break;
                 }
 
@@ -94,34 +94,143 @@ public final class FeedPageServer {
         }
     }
 
-    /*
-    private static void sendText(User user, ArrayList<Chat> chats, BufferedWriter bw, BufferedReader br) throws IOException {
-        // Compose a new message
-        String newMessage = br.readLine();
-        System.out.println("read: " + newMessage);
 
-        chat.addMessage(new Message(user.getUserID(), 0, newMessage));
+    private static void sendText(User user, ArrayList<User> users, ArrayList<Chat> chats, BufferedWriter bw, BufferedReader br) throws IOException, InvalidFileFormatException {
+        // Update chats and users data
+        chats = updateChats(chats);
+        users = updateUsers(users);
+
+        String selectedChat = br.readLine();
+        System.out.println("read 5: " + selectedChat);
+        String chatOutput = "";
+        boolean found = false;
+        for (Chat chat : chats) {
+            if (selectedChat.equals(chat.getChatID())) {
+                Writer.write("valid", bw);
+                System.out.println("write: valid");
+
+                String messageInput = br.readLine();
+                chat.addMessage(new Message(user.getUserID(), 0, messageInput));
+
+                found = true;
+                String chatContent = "";
+
+                for (int i = 0; i < chat.getMessageList().size(); i++) {
+                    Message message = chat.getMessageList().get(i);
+
+                    // Check if the message is from the logged-in user
+                    if (message.getAuthorID().equals(user.getUserID())) {
+                        chatContent += "You: ";
+                    } else {
+                        chatContent += User.findUsernameFromID(message.getAuthorID()) + ": ";
+                    }
+
+                    // Add the message's content
+                    chatContent += message.getMessage();
+                    chatContent += ";";
+                }
+
+                // Send chat content to client
+                Writer.write(chatContent.substring(0, chatContent.length() - 1), bw);
+                System.out.println("write: " + chatContent);
+                break;
+            }
+        }
+        if (!found) {
+            Writer.write("invalid", bw);
+        }
     }
 
-    private static void editText(User user, ArrayList<Chat> chats, BufferedWriter bw, BufferedReader br) {
-        // Edit the previous message by the user
-        String editedMessage = br.readLine();
-        System.out.println("read: " + editedMessage);
-        chat.editMessage(editedMessage, user.getUserID());
+    private static void editText(User user, ArrayList<User> users, ArrayList<Chat> chats, BufferedWriter bw, BufferedReader br) throws InvalidFileFormatException, IOException {
+        // Update chats and users data
+        chats = updateChats(chats);
+        users = updateUsers(users);
+
+        String selectedChat = br.readLine();
+        System.out.println("read 5: " + selectedChat);
+        String chatOutput = "";
+        boolean found = false;
+        for (Chat chat : chats) {
+            if (selectedChat.equals(chat.getChatID())) {
+                Writer.write("valid", bw);
+                System.out.println("write: valid");
+
+                String messageInput = br.readLine();
+                chat.editMessage(messageInput, user.getUserID());
+
+                found = true;
+                String chatContent = "";
+
+                for (int i = 0; i < chat.getMessageList().size(); i++) {
+                    Message message = chat.getMessageList().get(i);
+
+                    // Check if the message is from the logged-in user
+                    if (message.getAuthorID().equals(user.getUserID())) {
+                        chatContent += "You: ";
+                    } else {
+                        chatContent += User.findUsernameFromID(message.getAuthorID()) + ": ";
+                    }
+
+                    // Add the message's content
+                    chatContent += message.getMessage();
+                    chatContent += ";";
+                }
+
+                // Send chat content to client
+                Writer.write(chatContent.substring(0, chatContent.length() - 1), bw);
+                System.out.println("write: " + chatContent);
+                break;
+            }
+        }
+        if (!found) {
+            Writer.write("invalid", bw);
+        }
     }
 
-    private static void deleteText(User user, ArrayList<Chat> chats, BufferedWriter bw, BufferedReader br) {
-        // Delete the previous message by the user
-        chat.deleteMessage(user.getUserID());
-        break;
+    private static void deleteText(User user, ArrayList<User> users, ArrayList<Chat> chats, BufferedWriter bw, BufferedReader br) throws InvalidFileFormatException, IOException {
+        // Update chats and users data
+        chats = updateChats(chats);
+        users = updateUsers(users);
+
+        String selectedChat = br.readLine();
+        System.out.println("read 5: " + selectedChat);
+        String chatOutput = "";
+        boolean found = false;
+        for (Chat chat : chats) {
+            if (selectedChat.equals(chat.getChatID())) {
+                Writer.write("valid", bw);
+                System.out.println("write: valid");
+
+                chat.deleteMessage(user.getUserID());
+
+                found = true;
+                String chatContent = "";
+
+                for (int i = 0; i < chat.getMessageList().size(); i++) {
+                    Message message = chat.getMessageList().get(i);
+
+                    // Check if the message is from the logged-in user
+                    if (message.getAuthorID().equals(user.getUserID())) {
+                        chatContent += "You: ";
+                    } else {
+                        chatContent += User.findUsernameFromID(message.getAuthorID()) + ": ";
+                    }
+
+                    // Add the message's content
+                    chatContent += message.getMessage();
+                    chatContent += ";";
+                }
+
+                // Send chat content to client
+                Writer.write(chatContent.substring(0, chatContent.length() - 1), bw);
+                System.out.println("write: " + chatContent);
+                break;
+            }
+        }
+        if (!found) {
+            Writer.write("invalid", bw);
+        }
     }
-
-
-     */
-
-
-
-
 
     private static void handleOperationOne(ArrayList<User> users, User user, ArrayList<Chat> chats, BufferedReader br, BufferedWriter bw) throws IOException {
         // Step 1: Handle initial operations related to the user
@@ -212,10 +321,6 @@ public final class FeedPageServer {
         chats = updateChats(chats);
         users = updateUsers(users);
 
-        // Prepare chat summary for the logged-in user
-        // Write the logged-in user's chats to the client.
-        // FORMAT:
-        // Chat #0000 (With username, username, ...etc);Chat #0001 (With username, username);...etc
         String selectedChat = br.readLine();
         System.out.println("read 5: " + selectedChat);
         String chatOutput = "";
