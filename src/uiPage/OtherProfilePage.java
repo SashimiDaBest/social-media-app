@@ -40,12 +40,14 @@ public class OtherProfilePage extends JPanel {
         this.otherUsername = otherUsername;
 
         setLayout(new BorderLayout());
-
+        this.setBackground(Color.WHITE);
+        
         JPanel accountPanel = setAccountInfo();
         createImagePanel();
         JPanel followerPanel = setPeople(1, "Follower");
         JPanel followingPanel = setPeople(2, "Following");
         JPanel relationPanel = setRelation();
+        
 
         JPanel mainPanel = new JPanel(new GridLayout(0, 1, 0, 0));
         mainPanel.add(accountPanel);
@@ -57,7 +59,7 @@ public class OtherProfilePage extends JPanel {
 
         JPanel footer = setFooter();
         add(footer, BorderLayout.SOUTH);
-
+        
         setupActionListeners();
     }
 
@@ -103,7 +105,8 @@ public class OtherProfilePage extends JPanel {
 
         JPanel accountInfoPanel = new JPanel(new GridBagLayout());
         accountInfoPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-
+        accountInfoPanel.setBackground(Color.WHITE);
+        
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5); // Reduced gap
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -166,7 +169,7 @@ public class OtherProfilePage extends JPanel {
         gbcButton.insets = new Insets(2, 0, 2, 0); // Narrower gap between buttons
         gbcButton.fill = GridBagConstraints.NONE; // Prevent stretching
         gbcButton.anchor = GridBagConstraints.CENTER; // Center the buttons
-
+        buttonPanel.setBackground(Color.WHITE);
         gbc.gridy = 0;
         buttonPanel.add(profileButton, gbc);
 
@@ -175,6 +178,7 @@ public class OtherProfilePage extends JPanel {
         GridBagConstraints gbcAccount = new GridBagConstraints();
         gbcAccount.insets = new Insets(5, 5, 5, 5); // Reduced gap between panels
         gbcAccount.fill = GridBagConstraints.BOTH;
+        accountPanel.setBackground(Color.WHITE);
 
         // Add Button Panel on the left
         gbcAccount.gridx = 0;
@@ -201,7 +205,9 @@ public class OtherProfilePage extends JPanel {
         scrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPanel.setPreferredSize(new Dimension(400, 300));
         scrollPanel.setMinimumSize(new Dimension(300, 50));
-
+        panel.setBackground(Color.WHITE);
+        peopleButtonPanel.setBackground(Color.WHITE);
+        
         // Status area for showing messages
         JLabel statusLabel = new JLabel("Loading...", SwingConstants.CENTER);
         panel.add(statusLabel, BorderLayout.NORTH);
@@ -292,7 +298,7 @@ public class OtherProfilePage extends JPanel {
 //        backButton = new JButton("Back");
         feedButton = new JButton("Feed");
 //        nextButton = new JButton("Next");
-
+        footer.setBackground(Color.WHITE);
 //        footer.add(backButton);
         footer.add(feedButton);
 //        footer.add(nextButton);
@@ -301,7 +307,7 @@ public class OtherProfilePage extends JPanel {
 
     private JPanel setRelation() {
         JPanel relationPanel = new JPanel(new GridBagLayout());
-
+        relationPanel.setBackground(Color.WHITE);
         try {
             // Check if following otherUser, then create button
             Writer.write("4", bufferedWriter);

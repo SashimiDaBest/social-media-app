@@ -26,6 +26,7 @@ public class UserProfilePage extends JPanel {
         this.bufferedWriter = bufferedWriter;
 
         setLayout(new BorderLayout());
+        setBackground(Color.WHITE);
 
         createImagePanel();
         JPanel accountPanel = setAccountInfo();
@@ -34,6 +35,7 @@ public class UserProfilePage extends JPanel {
         JPanel blockedPanel = setPeople(3, "Blocked");
 
         JPanel mainPanel = new JPanel(new GridLayout(0, 1, 0, 0));
+        mainPanel.setBackground(Color.WHITE);
         mainPanel.add(accountPanel);
         mainPanel.add(followerPanel);
         mainPanel.add(followingPanel);
@@ -90,6 +92,7 @@ public class UserProfilePage extends JPanel {
 
     private JPanel setAccountInfo() {
         JPanel accountInfoPanel = new JPanel(new GridBagLayout());
+        accountInfoPanel.setBackground(Color.WHITE);
         accountInfoPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         GridBagConstraints gbc = new GridBagConstraints();
@@ -146,8 +149,11 @@ public class UserProfilePage extends JPanel {
         // Profile Actions Section
         profileButton = new JButton();
         settingButton = new JButton("Settings");
+        settingButton.setFont(new Font("Roboto", Font.BOLD, 14));
+
 
         JPanel buttonPanel = new JPanel(new GridBagLayout());
+        buttonPanel.setBackground(Color.WHITE);
         GridBagConstraints gbcButton = new GridBagConstraints();
         gbcButton.insets = new Insets(2, 0, 2, 0); // Narrower gap between buttons        gbc.fill = GridBagConstraints.NONE; // Prevent stretching
         gbc.anchor = GridBagConstraints.CENTER; // Center the buttons
@@ -160,6 +166,7 @@ public class UserProfilePage extends JPanel {
 
         // Combine Info Panel and Button Panel (Side by Side)
         JPanel accountPanel = new JPanel(new GridBagLayout());
+        accountPanel.setBackground(Color.WHITE);
         GridBagConstraints gbcAccount = new GridBagConstraints();
         gbcAccount.insets = new Insets(5, 5, 5, 5); // Reduced gap between panels
         gbcAccount.fill = GridBagConstraints.BOTH;
@@ -180,17 +187,22 @@ public class UserProfilePage extends JPanel {
     private JPanel setPeople(int category, String label) {
         // Create the main panel with a border title
         JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(Color.WHITE);
         panel.setBorder(BorderFactory.createTitledBorder(label));
 
         // Create the button panel for the list of people
         JPanel peopleButtonPanel = new JPanel(new GridLayout(0, 1, 5, 5));
+        peopleButtonPanel.setBackground(Color.WHITE);
         JScrollPane scrollPanel = new JScrollPane(peopleButtonPanel);
+        scrollPanel.setBackground(Color.WHITE);
+        scrollPanel.getViewport().setBackground(Color.WHITE);
         scrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPanel.setPreferredSize(new Dimension(400, 300));
         scrollPanel.setMinimumSize(new Dimension(300, 50));
 
         // Status area for showing messages
         JLabel statusLabel = new JLabel("Loading...", SwingConstants.CENTER);
+        statusLabel.setBackground(Color.WHITE);
         panel.add(statusLabel, BorderLayout.NORTH);
         panel.add(scrollPanel, BorderLayout.CENTER);
 
@@ -267,6 +279,7 @@ public class UserProfilePage extends JPanel {
 
     private JPanel createFooter() {
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        footer.setBackground(Color.WHITE);
 //        backButton = new JButton("Back");
         feedButton = new JButton("Feed");
 //        nextButton = new JButton("Next");
