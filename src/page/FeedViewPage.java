@@ -17,6 +17,9 @@ import java.util.Arrays;
 
 public class FeedViewPage extends JPanel {
 
+    private Timer chatRefreshTimer;
+    private final int REFRESH_INTERVAL = 5000; // Refresh every 5 seconds
+
     // Constants
     private static final int MAX_SELECTED_USERS = 8;
     private final int iconSideLength = 20;
@@ -83,6 +86,41 @@ public class FeedViewPage extends JPanel {
         createUtilityIcons();
         createProfilePic();
         setupActionListeners();
+
+        chatRefreshTimer = new Timer(REFRESH_INTERVAL, e -> refreshChat());
+        chatRefreshTimer.start();
+    }
+
+    public void stopChatRefreshTimer() {
+        if (chatRefreshTimer != null && chatRefreshTimer.isRunning()) {
+            chatRefreshTimer.stop();
+        }
+    }
+
+    private void refreshChat() {
+        Thread loadingThread = new Thread(() -> {
+            try {
+                common.Writer.write("refreshChat", bufferedWriter); // Request chat messages
+                common.Writer.write(currentChatID, bufferedWriter);
+
+                String response = bufferedReader.readLine();
+                if (response.equals("valid")) {
+                    String messagesLine = bufferedReader.readLine();
+                    ArrayList<String> messages = new ArrayList<>(Arrays.asList(messagesLine.split(";")));
+
+                    SwingUtilities.invokeLater(() -> updateChatPanel(messages)); // Update the chat panel on the EDT
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        loadingThread.start();
+
+        try {
+            loadingThread.join(); // makes sure this thread and its caller end at the same time
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
     }
 
     private void createProfilePic() {
@@ -344,6 +382,7 @@ public class FeedViewPage extends JPanel {
 
         // Profile button navigates to user profile
         profileButton.addActionListener(e -> {
+            stopChatRefreshTimer();
             common.Writer.write("user", bufferedWriter);
             System.out.println("write: user");
             pageManager.lazyLoadPage("user", () -> new UserProfilePage(pageManager, bufferedWriter, bufferedReader));
@@ -357,6 +396,7 @@ public class FeedViewPage extends JPanel {
             selectionButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
+                    stopChatRefreshTimer();
                     String selectedUser = selectionButton.getText();
                     common.Writer.write("6", bufferedWriter);
                     System.out.println("write: " + "6");
