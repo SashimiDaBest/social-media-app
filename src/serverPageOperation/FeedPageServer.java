@@ -95,6 +95,8 @@ public final class FeedPageServer {
                 } else if (input.equals("refreshChats")) {
                     sendChatList(user, br, bw);
                     //break;
+                } else if (input.equals("refresh")) {
+                    refresh(user, users, chats, bw, br);
                 }
 
             } catch (IOException | InvalidFileFormatException e) {
@@ -102,6 +104,50 @@ public final class FeedPageServer {
             }
         }
     }
+
+    private static void refresh(User user, ArrayList<User> users, ArrayList<Chat> chats, BufferedWriter bw, BufferedReader br) throws IOException, InvalidFileFormatException {
+        // Update chats and users data
+        chats = updateChats(chats);
+        users = updateUsers(users);
+
+        String selectedChat = br.readLine();
+        System.out.println("read 5: " + selectedChat);
+        String chatOutput = "";
+        boolean found = false;
+        for (Chat chat : chats) {
+            if (selectedChat.equals(chat.getChatID())) {
+                Writer.write("valid", bw);
+                System.out.println("write: valid");
+
+                found = true;
+                String chatContent = "";
+
+                for (int i = 0; i < chat.getMessageList().size(); i++) {
+                    Message message = chat.getMessageList().get(i);
+
+                    // Check if the message is from the logged-in user
+                    if (message.getAuthorID().equals(user.getUserID())) {
+                        chatContent += "You: ";
+                    } else {
+                        chatContent += User.findUsernameFromID(message.getAuthorID()) + ": ";
+                    }
+
+                    // Add the message's content
+                    chatContent += message.getMessage();
+                    chatContent += ";";
+                }
+
+                // Send chat content to client
+                Writer.write(chatContent.substring(0, chatContent.length() - 1), bw);
+                System.out.println("write: " + chatContent);
+                break;
+            }
+        }
+        if (!found) {
+            Writer.write("invalid", bw);
+        }
+    }
+
 
     private static void sendText(User user, ArrayList<User> users, ArrayList<Chat> chats, BufferedWriter bw, BufferedReader br) throws IOException, InvalidFileFormatException {
         // Update chats and users data
