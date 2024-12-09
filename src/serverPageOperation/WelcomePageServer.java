@@ -10,26 +10,26 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+
 /**
  * WelcomePageServer
  * <p>
- * Handles the operations for the welcome page on the server side, including
- * user sign-in and sign-up functionality. This class communicates with the client
- * to validate user credentials, create new user accounts, and navigate to the feed page.
+ * This class handles the server-side operations for the welcome page, including
+ * user sign-in and sign-up functionality. It interacts with the client to validate user credentials,
+ * create new user accounts, and navigate to the feed page once the user has successfully signed in or
+ * created a new account.
  * </p>
  *
- * <p>Features:</p>
+ * <p>Key Features:</p>
  * <ul>
- *     <li>Sign-In: Validates the username and password provided by the client and grants access if correct.</li>
- *     <li>Sign-Up: Creates a new user account with a unique username and password if the provided details are
- *     valid.</li>
- *     <li>Redirect: Once the user is signed in or a new account is created successfully, the user is redirected to the
- *     feed page.</li>
+ *     <li>Sign-In: Validates the username and password provided by the client and grants access if they are correct.</li>
+ *     <li>Sign-Up: Allows new users to create a unique account with a username and password if the provided details are valid.</li>
+ *     <li>Redirect: Once the user is signed in or a new account is created, the user is redirected to the feed page.</li>
  * </ul>
  *
  * <p>Usage:</p>
  * <p>The class provides a static method {@code welcomePageOperation} that handles incoming client requests,
- * processes sign-in or sign-up, and communicates back to the client with appropriate responses.</p>
+ * processes sign-in or sign-up, and communicates the results back to the client, including success or failure messages.</p>
  *
  * @author Derek McTume
  * @version 1.0
@@ -41,14 +41,20 @@ public final class WelcomePageServer {
     private static final String UNSUCCESSFUL_SIGN_IN = "Sign-in was unsuccessful";
 
     /**
-     * Manages the welcome page operations, including sign-in and sign-up,
+     * Handles the operations of the welcome page, including sign-in and sign-up,
      * and communicates with the client to validate user credentials or create
      * new accounts.
      *
-     * @param br    BufferedReader for reading client input
-     * @param bw    BufferedWriter for sending messages to the client
-     * @param user  The user object to be updated upon successful sign-in or sign-up
-     * @param users List of all users in the system
+     * This method initiates a loop where it waits for client input regarding whether the user wants to sign in 
+     * or sign up. Based on the client's input, it processes the request and either authenticates the user or 
+     * creates a new account. After successful authentication or account creation, the user is redirected 
+     * to the feed page.
+     *
+     * @param br    BufferedReader for reading client input.
+     * @param bw    BufferedWriter for sending messages to the client.
+     * @param user  The current user object that will be updated upon successful sign-in or sign-up.
+     * @param users List of all users in the system.
+     * @param chats List of all chats in the system, which is used for feed page redirection.
      */
     public static void welcomePageOperation(BufferedReader br, BufferedWriter bw, User user, ArrayList<User> users,
                                             ArrayList<Chat> chats) {
@@ -127,7 +133,7 @@ public final class WelcomePageServer {
                         Writer.write("User creation successful", bw);
                         System.out.println("writer: " + "User creation successful");
 
-                    // If new username/password is invalid
+                        // If new username/password is invalid
                     } catch (InvalidCreateAccountException e) {
                         Writer.write("Invalid fields", bw);
                         System.out.println("write: " + "Invalid fields");
