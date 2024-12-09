@@ -141,7 +141,7 @@ public class User implements UserInterface {
         this.password = password;
         this.userID = createUserID();
         this.accountType = 0;
-        this.serverPhotoPathway = sampleFolder + "I_0000.png";
+        this.serverPhotoPathway = "I_0000";
         followerList = new ArrayList<String>();
         followingList = new ArrayList<String>();
         blockedList = new ArrayList<String>();
