@@ -87,11 +87,11 @@ public final class FeedPageServer {
                     deleteText(user, users, chats, bw, br);
                     //break;
 
-                // just send back the user's image
+                    // just send back the user's image
                 } else if (input.equals("image")) {
                     Writer.write(user.getProfilePic(), bw);
                     System.out.println("Wrote: " + user.getProfilePic());
-                    
+
                 } else if (input.equals("refreshChats")) {
                     sendChatList(user, br, bw);
                     //break;
@@ -105,6 +105,18 @@ public final class FeedPageServer {
         }
     }
 
+    /**
+     * Refreshes the chat list and messages for the user. The method updates the chat and user lists
+     * before retrieving and sending the requested chat's content.
+     *
+     * @param user  The currently logged-in user
+     * @param users The list of all users
+     * @param chats The list of all chats
+     * @param bw    BufferedWriter to send data to the client
+     * @param br    BufferedReader to read input from the client
+     * @throws IOException                If an I/O error occurs during communication
+     * @throws InvalidFileFormatException If the file format is invalid when reading the chat or user data
+     */
     private static void refresh(User user, ArrayList<User> users, ArrayList<Chat> chats, BufferedWriter bw, BufferedReader br) throws IOException, InvalidFileFormatException {
         // Update chats and users data
         chats = updateChats(chats);
@@ -148,7 +160,18 @@ public final class FeedPageServer {
         }
     }
 
-
+    /**
+     * Sends a new text message to a selected chat. Updates the message list in the chat and sends the updated
+     * chat content back to the client.
+     *
+     * @param user  The currently logged-in user
+     * @param users The list of all users
+     * @param chats The list of all chats
+     * @param bw    BufferedWriter to send data to the client
+     * @param br    BufferedReader to read input from the client
+     * @throws IOException                If an I/O error occurs during communication
+     * @throws InvalidFileFormatException If the file format is invalid when reading the chat or user data
+     */
     private static void sendText(User user, ArrayList<User> users, ArrayList<Chat> chats, BufferedWriter bw, BufferedReader br) throws IOException, InvalidFileFormatException {
         // Update chats and users data
         chats = updateChats(chats);
@@ -195,6 +218,18 @@ public final class FeedPageServer {
         }
     }
 
+    /**
+     * Edits a text message in a selected chat. The message is updated in the chat, and the modified content
+     * is sent back to the client.
+     *
+     * @param user  The currently logged-in user
+     * @param users The list of all users
+     * @param chats The list of all chats
+     * @param bw    BufferedWriter to send data to the client
+     * @param br    BufferedReader to read input from the client
+     * @throws InvalidFileFormatException If the file format is invalid when reading the chat or user data
+     * @throws IOException                If an I/O error occurs during communication
+     */
     private static void editText(User user, ArrayList<User> users, ArrayList<Chat> chats, BufferedWriter bw, BufferedReader br) throws InvalidFileFormatException, IOException {
         // Update chats and users data
         chats = updateChats(chats);
@@ -241,6 +276,18 @@ public final class FeedPageServer {
         }
     }
 
+    /**
+     * Deletes a text message from a selected chat. The message is removed from the chat, and the updated content
+     * is sent back to the client.
+     *
+     * @param user  The currently logged-in user
+     * @param users The list of all users
+     * @param chats The list of all chats
+     * @param bw    BufferedWriter to send data to the client
+     * @param br    BufferedReader to read input from the client
+     * @throws InvalidFileFormatException If the file format is invalid when reading the chat or user data
+     * @throws IOException                If an I/O error occurs during communication
+     */
     private static void deleteText(User user, ArrayList<User> users, ArrayList<Chat> chats, BufferedWriter bw, BufferedReader br) throws InvalidFileFormatException, IOException {
         // Update chats and users data
         chats = updateChats(chats);
@@ -290,6 +337,17 @@ public final class FeedPageServer {
         }
     }
 
+    /**
+     * Handles chat creation operation. It allows the user to select other users to chat with and creates a new
+     * chat with valid members.
+     *
+     * @param users The list of all users
+     * @param user  The currently logged-in user
+     * @param chats The list of all chats
+     * @param br    BufferedReader to read input from the client
+     * @param bw    BufferedWriter to send data to the client
+     * @throws IOException If an I/O error occurs during communication
+     */
     private static void handleOperationOne(ArrayList<User> users, User user, ArrayList<Chat> chats, BufferedReader br, BufferedWriter bw) throws IOException {
         // Step 1: Handle initial operations related to the user
         handleOperationFour(users, user, bw);
@@ -302,7 +360,12 @@ public final class FeedPageServer {
     }
 
     /**
-     * Validates the chat ability for each selected user.
+     * Validates whether the users selected by the client are eligible for chat creation.
+     *
+     * @param br   BufferedReader to read input from the client
+     * @param bw   BufferedWriter to send data to the client
+     * @param user The currently logged-in user
+     * @throws IOException If an I/O error occurs during communication
      */
     private static void validateChatUsers(BufferedReader br, BufferedWriter bw, User user) throws IOException {
         String usernameToCheck = br.readLine();
@@ -337,7 +400,14 @@ public final class FeedPageServer {
     }
 
     /**
-     * Creates and initializes a new chat with the list of valid members.
+     * Creates a new chat and adds it to the system. It also adds the chat to the users' chat lists.
+     *
+     * @param br    BufferedReader to read input from the client
+     * @param bw    BufferedWriter to send data to the client
+     * @param users The list of all users
+     * @param user  The currently logged-in user
+     * @param chats The list of all chats
+     * @throws IOException If an I/O error occurs during communication
      */
     private static void createNewChat(BufferedReader br, BufferedWriter bw, ArrayList<User> users, User user, ArrayList<Chat> chats) throws IOException {
         String newChattersNames = br.readLine();
@@ -373,7 +443,18 @@ public final class FeedPageServer {
         }
     }
 
-    // for loading chats in chat panel
+    /**
+     * Handles the operation to view an existing chat. This method retrieves the selected chat's content
+     * and sends it to the client.
+     *
+     * @param users The list of all users
+     * @param user  The currently logged-in user
+     * @param chats The list of all chats
+     * @param br    BufferedReader to read input from the client
+     * @param bw    BufferedWriter to send data to the client
+     * @throws IOException                If an I/O error occurs during communication
+     * @throws InvalidFileFormatException If the file format is invalid when reading the chat or user data
+     */
     private static void handleOperationTwo(ArrayList<User> users, User user, ArrayList<Chat> chats, BufferedReader br, BufferedWriter bw) throws IOException, InvalidFileFormatException {
         // Update chats and users data
         chats = updateChats(chats);
@@ -420,6 +501,14 @@ public final class FeedPageServer {
         }
     }
 
+    /**
+     * Sends the list of chat IDs that the currently logged-in user is part of.
+     *
+     * @param user The currently logged-in user
+     * @param br   BufferedReader to read input from the client
+     * @param bw   BufferedWriter to send data to the client
+     * @throws IOException If an I/O error occurs during communication
+     */
     private static void sendChatList(User user, BufferedReader br, BufferedWriter bw) throws IOException {
         ArrayList<String> chatIDs = user.getChatIDList();
         for (String chatID : chatIDs) {
@@ -428,6 +517,14 @@ public final class FeedPageServer {
         Writer.write("stop", bw);
     }
 
+    /**
+     * Handles operation to provide a list of available users who are not the logged-in user.
+     *
+     * @param users The list of all users
+     * @param user  The currently logged-in user
+     * @param bw    BufferedWriter to send data to the client
+     * @throws IOException If an I/O error occurs during communication
+     */
     private static void handleOperationFour(ArrayList<User> users, User user, BufferedWriter bw) throws IOException {
         // Reinitialize user arrayList With existing user
         users = updateUsers(users);
@@ -450,8 +547,12 @@ public final class FeedPageServer {
         System.out.println("write: " + listOfAvailableUsers);
     }
 
+
     /**
-     * Get all the existing users (except main user)
+     * Updates and returns the list of all users.
+     *
+     * @param users The list of users to update
+     * @return A new list of users
      */
     public static ArrayList<User> updateUsers(ArrayList<User> users) {
         File dataDirectory = new File("SampleTestFolder");
@@ -466,7 +567,11 @@ public final class FeedPageServer {
     }
 
     /**
-     * Get all the existing chat
+     * Updates and returns the list of all chats.
+     *
+     * @param chats The list of chats to update
+     * @return A new list of chats
+     * @throws InvalidFileFormatException If the file format is invalid when reading the chat data
      */
     public static ArrayList<Chat> updateChats(ArrayList<Chat> chats) throws InvalidFileFormatException {
         File dataDirectory = new File("SampleTestFolder");

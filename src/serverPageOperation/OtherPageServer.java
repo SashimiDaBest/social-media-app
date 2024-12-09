@@ -9,39 +9,46 @@ import java.io.BufferedWriter;
 import java.util.ArrayList;
 
 /**
- * OtherPageServer
+ * <h1>OtherPageServer</h1>
  * <p>
- * This class handles operations related to viewing and interacting with another user's profile
- * on the server side. It provides features such as following/unfollowing, blocking/unblocking,
- * and viewing the other user's followers or following lists.
+ * This class manages server-side operations related to interacting with another user's profile page.
+ * It handles various actions like following/unfollowing, blocking/unblocking users, and viewing the
+ * followers and following lists of other users.
  * </p>
  *
- * <p>Key Features:</p>
+ * <p><b>Key Features:</b></p>
  * <ul>
  *     <li>Follow/Unfollow: Allows the current user to follow or unfollow another user.</li>
  *     <li>Block/Unblock: Enables the current user to block or unblock another user.</li>
- *     <li>View Followers/Following: Sends the list of followers or following users to the client and handles navigation requests.</li>
+ *     <li>View Followers/Following: Displays the list of followers or following users to the client.</li>
  * </ul>
  *
- * <p>Usage:</p>
- * <p>The main method in this class is {@code otherPageOperation}, which handles client interactions
- * and manages profile-related actions based on the user's input.</p>
+ * <p><b>Usage:</b></p>
+ * <p>The main method in this class is {@code otherPageOperation}, which handles client requests for
+ * viewing and interacting with another user's profile, managing their followers and following lists,
+ * and allowing following or blocking actions.</p>
  *
- * @author Soleil Pham
- * @version 1.0
- * @since 11/16/2024
+ * <p><b>Author:</b> Soleil Pham</p>
+ * <p><b>Version:</b> 1.0</p>
+ * <p><b>Since:</b> 11/16/2024</p>
  */
+
 public final class OtherPageServer {
 
     /**
      * Manages interactions on the other user's profile page. Handles actions such as
      * following/unfollowing, blocking/unblocking, and viewing followers and following lists.
      *
-     * @param br    BufferedReader for reading client input
-     * @param bw    BufferedWriter for sending messages to the client
-     * @param user  The current user
-     * @param users List of all users in the system
-     * @param chats List of all chats in the system
+     * <p>This method is responsible for handling the client-side input regarding interactions with
+     * another user's profile, processing the actions like follow, unfollow, block, unblock, and viewing
+     * followers and following lists. It also sends responses back to the client regarding these actions.</p>
+     *
+     * @param br    The {@link BufferedReader} used to read input from the client.
+     * @param bw    The {@link BufferedWriter} used to send responses to the client.
+     * @param user  The {@link User} object representing the current user interacting with the profile.
+     * @param users A list of all users in the system.
+     * @param chats A list of all chats in the system.
+     * @throws Exception If any error occurs during input/output operations or during any other operation.
      */
     public static void otherPageOperation(BufferedReader br, BufferedWriter bw, User user, ArrayList<User> users, ArrayList<Chat> chats) {
         System.out.println("Other page operations started");
@@ -65,13 +72,13 @@ public final class OtherPageServer {
                 if (otherUser.getAccountType() == 1 && !user.getFollowerList().contains(otherUser.getUserID())) {
                     Writer.write("message", bw);
                     UserPageServer.write(new ArrayList<>(), bw);
-                
-                // if the selected user's following list is not empty, populate it with their information
+
+                    // if the selected user's following list is not empty, populate it with their information
                 } else if (!otherUser.getFollowerList().get(0).isEmpty()) {
                     Writer.write("look", bw);
                     UserPageServer.write(otherUser.getFollowerList(), bw);
-                
-                // otherwise, it's empty 
+
+                    // otherwise, it's empty
                 } else {
                     Writer.write("[EMPTY]", bw);
                     UserPageServer.write(otherUser.getFollowerList(), bw);
@@ -119,7 +126,7 @@ public final class OtherPageServer {
                         users = FeedPageServer.updateUsers(users);
                     }
 
-                // for blocking
+                    // for blocking
                 } else if (input.equals("2")) {
                     if (user.getBlockedList().contains(otherUser.getUserID())) {
                         user.deleteBlock(otherUser.getUserID());
@@ -140,13 +147,13 @@ public final class OtherPageServer {
                     break;
                 }
 
-                // the following is used only for setRelation in OtherProfilePage 
+                // the following is used only for setRelation in OtherProfilePage
                 // (literally just for button text)
 
                 // for checking if client is following otherUser
-                else if (input.equals("4")){
+                else if (input.equals("4")) {
 
-                    if(user.getFollowingList().contains(otherUser.getUserID())) {
+                    if (user.getFollowingList().contains(otherUser.getUserID())) {
                         Writer.write("Unfollow", bw);
                         System.out.println("write: " + "Unfollow");
                     } else {
@@ -158,15 +165,14 @@ public final class OtherPageServer {
                 // for checking if client has blocked other User
                 else if (input.equals("6")) {
 
-                    if(user.getBlockedList().contains(otherUser.getUserID())) {
+                    if (user.getBlockedList().contains(otherUser.getUserID())) {
                         Writer.write("Unblock", bw);
                         System.out.println("write: " + "Unblock");
                     } else {
                         Writer.write("Block", bw);
                         System.out.println("write: " + "Block");
                     }
-                }
-                else {
+                } else {
                     System.out.println("ERROR: " + input);
                 }
                 input = br.readLine();
