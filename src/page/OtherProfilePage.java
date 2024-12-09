@@ -19,24 +19,83 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+* Represents the profile page of another user.
+* This class extends JPanel and provides a user interface to view and interact with another user's profile.
+* It includes methods to set up the account information, followers, following, and relation buttons,
+* as well as action listeners for various UI components.
+*/
 public class OtherProfilePage extends JPanel {
 
+    /**
+    * The button used to follow or unfollow the other user.
+    */
     private JButton followButton;
+
+    /**
+    * The button used to block or unblock the other user.
+    */
     private JButton blockButton;
 
+    /**
+    * The button used to view the profile picture of the other user.
+    */
     private JButton profileButton;
+
+    /**
+    * The button used to navigate back to the previous page.
+    */
     private JButton backButton;
+
+    /**
+    * The button used to navigate to the feed page.
+    */
     private JButton feedButton;
 
+    /**
+    * The PageManager instance used for managing page navigation.
+    */
     private PageManager pageManager;
+
+    /**
+    * The BufferedReader instance used for reading data from the server.
+    */
     private BufferedReader bufferedReader;
+
+    /**
+    * The BufferedWriter instance used for writing data to the server.
+    */
     private BufferedWriter bufferedWriter;
+
+    /**
+    * The username of the other user whose profile is being viewed.
+    */
     private String otherUsername;
 
-    private int targetWidth = 50;  // Set your desired width
-    private int targetHeight = 50; // Set your desired height
+    /**
+    * The target width for scaling the profile picture.
+    */
+    private int targetWidth = 50;
+
+    /**
+    * The target height for scaling the profile picture.
+    */
+    private int targetHeight = 50;
+
+    /**
+    * The BufferedImage instance representing the profile picture of the other user.
+    */
     private BufferedImage image;
 
+    /**
+    * Constructs an OtherProfilePage object.
+    * Initializes the page layout, sets up the account information, followers, following, and relation panels,
+    * and adds action listeners to the UI components.
+    * @param pageManager The PageManager instance to handle page navigation.
+    * @param writer The BufferedWriter instance for writing data.
+    * @param reader The BufferedReader instance for reading data.
+    * @param otherUsername The username of the other user whose profile is being viewed.
+    */
     public OtherProfilePage(PageManager pageManager, BufferedWriter writer, BufferedReader reader, String otherUsername) {
         System.out.println("This is other profile page");
         this.pageManager = pageManager;
@@ -67,7 +126,12 @@ public class OtherProfilePage extends JPanel {
         
         setupActionListeners();
     }
-
+    /**
+    * Asynchronously loads and sets the profile picture of the other user.
+    * This method reads the image name from a buffered reader, loads the image,
+    * scales it, and updates the profile button's icon on the Event Dispatch Thread (EDT).
+    * If an I/O error occurs during image loading, it prints the stack trace.
+    */
     private void createImagePanel() {
         // Run the image loading task on a new thread
         Thread loadingThread = new Thread(() -> {
@@ -103,7 +167,11 @@ public class OtherProfilePage extends JPanel {
             e.printStackTrace();
         }
     }
-
+    /**
+    * Sets up and returns the account information panel.
+    * This method retrieves and displays the username and account type of the other user.
+    * @return The account information panel containing the user's details.
+    */
     private JPanel setAccountInfo() {
         Writer.write(otherUsername, bufferedWriter);
         System.out.println("write: " + otherUsername);
@@ -198,7 +266,14 @@ public class OtherProfilePage extends JPanel {
 
         return accountPanel;
     }
-
+    /**
+    * Sets up and returns a panel displaying a list of people (followers or following).
+    * This method retrieves the list of people from the server, creates buttons for each person,
+    * and adds them to a scrollable panel.
+    * @param category The category of people to display (1 for followers, 2 for following).
+    * @param label The label for the panel (e.g., "Follower" or "Following").
+    * @return The panel containing the list of people.
+    */
     private JPanel setPeople(int category, String label) {
         // Create the main panel with a border title
         JPanel panel = new JPanel(new BorderLayout());
@@ -297,7 +372,11 @@ public class OtherProfilePage extends JPanel {
 
         return panel;
     }
-
+    /**
+    * Sets up and returns the footer panel.
+    * This method creates a panel with buttons for navigating to the feed.
+    * @return The footer panel containing navigation buttons.
+    */
     private JPanel setFooter() {
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
 //        backButton = new JButton("Back");
@@ -309,7 +388,12 @@ public class OtherProfilePage extends JPanel {
 //        footer.add(nextButton);
         return footer;
     }
-
+    /**
+    * Sets up and returns the relation panel.
+    * This method retrieves the relationship status (follow/unfollow, block/unblock) from the server
+    * and creates buttons accordingly.
+    * @return The relation panel containing follow and block buttons.
+    */
     private JPanel setRelation() {
         JPanel relationPanel = new JPanel(new GridBagLayout());
         relationPanel.setBackground(Color.WHITE);
@@ -337,7 +421,12 @@ public class OtherProfilePage extends JPanel {
 
         return relationPanel;
     }
-
+    /**
+    * Sets up action listeners for various UI components.
+    * This method assigns action listeners to buttons and other UI elements
+    * to handle user interactions such as navigating to the feed, following/unfollowing,
+    * blocking/unblocking, and viewing the profile picture.
+ */
     private void setupActionListeners() {
         feedButton.addActionListener(new ActionListener() {
             @Override
@@ -347,7 +436,10 @@ public class OtherProfilePage extends JPanel {
                 pageManager.lazyLoadPage("feed", () -> new FeedViewPage(pageManager, bufferedWriter, bufferedReader));
             }
         });
-
+        /**
+        * Action listener for the follow button.
+        * Toggles the follow status of the other user when the button is clicked.
+        */
         followButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -378,7 +470,10 @@ public class OtherProfilePage extends JPanel {
                 }
             }
         });
-
+        /**
+        * Action listener for the block button.
+        * Toggles the block status of the other user when the button is clicked.
+        */
         blockButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -399,7 +494,10 @@ public class OtherProfilePage extends JPanel {
                 }
             }
         });
-
+        /**
+        * Action listener for the profile button.
+        * Displays the profile picture of the other user in a dialog when the button is clicked.
+        */
         profileButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
@@ -415,47 +513,5 @@ public class OtherProfilePage extends JPanel {
                 }
             }
         });
-/*
-        backButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                pageManager.printHistory();
-                pageManager.goBack();
-            }
-        });
-
-        nextButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                pageManager.goForward();
-                pageManager.printHistory();
-            }
-        });
-
-        blockButton.addActionListener(new ActionListener() {
-           @Override
-           public void actionPerformed(ActionEvent e) {
-               UserPageClient.write("2", bufferedWriter);
-               try {
-                   System.out.println(bufferedReader.readLine());
-               } catch (IOException ex) {
-                   ex.printStackTrace();
-               }
-           }
-        });
-
-        followButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                UserPageClient.write("1", bufferedWriter);
-                try {
-                    System.out.println(bufferedReader.readLine());
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            }
-        });
-
- */
     }
 }

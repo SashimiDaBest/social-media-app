@@ -14,15 +14,79 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
 
+/**
+ * Represents the user profile page.
+ * This class extends JPanel and provides a user interface to view and interact with the user's own profile.
+ * It includes methods to set up the account information, followers, following, blocked users, and action listeners for various UI components.
+ */
 public class UserProfilePage extends JPanel {
+    /**
+     * The PageManager instance used for managing page navigation.
+     */
     private PageManager pageManager;
+
+    /**
+     * The BufferedReader instance used for reading data from the server.
+     */
     private BufferedReader bufferedReader;
+
+    /**
+     * The BufferedWriter instance used for writing data to the server.
+     */
     private BufferedWriter bufferedWriter;
 
-    private int targetWidth = 50;  // Set your desired width
-    private int targetHeight = 50; // Set your desired height
+    /**
+     * The target width for scaling the profile picture.
+     */
+    private int targetWidth = 50;
+
+    /**
+     * The target height for scaling the profile picture.
+     */
+    private int targetHeight = 50;
+
+    /**
+     * The BufferedImage instance representing the profile picture of the user.
+     */
     private BufferedImage image;
-    private JButton profileButton, settingButton, backButton, nextButton, logoutButton, feedButton;
+
+    /**
+     * The button used to view the profile picture of the user.
+     */
+    private JButton profileButton;
+
+    /**
+     * The button used to open the account settings.
+     */
+    private JButton settingButton;
+
+    /**
+     * The button used to navigate back to the previous page.
+     */
+    private JButton backButton;
+
+    /**
+     * The button used to navigate to the next page.
+     */
+    private JButton nextButton;
+
+    /**
+     * The button used to log out the user.
+     */
+    private JButton logoutButton;
+
+    /**
+     * The button used to navigate to the feed page.
+     */
+    private JButton feedButton;
+    /**
+    * Constructs a UserProfilePage object.
+    * Initializes the page layout, sets up the account information, followers, following, blocked users,
+    * and adds action listeners to the UI components.
+    * @param pageManager The PageManager instance to handle page navigation.
+    * @param bufferedWriter The BufferedWriter instance for writing data.
+    * @param bufferedReader The BufferedReader instance for reading data.
+    */
     public UserProfilePage(PageManager pageManager, BufferedWriter bufferedWriter, BufferedReader bufferedReader) {
         System.out.println("This is user profile page");
         this.pageManager = pageManager;
@@ -50,7 +114,12 @@ public class UserProfilePage extends JPanel {
 
         setupActionListeners();
     }
-
+    /**
+    * Asynchronously loads and sets the user's profile picture.
+    * This method reads the image name from a buffered reader, loads the image,
+    * scales it, and updates the profile button's icon on the Event Dispatch Thread (EDT).
+    * If an I/O error occurs during image loading, it prints the stack trace.
+    */
     private void createImagePanel() {
         // Run the image loading task on a new thread
         new Thread(() -> {
@@ -93,7 +162,11 @@ public class UserProfilePage extends JPanel {
             }
         }).start();
     }
-
+    /**
+     * Sets up and returns the account information panel.
+     * This method retrieves and displays the username and account type of the user.
+     * @return The account information panel containing the user's details.
+     */
     private JPanel setAccountInfo() {
         JPanel accountInfoPanel = new JPanel(new GridBagLayout());
         accountInfoPanel.setBackground(Color.WHITE);
@@ -188,7 +261,14 @@ public class UserProfilePage extends JPanel {
         accountPanel.add(accountInfoPanel, gbcAccount);
         return accountPanel;
     }
-
+    /**
+     * Sets up and returns a panel displaying a list of people (followers, following, or blocked users).
+     * This method retrieves the list of people from the server, creates buttons for each person,
+     * and adds them to a scrollable panel.
+     * @param category The category of people to display (1 for followers, 2 for following, 3 for blocked users).
+     * @param label The label for the panel (e.g., "Follower", "Following", or "Blocked").
+     * @return The panel containing the list of people.
+     */
     private JPanel setPeople(int category, String label) {
         // Create the main panel with a border title
         JPanel panel = new JPanel(new BorderLayout());
@@ -281,7 +361,11 @@ public class UserProfilePage extends JPanel {
 
         return panel;
     }
-
+    /**
+     * Sets up and returns the footer panel.
+     * This method creates a panel with buttons for navigating to the feed.
+     * @return The footer panel containing navigation buttons.
+     */
     private JPanel createFooter() {
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         footer.setBackground(Color.WHITE);
@@ -293,9 +377,19 @@ public class UserProfilePage extends JPanel {
 //        footer.add(nextButton);
         return footer;
     }
-
+    /**
+     * Sets up action listeners for various UI components.
+     * This method assigns action listeners to buttons and other UI elements
+     * to handle user interactions such as uploading a profile picture, navigating to the feed,
+     * opening account settings, and logging out.
+     */
     private void setupActionListeners() {
-
+        /**
+         * Action listener for the profile button.
+         * Opens a file chooser dialog to select a profile picture, uploads the selected file to the server,
+         * and updates the profile picture on the user interface.
+         * If the file upload is successful, a success message is displayed; otherwise, an error message is shown.
+         */
         profileButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -334,7 +428,11 @@ public class UserProfilePage extends JPanel {
                 }
             }
         });
-
+        /**
+         * Action listener for the setting button.
+         * Opens a modal dialog for account settings, allowing the user to log out.
+         * The dialog contains fields for username and password, and buttons for saving changes and logging out.
+         */
         settingButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -370,46 +468,6 @@ public class UserProfilePage extends JPanel {
                 settingsDialog.add(settingsPanel, BorderLayout.CENTER);
                 settingsDialog.add(buttonPanel, BorderLayout.SOUTH);
 
-                /*
-                // Load current account details
-                try {
-                    UserPageClient.write("getAccountInfo", bufferedWriter);
-                    String currentUsername = bufferedReader.readLine();
-                    usernameField.setText(currentUsername);
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(settingsDialog, "Failed to load account details.", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-                */
-
-                /*
-                // Save button action listener
-                saveButton.addActionListener(ev -> {
-                    String username = usernameField.getText();
-                    String password = new String(passwordField.getPassword());
-
-                    if (username.isEmpty() || password.isEmpty()) {
-                        JOptionPane.showMessageDialog(settingsDialog, "Username and password cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-
-                    try {
-                        UserPageClient.write("updateAccount", bufferedWriter);
-                        UserPageClient.write(username, bufferedWriter);
-                        UserPageClient.write(password, bufferedWriter);
-
-                        String response = bufferedReader.readLine();
-                        if ("success".equalsIgnoreCase(response)) {
-                            JOptionPane.showMessageDialog(settingsDialog, "Settings updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-                            settingsDialog.dispose();
-                        } else {
-                            JOptionPane.showMessageDialog(settingsDialog, "Failed to update settings. Try again.", "Error", JOptionPane.ERROR_MESSAGE);
-                        }
-                    } catch (IOException ex) {
-                        JOptionPane.showMessageDialog(settingsDialog, "Error while updating settings: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                });
-                */
-
                 // Logout button action listener
                 logoutButton.addActionListener(ev -> {
                     common.Writer.write("6", bufferedWriter);
@@ -424,7 +482,10 @@ public class UserProfilePage extends JPanel {
                 settingsDialog.setVisible(true);
             }
         });
-
+        /**
+         * Action listener for the feed button.
+         * Navigates to the feed page when the button is clicked.
+         */
         feedButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -433,21 +494,5 @@ public class UserProfilePage extends JPanel {
                 pageManager.lazyLoadPage("feed", () -> new FeedViewPage(pageManager, bufferedWriter, bufferedReader));
             }
         });
-/*
-        backButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                pageManager.goBack(); //REVISE
-            }
-        });
-
-        nextButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                pageManager.goForward(); //REVISE
-            }
-        });
-
- */
     }
 }

@@ -15,44 +15,225 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * Represents the feed view page of the application. This page displays chat messages,
+ * allows user search and selection, and provides various utility functions such as
+ * sending, editing, and deleting messages.
+ */
 public class FeedViewPage extends JPanel {
 
+    /**
+     * Timer for refreshing the chat view.
+     */
     private Timer chatRefreshTimer;
+
+    /**
+     * Refresh interval for the chat view in milliseconds.
+     */
     private final int REFRESH_INTERVAL = 5000; // Refresh every 5 seconds
 
-    // Constants
+    /**
+     * Maximum number of selected users allowed.
+     */
     private static final int MAX_SELECTED_USERS = 8;
+
+    /**
+     * Side length of the icons used in the UI.
+     */
     private final int iconSideLength = 20;
 
-    // UI Components
-    private JButton profileButton, searchButton, deleteButton, clearButton, addSelectedToChat, deleteTextButton, refreshButton;
-    private ArrayList<JButton> chatButtons, selectionButtons;
-    private JTextField chatField, searchField;
-    private JButton editButton, sendButton;
-    private JScrollPane chatViewPanel, chatButtonPanel;
-    private JPanel chatPanel; // Dynamic chat panel
+    /**
+     * Button for navigating to the user profile.
+     */
+    private JButton profileButton;
+
+    /**
+     * Button for initiating a user search.
+     */
+    private JButton searchButton;
+
+    /**
+     * Button for deleting the most recently added user from the selection.
+     */
+    private JButton deleteButton;
+
+    /**
+     * Button for clearing all selected users.
+     */
+    private JButton clearButton;
+
+    /**
+     * Button for adding selected users to a chat.
+     */
+    private JButton addSelectedToChat;
+
+    /**
+     * Button for deleting the currently displayed message.
+     */
+    private JButton deleteTextButton;
+
+    /**
+     * Button for refreshing the chat view.
+     */
+    private JButton refreshButton;
+
+    /**
+     * List of chat buttons.
+     */
+    private ArrayList<JButton> chatButtons;
+
+    /**
+     * List of selection buttons.
+     */
+    private ArrayList<JButton> selectionButtons;
+
+    /**
+     * Text field for entering chat messages.
+     */
+    private JTextField chatField;
+
+    /**
+     * Text field for searching users.
+     */
+    private JTextField searchField;
+
+    /**
+     * Button for editing the currently displayed message.
+     */
+    private JButton editButton;
+
+    /**
+     * Button for sending a chat message.
+     */
+    private JButton sendButton;
+
+    /**
+     * Scroll pane for the chat view.
+     */
+    private JScrollPane chatViewPanel;
+
+    /**
+     * Scroll pane for the chat buttons.
+     */
+    private JScrollPane chatButtonPanel;
+
+    /**
+     * Panel for dynamic chat updates.
+     */
+    private JPanel chatPanel;
+
+    /**
+     * Label for displaying chat messages.
+     */
     private JLabel messageLabel;
 
-    // Paths for icons
+    /**
+     * Path for the add selection icon.
+     */
     private final String addSelectionIconPath = "SampleTestFolder/addToSelectionIcon.png";
+
+    /**
+     * Path for the clear selection icon.
+     */
     private final String clearSelectionIconPath = "SampleTestFolder/clearSelectionIcon.png";
+
+    /**
+     * Path for the delete message icon.
+     */
     private final String deleteMessageIconPath = "SampleTestFolder/deleteMessageIcon.png";
+
+    /**
+     * Path for the edit message icon.
+     */
     private final String editMessageIconPath = "SampleTestFolder/editMessageIcon.png";
+
+    /**
+     * Path for the search icon.
+     */
     private final String searchIconPath = "SampleTestFolder/searchIcon.png";
+
+    /**
+     * Path for the send message icon.
+     */
     private final String sendMessageIconPath = "SampleTestFolder/sendMessageIcon.png";
+
+    /**
+     * Path for the delete selection icon.
+     */
     private final String deleteSelectionIconPath = "SampleTestFolder/deleteSelectionIcon.png";
 
-    // Icons
-    BufferedImage editMessageIcon, deleteMessageIcon, 
-        deleteSelectionIcon, sendMessageIcon, addToSelectionIcon,
-        clearSelectionIcon, searchIcon, userProfilePic;
+    /**
+     * Icon for editing messages.
+     */
+    BufferedImage editMessageIcon;
 
-    // Logic
-    private ArrayList<String> selectedUsers; // Holds selected usernames
+    /**
+     * Icon for deleting messages.
+     */
+    BufferedImage deleteMessageIcon;
+
+    /**
+     * Icon for deleting selections.
+     */
+    BufferedImage deleteSelectionIcon;
+
+    /**
+     * Icon for sending messages.
+     */
+    BufferedImage sendMessageIcon;
+
+    /**
+     * Icon for adding selections.
+     */
+    BufferedImage addToSelectionIcon;
+
+    /**
+     * Icon for clearing selections.
+     */
+    BufferedImage clearSelectionIcon;
+
+    /**
+     * Icon for searching.
+     */
+    BufferedImage searchIcon;
+
+    /**
+     * User profile picture.
+     */
+    BufferedImage userProfilePic;
+
+    /**
+     * List of selected usernames.
+     */
+    private ArrayList<String> selectedUsers;
+
+    /**
+     * BufferedWriter for writing data.
+     */
     private BufferedWriter bufferedWriter;
+
+    /**
+     * BufferedReader for reading data.
+     */
     private BufferedReader bufferedReader;
+
+    /**
+     * PageManager for managing page navigation.
+     */
     private PageManager pageManager;
+
+    /**
+     * Current chat ID.
+     */
     private String currentChatID;
+
+    /**
+     * Constructs a FeedViewPage with the specified parameters.
+     *
+     * @param pageManager The PageManager instance to manage page navigation.
+     * @param bw          The BufferedWriter instance for writing data.
+     * @param br          The BufferedReader instance for reading data.
+     */
 
     public FeedViewPage(PageManager pageManager, BufferedWriter bw, BufferedReader br) {
         System.out.println("This is feed view page");
@@ -87,7 +268,13 @@ public class FeedViewPage extends JPanel {
         createProfilePic();
         setupActionListeners();
     }
-
+    /**
+    * Asynchronously loads and sets the user's profile picture.
+    * This method reads the image name from a buffered reader, loads the image,
+    * scales it, and updates the profile button's icon on the Event Dispatch Thread (EDT).
+    * If the image name is missing or invalid, it sets a placeholder icon.
+    * If an I/O error occurs during image loading, it also sets a placeholder icon.
+    */
     private void createProfilePic() {
         // Run the image loading task on a new thread
         new Thread(() -> {
@@ -132,7 +319,12 @@ public class FeedViewPage extends JPanel {
             }
         }).start();
     }
-
+    /**
+     * Asynchronously loads and sets utility icons for various actions.
+     * This method loads multiple icons from specified file paths, scales them,
+     * and updates the corresponding buttons' icons on the Event Dispatch Thread (EDT).
+     * If an I/O error occurs during image loading, it prints the stack trace.
+     */
     private void createUtilityIcons() {
 
         // Run the image loading task on a new thread
@@ -194,8 +386,12 @@ public class FeedViewPage extends JPanel {
            }
        }).start();
    }
-
-    public JPanel createTopPanel() {
+    /**
+     * Creates and returns the top panel of the user interface.
+     * This panel contains a search panel and a selection panel, arranged vertically.
+     * @return The top panel containing the search and selection panels.
+     */
+    public JPanel createTopPanel(){
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
 
@@ -215,6 +411,11 @@ public class FeedViewPage extends JPanel {
         return topPanel;
     }
 
+    /**
+     * Creates and returns the search panel of the user interface.
+     * This panel contains a search field and buttons for search, delete, and clear actions.
+     * @return The search panel containing the search field and buttons.
+     */
     public JPanel createSearchPanel() {
         JPanel searchPanel = new JPanel(new BorderLayout());
         searchField = new JTextField(20);
@@ -243,7 +444,11 @@ public class FeedViewPage extends JPanel {
         searchPanel.add(buttonPanel, BorderLayout.EAST);
         return searchPanel;
     }
-
+    /**
+     * * Creates and returns the selection panel of the user interface.
+     * * This panel contains a text pane indicating selected users and buttons for each selected user.
+     * * @return The selection panel containing the text pane and selection buttons.
+     * */
     public JPanel createSelectionPanel() {
         JPanel selectionPanel = new JPanel(new FlowLayout());
 
@@ -269,7 +474,11 @@ public class FeedViewPage extends JPanel {
 
         return selectionPanel;
     }
-
+    /**
+     * Creates and returns a scrollable chat panel.
+     * This panel is used to display chat messages dynamically.
+     * @return A scrollable panel containing the chat messages.
+     */
     public JScrollPane createChatPanel() {
         chatPanel = new JPanel(); // Create a new panel for dynamic chat updates
         chatPanel.setLayout(new BoxLayout(chatPanel, BoxLayout.Y_AXIS)); // Vertical alignment of chat messages
@@ -278,6 +487,13 @@ public class FeedViewPage extends JPanel {
         return scrollPane;
     }
 
+    /**
+     * Updates the chat panel with the provided list of messages.
+     * This method clears the existing messages, adds the new messages,
+     * and ensures the panel is updated on the Event Dispatch Thread (EDT).
+     * It also scrolls the chat panel to the bottom.
+     * @param messages The list of messages to display in the chat panel.
+     */
     private void updateChatPanel(ArrayList<String> messages) {
         chatPanel.removeAll(); // Clear existing components
         for (String message : messages) {
@@ -291,6 +507,11 @@ public class FeedViewPage extends JPanel {
         SwingUtilities.invokeLater(() -> chatViewPanel.getVerticalScrollBar().setValue(chatViewPanel.getVerticalScrollBar().getMaximum()));
     }
 
+    /**
+     * Creates and returns the bottom panel of the user interface.
+     * This panel contains a chat input field and buttons for edit, send, delete, and refresh actions.
+     * @return The bottom panel containing the chat input field and buttons.
+     */
     public JPanel createBottomPanel() {
         JPanel bottomPanel = new JPanel(new BorderLayout());
 
@@ -322,7 +543,11 @@ public class FeedViewPage extends JPanel {
         bottomPanel.add(buttonPanel, BorderLayout.EAST);
         return bottomPanel;
     }
-
+        /**
+     * Creates and returns a scrollable panel containing chat buttons.
+     * This panel is used to display buttons for each available chat.
+     * @return A scrollable panel containing the chat buttons.
+     */
     public JScrollPane createChatViewPanel() {
         // Create a panel for buttons with a grid layout
         JPanel buttonPanelLeft = new JPanel(new GridLayout(8, 1, 5, 5)); // 8 buttons in a grid layout
@@ -344,7 +569,12 @@ public class FeedViewPage extends JPanel {
 
         return leftScrollPane;
     }
-
+        /**
+     * Sets up action listeners for various UI components.
+     * This method assigns action listeners to buttons and other UI elements
+     * to handle user interactions such as navigating to user profiles, searching for users,
+     * sending messages, editing messages, deleting messages, and refreshing chat views.
+     */
     private void setupActionListeners() {
 
         // Profile button navigates to user profile
@@ -690,7 +920,12 @@ public class FeedViewPage extends JPanel {
             }
         });
     }
-
+        /**
+     * Handles the user search action.
+     * This method sends a search request to the server, processes the search result,
+     * and adds the selected user to the selection if a valid user is found.
+     * If no user is selected or the input is invalid, it shows an error message.
+     */
     private void handleUserSearch() {
         try {
             common.Writer.write("4", bufferedWriter);
@@ -713,7 +948,14 @@ public class FeedViewPage extends JPanel {
             error.printStackTrace();
         }
     }
-
+    /**
+     * Processes the search result to find a matching user.
+     * This method checks if the user input matches any user exactly or provides a dropdown
+     * of close matches if no exact match is found.
+     * @param userList The list of users to search within.
+     * @param userInput The user input to search for.
+     * @return The selected user from the search result, or null if no user is selected.
+     */
     private String processSearchResult(String userList, String userInput) {
         String[] originalUsers = userList.split(";");
 
@@ -757,7 +999,13 @@ public class FeedViewPage extends JPanel {
                     closeMatches.toArray(new String[0]), closeMatches.get(0));
         }
     }
-
+    /**
+     * Adds the selected user to the selection.
+     * This method updates the selection buttons to reflect the newly selected user.
+     * If the user is already selected or the maximum number of users is reached,
+     * it shows an error message.
+     * @param selectedUser The user to add to the selection.
+     */
     private void addUserToSelection(String selectedUser) {
         if (selectedUsers.contains(selectedUser)) {
             JOptionPane.showMessageDialog(null, "User already selected.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -780,7 +1028,11 @@ public class FeedViewPage extends JPanel {
             addSelectedToChat.setEnabled(true);
         }
     }
-
+    /**
+     * Deletes the most recent user selection.
+     * This method removes the most recent user from the selection and updates the corresponding button.
+     * If no users are left in the selection, it disables the `addSelectedToChat` button.
+     */
     private void deleteMostRecentSelection() {
         if (!selectedUsers.isEmpty()) {
             // Remove the most recent user and corresponding button
@@ -798,7 +1050,10 @@ public class FeedViewPage extends JPanel {
             }
         }
     }
-
+    /**
+     * Clears all user selections.
+     * This method resets all selection buttons and disables the `addSelectedToChat` button.
+     */
     private void clearSelections() {
         // Clear all selected users
         selectedUsers.clear();
@@ -813,7 +1068,11 @@ public class FeedViewPage extends JPanel {
         // Disable `addSelectedToChat`
         addSelectedToChat.setEnabled(false);
     }
-
+    /**
+     * Refreshes the chat view panel with updated chat buttons.
+     * This method clears the existing chat buttons, requests an updated list of chats from the server,
+     * and updates the chat view panel with the new buttons.
+     */
     private void refreshChatViewPanel() {
         // Clear existing chat buttons
         chatButtons.clear();
