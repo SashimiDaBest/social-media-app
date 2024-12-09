@@ -1,4 +1,3 @@
-[
 # BoilerGram (CS 18000 Team Project)
 BoilerGram is a social media application inspired by Instagram, offering a range of interactive and intuitive functionalities. The app is designed to mimic a typical social media platform, emphasizing user interaction, messaging, and profile management.
 > ⚠️ **Warning**: After a new chat is created using the "Add selected to chat" button, user/tester must navigate to user profile and back to feed to use chat functionalities.
