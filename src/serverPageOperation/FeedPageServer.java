@@ -309,7 +309,7 @@ public final class FeedPageServer {
         System.out.println("read 2: " + usernameToCheck);
 
         while (!"[DONE]".equals(usernameToCheck)) {
-            User targetUser = new User("Sample Test Folder/" + User.findIDFromUsername(usernameToCheck) + ".txt");
+            User targetUser = new User("SampleTestFolder/" + User.findIDFromUsername(usernameToCheck) + ".txt");
 
             String validationResult = user.checkChatAbility(targetUser);
             switch (validationResult) {
@@ -454,7 +454,7 @@ public final class FeedPageServer {
      * Get all the existing users (except main user)
      */
     public static ArrayList<User> updateUsers(ArrayList<User> users) {
-        File dataDirectory = new File("Sample Test Folder");
+        File dataDirectory = new File("SampleTestFolder");
         File[] userFiles = dataDirectory.listFiles((ignored, name) -> name.startsWith("U_"));
         users = new ArrayList<>();
         if (users != null) {
@@ -469,7 +469,7 @@ public final class FeedPageServer {
      * Get all the existing chat
      */
     public static ArrayList<Chat> updateChats(ArrayList<Chat> chats) throws InvalidFileFormatException {
-        File dataDirectory = new File("Sample Test Folder");
+        File dataDirectory = new File("SampleTestFolder");
         File[] chatFiles = dataDirectory.listFiles((ignored, name) -> name.startsWith("C_"));
         chats = new ArrayList<>();
         for (File chatFile : chatFiles) {

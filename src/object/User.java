@@ -55,7 +55,7 @@ public class User implements UserInterface {
     /** The user's profile picture, stored as an image. */
     private BufferedImage image;
     /** The folder pathway to all the user's and chat's information. */
-    private final String sampleFolder = "Sample Test Folder/";
+    private final String sampleFolder = "SampleTestFolder/";
 
     /**
              * Constructs a User by reading user data from a file.

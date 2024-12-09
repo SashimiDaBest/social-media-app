@@ -155,7 +155,7 @@ public final class UserPageServer {
                 throw new Exception("Error: File is not an image");
             }
             // Destination file (change this path as needed)
-            File destinationFile = new File("Sample Test Folder/" + "I" + userID.substring(1) + ".png");
+            File destinationFile = new File("SampleTestFolder/" + "I" + userID.substring(1) + ".png");
 
             // Ensure the destination directory exists
             if (!destinationFile.getParentFile().exists()) {

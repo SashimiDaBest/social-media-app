@@ -49,7 +49,7 @@ public final class OtherPageServer {
             // Load the other user based on the client-provided username
             String otherUsername = br.readLine();
             System.out.println("read: " + otherUsername);
-            User otherUser = new User("Sample Test Folder/" + User.findIDFromUsername(otherUsername) + ".txt");
+            User otherUser = new User("SampleTestFolder/" + User.findIDFromUsername(otherUsername) + ".txt");
 
             Writer.write(otherUser.getUsername(), bw);
             Writer.write(Integer.toString(otherUser.getAccountType()), bw);

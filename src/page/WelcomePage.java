@@ -91,7 +91,7 @@ public class WelcomePage extends JPanel {
 
     // Load and resize the image
     try {
-        BufferedImage image = ImageIO.read(new File("Sample Test Folder/BoilerGramLogo.png"));
+        BufferedImage image = ImageIO.read(new File("SampleTestFolder/BoilerGramLogo.png"));
         int width = 200;  // Desired width
         int height = (int) ((double) width / image.getWidth() * image.getHeight());  // Maintain aspect ratio
         ImageIcon resizedImageIcon = new ImageIcon(image.getScaledInstance(width, height, Image.SCALE_SMOOTH));

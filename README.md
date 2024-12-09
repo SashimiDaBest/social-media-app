@@ -354,7 +354,7 @@ A comprehensive overview of each class, covering its functionality, the testing 
 
 ## Testing and Verification Instructions
 ### **_Running Test Cases_**
-Sample data is provided for physically testing this program, but the test cases are not compatible with this sample data (as I/O is tested manually). When you have finished testing the functionality of the chat by following the instructions below, you should delete all of the files within the “Sample Test Folder” and then run the test cases, and they should all pass.
+Sample data is provided for physically testing this program, but the test cases are not compatible with this sample data (as I/O is tested manually). When you have finished testing the functionality of the chat by following the instructions below, you should delete all of the files within the “SampleTestFolder” and then run the test cases, and they should all pass.
 ### _**Test Welcome Page**_
 1. **Signing in with an existing user successfully**
 - Press 1 to Sign In
@@ -475,7 +475,7 @@ Note: since the actual program will only display the option to navigate to a cer
 
 1. **Test Storing Image**
 - [1]
-- [] - Use a file path from the tester's computer. The tester’s image appearing in the sample test folder after following the prompt should indicate successful writing of the image file on the server side.
+- [] - Use a file path from the tester's computer. The tester’s image appearing in the SampleTestFolder after following the prompt should indicate successful writing of the image file on the server side.
 2. **Test View Followers**
 - [2]
 - [N] - using “N” should return the user back to the profile page menu, but any other input will work as well.

@@ -34,13 +34,13 @@ public class FeedViewPage extends JPanel {
     private JLabel messageLabel;
 
     // Paths for icons
-    private final String addSelectionIconPath = "Sample Test Folder/addToSelectionIcon.png";
-    private final String clearSelectionIconPath = "Sample Test Folder/clearSelectionIcon.png";
-    private final String deleteMessageIconPath = "Sample Test Folder/deleteMessageIcon.png";
-    private final String editMessageIconPath = "Sample Test Folder/editMessageIcon.png";
-    private final String searchIconPath = "Sample Test Folder/searchIcon.png";
-    private final String sendMessageIconPath = "Sample Test Folder/sendMessageIcon.png";
-    private final String deleteSelectionIconPath = "Sample Test Folder/deleteSelectionIcon.png";
+    private final String addSelectionIconPath = "SampleTestFolder/addToSelectionIcon.png";
+    private final String clearSelectionIconPath = "SampleTestFolder/clearSelectionIcon.png";
+    private final String deleteMessageIconPath = "SampleTestFolder/deleteMessageIcon.png";
+    private final String editMessageIconPath = "SampleTestFolder/editMessageIcon.png";
+    private final String searchIconPath = "SampleTestFolder/searchIcon.png";
+    private final String sendMessageIconPath = "SampleTestFolder/sendMessageIcon.png";
+    private final String deleteSelectionIconPath = "SampleTestFolder/deleteSelectionIcon.png";
 
     // Icons
     BufferedImage editMessageIcon, deleteMessageIcon, 
@@ -102,7 +102,7 @@ public class FeedViewPage extends JPanel {
                 }
 
                 // Load image from file
-                userProfilePic = ImageIO.read(new File("./Sample Test Folder/" + imageName + ".png"));
+                userProfilePic = ImageIO.read(new File("./SampleTestFolder/" + imageName + ".png"));
 
                 // Scale the image
                 Image newImage = userProfilePic.getScaledInstance(iconSideLength + 10, iconSideLength + 10, Image.SCALE_SMOOTH);
@@ -119,7 +119,7 @@ public class FeedViewPage extends JPanel {
 
                 // Handle missing or error scenarios by setting a placeholder icon
                 try {
-                    BufferedImage img = ImageIO.read(new File("Sample Test Folder/I_0000.png"));
+                    BufferedImage img = ImageIO.read(new File("SampleTestFolder/I_0000.png"));
                     Image newImage = img.getScaledInstance(iconSideLength + 10, iconSideLength + 10, Image.SCALE_SMOOTH);
                     SwingUtilities.invokeLater(() -> {
                         profileButton.setIcon(new ImageIcon(newImage));

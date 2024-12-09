@@ -19,7 +19,7 @@ import java.util.ArrayList;
  */
 public class SimpleServerTest {
 
-    private static final String DATA_DIRECTORY_PATH = "Sample Test Folder";
+    private static final String DATA_DIRECTORY_PATH = "SampleTestFolder";
 
     /**
      * Validates the {@link SimpleServer} constructor by ensuring all files in the data directory

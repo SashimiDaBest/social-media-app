@@ -63,7 +63,7 @@ public class UserProfilePage extends JPanel {
                 }
 
                 // Load image from file
-                image = ImageIO.read(new File("./Sample Test Folder/" + imageName + ".png"));
+                image = ImageIO.read(new File("./SampleTestFolder/" + imageName + ".png"));
 
                 // Scale the image
                 Image newImage = image.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
@@ -80,7 +80,7 @@ public class UserProfilePage extends JPanel {
 
                 // Handle missing or error scenarios by setting a placeholder icon
                 try {
-                    BufferedImage img = ImageIO.read(new File("Sample Test Folder/I_0000.png"));
+                    BufferedImage img = ImageIO.read(new File("SampleTestFolder/I_0000.png"));
                     Image newImage = img.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
                     SwingUtilities.invokeLater(() -> {
                         profileButton.setIcon(new ImageIcon(img));

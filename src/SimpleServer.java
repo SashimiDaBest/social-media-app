@@ -101,7 +101,7 @@ public class SimpleServer implements Runnable {
 
         // Load user and chat data
         try {
-            File dataDirectory = new File("Sample Test Folder");
+            File dataDirectory = new File("SampleTestFolder");
             if (!dataDirectory.exists() || !dataDirectory.isDirectory()) {
                 throw new FileNotFoundException("Data directory does not exist: " + dataDirectory.getAbsolutePath());
             }

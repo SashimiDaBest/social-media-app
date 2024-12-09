@@ -30,7 +30,7 @@ public class Chat implements ChatInterface {
     /** File to store a list of all chat IDs. */
     private static String chatIDListDoc = "chatIDList.txt";
 
-    private final String sampleFolder = "Sample Test Folder/";
+    private final String sampleFolder = "SampleTestFolder/";
 
     /**
      * Constructs a Chat object by reading data from an existing chat file.

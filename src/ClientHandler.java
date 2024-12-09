@@ -93,7 +93,7 @@ public class ClientHandler implements Runnable {
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
         try {
-            Image appIcon = new ImageIcon("Sample Test Folder/BoilerGramLogo.png").getImage();
+            Image appIcon = new ImageIcon("SampleTestFolder/BoilerGramLogo.png").getImage();
             frame.setIconImage(appIcon);
 
         } catch (Exception e) {

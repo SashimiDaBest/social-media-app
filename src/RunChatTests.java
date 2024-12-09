@@ -37,7 +37,7 @@ public class RunChatTests {
         // Create this Chat using the constructor that does not read from a file and
         // keep track of the data file it creates.
         Chat testChat = new Chat(memberIDs);
-        File outputFile = new File("Sample Test Folder/" + testChat.getChatID() + ".txt");
+        File outputFile = new File("SampleTestFolder/" + testChat.getChatID() + ".txt");
 
         // Add the test messages to the chat.
         testChat.addMessage(testMessage1);
@@ -201,7 +201,7 @@ public class RunChatTests {
 
         // Parse chatData
         ArrayList<String> fileData = new ArrayList<>();
-        try (BufferedReader bReader = new BufferedReader(new FileReader("Sample Test Folder/" + testChat.getChatID() +
+        try (BufferedReader bReader = new BufferedReader(new FileReader("SampleTestFolder/" + testChat.getChatID() +
                 ".txt"))) {
 
             String line = bReader.readLine();
@@ -241,7 +241,7 @@ public class RunChatTests {
         }
 
         // Delete files used for testing
-        File createdFile = new File("Sample Test Folder/C_0000.txt");
+        File createdFile = new File("SampleTestFolder/C_0000.txt");
         if (createdFile.exists())
             createdFile.delete();
 
@@ -281,7 +281,7 @@ public class RunChatTests {
 
         // Check if writeData() accurately represents the changes
         ArrayList<String> fileData = new ArrayList<>();
-        try (BufferedReader bReader = new BufferedReader(new FileReader("Sample Test Folder/" + testChat1.getChatID() +
+        try (BufferedReader bReader = new BufferedReader(new FileReader("SampleTestFolder/" + testChat1.getChatID() +
                 ".txt"))) {
 
             String line = bReader.readLine();
@@ -306,7 +306,7 @@ public class RunChatTests {
                 "only have two lines! (empty message list)", 2, fileData.size());
 
         // Delete files used for testing
-        File createdFile = new File("Sample Test Folder/C_0000.txt");
+        File createdFile = new File("SampleTestFolder/C_0000.txt");
         if (createdFile.exists())
             createdFile.delete();
 
@@ -345,7 +345,7 @@ public class RunChatTests {
                 "this is a new message", testChat.getMessageList().get(0).getMessage());
 
         // Delete files used for testing
-        File createdFile = new File("Sample Test Folder/" + testChat.getChatID() + ".txt");
+        File createdFile = new File("SampleTestFolder/" + testChat.getChatID() + ".txt");
         if (createdFile.exists())
             createdFile.delete();
 

@@ -60,7 +60,7 @@ public class UserTest {
                 true, result5);
 
         // now check the file was created
-        File testUserFile = new File("Sample Test Folder/" + testUser.getUserID() + ".txt");
+        File testUserFile = new File("SampleTestFolder/" + testUser.getUserID() + ".txt");
         ArrayList<String> fileContents = new ArrayList<>();
 
         try (BufferedReader bReader = new BufferedReader(new FileReader(testUserFile))) {
@@ -122,7 +122,7 @@ public class UserTest {
         testUser.setUsername(testName);
 
         String result = testUser.getUsername();
-        File testFile = new File("Sample Test Folder/" + testUser.getUserID() + ".txt");
+        File testFile = new File("SampleTestFolder/" + testUser.getUserID() + ".txt");
         testFile.delete();
         assertEquals("testSetUsername: Setting username does not work",
                 testName, result);
@@ -136,7 +136,7 @@ public class UserTest {
         testUser.setPassword(testPassword);
 
         String result = testUser.getPassWord();
-        File testFile = new File("Sample Test Folder/" + testUser.getUserID() + ".txt");
+        File testFile = new File("SampleTestFolder/" + testUser.getUserID() + ".txt");
         testFile.delete();
         assertEquals("testSetPassword: Setting password does not work",
                 testPassword, result);
@@ -150,7 +150,7 @@ public class UserTest {
         testUser.setProfilePic(testPic);
 
         String result = testUser.getProfilePic();
-        File testFile = new File("Sample Test Folder/" + testUser.getUserID() + ".txt");
+        File testFile = new File("SampleTestFolder/" + testUser.getUserID() + ".txt");
         testFile.delete();
         assertEquals("testSetProfilePic: Setting the profile pic does not work",
                 testPic, result);
@@ -164,7 +164,7 @@ public class UserTest {
         testUser.setAccountType(testType);
 
         int result = testUser.getAccountType();
-        File testFile = new File("Sample Test Folder/" + testUser.getUserID() + ".txt");
+        File testFile = new File("SampleTestFolder/" + testUser.getUserID() + ".txt");
         testFile.delete();
         assertEquals("testSetAccountType: Setting the account type does not work",
                 testType, result);
@@ -181,7 +181,7 @@ public class UserTest {
         testUser.setUserID(testID);
 
         String result = testUser.getUserID();
-        File testFile = new File("Sample Test Folder/U_0000.txt");
+        File testFile = new File("SampleTestFolder/U_0000.txt");
         testFile.delete();
         assertEquals("testSetUserID: Setting the user ID does not work",
                 testID, result);
@@ -226,7 +226,7 @@ public class UserTest {
 
         boolean result2 = blocker2.addBlock(testId2);
 
-        File blockerFile2 = new File("Sample Test Folder/" + blocker2.getUserID() + ".txt");
+        File blockerFile2 = new File("SampleTestFolder/" + blocker2.getUserID() + ".txt");
         blockerFile2.delete();
 
         // Reset UserIDList.txt
@@ -251,7 +251,7 @@ public class UserTest {
 
         boolean result3 = blocker3.addBlock(testId3);
 
-        File blockerFile3 = new File("Sample Test Folder/" + blocker3.getUserID() + ".txt");
+        File blockerFile3 = new File("SampleTestFolder/" + blocker3.getUserID() + ".txt");
         blockerFile3.delete();
 
         // Reset UserIDList.txt
@@ -282,7 +282,7 @@ public class UserTest {
         testUser1.addBlock(testId1);
         boolean result1 = testUser1.deleteBlock(testId1);
 
-        File testFile1 = new File("Sample Test Folder/" + testUser1.getUserID() + ".txt");
+        File testFile1 = new File("SampleTestFolder/" + testUser1.getUserID() + ".txt");
         testFile1.delete();
         assertEquals("testDeleteBlock: if the blocked ID is removed," +
                 " then is should no longer be in the UserArray", true, result1);
@@ -300,7 +300,7 @@ public class UserTest {
 
         boolean result2 = testUser2.deleteBlock(testId2);
 
-        File testFile2 = new File("Sample Test Folder/" + testUser2.getUserID() + ".txt");
+        File testFile2 = new File("SampleTestFolder/" + testUser2.getUserID() + ".txt");
         testFile2.delete();
         assertEquals("testDeleteBlock: if the blocked ID is not in blockedIds," +
                 " then it should return false", false, result2);
@@ -323,7 +323,7 @@ public class UserTest {
         boolean funcResult1 = testUser1.addChat(testChat1);
         boolean result1 = testUser1.getChatIDList().contains(testChat1);
 
-        File testFile1 = new File("Sample Test Folder/" + testUser1.getUserID() + ".txt");
+        File testFile1 = new File("SampleTestFolder/" + testUser1.getUserID() + ".txt");
 
         testFile1.delete();
 
@@ -360,7 +360,7 @@ public class UserTest {
         }
         boolean result2 = count > 1;
 
-        File testFile2 = new File("Sample Test Folder/" + testUser2.getUserID() + ".txt");
+        File testFile2 = new File("SampleTestFolder/" + testUser2.getUserID() + ".txt");
 
         testFile2.delete();
 
@@ -399,7 +399,7 @@ public class UserTest {
             }
         }
 
-        File testFile = new File("Sample Test Folder/" + testUser.getUserID() + ".txt");
+        File testFile = new File("SampleTestFolder/" + testUser.getUserID() + ".txt");
 
         testFile.delete();
         // Clear the list that contains the chat ids
@@ -422,7 +422,7 @@ public class UserTest {
         }
 
         // Clear the chat file
-        File testChatFile = new File("Sample Test Folder/C_0000.txt");
+        File testChatFile = new File("SampleTestFolder/C_0000.txt");
         testChatFile.delete();
 
     }
@@ -525,7 +525,7 @@ public class UserTest {
 
         // Ensure username is correctly found
         String result = testUser.findUsernameFromID(testID);
-        File testFile = new File("Sample Test Folder/" + testUser.getUserID() + ".txt");
+        File testFile = new File("SampleTestFolder/" + testUser.getUserID() + ".txt");
         testFile.delete();
 
         assertEquals("testFindUsernameFromID: Improper username returned",
@@ -551,7 +551,7 @@ public class UserTest {
         // Ensure ID is correctly found
         String result = testUser.findIDFromUsername(testUsername);
 
-        File testFile = new File("Sample Test Folder/" + testUser.getUserID() + ".txt");
+        File testFile = new File("SampleTestFolder/" + testUser.getUserID() + ".txt");
         testFile.delete(); // Clean up
 
         // Clear list of users
@@ -584,8 +584,8 @@ public class UserTest {
         boolean result2 = Boolean.parseBoolean(testUser2.checkChatAbility(testUser1));  // Check if User 2 can chat
         // with User 1 in the chat
 
-        File testFile = new File("Sample Test Folder/" + testUser1.getUserID() + ".txt");
-        File testFile2 = new File("Sample Test Folder/" + testUser2.getUserID() + ".txt");
+        File testFile = new File("SampleTestFolder/" + testUser1.getUserID() + ".txt");
+        File testFile2 = new File("SampleTestFolder/" + testUser2.getUserID() + ".txt");
         testFile.delete();
         testFile2.delete();
 

@@ -80,7 +80,7 @@ public class OtherProfilePage extends JPanel {
                 }
 
                 // Load image from file
-                image = ImageIO.read(new File("./Sample Test Folder/" + imageName + ".png"));
+                image = ImageIO.read(new File("./SampleTestFolder/" + imageName + ".png"));
 
                 // Scale the image
                 Image newImage = image.getScaledInstance(50, 50, java.awt.Image.SCALE_SMOOTH);
