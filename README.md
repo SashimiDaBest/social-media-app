@@ -1,66 +1,69 @@
-
-# Social Media App
-CS 180 Team Project
+[
+# BoilerGram (CS 18000 Team Project)
+BoilerGram is a social media application inspired by Instagram, offering a range of interactive and intuitive functionalities. The app is designed to mimic a typical social media platform, emphasizing user interaction, messaging, and profile management.
+> ⚠️ **Warning**: After a new chat is created using the "Add selected to chat" button, user/tester must navigate to user profile and back to feed to use chat functionalities.
 
 ## Table of Contents
 - [Simplified Directory Structure](#simplified-directory-structure)
 - [Compilation and Execution Instructions](#compilation-and-execution-instructions)
 - [Submission Record](#submission-record)
 - [Documentation](#documentation)
-    - [clientPageOperation](#clientpageoperation)
+    - [common](#common)
     - [exception](#exception)
     - [object](#object)
+    - [page](#page)
     - [serverPageOperation](#serverpageoperation)
-    - [page](#uipage)
+    - [Other Files](#other-files)
 - [Testing and Verification Instructions](#testing-and-verification-instructions)
 
 ## Simplified Directory Structure
 ```plaintext
-src/ 
+📂 src/ 
 |
-├── common/                        # Shared utilities and reusable components
-│   ├── PageManager.java           # Manages navigation between pages
-│   ├── ProfilePictureDialog.java  # Dialog for displaying profile pictures
-│   ├── RoundedButton.java         # Custom button with animation effects
-│   └── Writer.java                # Handles server communication (reading/writing)
+├── 📂 common/                        # Shared utilities and reusable components
+│   ├── 📄 PageManager.java           # Manages navigation between pages
+│   ├── 📄 ProfilePictureDialog.java  # Dialog for displaying profile pictures
+│   ├── 📄 RoundedButton.java         # Custom button with animation effects
+│   └── 📄 Writer.java                # Handles server communication (reading/writing)
 │
-├── exception/                     # Custom exceptions for handling errors
-│   ├── InvalidCreateAccountException.java # Thrown when account creation fails due to invalid fields
-│   ├── InvalidFileFormatException.java    # Thrown when a file format is invalid or corrupted
-│   └── NoChatFoundException.java          # Thrown when a specified chat is not found
+├── 📂 exception/                     # Custom exceptions for handling errors
+│   ├── 📄 InvalidCreateAccountException.java # Thrown when account creation fails due to invalid fields
+│   ├── 📄 InvalidFileFormatException.java    # Thrown when a file format is invalid or corrupted
+│   └── 📄 NoChatFoundException.java          # Thrown when a specified chat is not found
 │
-├── object/                        # Object classes and interfaces
-│   ├── Chat.java                  # Chat class for managing chat-related operations
-│   ├── ChatInterface.java         # Interface for chat operations
-│   ├── Message.java               # Message class for managing individual messages
-│   ├── MessageInterface.java      # Interface for message operations
-│   ├── User.java                  # User class for managing user-related operations
-│   └── UserInterface.java         # Interface for user operations
+├── 📂 object/                        # Object classes and interfaces
+│   ├── 📄 Chat.java                  # Chat class for managing chat-related operations
+│   ├── 📄 ChatInterface.java         # Interface for chat operations
+│   ├── 📄 Message.java               # Message class for managing individual messages
+│   ├── 📄 MessageInterface.java      # Interface for message operations
+│   ├── 📄 User.java                  # User class for managing user-related operations
+│   └── 📄 UserInterface.java         # Interface for user operations
 │
-├── page/                        # UI-related classes and client-side operations
-│   ├── CreateUserPage.java        # Page for user creation
-│   ├── FeedViewPage.java          # Page for displaying the user's feed
-│   ├── OtherProfilePage.java      # Page for viewing other users' profiles
-│   ├── UserProfilePage.java       # Page for viewing the user's own profile 
-│   └── WelcomePage.java           # Welcome page for the application creation
+├── 📂 page/                        # UI-related classes and client-side operations
+│   ├── 📄 CreateUserPage.java        # Page for user creation
+│   ├── 📄 FeedViewPage.java          # Page for displaying the user's feed
+│   ├── 📄 OtherProfilePage.java      # Page for viewing other users' profiles
+│   ├── 📄 UserProfilePage.java       # Page for viewing the user's own profile 
+│   └── 📄 WelcomePage.java           # Welcome page for the application creation
 │
-├── serverPageOperation/           # Server-side operations and functionality 
-│   ├── FeedPageServer.java        # Handles feed page operations on the server
-│   ├── OtherPageServer.java       # Handles other user page operations on the server
-│   ├── UserPageServer.java        # Handles user profile operations on the server
-│   └── WelcomePageServer.java     # Handles welcome page operations on the server
+├── 📂 serverPageOperation/           # Server-side operations and functionality 
+│   ├── 📄 FeedPageServer.java        # Handles feed page operations on the server
+│   ├── 📄 OtherPageServer.java       # Handles other user page operations on the server
+│   ├── 📄 UserPageServer.java        # Handles user profile operations on the server
+│   └── 📄 WelcomePageServer.java     # Handles welcome page operations on the server
 │
-├── ClientHandler.java             # Main client handler class
-├── MessageTest.java               # Test class for message functionality
-├── RunChatTests.java              # Test runner for chat-related tests
-├── RunUserTests.java              # Test runner for user-related tests
-├── ServerInterface.java           # Interface for server operations
-├── SimpleServer.java              # Main server class
-├── SimpleServerTest.java          # Test class for the SimpleServer
-└── UserTest.java                  # Test class for the User object
+├── 📄 ClientHandler.java             # Main client handler class
+├── 📄 MessageTest.java               # Test class for message functionality
+├── 📄 RunChatTests.java              # Test runner for chat-related tests
+├── 📄 RunUserTests.java              # Test runner for user-related tests
+├── 📄 ServerInterface.java           # Interface for server operations
+├── 📄 SimpleServer.java              # Main server class
+├── 📄 SimpleServerTest.java          # Test class for the SimpleServer
+└── 📄 UserTest.java                  # Test class for the User object
 ```
 
 ## Compilation and Execution Instructions
+> ⚠️ **Warning**: User must navigate to src before entering compilation and run command for SimpleServer.java and ClientHandler.java
 
 1. **Starting the Server:**
     - Open your terminal and navigate to the directory containing `SimpleServer.java`.
@@ -68,179 +71,70 @@ src/
       ```bash
       javac SimpleServer.java && java SimpleServer
       ```
-
 2. **Starting the Client:**
     - Open a separate terminal and navigate to the directory containing `ClientHandler.java`.
     - Compile and run the client using the following commands:
       ```bash
       javac ClientHandler.java && java ClientHandler
       ```
+
       
 ## Submission Record
 A list of who submitted which parts of the assignment on Brightspace and Vocareum
+
+**Phase 1**
 - Connor Pugliese - Submitted Vocareum workspace v1 for Phase 1
 - Derek McTume - Submitted Vocareum workspace v2 for Phase 1
 - Soleil Pham - Submitted Vocareum workspace v3 for Phase 1
 
+**Phase 2**
+- Soleil Pham - Submitted Vocareum workspace v1 for Phase 2
+- Soleil Pham - Submitted Vocareum workspace v2 for Phase 2
+- Soleil Pham - Submitted Vocareum workspace v3 for Phase 2
+- Connor Pugliese - Submitted Vocareum workspace v4 for Phase 2
+
+**Phase 3**
+- Soleil Pham - Submitted Report on Brightspace
+- Soleil Pham - Submitted Video Presentation on Brightspace
+- Soleil Pham - Submitted Vocareum workspace v1 for Phase 3
+- Soleil Pham - Submitted Vocareum workspace v2 for Phase 3
 
 ## Documentation
 A comprehensive overview of each class, covering its functionality, the testing conducted to ensure it operates correctly, and its interactions with other classes within the project.
-1. **ClientHandler.java**
-- **Functionality**:
-   The ClientHandler class manages individual client connections for a social media application. It handles communication between the client and the server, using input and output streams to exchange messages. Additionally, it sets up and manages the user interface (UI) using Swing components. The class implements Runnable, enabling each client connection to run on a separate thread, which supports concurrent communication with multiple clients. The user interface includes pages such as the welcome screen, user profile, and feed view, allowing seamless navigation and interaction within the application.
-- **Testing**:
-  - Verified the successful establishment of client-server connections and the proper initialization of input/output streams.
-  - Checked that GUI components are correctly created, displayed, and responsive to user interactions.
-  - Ensured that user input is appropriately processed and that messages are accurately sent and received from the server.
-  - Tested edge cases, such as handling invalid usernames and passwords, to ensure robust error handling with proper feedback.
-  - Conducted multi-threaded testing to confirm the correct management of concurrent client connections, ensuring no race conditions or deadlocks occur.
-- **Relationships**:
-  - Implements Runnable to support multi-threaded client handling, allowing the server to communicate with multiple clients simultaneously.
-  - Uses BufferedReader and BufferedWriter to facilitate message exchange between the client and server.
-  - Integrates with WelcomePageClient to manage welcome page functionality and connects with other UI components for a seamless user experience.
-  - Employs Swing (JFrame, JPanel, CardLayout) from the javax.swing and java.awt packages to construct and manage the graphical user interface.
-  - Collaborates with various UI pages (WelcomePage, CreateUserPage, FeedViewPage, UserProfilePage, and OtherProfilePage) to enable user navigation and interactions within the application.
 
-2. **MessageTest.java**
-- **Functionality**:
-  The `MessageTest` class contains JUnit tests to verify the functionality of the `Message` class. It tests methods that retrieve message details (such as author ID, message type, and content) and ensure message content updates are handled correctly based on the message type.
-- **Testing**:
-    - **testGetMessage**:
-        - Confirms that the `getMessage` method correctly returns the message content.
-        - Includes tests to ensure that the content matches or does not match as expected.
-    - **testGetAuthorID**:
-        - Verifies that the `getAuthorID` method returns the correct author ID.
-        - Ensures that the method does not return incorrect author IDs.
-    - **testGetMessageType**:
-        - Checks if the `getMessageType` method returns the correct message type.
-        - Ensures that incorrect message types are not returned.
-    - **testSetMessage**:
-        - Validates the `setMessage` method, confirming it updates the message content if the message type is text (0) and returns `true`.
-        - Tests that the method does not update the message if the type is non-text and returns `false`.
-- **Relationships**: The `MessageTest` class is responsible for testing the `Message` class. It does not interact with other classes directly but ensures that the `Message` class functions correctly within the larger application.
+### common
+1. **PageManager.java**
+- **Functionality**: The `PageManager` class manages navigation between different pages (JPanels) in a Swing application using a `CardLayout`. It provides functionality for switching, adding, removing, and lazily loading pages, as well as maintaining navigation history for backward and forward navigation. It is particularly useful for applications with multi-page navigation, such as social media platforms or e-commerce systems.
+  - Displays pages using CardLayout and manages them with unique names.
+  - Supports navigation history with back and forward functionality.
+  - Implements lazy loading for on-demand page creation.
+  - Provides reset functionality to clear history and retain only essential pages.
+- **Testing**: Verified seamless page transitions, proper history management for back and forward navigation, and efficient lazy loading. Ensured robustness in error handling for missing pages and tested memory management for page removal.
+- **Relationships**: Integrates with other components in the application by dynamically managing and displaying their JPanels. Interacts with pages created by PageCreator to support lazy loading and facilitates transitions between views like "feed," "profile," and "settings."
 
-3. **RunChatTests.java**
-- **Functionality**: The RunChatTests class is a JUnit test suite that rigorously tests the functionality of the Chat class. It includes various test methods to ensure the correct implementation of chat operations, such as constructing chats, adding messages, editing messages, and deleting messages. The tests also validate the proper handling of file-based data persistence and exceptions related to invalid file formats.
-- **Testing**:
-  - **`testNoReadConstructor`**: Verifies that a chat created without reading from a file correctly writes data to a new file and compares the contents against expected values.
-  - **`testReadConstructor`**: Tests the ability of the `Chat` class to instantiate from a file with valid data. It also checks for the correct handling of corrupt data by asserting that `InvalidFileFormatException` is thrown when necessary.
-  - **`testAddMessage`**: Checks that a new message is added to the `messageList` and written to the file accurately. It also verifies that message type and contents match the expected values in the file.
-  - **`testDeleteMessage`**: Validates the deletion of a message from the `messageList` and ensures that the changes are correctly written to the file, resulting in an empty message list.
-  - **`testEditMessage`**: Ensures that editing a message by its author properly updates the message in the `messageList` and writes the changes to the file.
-- **Relationships**: The `RunChatTests` class tests the `Chat` class, which is a core component of the social media application. It ensures that the methods related to message handling and data persistence in the `Chat` class are functioning correctly. The tests also involve interactions with the `Message` class to validate the integrity of chat messages. Additionally, file handling and exceptions like `InvalidFileFormatException` are tested to ensure robust error handling.
+2. **ProfilePictureDialog.java**
+- **Functionality**: The PageManager class manages navigation between different pages (JPanels) in a Swing application using a CardLayout. It provides functionality for switching, adding, removing, and lazily loading pages, as well as maintaining navigation history for backward and forward navigation. It is particularly useful for applications with multi-page navigation, such as social media platforms or e-commerce systems.
+  - Displays a scaled version of the user's profile picture in a centered dialog.
+  - Maintains aspect ratio during scaling, ensuring the image is displayed correctly.
+  - Includes a close button for dismissing the dialog.
+- **Testing**: Verified seamless page transitions, proper history management for back and forward navigation, and efficient lazy loading. Ensured robustness in error handling for missing pages and tested memory management for page removal.
+- **Relationships**: Integrates with other components in the application by dynamically managing and displaying their JPanels. Interacts with pages created by PageCreator to support lazy loading and facilitates transitions between views like "feed," "profile," and "settings."
 
-4. **RunUserTests.java**
-- **Functionality**:
-  `RunUserTests` contains JUnit tests that evaluate the `User` class functionality. The tests cover the behavior of methods related to user creation, attribute setting, following and blocking users, chat management, and file-based data persistence.
-- **Testing**:
-    - **User Creation**: The constructor tests verify the creation of `User` objects, ensuring that attributes such as username, password, and user ID are properly initialized and that a corresponding data file is created.
-    - **Mutator Methods**: Tests like `testSetUsername`, `testSetPassword`, `testSetProfilePic`, and `testSetAccountType` validate that changes to user attributes are reflected correctly.
-    - **User Relationships**:
-        - Tests for adding and removing followers, following users, and blocking/unblocking ensure that lists are updated as expected.
-        - Methods like `addFollower`, `addBlock`, `deleteFollower`, and `deleteBlock` are verified for correctness.
-    - **Chat Management**:
-        - Methods `addChat` and `createChat` are tested to ensure chats are appropriately linked to users.
-    - **Utility Methods**:
-        - `findUser` and `userNameValidation` are tested for correct behavior when searching for users and validating usernames.
-    - **File Persistence**: After each test, created user and chat files are cleaned up, and the `UserIDList` and `chatIDList` files are reset.
-- **Relationships**:
-    - Relies on the `User` and `Chat` classes to test user-to-user interactions and chat functionalities.
-    - Tests interactions between multiple `User` objects to simulate a realistic social media environment.
-    - Uses file operations to ensure user and chat data are correctly written and retrieved.
+3. **RoundedButton.java**
+- **Functionality**: The RoundedButton class is a custom Swing button with a modern, rounded rectangle design and a zoom-in animation effect when clicked. It enhances the user interface with visually appealing anti-aliased rendering and customizable corner radii.
+  - Displays a button with rounded corners, customizable via the radius parameter.
+  - Provides a "zoom-in and zoom-out" animation when the button is clicked for better interactivity.
+  - Supports anti-aliased rendering for smooth graphics and scalable text for the animation effect.
+  - Ensures the clickable area conforms to the rounded shape.
+- **Testing**: Validated appearance with various radii and colors. Tested the animation effect for smooth transitions during mouse clicks and ensured the button scales properly without disrupting layout or text rendering. Confirmed compatibility with different Swing components and layouts.
+- **Relationships**: Integrates with Swing layouts and panels seamlessly as a drop-in replacement for standard JButton. Commonly used in other classes like WelcomePage and FeedViewPage to enhance UI consistency and interactivity.
 
-5. **ServerInterface.java**
-- **Functionality**: The ServerInterface defines the essential operations that a simple server must implement. It provides a contract for starting and stopping the server, as well as retrieving lists of users and chats managed by the server. By defining these methods, the interface ensures that any class implementing it will provide consistent and structured behavior for server operations. The interface is useful for promoting code reusability and standardizing how servers are managed within the application.
-- **Relationships**:
-  - Any class implementing ServerInterface must provide concrete implementations for all declared methods.
-  - The interface ensures that implementing classes have mechanisms for managing User and Chat objects, facilitating seamless user and chat handling.
-  - It interacts with the User and Chat classes, which represent user entities and chat sessions respectively, providing a standardized way to access these objects within server implementations.
-
-6. **SimpleServer.java**
-- **Functionality**: The SimpleServer class provides a basic server implementation that listens for client connections on a specified port and delegates request handling to the WelcomePageServer. It uses input and output streams for communication with clients and supports loading user and chat data from files. The server is designed to handle multiple client connections concurrently by leveraging the Runnable interface, allowing each connection to run on a separate thread. The class also includes mechanisms for managing resources and ensuring proper closure of sockets and streams.
-- **Testing**:
-  - Verified that the server correctly initializes by loading User and Chat objects from data files in the designated directory.
-  - Ensured that client connections are accepted and handled correctly, with requests being processed by the WelcomePageServer.
-  - Checked for proper error handling and resource management, especially for closing sockets and streams to avoid memory leaks.
-  - Conducted stress testing to ensure the server can manage multiple concurrent connections without performance degradation.
-  - Validated that invalid or corrupt chat files are handled gracefully, using appropriate exception handling mechanisms.
-- **Relationships**:
-  - Implements Runnable to support multi-threaded client handling, allowing the server to communicate with multiple clients simultaneously.
-  - Utilizes the WelcomePageServer class to manage initial client interactions, such as user sign-in and sign-up.
-  - Interacts with the User and Chat classes to load and manage data from files, converting them into objects for in-memory storage.
-  - Uses Java networking (ServerSocket and Socket) and I/O classes (BufferedReader, BufferedWriter) to establish connections and facilitate communication.
-  - Relies on exception handling classes like InvalidFileFormatException to manage errors when loading data.
-
-7. **SimpleServerTest.java**
-- **Functionality**: The SimpleServerTest class provides unit tests for the SimpleServer class. Its main purpose is to validate that the SimpleServer constructor correctly processes files from the data directory and converts them into User and Chat objects. The test checks that every file in the data directory corresponds to an appropriate User or Chat object in the server’s internal data structures. The class ensures data integrity and verifies that no files are overlooked during the object creation process.
-- **Testing**:
-  - testServerConstructor(): This unit test:
-  - Checks that each file in the data directory is successfully converted into a User or Chat object.
-  - Compares the total number of files in the directory with the number of objects created and stored in the SimpleServer.
-  - Iterates through each file, extracts the file name, and verifies that it matches an ID of a User or Chat object.
-  - Uses assertEquals to ensure the total number of objects matches the number of files, confirming that all data has been processed correctly.
-  - The test is designed to handle potential issues with file I/O gracefully, throwing a RuntimeException if an IOException occurs.
-- **Relationships**:
-  - Uses SimpleServer to test the constructor's ability to populate the user and chat lists from files.
-  - Relies on the User and Chat classes to verify that data from files is appropriately converted into objects.
-  - Integrates with JUnit for testing, using assertions to validate the correctness of the server's initialization process.
-  - The main method allows for manual testing, providing a way to run the test independently of the JUnit framework.
-
-8. **UserTest.java**
-- **Functionality**:
-  The `UserTest` class provides a comprehensive suite of JUnit tests for the `User` class. It tests the constructors, mutators, and various methods used in user management, such as adding followers, blocking users, creating chats, and handling authentication. The tests ensure that user data is correctly persisted in files, attributes are properly assigned and updated, and edge cases are managed.
-- **Testing**:
-    - **Constructor Tests**:
-        - `testSecondUserConstructor`: Verifies proper initialization of a `User` object, checks that all attributes are correctly set, and confirms that the corresponding user data file is created with accurate contents.
-    - **Mutator Tests**:
-        - `testSetUsername`, `testSetPassword`, `testSetProfilePic`, `testSetAccountType`, `testSetUserID`: Ensure that setting these attributes updates the user object and the user data file appropriately.
-    - **Method Tests**:
-        - `testAddBlock`, `testDeleteBlock`: Test the ability to block and unblock users, ensuring the user’s block list is updated and the function returns expected values.
-        - `testAddChat`, `testCreateChat`: Check if chat IDs are correctly added to the user’s chat list, with validation to prevent duplicates.
-        - `testHasLogin`: Verifies the login functionality by matching the user’s credentials with data in the `UserIDList` file.
-        - `testCreateNewUser`: Confirms that new user entries are written to `UserIDList.txt` with correct information.
-        - `testSendText`: Ensures messages are successfully sent to existing chats and handles exceptions for non-existent chats.
-- **Relationships**:
-    - Uses the `User` class to instantiate user objects and test their behaviors.
-    - Tests interactions with the `Chat` class to validate chat-related functionalities.
-    - Implements exception handling using `NoChatFoundException` for scenarios where chats are not found.
-
-### clientPageOperation
-1. **FeedPageClient.java**
-- **Functionality**: The `FeedPageClient` class serves as the client-side handler for interacting with the feed page of the application. It facilitates user actions such as browsing through content, selecting specific users for interaction, or navigating to other parts of the application. It manages user input, sends commands to the server, and processes responses to display appropriate content to the user.
-- **Testing**:
-  - Verified that all navigation options (e.g., viewing users, returning to the main menu) correctly communicate with the server and handle the responses as expected.
-  - Ensured edge cases, such as invalid inputs or server errors, are gracefully managed.
-- **Relationships**:
-  - Communicates with `FeedPageServer` to receive and display feed content.
-  - Interacts with `OtherPageClient` and `UserPageClient` for user navigation.
-
-2. **OtherPageClient.java**
-- **Functionality**: The `OtherPageClient` class is responsible for handling the client-side operations of viewing and interacting with another user’s profile. It provides options for actions like following/unfollowing, blocking/unblocking, and viewing the selected user’s follower or following list. The class captures user input, sends requests to the server, and displays the results.
-- **Testing**:
-  - Tested the proper sending of requests (e.g., follow/unfollow) and the correct handling of server responses.
-  - Verified that invalid or unexpected input is managed effectively and does not crash the client application.
-- **Relationships**:
-  - Works with `OtherPageServer` for server-side profile operations.
-  - Interacts with `UserPageClient` for redirecting back to the user’s profile or the feed page.
-
-3. **UserPageClient.java**
-- **Functionality**: The `UserPageClient` class manages the client-side interactions for the user’s own profile page. It allows the user to view their account details, manage their list of followers, following, and blocked users, and navigate to other sections such as the feed or other user profiles. The class processes input from the user, sends appropriate requests to the server, and displays the information received.
-- **Testing**:
-  - Verified that profile data is accurately retrieved from the server and displayed.
-  - Checked edge cases like empty follower or blocked lists to ensure correct behavior.
-  - Ensured navigation between sections (e.g., viewing followers, going back to the feed) works seamlessly.
-- **Relationships**:
-  - Communicates with `UserPageServer` for account and profile management.
-  - Redirects to `FeedPageClient` and `OtherPageClient` based on user choices.
-
-4. **WelcomePageClient.java**
-- **Functionality**: The `WelcomePageClient` class handles the client-side operations of the welcome page, which includes sign-in and sign-up functionalities. It manages user input for login credentials, communicates with the server to validate or create accounts, and redirects the user to the feed page upon successful login or account creation.
-- **Testing**:
-  - Verified sign-in and sign-up flows to ensure proper communication with `WelcomePageServer`.
-  - Tested various scenarios, such as invalid credentials or taken usernames, to confirm appropriate error handling and messaging.
-- **Relationships**:
-  - Works closely with `WelcomePageServer` for authentication and account creation.
-  - Redirects to `FeedPageClient` once the user is authenticated.
+4. **Writer.java**
+- **Functionality**: The Writer class provides utility methods for reading from and writing to the server in the client-side application. It simplifies server communication, enabling consistent handling of messages and data exchange between the client and server.
+  - **Reading Data**: Reads multiple lines from the server until a termination keyword ("END") is received, storing them in a list for further processing.
+  - **Writing Data**: Sends messages to the server and ensures the data is flushed immediately, maintaining reliable communication.
+- **Testing**: Validated the readAndPrint method by simulating server responses, ensuring correct handling of multiple lines and termination conditions. Verified the write method with various inputs, confirming message integrity and handling of edge cases like server disconnections.
+- **Relationships**: Frequently used in client-side classes like FeedViewPage, UserProfilePage, and OtherProfilePage to manage communication with the server for tasks like retrieving user data or sending user actions. It serves as a foundational component for maintaining reliable client-server interaction.
 
 ### exception
 1. **InvalidCreateAccountException.java**
@@ -312,6 +206,55 @@ A comprehensive overview of each class, covering its functionality, the testing 
     - `UserInterface` is implemented by the `User` class, which uses this interface to enforce a consistent structure for user-related operations.
     - The interface defines interactions with `Chat` and `Message` classes, and it utilizes exceptions such as `NoChatFoundException` for error handling.
 
+### page
+1. **CreateUserPage.java**
+- **Functionality**: The `CreateUserPage` class creates a GUI for user sign-up in a social media application. It allows users to enter a username and password, validates their input, and communicates with the server to create an account. It features a clean layout with custom-styled components and provides robust error handling for invalid inputs and server communication issues.
+- **Testing**: Verified UI functionality, including input validation (e.g., empty fields, invalid characters), successful communication with the server, and proper handling of error scenarios such as invalid inputs and server disconnections. Ensured sensitive data like passwords is securely cleared after processing.
+- **Relationships**:
+  - Uses `PageManager` for page navigation.
+  - Communicates with the server via `BufferedReader`, `BufferedWriter`, and the `Writer` utility.
+  - Integrates `RoundedButton` for styled buttons.
+  - Connects seamlessly with other pages, such as the welcome page, to provide a cohesive user experience.
+
+2. **FeedViewPage.java**
+- **Functionality**: The `FeedViewPage` class serves as the main chat interface in a social media application, enabling users to view chats, send and edit messages, search for users, and create new chats. It uses Swing components for a dynamic UI, supporting features like user selection, message updates, and chat creation. The page interacts with the server to fetch and update data in real-time.
+  - Displays chats and messages dynamically, with options to send, edit, or delete messages.
+  - Allows user search and selection for new chats (up to 8 users).
+  - Includes automatic chat refresh and navigation to other pages like user profiles.
+- **Testing**: Validated functionality for chat updates, user search, and message handling. Ensured server communication reliability and robust error handling for invalid inputs or server failures.
+- **Relationships**: Integrates with `PageManager` for navigation and communicates with the server via `BufferedReader` and `BufferedWriter`. Enhances UI with `RoundedButton` and custom dynamic panels.
+
+3. **OtherProfilePage.java**
+- **Functionality**: The `OtherProfilePage` class provides the interface for viewing and interacting with another user's profile in a social media application. It displays profile details, such as username, account type, and lists of followers and following. Users can perform actions like follow/unfollow and block/unblock while navigating back to the feed or exploring related profiles.
+  - Displays profile picture, username, account type, followers, and following.
+  - Supports follow/unfollow and block/unblock actions with real-time server updates.
+  - Enables navigation to other profiles or the main feed.
+- **Testing**:
+  - Verified that profile data is accurately retrieved from the server and displayed.
+  - Checked edge cases like empty follower or blocked lists to ensure correct behavior.
+  - Ensured navigation between sections (e.g., viewing followers, going back to the feed) works seamlessly.
+- **Relationships**:
+  - Communicates with `UserPageServer` for account and profile management.
+  - Redirects to `FeedPageClient` and `OtherPageClient` based on user choices.
+  - Integrates `PageManager` for navigation, communicates with the server using `BufferedReader` and `BufferedWriter`, and utilizes custom components like `RoundedButton` and `ProfilePictureDialog` for an enhanced user interface.
+
+4. **UserProfilePage.java**
+- **Functionality**: The `UserProfilePage` class provides a user interface for viewing and managing the logged-in user's profile. It displays details such as the username, account type, followers, following, and blocked users. Users can upload a profile picture, navigate to the feed, and access account settings or logout options.
+  - Displays user account information, including username and account type, along with lists of followers, following, and blocked users.
+  - Allows users to upload or update their profile picture.
+  - Provides navigation to the feed page and access to account settings or logout.
+- **Testing**: Verified profile information loading, proper handling of server communication for actions like updating the profile picture and navigating pages. Ensured smooth error handling for invalid data or server issues.
+- **Relationships**: Integrates `PageManager` for navigation between pages, communicates with the server using `BufferedReader` and `BufferedWriter`, and uses custom components like `RoundedButton` for enhanced UI. Works with `FeedViewPage` and `WelcomePage` for seamless transitions.
+
+4. **WelcomePage.java**
+- **Functionality**: The `WelcomePage` class provides the login and account creation interface for the social media application. It enables users to sign in with their credentials or navigate to the account creation page. The page is visually styled with clean layouts and rounded buttons for better user experience.
+  - Provides input fields for username and password with real-time validation for empty fields.
+  - Enables users to sign in or navigate to the sign-up page.
+  - Displays a title and logo at the top, with a responsive design using Swing components.
+  - Communicates with the server to validate login credentials.
+- **Testing**: Verified successful and unsuccessful login attempts, handling of empty fields, and secure password clearance from memory after submission. Tested seamless navigation to the sign-up page and validated error handling for server disconnection or invalid input.
+- **Relationships**: Integrates `PageManager` for transitioning to other pages like `FeedViewPage` or `CreateUserPage`. Communicates with the server using `BufferedReader` and `BufferedWriter` for login operations. Enhances UI with custom components like `RoundedButton`.
+
 ### serverPageOperation
 1. **FeedPageServer.java**
 - **Functionality**: The FeedPageServer class handles server-side operations for the feed page. It provides features such as listing available users, facilitating user selection for interaction, and managing navigation requests from the client. The class ensures smooth communication between the client and the server for feed-related activities.
@@ -350,7 +293,125 @@ A comprehensive overview of each class, covering its functionality, the testing 
   - Redirects to FeedPageServer once the user is authenticated or a new account is created.
   - Uses User and Chat objects to manage user data and interactions.
 
-### page (Incomplete)
+### Other Files
+1. **ClientHandler.java**
+- **Functionality**:
+  The ClientHandler class manages individual client connections for a social media application. It handles communication between the client and the server, using input and output streams to exchange messages. Additionally, it sets up and manages the user interface (UI) using Swing components. The class implements Runnable, enabling each client connection to run on a separate thread, which supports concurrent communication with multiple clients. The user interface includes pages such as the welcome screen, user profile, and feed view, allowing seamless navigation and interaction within the application.
+- **Testing**:
+  - Verified the successful establishment of client-server connections and the proper initialization of input/output streams.
+  - Checked that GUI components are correctly created, displayed, and responsive to user interactions.
+  - Ensured that user input is appropriately processed and that messages are accurately sent and received from the server.
+  - Tested edge cases, such as handling invalid usernames and passwords, to ensure robust error handling with proper feedback.
+  - Conducted multi-threaded testing to confirm the correct management of concurrent client connections, ensuring no race conditions or deadlocks occur.
+- **Relationships**:
+  - Implements Runnable to support multi-threaded client handling, allowing the server to communicate with multiple clients simultaneously.
+  - Uses BufferedReader and BufferedWriter to facilitate message exchange between the client and server.
+  - Integrates with WelcomePageClient to manage welcome page functionality and connects with other UI components for a seamless user experience.
+  - Employs Swing (JFrame, JPanel, CardLayout) from the javax.swing and java.awt packages to construct and manage the graphical user interface.
+  - Collaborates with various UI pages (WelcomePage, CreateUserPage, FeedViewPage, UserProfilePage, and OtherProfilePage) to enable user navigation and interactions within the application.
+
+2. **MessageTest.java**
+- **Functionality**:
+  The `MessageTest` class contains JUnit tests to verify the functionality of the `Message` class. It tests methods that retrieve message details (such as author ID, message type, and content) and ensure message content updates are handled correctly based on the message type.
+- **Testing**:
+  - **testGetMessage**:
+    - Confirms that the `getMessage` method correctly returns the message content.
+    - Includes tests to ensure that the content matches or does not match as expected.
+  - **testGetAuthorID**:
+    - Verifies that the `getAuthorID` method returns the correct author ID.
+    - Ensures that the method does not return incorrect author IDs.
+  - **testGetMessageType**:
+    - Checks if the `getMessageType` method returns the correct message type.
+    - Ensures that incorrect message types are not returned.
+  - **testSetMessage**:
+    - Validates the `setMessage` method, confirming it updates the message content if the message type is text (0) and returns `true`.
+    - Tests that the method does not update the message if the type is non-text and returns `false`.
+- **Relationships**: The `MessageTest` class is responsible for testing the `Message` class. It does not interact with other classes directly but ensures that the `Message` class functions correctly within the larger application.
+
+3. **RunChatTests.java**
+- **Functionality**: The RunChatTests class is a JUnit test suite that rigorously tests the functionality of the Chat class. It includes various test methods to ensure the correct implementation of chat operations, such as constructing chats, adding messages, editing messages, and deleting messages. The tests also validate the proper handling of file-based data persistence and exceptions related to invalid file formats.
+- **Testing**:
+  - **`testNoReadConstructor`**: Verifies that a chat created without reading from a file correctly writes data to a new file and compares the contents against expected values.
+  - **`testReadConstructor`**: Tests the ability of the `Chat` class to instantiate from a file with valid data. It also checks for the correct handling of corrupt data by asserting that `InvalidFileFormatException` is thrown when necessary.
+  - **`testAddMessage`**: Checks that a new message is added to the `messageList` and written to the file accurately. It also verifies that message type and contents match the expected values in the file.
+  - **`testDeleteMessage`**: Validates the deletion of a message from the `messageList` and ensures that the changes are correctly written to the file, resulting in an empty message list.
+  - **`testEditMessage`**: Ensures that editing a message by its author properly updates the message in the `messageList` and writes the changes to the file.
+- **Relationships**: The `RunChatTests` class tests the `Chat` class, which is a core component of the social media application. It ensures that the methods related to message handling and data persistence in the `Chat` class are functioning correctly. The tests also involve interactions with the `Message` class to validate the integrity of chat messages. Additionally, file handling and exceptions like `InvalidFileFormatException` are tested to ensure robust error handling.
+
+4. **RunUserTests.java**
+- **Functionality**:
+  `RunUserTests` contains JUnit tests that evaluate the `User` class functionality. The tests cover the behavior of methods related to user creation, attribute setting, following and blocking users, chat management, and file-based data persistence.
+- **Testing**:
+  - **User Creation**: The constructor tests verify the creation of `User` objects, ensuring that attributes such as username, password, and user ID are properly initialized and that a corresponding data file is created.
+  - **Mutator Methods**: Tests like `testSetUsername`, `testSetPassword`, `testSetProfilePic`, and `testSetAccountType` validate that changes to user attributes are reflected correctly.
+  - **User Relationships**:
+    - Tests for adding and removing followers, following users, and blocking/unblocking ensure that lists are updated as expected.
+    - Methods like `addFollower`, `addBlock`, `deleteFollower`, and `deleteBlock` are verified for correctness.
+  - **Chat Management**:
+    - Methods `addChat` and `createChat` are tested to ensure chats are appropriately linked to users.
+  - **Utility Methods**:
+    - `findUser` and `userNameValidation` are tested for correct behavior when searching for users and validating usernames.
+  - **File Persistence**: After each test, created user and chat files are cleaned up, and the `UserIDList` and `chatIDList` files are reset.
+- **Relationships**:
+  - Relies on the `User` and `Chat` classes to test user-to-user interactions and chat functionalities.
+  - Tests interactions between multiple `User` objects to simulate a realistic social media environment.
+  - Uses file operations to ensure user and chat data are correctly written and retrieved.
+
+5. **ServerInterface.java**
+- **Functionality**: The ServerInterface defines the essential operations that a simple server must implement. It provides a contract for starting and stopping the server, as well as retrieving lists of users and chats managed by the server. By defining these methods, the interface ensures that any class implementing it will provide consistent and structured behavior for server operations. The interface is useful for promoting code reusability and standardizing how servers are managed within the application.
+- **Relationships**:
+  - Any class implementing ServerInterface must provide concrete implementations for all declared methods.
+  - The interface ensures that implementing classes have mechanisms for managing User and Chat objects, facilitating seamless user and chat handling.
+  - It interacts with the User and Chat classes, which represent user entities and chat sessions respectively, providing a standardized way to access these objects within server implementations.
+
+6. **SimpleServer.java**
+- **Functionality**: The SimpleServer class provides a basic server implementation that listens for client connections on a specified port and delegates request handling to the WelcomePageServer. It uses input and output streams for communication with clients and supports loading user and chat data from files. The server is designed to handle multiple client connections concurrently by leveraging the Runnable interface, allowing each connection to run on a separate thread. The class also includes mechanisms for managing resources and ensuring proper closure of sockets and streams.
+- **Testing**:
+  - Verified that the server correctly initializes by loading User and Chat objects from data files in the designated directory.
+  - Ensured that client connections are accepted and handled correctly, with requests being processed by the WelcomePageServer.
+  - Checked for proper error handling and resource management, especially for closing sockets and streams to avoid memory leaks.
+  - Conducted stress testing to ensure the server can manage multiple concurrent connections without performance degradation.
+  - Validated that invalid or corrupt chat files are handled gracefully, using appropriate exception handling mechanisms.
+- **Relationships**:
+  - Implements Runnable to support multi-threaded client handling, allowing the server to communicate with multiple clients simultaneously.
+  - Utilizes the WelcomePageServer class to manage initial client interactions, such as user sign-in and sign-up.
+  - Interacts with the User and Chat classes to load and manage data from files, converting them into objects for in-memory storage.
+  - Uses Java networking (ServerSocket and Socket) and I/O classes (BufferedReader, BufferedWriter) to establish connections and facilitate communication.
+  - Relies on exception handling classes like InvalidFileFormatException to manage errors when loading data.
+
+7. **SimpleServerTest.java**
+- **Functionality**: The SimpleServerTest class provides unit tests for the SimpleServer class. Its main purpose is to validate that the SimpleServer constructor correctly processes files from the data directory and converts them into User and Chat objects. The test checks that every file in the data directory corresponds to an appropriate User or Chat object in the server’s internal data structures. The class ensures data integrity and verifies that no files are overlooked during the object creation process.
+- **Testing**:
+  - testServerConstructor(): This unit test:
+  - Checks that each file in the data directory is successfully converted into a User or Chat object.
+  - Compares the total number of files in the directory with the number of objects created and stored in the SimpleServer.
+  - Iterates through each file, extracts the file name, and verifies that it matches an ID of a User or Chat object.
+  - Uses assertEquals to ensure the total number of objects matches the number of files, confirming that all data has been processed correctly.
+  - The test is designed to handle potential issues with file I/O gracefully, throwing a RuntimeException if an IOException occurs.
+- **Relationships**:
+  - Uses SimpleServer to test the constructor's ability to populate the user and chat lists from files.
+  - Relies on the User and Chat classes to verify that data from files is appropriately converted into objects.
+  - Integrates with JUnit for testing, using assertions to validate the correctness of the server's initialization process.
+  - The main method allows for manual testing, providing a way to run the test independently of the JUnit framework.
+
+8. **UserTest.java**
+- **Functionality**:
+  The `UserTest` class provides a comprehensive suite of JUnit tests for the `User` class. It tests the constructors, mutators, and various methods used in user management, such as adding followers, blocking users, creating chats, and handling authentication. The tests ensure that user data is correctly persisted in files, attributes are properly assigned and updated, and edge cases are managed.
+- **Testing**:
+  - **Constructor Tests**:
+    - `testSecondUserConstructor`: Verifies proper initialization of a `User` object, checks that all attributes are correctly set, and confirms that the corresponding user data file is created with accurate contents.
+  - **Mutator Tests**:
+    - `testSetUsername`, `testSetPassword`, `testSetProfilePic`, `testSetAccountType`, `testSetUserID`: Ensure that setting these attributes updates the user object and the user data file appropriately.
+  - **Method Tests**:
+    - `testAddBlock`, `testDeleteBlock`: Test the ability to block and unblock users, ensuring the user’s block list is updated and the function returns expected values.
+    - `testAddChat`, `testCreateChat`: Check if chat IDs are correctly added to the user’s chat list, with validation to prevent duplicates.
+    - `testHasLogin`: Verifies the login functionality by matching the user’s credentials with data in the `UserIDList` file.
+    - `testCreateNewUser`: Confirms that new user entries are written to `UserIDList.txt` with correct information.
+    - `testSendText`: Ensures messages are successfully sent to existing chats and handles exceptions for non-existent chats.
+- **Relationships**:
+  - Uses the `User` class to instantiate user objects and test their behaviors.
+  - Tests interactions with the `Chat` class to validate chat-related functionalities.
+  - Implements exception handling using `NoChatFoundException` for scenarios where chats are not found.
 
 ## Testing and Verification Instructions
 ### **_Running Test Cases_**
