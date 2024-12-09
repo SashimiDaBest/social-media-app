@@ -11,17 +11,18 @@ import java.util.ArrayList;
 /**
  * UserPageServer
  * <p>
- * This class handles the operations for the user page on the server side. It manages
- * interactions such as displaying the user's account information, managing the user's
- * followers, following, and blocked lists, and handling navigation to other pages like
- * the feed page or other user profiles.
+ * This class handles the server-side operations for managing a user's profile page. It provides
+ * functionality for displaying user account details, managing the user's followers, following,
+ * and blocked lists, as well as handling requests to update the user's profile picture and
+ * navigate to other pages (like other user profiles, feed page, and welcome page).
  * </p>
  *
  * <p>Key Features:</p>
  * <ul>
  *     <li>Displays user account details, including username and account type.</li>
  *     <li>Handles requests for viewing the user's followers, following, and blocked users.</li>
- *     <li>Provides functionality to navigate to other user profiles or return to the feed page.</li>
+ *     <li>Allows the user to upload and save a new profile picture.</li>
+ *     <li>Provides functionality to navigate to other user profiles, the feed page, or the welcome page.</li>
  * </ul>
  *
  * <p>Usage:</p>
@@ -35,9 +36,9 @@ import java.util.ArrayList;
 public final class UserPageServer {
 
     /**
-     * Manages user page operations, such as displaying user details, handling
-     * interactions with the follower, following, and blocked lists, and redirecting
-     * to other pages based on client input.
+     * Handles user page operations, including displaying the user's account details, managing followers,
+     * following, and blocked users, updating the profile picture, and redirecting to other pages based on
+     * the client's input.
      *
      * @param br    BufferedReader for reading client input
      * @param bw    BufferedWriter for sending data to the client
@@ -99,7 +100,7 @@ public final class UserPageServer {
                     String path = br.readLine();
                     System.out.println("read: " + path);
                     File file = new File(path);
-                    if (saveImageAsNewFile(file, user.getUserID(), bw)){
+                    if (saveImageAsNewFile(file, user.getUserID(), bw)) {
                         user.setProfilePic("I" + user.getUserID().substring(1));
                     }
                     Writer.write(user.getProfilePic(), bw);
@@ -124,6 +125,14 @@ public final class UserPageServer {
         }
     }
 
+    /**
+     * Writes a list of users (or IDs) to the BufferedWriter, sending it to the client.
+     * It also handles the case where the list is empty and sends "[EMPTY]" to the client.
+     *
+     * @param people List of users or IDs to be sent to the client
+     * @param bw     BufferedWriter used to send data to the client
+     * @return Returns true if the data was successfully written to the client
+     */
     public static boolean write(ArrayList<String> people, BufferedWriter bw) {
         try {
             if (!people.isEmpty() && !people.get(0).isEmpty()) {
@@ -147,6 +156,16 @@ public final class UserPageServer {
         }
     }
 
+    /**
+     * Saves the uploaded image file as the new profile picture for the user.
+     * This method checks if the file is an image and ensures the file is properly copied to
+     * the appropriate directory.
+     *
+     * @param sourceFile The image file uploaded by the client
+     * @param userID     The user ID of the current user
+     * @param bw         BufferedWriter for sending the success message to the client
+     * @return Returns true if the image is successfully saved, otherwise false
+     */
     private static boolean saveImageAsNewFile(File sourceFile, String userID, BufferedWriter bw) {
 
         try {
@@ -186,6 +205,12 @@ public final class UserPageServer {
         }
     }
 
+    /**
+     * Checks if the given file is a valid image by attempting to read it using ImageIO.
+     *
+     * @param file The file to check
+     * @return Returns true if the file is a valid image, otherwise false
+     */
     private static boolean isImage(File file) {
         try {
             return ImageIO.read(file) != null;
