@@ -397,9 +397,7 @@ public class FeedViewPage extends JPanel {
 
         // Search Panel
         JPanel searchPanel = new JPanel(new BorderLayout());
-        // profileButton = new RoundedButton("User Page", 18);
-        // profileButton.setFont(new Font("Arial", Font.BOLD, 12));
-        profileButton = new JButton();
+        profileButton = new JButton("User Page");
         searchPanel.add(profileButton, BorderLayout.WEST);
         searchPanel.add(createSearchPanel(), BorderLayout.CENTER);
 
@@ -569,12 +567,7 @@ public class FeedViewPage extends JPanel {
 
         return leftScrollPane;
     }
-        /**
-     * Sets up action listeners for various UI components.
-     * This method assigns action listeners to buttons and other UI elements
-     * to handle user interactions such as navigating to user profiles, searching for users,
-     * sending messages, editing messages, deleting messages, and refreshing chat views.
-     */
+
     private void setupActionListeners() {
 
         // Profile button navigates to user profile
